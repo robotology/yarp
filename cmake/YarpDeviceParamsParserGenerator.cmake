@@ -55,15 +55,21 @@ function(generateDeviceParamsParser_fromIniFile CLASSNAME DEVICENAME FILEINI EXT
     generateDeviceParamsParser_commandline (${COMMAND})
 endfunction()
 
+# If an additional argument is specified, it is considered the OUTPUTDIR
 function(generateDeviceParamsParser CLASSNAME DEVICENAME)
+    if (NOT ARGN)
+        set (OUTPUTDIR ${CMAKE_CURRENT_SOURCE_DIR})
+    else ()
+        set (OUTPUTDIR ${ARGN})
+    endif ()
     set (INPUTFILENAME_INI "${CMAKE_CURRENT_SOURCE_DIR}/${CLASSNAME}_params.ini")
     set (INPUTFILENAME_MD "${CMAKE_CURRENT_SOURCE_DIR}/${CLASSNAME}_params.md")
     set (INPUTFILENAME_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/${CLASSNAME}_params_extracomments.md")
 
     if (EXISTS ${INPUTFILENAME_INI})
-        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_ini ${INPUTFILENAME_INI}")
+        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_ini ${INPUTFILENAME_INI} --output_dir ${OUTPUTDIR}")
     elseif (EXISTS ${INPUTFILENAME_MD})
-        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_md  ${INPUTFILENAME_MD}")
+        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_md  ${INPUTFILENAME_MD} --output_dir ${OUTPUTDIR}")
     else()
         message(FATAL_ERROR "Cannot find input file ${INPUTFILENAME_INI} or ${INPUTFILENAME_MD}")
     endif()
