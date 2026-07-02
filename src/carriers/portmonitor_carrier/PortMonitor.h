@@ -67,8 +67,10 @@ public:
         {
             if (*it) {
                 delete *it;
+                *it = nullptr;
             }
         }
+        binder.clear();
     }
 
     Carrier *create() const override
@@ -111,6 +113,9 @@ public:
     MonitorBinding* getBinder()
     {
         if(!bReady) {
+            return nullptr;
+        }
+        if (binder.empty()) {
             return nullptr;
         }
         return binder[0];

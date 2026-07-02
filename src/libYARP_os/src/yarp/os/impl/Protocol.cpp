@@ -155,6 +155,11 @@ std::string Protocol::getSenderSpecifier() const
     // name.  Ideally, we wouldn't need to bundle that in with
     // the sender name, but we do it for now in the name of
     // backwards compatibility.
+
+    //This is an example string:
+    //fast_tcp+send.portmonitor+file.bottle_compression_zlib+type.dll
+    //will be splitted into:
+    //(fast_tcp) (send portmonitor) (file bottle_compression_zlib) (type dll)
     std::string carrier = r.getCarrierName();
     size_t start = carrier.find('+');
     if (start != std::string::npos) {

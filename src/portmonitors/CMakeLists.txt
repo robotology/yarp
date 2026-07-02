@@ -25,6 +25,7 @@ yarp_begin_plugin_library(yarppm
   add_subdirectory(sound_marker)
   add_subdirectory(sensorMeasurements_to_vector)
   add_subdirectory(throttleDown)
+  add_subdirectory(test_numbers)
 
 yarp_end_plugin_library(yarppm QUIET)
 add_library(YARP::yarppm ALIAS yarppm)

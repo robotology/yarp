@@ -19,6 +19,70 @@
 
 using namespace yarp::os;
 
+std::pair<std::string, std::string> parseBlocks(const std::string& input)
+{
+    const std::string sendTag = "+send.portmonitor+";
+    const std::string recvTag = "+recv.portmonitor+";
+
+    size_t posSend = input.find(sendTag);
+    size_t posRecv = input.find(recvTag);
+
+    std::string middle;   // tra send e recv
+    std::string afterRecv; // da recv in poi
+
+    // Estrazione blocco "recv -> fine"
+    if (posRecv != std::string::npos)
+    {
+        afterRecv = input.substr(posRecv + recvTag.size());
+    }
+
+    // Estrazione blocco tra send e recv (indipendente dall'ordine)
+    if (posSend != std::string::npos && posRecv != std::string::npos)
+    {
+        size_t start = posSend + sendTag.size();
+        size_t end = (posSend < posRecv) ? posRecv : std::string::npos;
+
+        middle = input.substr(start, end - start);
+    }
+    else if (posSend != std::string::npos && posRecv == std::string::npos)
+    {
+        // solo send presente: tutto dopo send
+        middle = input.substr(posSend + sendTag.size());
+    }
+    else if (posSend == std::string::npos && posRecv != std::string::npos)
+    {
+        // solo recv presente: tutto prima di recv
+        middle = input.substr(0, posRecv);
+    }
+    else
+    {
+        // nessun tag: tutta la stringa è "middle"
+        middle = input;
+    }
+
+    return {middle, afterRecv};
+}
+
+std::string separateString(std::string input)
+{
+    std::string output;
+    size_t start = 0;
+    if (start != std::string::npos) {
+        output += " (";
+        for (size_t i = start; i < (size_t)input.length(); i++) {
+            char ch = input[i];
+            if (ch == '+') {
+                output += ") (";
+            } else if (ch == '.') {
+                output += " ";
+            } else {
+                output += ch;
+            }
+        }
+        output += ")";
+    }
+    return output;
+}
 
 /**
  * Class PortMonitor
@@ -38,14 +102,34 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     }
 
     Property options;
-    options.fromString(proto.getSenderSpecifier());
+    //options.fromString(proto.getSenderSpecifier());
     options.put("source", sourceName);
     options.put("destination", portName);
     options.put("sender_side",
              (proto.getContactable()->getName() == sourceName) ? 1 : 0);
     options.put("receiver_side",
              (proto.getContactable()->getName() == portName) ? 1 : 0);
-    options.put("carrier", proto.getRoute().getCarrierName());
+
+    std::string carrier_options = proto.getRoute().getCarrierName();
+
+    //I want to split a string like this:
+    //fast_tcp+send.portmonitor+file.bottle_compression_zlib+type.dll+recv.portmonitor+file.bottle_compression_zlib+type.dll
+    //into two strings. For senders side:
+    // file.bottle_compression_zlib+type.dll
+    // and for receivers side:
+    // file.bottle_compression_zlib+type.dll
+    auto [file1, file2] = parseBlocks(carrier_options);
+    if (proto.getContactable()->getName() == sourceName)
+    {
+        std::string sendoptions = separateString(file1);
+        options.fromString(sendoptions, false);
+    }
+    else if (proto.getContactable()->getName() == portName)
+    {
+        std::string recvoptions = separateString(file2);
+        options.fromString(recvoptions, false);
+    }
+
     return configureFromProperty(options);
 }
 
@@ -53,21 +137,38 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
 {
     yCTrace(PORTMONITORCARRIER);
     std::string debug_string_options = options.toString();
+    YARP_UNUSED(debug_string_options);
 
+    // clear the list of binders, if any, before creating new ones
     for (auto it=binder.begin(); it!=binder.end(); ++it)
     {
         if (*it) {
             delete *it;
+            *it=nullptr;
         }
     }
+    binder.clear();
 
-    std::vector<std::string> scripts;
+    std::vector<std::string> scriptstype;
     std::vector<std::string> filenames;
     std::vector<std::string> constraints;
     std::vector<std::string> contexts;    // context is used to find the script files
 
-    scripts.push_back(options.check("type", Value("lua")).asString());
-    filenames.push_back(options.check("file", Value("modifier")).asString());
+    std::string type = options.check("type", Value("")).asString();
+    std::string file = options.check("file", Value("")).asString();
+    bool sender_side = options.check("sender_side", Value(false)).asBool() == 1;
+    // Validate that mandatory parameters are provided
+    if (type.empty() || file.empty())
+    {
+        if (sender_side)
+            yCError(PORTMONITORCARRIER) << "Missing required 'type' or 'file' parameter on sender side";
+        else
+            yCError(PORTMONITORCARRIER) << "Missing required 'type' or 'file' parameter on receiver side";
+        return false;
+    }
+
+    scriptstype.push_back(type);
+    filenames.push_back(file);
     constraints.push_back(options.check("constraint", Value("")).asString());
     contexts.push_back(options.check("context", Value("")).asString());
 
@@ -84,16 +185,28 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
             break;
         }
 
-        scripts.push_back(options.check(typeKey, Value("lua")).asString());
-        filenames.push_back(options.check(fileKey, Value("modifier")).asString());
+        std::string type = options.check(typeKey, Value("")).asString();
+        std::string file = options.check(fileKey, Value("")).asString();
+        // Validate that mandatory parameters are provided
+        if (type.empty() || file.empty())
+        {
+            if (sender_side)
+                yCError(PORTMONITORCARRIER) << "Missing required 'type' or 'file' parameter on sender side";
+            else
+                yCError(PORTMONITORCARRIER) << "Missing required 'type' or 'file' parameter on receiver side";
+            return false;
+        }
+
+        scriptstype.push_back(type);
+        filenames.push_back(file);
         constraints.push_back(options.check(constraintKey, Value("")).asString());
         contexts.push_back(options.check(contextKey, Value("")).asString());
     }
 
     // Create the monitor binding objects for each script
-    for (size_t i=0; i< scripts.size(); i++)
+    for (size_t i=0; i< scriptstype.size(); i++)
     {
-        MonitorBinding* mon = MonitorBinding::create(scripts[i].c_str());
+        MonitorBinding* mon = MonitorBinding::create(scriptstype[i].c_str());
         if(mon == nullptr)
         {
             //Failed to create monitor
@@ -113,7 +226,7 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
     {
         // sets the context for finding the script file
         std::string strFile = filenames[i];
-        if(scripts[i] != "dll")
+        if(scriptstype[i] != "dll")
         {
             yarp::os::ResourceFinder rf;
             rf.setDefaultContext(contexts[i]);
@@ -122,20 +235,24 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
             if(strFile.empty()) {
                 strFile = rf.findFile(filenames[i] + ".lua");
             }
+            if(strFile.empty()) {
+                strFile = rf.findFile(filenames[i] + ".py");
+            }
         }
 
         // set the information for the monitor object
         Property info;
         info.clear();
         info.put("filename", strFile);
-        info.put("type", scripts[i]);
+        info.put("type", scriptstype[i]);
         info.put("source", options.find("source").asString());
         info.put("destination", options.find("destination").asString());
         info.put("sender_side",  options.find("sender_side").asInt32());
         info.put("receiver_side",options.find("receiver_side").asInt32());
 
         //here, for multiple portmonitors, only the related parameters should be provided...
-        info.put("carrier", options.find("carrier").asString());
+        std::string carrier_options = options.find("carrier").asString();
+        info.put("carrier", carrier_options);
 
         // load the monitor object with the provided information
         bReady &= binder[i]->load(info);
@@ -186,24 +303,32 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     // When we are here,
     // the incoming data should be accessed using localReader.
     // The reader passed to this function is indeed empty.
-    // first check if we need to call the update callback
-    if (!binder[0]->hasUpdate())
-    {
-        localReader->setParentConnectionReader(&reader);
-        return *localReader;
-    }
 
+    localReader->setParentConnectionReader(&reader);
+
+    //Call the sequence of portmonitors,
+    //feeding the output of one as input to the next one.
     PortMonitor::lock();
     yarp::os::Things thing;
     thing.setConnectionReader(*localReader);
-    yarp::os::Things& result = binder[0]->updateData(thing);
+    yarp::os::Things* current = &thing;
+    for (size_t i = 0; i < binder.size(); ++i)
+    {
+        // If no update callback is available, avoid calling it
+        if(!binder[i]->hasUpdate())
+        {
+            continue;
+        }
+        current = &binder[i]->updateData(*current);
+    }
     PortMonitor::unlock();
+
     con.reset();
-    if(result.write(con.getWriter())) {
+    if(current->write(con.getWriter())) {
         auto& cReader = con.getReader(reader.getWriter());
         cReader.setParentConnectionReader(&reader);
-        if (result.getPortReader() != nullptr) {
-            cReader.getWriter()->setReplyHandler(*result.getPortReader());
+        if (current->getPortReader() != nullptr) {
+            cReader.getWriter()->setReplyHandler(*current->getPortReader());
         }
         return cReader;
     }
@@ -213,6 +338,9 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
 bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
 {
     yCTrace(PORTMONITORCARRIER);
+
+    // TODO: the implementation of this method is not complete yet.
+    // It should call the acceptData method of all the portmonitors in the binder vector, not just the first one.
 
     if(!bReady) {
         return false;
@@ -264,22 +392,19 @@ const yarp::os::PortWriter& PortMonitor::modifyOutgoingData(const yarp::os::Port
         return writer;
     }
 
-    // If no update callback avoid calling it
-    for (size_t i=0; i<binder.size(); i++)
-    {
-        if(!binder[i]->hasUpdate())
-        {
-            return writer;
-        }
-    }
-
     //Call the sequence of portmonitors,
     //feeding the output of one as input to the next one.
     PortMonitor::lock();
     thing.reset();
     thing.setPortWriter(const_cast<yarp::os::PortWriter*>(&writer));
     yarp::os::Things* current = &thing;
-    for (size_t i = 0; i < binder.size(); ++i) {
+    for (size_t i = 0; i < binder.size(); ++i)
+    {
+        // If no update callback is available, avoid calling it
+        if(!binder[i]->hasUpdate())
+        {
+            continue;
+        }
         current = &binder[i]->updateData(*current);
     }
     PortMonitor::unlock();
@@ -289,6 +414,9 @@ const yarp::os::PortWriter& PortMonitor::modifyOutgoingData(const yarp::os::Port
 bool PortMonitor::acceptOutgoingData(const yarp::os::PortWriter& writer)
 {
     yCTrace(PORTMONITORCARRIER);
+
+    // TODO: the implementation of this method is not complete yet.
+    // It should call the acceptData method of all the portmonitors in the binder vector, not just the first one.
 
     if(!bReady) {
         return false;
@@ -316,22 +444,19 @@ yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader)
         return reader;
     }
 
-    // If no updateReply callback avoid calling it
-    for (size_t i=0; i<binder.size(); i++)
-    {
-        if(!binder[i]->hasUpdateReply())
-        {
-            return reader;
-        }
-    }
-
     //Call the sequence of portmonitors,
     //feeding the output of one as input to the next one.
     PortMonitor::lock();
     thing.reset();
     thing.setPortReader(&reader);
     yarp::os::Things* current = &thing;
-    for (size_t i = 0; i < binder.size(); ++i) {
+    for (size_t i = 0; i < binder.size(); ++i)
+    {
+        // If no reply callback is available, avoid calling it
+        if(!binder[i]->hasUpdateReply())
+        {
+            continue;
+        }
         current = &binder[i]->updateReply(*current);
     }
     PortMonitor::unlock();

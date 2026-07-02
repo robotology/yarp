@@ -618,9 +618,10 @@ static int metaConnect(const std::string& src,
     // inject the stats_monitor portmonitor into the carrier string for every new connection
     if (mode == YARP_ENACT_CONNECT && !style.carrier.empty())
     {
-        bool statsEnabled = false;
-        yarp::conf::environment::get_string("YARP_CONNECTIONS_STATS_ENABLE", &statsEnabled);
-        if (statsEnabled)
+        std::string statsEnabled;
+        bool statsEnabledFound = false;
+        statsEnabled = yarp::conf::environment::get_string("YARP_CONNECTIONS_STATS_ENABLE", &statsEnabledFound);
+        if (statsEnabledFound && statsEnabled == "1")
         {
             bool stat_portmonitor_is_available = true;
             //TO BE IMPLEMENTED: stat_portmonitor_is_available = YARP_HAS_DYNAMIC_PLUGINS && YarpPlugin::exists("send.portmonitor", "file.stats_monitor", "type.dll");

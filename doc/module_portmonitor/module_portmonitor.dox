@@ -52,13 +52,14 @@ or a DLL can be loaded instead of the Lua script:
 \endverbatim
 
 - 'recv.portmonitor' or 'send.portmonitor' indicates that a portmonitor carrier modiffier should be used respectively in receiver or sender side.
-- 'type.lua' , 'type.dll', 'type.python' respectively tells the carrier to expect Lua/python script or a DLL file.
+- 'type.lua' , 'type.dll', 'type.python' respectively tells the carrier to expect Lua/Python script or a DLL file.
 - 'context.myapp' is only used for the scripts  and it tells the resource finder to load the script from the 'myapp' context. If context is not used, the current path where module is launched will be searched for the script file.
 - 'file.my_lua_script' indicates 'my_lua_script' (alternatively my_dll_file) should be loaded by monitor object. For the scripts, the 'my_lua_script' is located using standard YARP Resource Finder policy. The postfix (e.g., '.lua') is not necessary. The DLLs should be located in the system standard path, the same folder the program is running or the paths indicated in `LD_LIBRARY_PATH' on the Linux machines.
 
 \section concatenate Advanced usage: concatenation of multiple portmonitors
 This feature is still experimental.
 You can concatenate multiple portmonitors as in this example, which throttles down a connection, and then adds a simulated delay of 500ms.
+It's importnat to notice the sequence id suffix (1,2,..etc) that has to be applied to both the `file` and the `type` label.
 
 \verbatim
   $ yarp connect /mysender /myreceiver fast_tcp+send.portmonitor+file.throttleDown+period_ms.100+type.dll+file1.simulated_network_delay+delay_ms.500+type1.dll
@@ -79,7 +80,7 @@ yarp read ...  /stats_monitor/mysender/myreceiver/stats:o
 \endverbatim
 
 Note that the throttleDown is applied before the stats monitor.
-If the order of the monitors is swapped, than incorrect statics will be displayed, cause they will be computed before the action of the throttleDown.
+If the order of the monitors is swapped, then incorrect statics will be displayed, cause they will be computed before the action of the throttleDown.
 
 \verbatim
 yarp write /mysender --period 0.01      //then type the string `aaaa`

@@ -82,12 +82,12 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
         REQUIRE(!b);
     }
 
-    SECTION("Test usage od environment variable ENABLE_CONNECTIONS_STATS")
+    SECTION("Test usage of environment variable YARP_CONNECTIONS_STATS_ENABLE")
     {
         yarp::os::Port sender;
         yarp::os::Port receiver;
 
-        yarp::conf::environment::setEnvironment("ENABLE_CONNECTIONS_STATS", "1" );
+        yarp::conf::environment::setEnvironment("YARP_CONNECTIONS_STATS_ENABLE", "1" );
 
         sender.open("/send");
         receiver.open("/recv");
@@ -112,7 +112,7 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
         yarp::conf::environment::setEnvironment("YARP_CONNECTIONS_STATS_ENABLE", "" );
     }
 
-    SECTION("Test multiple monitors concatenation")
+    SECTION("Test multiple monitors concatenation using environment variable")
     {
         yarp::os::Port sender;
         yarp::os::Port receiver;
@@ -141,6 +141,61 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
 
         yarp::conf::environment::setEnvironment("YARP_CONNECTIONS_STATS_ENABLE", "" );
     }
+
+  SECTION("Test multiple monitors concatenation (send version)")
+    {
+        yarp::os::Port sender;
+        yarp::os::Port receiver;
+
+        sender.open("/send");
+        receiver.open("/recv");
+
+        yarp::os::Network::connect("/send", "/recv", "tcp+send.portmonitor+type.dll+file.throttleDown+period_ms.500+file1.stats_monitor+type1.dll");
+
+        yarp::os::Time::delay(1.0);
+        b = yarp::os::Network::exists(s1);
+        REQUIRE(b);
+        b = yarp::os::Network::exists(s2);
+        REQUIRE(b);
+
+        receiver.close();
+        sender.close();
+
+        yarp::os::Time::delay(1.0);
+        b = yarp::os::Network::exists(s1);
+        REQUIRE(!b);
+        b = yarp::os::Network::exists(s2);
+        REQUIRE(!b);
+    }
+
+/*
+       //This is not implemented yet, because the portmonitor is not yet implemented for the receiver side
+   SECTION("Test multiple monitors concatenation (recv version)")
+    {
+        yarp::os::Port sender;
+        yarp::os::Port receiver;
+
+        sender.open("/send");
+        receiver.open("/recv");
+
+        yarp::os::Network::connect("/send", "/recv", "tcp+recv.portmonitor+type.dll+file.throttleDown+period_ms.500+file1.stats_monitor+type1.dll");
+
+        yarp::os::Time::delay(1.0);
+        b = yarp::os::Network::exists(s1);
+        REQUIRE(b);
+        b = yarp::os::Network::exists(s2);
+        REQUIRE(b);
+
+        receiver.close();
+        sender.close();
+
+        yarp::os::Time::delay(1.0);
+        b = yarp::os::Network::exists(s1);
+        REQUIRE(!b);
+        b = yarp::os::Network::exists(s2);
+        REQUIRE(!b);
+    }
+*/
 
     yarp::os::NetworkBase::setLocalMode(false);
 }
