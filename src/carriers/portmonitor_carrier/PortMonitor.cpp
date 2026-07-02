@@ -21,22 +21,20 @@ using namespace yarp::os;
 
 std::pair<std::string, std::string> parseBlocks(const std::string& input)
 {
+    //This function is not commented because it was generated
     const std::string sendTag = "+send.portmonitor+";
     const std::string recvTag = "+recv.portmonitor+";
 
     size_t posSend = input.find(sendTag);
     size_t posRecv = input.find(recvTag);
 
-    std::string middle;   // tra send e recv
-    std::string afterRecv; // da recv in poi
-
-    // Estrazione blocco "recv -> fine"
+    std::string middle;
+    std::string afterRecv;
     if (posRecv != std::string::npos)
     {
         afterRecv = input.substr(posRecv + recvTag.size());
     }
 
-    // Estrazione blocco tra send e recv (indipendente dall'ordine)
     if (posSend != std::string::npos && posRecv != std::string::npos)
     {
         size_t start = posSend + sendTag.size();
@@ -46,17 +44,14 @@ std::pair<std::string, std::string> parseBlocks(const std::string& input)
     }
     else if (posSend != std::string::npos && posRecv == std::string::npos)
     {
-        // solo send presente: tutto dopo send
         middle = input.substr(posSend + sendTag.size());
     }
     else if (posSend == std::string::npos && posRecv != std::string::npos)
     {
-        // solo recv presente: tutto prima di recv
         middle = input.substr(0, posRecv);
     }
     else
     {
-        // nessun tag: tutta la stringa è "middle"
         middle = input;
     }
 

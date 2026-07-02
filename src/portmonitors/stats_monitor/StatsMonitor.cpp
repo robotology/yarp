@@ -26,18 +26,6 @@ YARP_LOG_COMPONENT(STATSMONITOR,
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),
                    nullptr)
-
-bool split(const std::string &s, std::map<std::string, std::string>& parameters)
-{
-    std::istringstream iss(s);
-    std::string item;
-    while (std::getline(iss, item, '+')) {
-        const auto point = item.find('.');
-        parameters[item.substr(0, point)] = item.substr(point + 1);
-    }
-    return true;
-}
-
 } // namespace
 
 // Monitor: create
@@ -46,14 +34,6 @@ bool StatsMonitor::create(const yarp::os::Property& options)
     m_isSender = options.find("sender_side").asBool();
     m_source = options.find("source").asString();
     m_destination = options.find("destination").asString();
-    std::string full_carrier_string = options.find("carrier").asString();
-    m_carrier = full_carrier_string.substr(0, full_carrier_string.find('+'));
-
-    std::map<std::string, std::string> parameters;
-    if (!split(full_carrier_string, parameters)) {
-        yCError(STATSMONITOR, "Error parsing the parameters.");
-        return false;
-    }
 
     if (!m_isSender) {
         yCError(STATSMONITOR, "Attaching on receiver side is not supported yet.");

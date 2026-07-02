@@ -87,7 +87,7 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
         yarp::os::Port sender;
         yarp::os::Port receiver;
 
-        yarp::conf::environment::setEnvironment("YARP_CONNECTIONS_STATS_ENABLE", "1" );
+        yarp::conf::environment::set_bool("YARP_CONNECTIONS_STATS_ENABLE", true );
 
         sender.open("/send");
         receiver.open("/recv");
@@ -109,7 +109,7 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
         b = yarp::os::Network::exists(s2);
         REQUIRE(!b);
 
-        yarp::conf::environment::setEnvironment("YARP_CONNECTIONS_STATS_ENABLE", "" );
+        yarp::conf::environment::unset("YARP_CONNECTIONS_STATS_ENABLE");
     }
 
     SECTION("Test multiple monitors concatenation using environment variable")
@@ -117,7 +117,7 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
         yarp::os::Port sender;
         yarp::os::Port receiver;
 
-        yarp::conf::environment::setEnvironment("YARP_CONNECTIONS_STATS_ENABLE", "1" );
+        yarp::conf::environment::set_bool("YARP_CONNECTIONS_STATS_ENABLE", true );
 
         sender.open("/send");
         receiver.open("/recv");
@@ -139,7 +139,7 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
         b = yarp::os::Network::exists(s2);
         REQUIRE(!b);
 
-        yarp::conf::environment::setEnvironment("YARP_CONNECTIONS_STATS_ENABLE", "" );
+        yarp::conf::environment::unset("YARP_CONNECTIONS_STATS_ENABLE");
     }
 
   SECTION("Test multiple monitors concatenation (send version)")

@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef TEST_NUMBERS_H
-#define TEST_NUMBERS_H
+#ifndef TEST_NUMBERS2_H
+#define TEST_NUMBERS2_H
 
 #include <yarp/os/Things.h>
 #include <yarp/os/MonitorObject.h>
