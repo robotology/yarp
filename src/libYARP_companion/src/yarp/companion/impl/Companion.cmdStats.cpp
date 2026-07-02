@@ -181,7 +181,7 @@ int Companion::cmdStats(int argc, char *argv[])
 
     //makes the connection
     std::string remote_port = argv[0];
-    std::string protocol= options.check("protocol", Value("tcp")).asString();
+    std::string protocol= options.check("protocol", Value("fast_tcp")).asString();
     double max_time = options.check("duration", Value(0)).asFloat32();
 
     bool b = yarp::os::NetworkBase::connect(remote_port.c_str(), localPort->getName().c_str(), protocol, false);

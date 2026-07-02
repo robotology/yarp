@@ -400,15 +400,7 @@ static int metaConnect(const std::string& src,
             staticDest.getCarrier().c_str());
 
     //DynamicSrc and DynamicDst are the contacts created by connect command
-    //while staticSrc and staticDest are contacts created by querying th server
-
-    if (staticSrc.getCarrier() == "xmlrpc" && (staticDest.getCarrier() == "xmlrpc" || (staticDest.getCarrier().find("rossrv") == 0)) && mode == YARP_ENACT_CONNECT) {
-        // Unconnectable in general
-        // Let's assume the first part is a YARP port, and use "tcp" instead
-        staticSrc.setCarrier("tcp");
-        staticDest.setCarrier("tcp");
-    }
-
+    //while staticSrc and staticDest are contacts created by querying the server
     std::string carrierConstraint;
 
     // see if we can do business with the source port
@@ -621,6 +613,44 @@ static int metaConnect(const std::string& src,
     yCTrace(NETWORK,
             "style_carrier with params  =%s",
             style.carrier.c_str());
+
+    // If YARP_CONNECTIONS_STATS_ENABLE is set in the environment, automatically
+    // inject the stats_monitor portmonitor into the carrier string for every new connection
+    if (mode == YARP_ENACT_CONNECT && !style.carrier.empty())
+    {
+        bool statsEnabled = false;
+        yarp::conf::environment::get_string("YARP_CONNECTIONS_STATS_ENABLE", &statsEnabled);
+        if (statsEnabled)
+        {
+            bool stat_portmonitor_is_available = true;
+            //TO BE IMPLEMENTED: stat_portmonitor_is_available = YARP_HAS_DYNAMIC_PLUGINS && YarpPlugin::exists("send.portmonitor", "file.stats_monitor", "type.dll");
+            if (stat_portmonitor_is_available)
+            {
+                //If the connection already uses a portmonitor, we need to concatenate the stats_monitor to the existing portmonitor.
+                if (style.carrier.find("portmonitor") != std::string::npos)
+                {
+                    // Find the next available numeric suffix for file/type parameters.
+                    // "file." (no suffix) is treated as the base entry already present;
+                    // we scan "file1.", "file2.", ... and take the first missing index.
+                    int idx = 1;
+                    while (style.carrier.find("file" + std::to_string(idx) + ".") != std::string::npos) {
+                        ++idx;
+                    }
+                    const std::string suffix = std::to_string(idx);
+                    style.carrier += "+file" + suffix + ".stats_monitor+type" + suffix + ".dll";
+                }
+                // otherwise, we inject the stats_monitor portmonitor into the carrier string
+                else
+                {
+                    style.carrier += "+send.portmonitor+file.stats_monitor+type.dll";
+                }
+            }
+            else
+            {
+                yCWarning(NETWORK, "Failure: stats_monitor not available. Using default connection.");
+            }
+        }
+    }
 
     bool connectionIsPush = false;
     bool connectionIsPull = false;
