@@ -96,22 +96,37 @@ bool FrameGrabberControls_Responder::respond(const yarp::os::Bottle& cmd, yarp::
         switch (param) {
         case VOCAB_FEATURE: {
             ok = fgCtrl->setFeature(cmd.get(3).asInt32(), cmd.get(4).asFloat64());
+            response.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+            response.addVocab32(VOCAB_SET);
+            response.addInt32(ok);
         } break;
 
         case VOCAB_FEATURE2: {
             ok = fgCtrl->setFeature(cmd.get(3).asInt32(), cmd.get(4).asFloat64(), cmd.get(5).asFloat64());
+            response.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+            response.addVocab32(VOCAB_SET);
+            response.addInt32(ok);
         } break;
 
         case VOCAB_ACTIVE: {
             ok = fgCtrl->setActive(cmd.get(3).asInt32(), cmd.get(4).asInt32());
+            response.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+            response.addVocab32(VOCAB_SET);
+            response.addInt32(ok);
         } break;
 
         case VOCAB_MODE: {
             ok = fgCtrl->setMode(cmd.get(3).asInt32(), static_cast<FeatureMode>(cmd.get(4).asInt32()));
+            response.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+            response.addVocab32(VOCAB_SET);
+            response.addInt32(ok);
         } break;
 
         case VOCAB_ONEPUSH: {
             ok = fgCtrl->setOnePush(cmd.get(3).asInt32());
+            response.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+            response.addVocab32(VOCAB_SET);
+            response.addInt32(ok);
         } break;
 
         default:

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/IRgbVisualParams.h>
 
@@ -83,6 +84,20 @@ void do_nws_nwc_test(bool use_stream)
 
     yarp::dev::tests::exec_IFrameGrabberImage_test_1(igrabber);
     yarp::dev::tests::exec_IRgbVisualParams_test_1(irgbParams);
+
+    {
+        // fakeFrameGrabber::setFeature() unconditionally returns false: this checks that
+        // the nwc/nws RPC round trip actually propagates that failure back to the caller,
+        // instead of reporting success just because the RPC transport completed.
+        yarp::dev::IFrameGrabberControls* ictrl = nullptr;
+        REQUIRE(dd_nwc.view(ictrl));
+        REQUIRE(ictrl);
+        CHECK(ictrl->setFeature(0, 1.0) == false);
+        CHECK(ictrl->setFeature(0, 1.0, 1.0) == false);
+        CHECK(ictrl->setActive(0, true) == false);
+        CHECK(ictrl->setMode(0, MODE_MANUAL) == false);
+        CHECK(ictrl->setOnePush(0) == false);
+    }
 
     yarp::os::SystemClock::delaySystem(0.5);
 
