@@ -22,15 +22,6 @@ YARP_LOG_COMPONENT(RPCMONITOR,
                    yarp::os::Log::printCallback(),
                    nullptr)
 
-bool split(const std::string &s, std::map<std::string, std::string>& parameters) {
-    std::istringstream iss(s);
-    std::string item;
-    while (std::getline(iss, item, '+')) {
-        const auto point = item.find('.');
-        parameters[item.substr(0, point)] = item.substr(point + 1);
-    }
-    return true;
-}
 } // namespace
 
 // Monitor: create
@@ -40,14 +31,8 @@ bool RpcMonitor::create(const yarp::os::Property& options)
     source = options.find("source").asString();
     destination = options.find("destination").asString();
     const std::string source_port = (sender ? source : destination) + "/monitor";
-    // Check the 'monitor' parameter
-    const std::string carrier = options.find("carrier").asString();
-    std::map<std::string, std::string> parameters;
-    if (!split(carrier, parameters)) {
-        yCError(RPCMONITOR, "Error parsing the parameters.");
-        return false;
-    }
-    const std::string monitor_port = ((parameters.find("monitor") != parameters.end()) ? parameters["monitor"] : "/monitor");
+
+    const std::string monitor_port = options.check("monitor", yarp::os::Value("/monitor")).asString();
 
     if (!sender) {
         yCError(RPCMONITOR, "Attaching on receiver side is not supported yet.");

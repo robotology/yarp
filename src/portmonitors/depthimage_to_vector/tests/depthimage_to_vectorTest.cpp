@@ -50,8 +50,8 @@ TEST_CASE("pm::depthimage_to_vectorTest", "[yarp::pm]")
         bool b = yarp::os::Network::connect("/send", "/recv", tc.carrier);
         REQUIRE(b);
 
-        // Create a test depth image (5x4 pixels = 20 total values for easy verification)
-        constexpr int width = 5;
+        // Create a test depth image (4x4 pixels = 16 total values for easy verification)
+        constexpr int width = 4;
         constexpr int height = 4;
         constexpr int total_pixels = width * height;
 

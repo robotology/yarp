@@ -9,6 +9,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Sound.h>
+#include <yarp/sig/SoundUtils.h>
 
 #include <yarp/conf/environment.h>
 
@@ -59,12 +60,7 @@ TEST_CASE("pm::sound_compression_mp3Test", "[yarp::pm]")
         snd.resize(samples, channels);
 
         // Fill with a simple sine wave pattern
-        for (size_t i = 0; i < samples; i++) {
-            double value = std::sin(2.0 * M_PI * 440.0 * i / frequency) * 10000.0;
-            for (size_t c = 0; c < channels; c++) {
-                snd.set(static_cast<yarp::sig::Sound::audio_sample>(value), i, c);
-            }
-        }
+        yarp::sig::utils::makeTone(snd,0.1, channels, frequency, 440);
 
         sender.write();
 

@@ -57,10 +57,11 @@ TEST_CASE("pm::segmentationimage_to_rgbTest", "[yarp::pm]")
         img.resize(width, height);
 
         // Fill with some segmentation labels (0-255)
+        unsigned char* rawImg = img.getRawImage();
         for (size_t y = 0; y < height; y++) {
             for (size_t x = 0; x < width; x++) {
                 unsigned char label = static_cast<unsigned char>((x + y) % 10);
-                img.pixel(x, y) = label;
+                rawImg[y * width + x] = label;
             }
         }
 

@@ -33,7 +33,7 @@ to execute 4 recipes at a time.
 The software allows the insertion of a wide range of parameters via the command line.<br>
 The string:
 ```
-yarp connect /grabber /view <protocol>+send.portmonitor.+file.image_compression_ffmpeg+recv.portmonitor+file.image_compression_ffmpeg+type.dll
+yarp connect /grabber /view <protocol>+send.portmonitor.+file.image_compression_ffmpeg+type.dll+recv.portmonitor+file.image_compression_ffmpeg+type.dll
 ```
 is the basic command to connect source and receiver through the port monitor; we will refer to this string in the following as “Connection base string”. <br>
 
@@ -110,7 +110,7 @@ yarpview --name /view
 
 ### Terminal 4 (can be run on both sides)
 ```
-yarp connect /grabber /view fast_tcp+send.portmonitor+file.image_compression_ffmpeg+recv.portmonitor+file.image_compression_ffmpeg+type.dll
+yarp connect /grabber /view fast_tcp+send.portmonitor+file.image_compression_ffmpeg+type.dll+recv.portmonitor+file.image_compression_ffmpeg+type.dll
 ```
 <br>
 The following image is the output video stream, which is compressed in sender side, transmitted, decompressed in receiver side and then visualized through the YARP viewer.

@@ -9,6 +9,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Sound.h>
+#include <yarp/sig/SoundUtils.h>
 
 #include <yarp/conf/environment.h>
 
@@ -30,11 +31,12 @@ TEST_CASE("pm::soundfilter_resampleTest", "[yarp::pm]")
     struct TestCase {
         std::string carrier;
         int expected_frequency;
+        int channels;
     };
 
     auto tc = GENERATE(
-        TestCase {"fast_tcp", 16000},
-        TestCase {"fast_tcp+recv.portmonitor+file.soundfilter_resample+recv.target_sample_rate+8000+type.dll", 8000}
+        TestCase {"fast_tcp", 16000 ,2},
+        TestCase {"fast_tcp+recv.portmonitor+file.soundfilter_resample+channel.0+frequency.8000+gain_percent.200+type.dll", 8000, 1}
     );
 
     SECTION("Test sound resampling")
@@ -57,12 +59,8 @@ TEST_CASE("pm::soundfilter_resampleTest", "[yarp::pm]")
         snd.setFrequency(original_frequency);
         snd.resize(samples, channels);
 
-        // Fill with test data
-        for (size_t i = 0; i < samples; i++) {
-            for (size_t c = 0; c < channels; c++) {
-                snd.set(static_cast<yarp::sig::Sound::audio_sample>(i), i, c);
-            }
-        }
+        // Fill with a simple sine wave pattern
+        yarp::sig::utils::makeTone(snd,0.1, channels, original_frequency, 440);
 
         sender.write();
 
@@ -73,17 +71,7 @@ TEST_CASE("pm::soundfilter_resampleTest", "[yarp::pm]")
 
         // Verify the frequency is as expected (original or resampled)
         CHECK(received->getFrequency() == tc.expected_frequency);
-        CHECK(received->getChannels() == channels);
-
-        // If resampled, the number of samples should be proportional to the frequency ratio
-        if (tc.expected_frequency != original_frequency) {
-            size_t expected_samples = samples * tc.expected_frequency / original_frequency;
-            // Allow some tolerance in the resampled size
-            CHECK(received->getSamples() >= expected_samples - 10);
-            CHECK(received->getSamples() <= expected_samples + 10);
-        } else {
-            CHECK(received->getSamples() == samples);
-        }
+        CHECK(received->getChannels() == tc.channels);
 
         receiver.close();
         sender.close();

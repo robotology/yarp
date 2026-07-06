@@ -128,6 +128,33 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     return configureFromProperty(options);
 }
 
+void parseParameters (yarp::os::Property& inputoptions, yarp::os::Property& outputoptions)
+{
+    // Iterate through all properties and save unknown parameters to paramsMap
+    Bottle propertyBottle;
+    propertyBottle.fromString(inputoptions.toString());
+
+    for (int i = 0; i < propertyBottle.size(); i++)
+    {
+        Value& element = propertyBottle.get(i);
+        if (!element.isList()) { continue; }
+
+        Bottle* entry = element.asList();
+        if (entry->size() < 2) { continue; }
+
+        std::string key = entry->get(0).asString();
+
+        // Skip known parameters
+        if (key == "type" ||
+            key == "file")
+        { continue;}
+
+        // Add unknown parameter to params map
+        auto value = entry->get(1);
+        outputoptions.put(key,value);
+    }
+}
+
 bool PortMonitor::configureFromProperty(yarp::os::Property& options)
 {
     yCTrace(PORTMONITORCARRIER);
@@ -246,8 +273,9 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
         info.put("receiver_side",options.find("receiver_side").asInt32());
 
         //here, for multiple portmonitors, only the related parameters should be provided...
-        std::string carrier_options = options.find("carrier").asString();
-        info.put("carrier", carrier_options);
+        parseParameters(options, info);
+        std::string debugInfoString = info.toString();
+        YARP_UNUSED(debugInfoString);
 
         // load the monitor object with the provided information
         bReady &= binder[i]->load(info);

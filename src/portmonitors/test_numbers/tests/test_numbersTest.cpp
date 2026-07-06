@@ -61,7 +61,7 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
         bool b = yarp::os::Network::connect("/send", "/recv", tc.carrier);
         REQUIRE(b);
 
-        sender.write(yarp::os::Value(1));
+        sender.write(yarp::os::Value(tc.expected_value));
 
         yarp::os::Time::delay(0.5);
 

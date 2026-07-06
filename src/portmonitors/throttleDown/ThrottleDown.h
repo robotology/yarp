@@ -41,8 +41,6 @@ public:
 
     bool accept(yarp::os::Things& thing) override;
     yarp::os::Things& update(yarp::os::Things& thing) override;
-
-    void getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop);
 };
 
 #endif  // YARP_PM_THROTTLEDOWN

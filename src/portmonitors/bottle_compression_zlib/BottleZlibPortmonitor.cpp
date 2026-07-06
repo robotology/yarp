@@ -27,44 +27,7 @@ YARP_LOG_COMPONENT(BOTTLE_ZLIB_MONITOR,
                    yarp::os::Log::printCallback(),
                    nullptr)
 
-void split(const std::string& s, char delim, std::vector<std::string>& elements)
-{
-    std::istringstream iss(s);
-    std::string item;
-    while (std::getline(iss, item, delim))
-    {
-        elements.push_back(item);
-    }
-}
 } //anonymous namespace
-
-void getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop)
-{
-    // Split command line string using '+' delimiter
-    std::vector<std::string> parameters;
-    split(carrierString, '+', parameters);
-
-    // Iterate over result strings
-    for (std::string param : parameters)
-    {
-        // If there is no '.', then the param is bad formatted, skip it.
-        auto pointPosition = param.find('.');
-        if (pointPosition == std::string::npos)
-        {
-            continue;
-        }
-
-        // Otherwise, separate key and value
-        std::string paramKey = param.substr(0, pointPosition);
-        yarp::os::Value paramValue;
-        std::string s = param.substr(pointPosition + 1, param.length());
-        paramValue.fromString(s.c_str());
-
-        //and append to the returned property
-        prop.put(paramKey, paramValue);
-    }
-    return;
-}
 
 bool BottleZlibMonitorObject::create(const yarp::os::Property& options)
 {
@@ -72,11 +35,7 @@ bool BottleZlibMonitorObject::create(const yarp::os::Property& options)
     m_shouldCompress = (options.find("sender_side").asBool());
 
     //parse the user parameters
-    yarp::os::Property m_user_params;
-
-    std::string str = options.find("carrier").asString();
-    getParamsFromCommandLine(str, m_user_params);
-    m_debug_compression_size = m_user_params.check("debug_compression_info");
+    m_debug_compression_size = options.check("debug_compression_info");
 
     return true;
 }
