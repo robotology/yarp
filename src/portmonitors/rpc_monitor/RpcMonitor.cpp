@@ -5,6 +5,7 @@
 
 #include "RpcMonitor.h"
 
+#include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/CommandBottle.h>
 #include <yarp/os/LogComponent.h>
@@ -32,17 +33,18 @@ bool RpcMonitor::create(const yarp::os::Property& options)
     destination = options.find("destination").asString();
     const std::string source_port = (sender ? source : destination) + "/monitor";
 
-    const std::string monitor_port = options.check("monitor", yarp::os::Value("/monitor")).asString();
+    const std::string monitor_port = options.check("monitor_name", yarp::os::Value("/monitor")).asString();
 
     if (!sender) {
         yCError(RPCMONITOR, "Attaching on receiver side is not supported yet.");
         return false;
     }
-    if (!port.openFake(source_port)) {
+    if (!port.open(source_port)) {
         yCError(RPCMONITOR, "Could not open port %s.", source_port.c_str());
         return false;
     }
-    if (!port.addOutput(monitor_port)) {
+    if (!yarp::os::Network::connect(source_port, monitor_port, "fast_tcp"))
+    {
         yCError(RPCMONITOR, "Could not connect to port %s.", monitor_port.c_str());
         return false;
     }
@@ -74,7 +76,9 @@ yarp::os::Things& RpcMonitor::update(yarp::os::Things& thing)
         bcmd.addString("[unknown]");
     }
     yCDebug(RPCMONITOR, "Writing: %s", msg.toString().c_str());
-    port.write(msg);
+    if (port.getOutputCount() > 0) {
+        port.write(msg);
+    }
     return thing;
 }
 
@@ -103,6 +107,8 @@ yarp::os::Things& RpcMonitor::updateReply(yarp::os::Things& thing)
         bcmd.addString("[unknown]");
     }
     yCDebug(RPCMONITOR, "Writing: %s", msg.toString().c_str());
-    port.write(msg);
+    if (port.getOutputCount() > 0) {
+        port.write(msg);
+    }
     return thing;
 }

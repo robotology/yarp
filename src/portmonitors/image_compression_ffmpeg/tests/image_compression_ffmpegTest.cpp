@@ -18,7 +18,7 @@
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
-TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
+TEST_CASE("pm::image_compression_ffmpegTest", "[yarp::pm]")
 {
     YARP_REQUIRE_PLUGIN("image_compression_ffmpeg", "portmonitor")
 

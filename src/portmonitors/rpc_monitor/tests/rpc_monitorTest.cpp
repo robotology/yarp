@@ -36,10 +36,40 @@ TEST_CASE("pm::rpc_monitorTest", "[yarp::pm]")
 
     auto tc = GENERATE(
         TestCase {"fast_tcp", false},
-        TestCase {"fast_tcp+send.portmonitor+file.rpc_monitor+type.dll", true}
+        TestCase {"fast_tcp+send.portmonitor+file.rpc_monitor+monitor_name./monitor_data_receiver+type.dll", true}
     );
 
-    SECTION("Test RPC monitoring - monitor = " + std::string(tc.use_monitor ? "enabled" : "disabled"))
+    SECTION("Quick Test RPC monitoring - monitor = " + std::string(tc.use_monitor ? "enabled" : "disabled"))
+    {
+        yarp::os::Port sender;
+        yarp::os::Port receiver;
+        yarp::os::Port monitorport;
+
+        sender.open("/send");
+        receiver.open("/recv");
+        if (tc.use_monitor) {
+
+            monitorport.open("/monitor_data_receiver");
+        }
+
+        yarp::os::Network::connect("/send", "/recv", tc.carrier);
+
+        sender.write(yarp::os::Value(100));
+
+        yarp::os::Time::delay(1.0);
+
+        yarp::os::Value rval;
+        receiver.read(rval);
+        CHECK(rval.asInt32()==100);
+
+        receiver.close();
+        sender.close();
+        if (tc.use_monitor) {
+            monitorport.close();
+        }
+    }
+
+    SECTION("Advanced Test RPC monitoring - monitor = " + std::string(tc.use_monitor ? "enabled" : "disabled"))
     {
         yarp::os::RpcClient client;
         yarp::os::RpcServer server;
@@ -49,7 +79,7 @@ TEST_CASE("pm::rpc_monitorTest", "[yarp::pm]")
         server.open("/rpc_server");
 
         if (tc.use_monitor) {
-            monitor.open("/monitor");
+            monitor.open("/monitor_data_receiver");
         }
 
         bool b = yarp::os::Network::connect("/rpc_client", "/rpc_server", tc.carrier);
@@ -74,6 +104,8 @@ TEST_CASE("pm::rpc_monitorTest", "[yarp::pm]")
 
         yarp::os::Bottle reply;
         client.write(cmd, reply);
+
+        yarp::os::Time::delay(0.3);
 
         server_thread.join();
 
