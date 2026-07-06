@@ -25,8 +25,6 @@ class Sound_marker : public yarp::os::MonitorObject
     size_t marker_counter = 0;
 
 public:
-    void getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop);
-
     bool create(const yarp::os::Property &options) override;
     void destroy() override;
 

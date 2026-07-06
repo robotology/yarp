@@ -40,3 +40,7 @@ yarp_install(
 set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
 set_property(TARGET yarp_pm_soundfilter_resample PROPERTY FOLDER "Plugins/Port Monitor")
+
+if(YARP_COMPILE_TESTS)
+  add_subdirectory(tests)
+endif()
