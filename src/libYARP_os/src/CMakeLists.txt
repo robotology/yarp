@@ -46,6 +46,7 @@ set(YARP_os_HDRS
   yarp/os/LogComponent.h
   yarp/os/LogStream.h
   yarp/os/ManagedBytes.h
+  yarp/os/MemoryGuard.h
   yarp/os/MessageStack.h
   yarp/os/ModifyingCarrier.h
   yarp/os/MonitorObject.h
@@ -167,6 +168,7 @@ set(YARP_os_SRCS
   yarp/os/Log.cpp
   yarp/os/LogComponent.cpp
   yarp/os/ManagedBytes.cpp
+  yarp/os/MemoryGuard.cpp
   yarp/os/MessageStack.cpp
   yarp/os/ModifyingCarrier.cpp
   yarp/os/MultiNameSpace.cpp
