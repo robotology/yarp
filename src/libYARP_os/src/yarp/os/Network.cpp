@@ -317,7 +317,7 @@ static bool is_stats_port(const std::string& src,
 
 static void addStatsMonitorIfNeeded(const std::string& src,
                                     const std::string& dest,
-                                    ContactStyle style,
+                                    ContactStyle& style,
                                     int mode)
 {
     // If YARP_CONNECTIONS_STATS_ENABLE is set in the environment, automatically

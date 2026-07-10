@@ -1,6 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -127,19 +126,20 @@ int check_sample_fmt(const AVCodec * codec, enum AVSampleFormat sample_fmt)
     return 0;
 }
 
-int select_sample_rate(const AVCodec * codec)
+int select_sample_rate(const AVCodec* codec, int desired_rate)
 {
     const int* p;
     int best_samplerate = 0;
 
     if (!codec->supported_samplerates) {
-        return 44100;
+        return desired_rate; // Use the desired rate if codec doesn't specify
     }
 
     p = codec->supported_samplerates;
     while (*p)
     {
-        if (!best_samplerate || abs(44100 - *p) < abs(44100 - best_samplerate)) {
+        // Find the closest supported rate to the desired rate
+        if (!best_samplerate || abs(desired_rate - *p) < abs(desired_rate - best_samplerate)) {
             best_samplerate = *p;
         }
          p++;
@@ -292,7 +292,7 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
     }
 
     // select other audio parameters supported by the encoder
-    c->sample_rate = select_sample_rate(codec);
+    c->sample_rate = select_sample_rate(codec, sound_data.getFrequency());
 #if LIBAVCODEC_VERSION_MAJOR >= 61
     // from https://github.com/FFmpeg/FFmpeg/commit/f5ef91e02080316f50d606f5b0b03333bb627ed7#diff-85abeaf18e8c74a972fa1f5ab3c2fdfa7ddc818f9048196c6bd5f63a837b076aL167
     ret = select_channel_layout(codec, &c->ch_layout);
@@ -367,21 +367,24 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
     size_t soundsize = sound_data.getSamples();
     size_t nframes = soundsize / c->frame_size;
     size_t rem_lastframe = soundsize % c->frame_size;
-    YARP_UNUSED(rem_lastframe);
+
+    // Encode full frames
     for (size_t i = 0; i < nframes; i++)
     {
         ret = av_frame_make_writable(frame);
         if (ret < 0) {
-            exit(1);
+            av_frame_free(&frame);
+            av_packet_free(&pkt);
+            avcodec_free_context(&c);
+            fos.close();
+            return false;
         }
 
 #if LIBAVCODEC_VERSION_MAJOR >= 61
-        // See https://github.com/FFmpeg/FFmpeg/commit/f5ef91e02080316f50d606f5b0b03333bb627ed7#diff-85abeaf18e8c74a972fa1f5ab3c2fdfa7ddc818f9048196c6bd5f63a837b076aL221
         int ch_layout_nb_channels = c->ch_layout.nb_channels;
 #else
         int ch_layout_nb_channels = c->channels;
 #endif
-
 
         samples = (uint16_t*)frame->data[0];
         for (int j = 0; j < c->frame_size; j++)
@@ -393,6 +396,48 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
         if (encode(c, frame, pkt, fos) == false)
         {
             yCError(SOUNDFILE_MP3, "Encode failed, memory could be corrupted, should I exit?");
+        }
+    }
+
+    // Encode remaining samples (partial frame) with zero padding
+    if (rem_lastframe > 0)
+    {
+        ret = av_frame_make_writable(frame);
+        if (ret < 0) {
+            av_frame_free(&frame);
+            av_packet_free(&pkt);
+            avcodec_free_context(&c);
+            fos.close();
+            return false;
+        }
+
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+        int ch_layout_nb_channels = c->ch_layout.nb_channels;
+#else
+        int ch_layout_nb_channels = c->channels;
+#endif
+
+        samples = (uint16_t*)frame->data[0];
+
+        // Copy remaining samples
+        for (size_t j = 0; j < rem_lastframe; j++)
+        {
+            for (int k = 0; k < ch_layout_nb_channels; k++) {
+                samples[j * ch_layout_nb_channels + k] = sound_data.get(j + nframes * c->frame_size, k);
+            }
+        }
+
+        // Zero-pad the rest of the frame
+        for (size_t j = rem_lastframe; j < static_cast<size_t>(c->frame_size); j++)
+        {
+            for (int k = 0; k < ch_layout_nb_channels; k++) {
+                samples[j * ch_layout_nb_channels + k] = 0;
+            }
+        }
+
+        if (encode(c, frame, pkt, fos) == false)
+        {
+            yCError(SOUNDFILE_MP3, "Encode failed on partial frame");
         }
     }
 
@@ -418,6 +463,48 @@ bool read_mp3_istream(Sound& sound_data, std::istream& istream)
     yCError(SOUNDFILE_MP3) << "read_mp3_istream() not supported: lib ffmpeg not found";
     return false;
 #else
+    // Try to read metadata header (12 bytes) - only present in bytestream format
+    uint32_t original_samples = 0;
+    uint32_t original_frequency = 0;
+    uint32_t original_channels = 0;
+
+    // Save current position
+    std::streampos start_pos = istream.tellg();
+
+    // Try to read metadata
+    istream.read((char*)&original_samples, sizeof(uint32_t));
+    istream.read((char*)&original_frequency, sizeof(uint32_t));
+    istream.read((char*)&original_channels, sizeof(uint32_t));
+
+    bool has_metadata = false;
+    if (istream.good())
+    {
+        // Validate metadata - check if values are reasonable
+        // MP3 frequency range: 8000-48000 Hz, channels: 1-2, samples: reasonable range
+        if (original_frequency >= 8000 && original_frequency <= 48000 &&
+            original_channels >= 1 && original_channels <= 2 &&
+            original_samples > 0 && original_samples < 100000000) // max ~30 minutes at 48kHz
+        {
+            has_metadata = true;
+            yCDebug(SOUNDFILE_MP3, "Found metadata: samples=%u, frequency=%u, channels=%u",
+                    original_samples, original_frequency, original_channels);
+        }
+        else
+        {
+            yCDebug(SOUNDFILE_MP3, "No valid metadata found, seeking back to start");
+            // Reset to start - this is a standard MP3 file without metadata
+            istream.clear();
+            istream.seekg(start_pos);
+        }
+    }
+    else
+    {
+        yCDebug(SOUNDFILE_MP3, "Failed to read metadata, seeking back to start");
+        // Reset to start - this is a standard MP3 file without metadata
+        istream.clear();
+        istream.seekg(start_pos);
+    }
+
     const AVCodec* codec = nullptr;
     AVCodecContext* context = nullptr;
     AVCodecParserContext* parser = nullptr;
@@ -523,21 +610,37 @@ bool read_mp3_istream(Sound& sound_data, std::istream& istream)
     {
         tot_num_of_samples += it->getSamples();
     }
+
+    yCDebug(SOUNDFILE_MP3, "Decoded %zu samples total", tot_num_of_samples);
+
     sound_data.resize(tot_num_of_samples, vector_of_sound_frames[0].getChannels());
-    size_t offset =0;
+    size_t offset = 0;
     for (auto it = vector_of_sound_frames.begin(); it != vector_of_sound_frames.end(); it++)
     {
         sound_data.overwrite(*it, offset, it->getSamples());
-        offset+=it->getSamples();
+        offset += it->getSamples();
     }
 
-    //At this point, I have the sound_data whose size is a multiple of frames * 1152.
-    //But the mp3 encoder might have trailing zeros...
-    size_t tpadding = context->trailing_padding;
-    size_t ipadding = context->initial_padding;
+    // Use metadata if available, otherwise use decoded values
+    if (has_metadata)
+    {
+        // Trim to original sample count using metadata
+        if (original_samples > 0 && original_samples <= tot_num_of_samples)
+        {
+            yCDebug(SOUNDFILE_MP3, "Trimming from %zu to %u samples using metadata", tot_num_of_samples, original_samples);
+            sound_data.resize(original_samples, original_channels);
+        }
+        sound_data.setFrequency(original_frequency);
+    }
+    else
+    {
+        // Use frequency from decoder
+        sound_data.setFrequency(context->sample_rate);
+        yCDebug(SOUNDFILE_MP3, "Using decoder frequency: %d Hz", context->sample_rate);
+    }
 
-    //sound_data.setFrequency(vector_of_sound_frames[0].getFrequency());
-    sound_data.setFrequency(context->sample_rate);
+    yCDebug(SOUNDFILE_MP3, "Final sound: %zu samples, %d Hz, %zu channels",
+            sound_data.getSamples(), sound_data.getFrequency(), sound_data.getChannels());
 
     //cleanup
     avcodec_free_context(&context);
@@ -567,4 +670,291 @@ bool yarp::sig::file::read_mp3_bytestream(Sound& data, const char* bytestream, s
 {
     std::istringstream iss(std::string(bytestream, streamsize));
     return read_mp3_istream(data, iss);
+}
+
+bool yarp::sig::file::write_mp3_bytestream(const Sound& data, char* bytestream, size_t& streamsize)
+{
+#if !defined (YARP_HAS_FFMPEG)
+    yCError(SOUNDFILE_MP3) << "write_mp3_bytestream() not supported: lib ffmpeg not found";
+    return false;
+#else
+    const AVCodec * codec = nullptr;
+    AVCodecContext * c = nullptr;
+    AVFrame * frame = nullptr;
+    AVPacket * pkt = nullptr;
+    int ret;
+    std::ostringstream oss(std::ios::binary);
+    uint16_t * samples = nullptr;
+
+#if LIBAVCODEC_VERSION_MAJOR < 58
+    avcodec_register_all();
+#endif
+
+    // find the MP3 encoder
+    codec = avcodec_find_encoder(AV_CODEC_ID_MP2);
+    if (!codec)
+    {
+        yCError(SOUNDFILE_MP3, "Codec not found");
+        return false;
+    }
+
+    c = avcodec_alloc_context3(codec);
+    if (!c)
+    {
+        yCError(SOUNDFILE_MP3, "Could not allocate audio codec context");
+        return false;
+    }
+
+    // the compressed output bitrate
+    c->bit_rate = 64000;
+
+    // check that the encoder supports s16 pcm input
+    c->sample_fmt = AV_SAMPLE_FMT_S16;
+    if (!check_sample_fmt(codec, c->sample_fmt))
+    {
+        yCError(SOUNDFILE_MP3, "Encoder does not support sample format %s",
+        av_get_sample_fmt_name(c->sample_fmt));
+        avcodec_free_context(&c);
+        return false;
+    }
+
+    // select other audio parameters supported by the encoder
+    c->sample_rate = select_sample_rate(codec, data.getFrequency());
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+    ret = select_channel_layout(codec, &c->ch_layout);
+    if (ret < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Could not select_channel_layout");
+        avcodec_free_context(&c);
+        return false;
+    }
+#else
+    c->channel_layout = select_channel_layout(codec);
+    c->channels = av_get_channel_layout_nb_channels(c->channel_layout);
+#endif
+
+    // open it
+    if (avcodec_open2(c, codec, NULL) < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Could not open codec");
+        avcodec_free_context(&c);
+        return false;
+    }
+
+    // Write metadata header BEFORE MP3 data
+    uint32_t original_samples = static_cast<uint32_t>(data.getSamples());
+    uint32_t original_frequency = static_cast<uint32_t>(data.getFrequency());
+    uint32_t original_channels = static_cast<uint32_t>(data.getChannels());
+    oss.write((const char*)&original_samples, sizeof(uint32_t));
+    oss.write((const char*)&original_frequency, sizeof(uint32_t));
+    oss.write((const char*)&original_channels, sizeof(uint32_t));
+
+    // packet for holding encoded output
+    pkt = av_packet_alloc();
+    if (!pkt)
+    {
+        yCError(SOUNDFILE_MP3, "could not allocate the packet");
+        avcodec_free_context(&c);
+        return false;
+    }
+
+    // frame containing input raw audio
+    frame = av_frame_alloc();
+    if (!frame)
+    {
+        yCError(SOUNDFILE_MP3, "Could not allocate audio frame");
+        av_packet_free(&pkt);
+        avcodec_free_context(&c);
+        return false;
+    }
+
+    frame->nb_samples = c->frame_size;
+    frame->format = c->sample_fmt;
+
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+    ret = av_channel_layout_copy(&frame->ch_layout, &c->ch_layout);
+    if (ret < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Could not copy channel layout");
+        av_frame_free(&frame);
+        av_packet_free(&pkt);
+        avcodec_free_context(&c);
+        return false;
+    }
+#else
+    frame->channel_layout = c->channel_layout;
+#endif
+
+    // allocate the data buffers
+    ret = av_frame_get_buffer(frame, 0);
+    if (ret < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Could not allocate audio data buffers");
+        av_frame_free(&frame);
+        av_packet_free(&pkt);
+        avcodec_free_context(&c);
+        return false;
+    }
+
+    // Helper lambda to write packet data to ostringstream
+    auto encode_to_stream = [&](AVCodecContext* ctx, AVFrame* frm, AVPacket* p, std::ostringstream& os) -> bool {
+        int r;
+        r = avcodec_send_frame(ctx, frm);
+        if (r < 0)
+        {
+            yCError(SOUNDFILE_MP3, "Error sending the frame to the encoder\n");
+            return false;
+        }
+
+        while (r >= 0)
+        {
+            r = avcodec_receive_packet(ctx, p);
+            if (r == AVERROR(EAGAIN) || r == AVERROR_EOF)
+            {
+                return true;
+            }
+            else if (r < 0)
+            {
+                yCError(SOUNDFILE_MP3, "Error encoding audio frame\n");
+                return false;
+            }
+            os.write((const char*)(p->data), p->size);
+            av_packet_unref(p);
+        }
+        return true;
+    };
+
+    // encode
+    size_t soundsize = data.getSamples();
+    size_t nframes = soundsize / c->frame_size;
+    size_t rem_lastframe = soundsize % c->frame_size;
+
+    // Encode full frames
+    for (size_t i = 0; i < nframes; i++)
+    {
+        ret = av_frame_make_writable(frame);
+        if (ret < 0) {
+            av_frame_free(&frame);
+            av_packet_free(&pkt);
+            avcodec_free_context(&c);
+            return false;
+        }
+
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+        int ch_layout_nb_channels = c->ch_layout.nb_channels;
+#else
+        int ch_layout_nb_channels = c->channels;
+#endif
+
+        samples = (uint16_t*)frame->data[0];
+        for (int j = 0; j < c->frame_size; j++)
+        {
+            for (int k = 0; k < ch_layout_nb_channels; k++) {
+                samples[j * ch_layout_nb_channels + k] = data.get(j + i * c->frame_size, k);
+            }
+        }
+        if (!encode_to_stream(c, frame, pkt, oss))
+        {
+            yCError(SOUNDFILE_MP3, "Encode failed, memory could be corrupted");
+            av_frame_free(&frame);
+            av_packet_free(&pkt);
+            avcodec_free_context(&c);
+            return false;
+        }
+    }
+
+    // Encode remaining samples (partial frame) with zero padding
+    if (rem_lastframe > 0)
+    {
+        ret = av_frame_make_writable(frame);
+        if (ret < 0) {
+            av_frame_free(&frame);
+            av_packet_free(&pkt);
+            avcodec_free_context(&c);
+            return false;
+        }
+
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+        int ch_layout_nb_channels = c->ch_layout.nb_channels;
+#else
+        int ch_layout_nb_channels = c->channels;
+#endif
+
+        samples = (uint16_t*)frame->data[0];
+
+        // Copy remaining samples
+        for (size_t j = 0; j < rem_lastframe; j++)
+        {
+            for (int k = 0; k < ch_layout_nb_channels; k++) {
+                samples[j * ch_layout_nb_channels + k] = data.get(j + nframes * c->frame_size, k);
+            }
+        }
+
+        // Zero-pad the rest of the frame
+        for (size_t j = rem_lastframe; j < static_cast<size_t>(c->frame_size); j++)
+        {
+            for (int k = 0; k < ch_layout_nb_channels; k++) {
+                samples[j * ch_layout_nb_channels + k] = 0;
+            }
+        }
+
+        if (!encode_to_stream(c, frame, pkt, oss))
+        {
+            yCError(SOUNDFILE_MP3, "Encode failed on partial frame");
+            av_frame_free(&frame);
+            av_packet_free(&pkt);
+            avcodec_free_context(&c);
+            return false;
+        }
+    }
+
+    // flush the encoder
+    if (!encode_to_stream(c, NULL, pkt, oss))
+    {
+        yCError(SOUNDFILE_MP3, "Encode failed during flush");
+        av_frame_free(&frame);
+        av_packet_free(&pkt);
+        avcodec_free_context(&c);
+        return false;
+    }
+
+    // Get the encoded data from the ostringstream
+    std::string encoded_data = oss.str();
+    size_t encoded_size = encoded_data.size();
+
+    // FIX: Handle buffer size query separately from error condition
+    if (bytestream == nullptr)
+    {
+        // Caller is querying required buffer size - this is SUCCESS
+        // Add 12 bytes for the metadata header
+        streamsize = encoded_size;
+        av_frame_free(&frame);
+        av_packet_free(&pkt);
+        avcodec_free_context(&c);
+        return true;
+    }
+
+    // Check if the provided buffer is large enough
+    if (streamsize < encoded_size)
+    {
+        // Buffer too small - this is an ERROR
+        yCError(SOUNDFILE_MP3, "Buffer too small: provided %zu bytes, need %zu bytes", streamsize, encoded_size);
+        streamsize = encoded_size;
+        av_frame_free(&frame);
+        av_packet_free(&pkt);
+        avcodec_free_context(&c);
+        return false;
+    }
+
+    // Copy the encoded data to the output buffer
+    memcpy(bytestream, encoded_data.data(), encoded_size);
+    streamsize = encoded_size;
+
+    // Cleanup
+    av_frame_free(&frame);
+    av_packet_free(&pkt);
+    avcodec_free_context(&c);
+
+    return true;
+#endif
 }

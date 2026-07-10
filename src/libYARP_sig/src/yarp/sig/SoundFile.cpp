@@ -57,7 +57,7 @@ bool yarp::sig::file::read_bytestream(Sound& data, const char* bytestream, size_
 {
     if (strcmp(format.c_str(), ".wav") == 0)
     {
-        return read_wav_bytestream(data, bytestream);
+        return read_wav_bytestream(data, bytestream, streamsize);
     }
     else if (strcmp(format.c_str(), ".mp3") == 0)
     {
@@ -85,6 +85,20 @@ bool yarp::sig::file::write(const Sound& sound_data, const char* filename)
         return write_mp3_file(sound_data, filename);
     }
 
+    yCError(SOUNDFILE) << "Unknown file format";
+    return false;
+}
+
+bool yarp::sig::file::write_bytestream(const Sound& data, char* bytestream, size_t& streamsize, std::string format)
+{
+    if (strcmp(format.c_str(), ".wav") == 0)
+    {
+        return write_wav_bytestream(data, bytestream, streamsize);
+    }
+    else if (strcmp(format.c_str(), ".mp3") == 0)
+    {
+        return write_mp3_bytestream(data, bytestream, streamsize);
+    }
     yCError(SOUNDFILE) << "Unknown file format";
     return false;
 }

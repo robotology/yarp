@@ -12,11 +12,12 @@
 namespace yarp::sig::file {
 /**
  * Read a sound from a byte array.
- * @param data sound to read
- * @param bytestream the byte array
+ * @param data sound to read  [output]
+ * @param bytestream the byte array [input]
+ * @param streamsize size of the byte array [input]
  * @return true on success
  */
-bool YARP_sig_API read_wav_bytestream(Sound& data, const char* bytestream);
+bool YARP_sig_API read_wav_bytestream(Sound& data, const char* bytestream, size_t streamsize);
 
 /**
  * Read a sound from a .wav audio file.
@@ -27,9 +28,18 @@ bool YARP_sig_API read_wav_bytestream(Sound& data, const char* bytestream);
 bool YARP_sig_API read_wav_file(Sound& data, const char* filename);
 
 /**
+ * Write a sound to a byte array.
+ * @param data sound to write [input]
+ * @param bytestream the byte array [output]
+ * @param streamsize the size of the byte array [output]
+ * @return true on success
+ */
+bool YARP_sig_API write_wav_bytestream(const Sound& data, char* bytestream, size_t& streamsize);
+
+/**
  * Write a sound to a .wav file.
- * @param data sound to write
- * @param filename name of file
+ * @param data sound to write [input]
+ * @param filename name of file [output]
  * @return true on success
  */
 bool YARP_sig_API write_wav_file(const Sound& data, const char* filename);

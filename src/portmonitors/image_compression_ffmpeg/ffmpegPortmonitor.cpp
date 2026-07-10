@@ -766,7 +766,8 @@ bool FfmpegMonitorObject::parsePropertyParams(yarp::os::Property inputoptions, c
 
     // Iterate through all properties and save unknown parameters to paramsMap
     Bottle propertyBottle;
-    propertyBottle.fromString(inputoptions.toString());
+    std::string inputoptionsStr = inputoptions.toString();
+    propertyBottle.fromString(inputoptionsStr);
 
     for (int i = 0; i < propertyBottle.size(); i++)
     {
@@ -789,12 +790,13 @@ bool FfmpegMonitorObject::parsePropertyParams(yarp::os::Property inputoptions, c
             key == "source" ||
             key == "destination" ||
             key == "sender_side" ||
-            key == "receiver_side")
+            key == "receiver_side" ||
+            key == "carrier")
         { continue;}
 
 
         // Add unknown parameter to params map
-        std::string value = entry->get(1).asString();
+        std::string value = entry->get(1).toString();
         paramsMap[key] = value;
     }
 

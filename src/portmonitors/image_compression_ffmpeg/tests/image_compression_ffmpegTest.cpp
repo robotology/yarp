@@ -30,10 +30,10 @@ TEST_CASE("pm::image_compression_ffmpegTest", "[yarp::pm]")
     auto tc = GENERATE(
        "fast_tcp",
        "fast_tcp+send.portmonitor+file.image_compression_ffmpeg+type.dll+recv.portmonitor+file.image_compression_ffmpeg+type.dll",
-       "fast_tcp+send.portmonitor+file.image_compression_ffmpeg+codec.mpeg2video+type.dll+recv.portmonitor+file.image_compression_ffmpeg+codec.mpeg2video+type.dll",
- //      "fast_tcp+send.portmonitor+file.image_compression_ffmpeg+codec.h264+type.dll+recv.portmonitor+file.image_compression_ffmpeg+codec.h264+type.dll",
- //      "fast_tcp+send.portmonitor+file.image_compression_ffmpeg+codec.h265+type.dll+recv.portmonitor+file.image_compression_ffmpeg+codec.h265+type.dll",
-       "fast_tcp+send.portmonitor+file.image_compression_ffmpeg+custom_enc.mjpeg+type.dll+recv.portmonitor+file.image_compression_ffmpeg+custom_dec.mjpeg+type.dll"
+       "fast_tcp+send.portmonitor+file.image_compression_ffmpeg+encoder.mpeg2video+qmin.3+type.dll+recv.portmonitor+file.image_compression_ffmpeg+decoder.mpeg2video+qmin.3+type.dll",
+ //      "fast_tcp+send.portmonitor+file.image_compression_ffmpeg+encoder.h264+type.dll+recv.portmonitor+file.image_compression_ffmpeg+decoder.h264+type.dll",
+ //      "fast_tcp+send.portmonitor+file.image_compression_ffmpeg+encoder.h265+type.dll+recv.portmonitor+file.image_compression_ffmpeg+decoder.h265+type.dll",
+       "fast_tcp+send.portmonitor+file.image_compression_ffmpeg+encoder.mjpeg+type.dll+recv.portmonitor+file.image_compression_ffmpeg+decoder.mjpeg+type.dll"
     );
 
     SECTION("Test that normally the portmonitor is not used")

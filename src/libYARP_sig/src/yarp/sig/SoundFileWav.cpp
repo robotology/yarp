@@ -426,10 +426,17 @@ bool yarp::sig::file::read_wav_file(Sound& sound_data, const char * filename)
     return true;
 }
 
-bool yarp::sig::file::read_wav_bytestream(Sound& data, const char* bytestream)
+bool yarp::sig::file::read_wav_bytestream(Sound& data, const char* bytestream, size_t streamsize)
 {
     yCError(SOUNDFILE_WAV, "read_wav_bytestream() Not yet implemented");
-    return true;
+    return false;
+}
+
+bool yarp::sig::file::write_wav_bytestream(const Sound& data, char* bytestream, size_t& streamsize)
+{
+    yCError(SOUNDFILE_WAV, "write_wav_bytestream() Not yet implemented");
+    streamsize = 0;
+    return false;
 }
 
 bool yarp::sig::file::write_wav_file(const Sound& sound_data, const char * filename)
