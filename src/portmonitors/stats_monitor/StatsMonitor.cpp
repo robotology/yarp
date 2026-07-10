@@ -34,6 +34,7 @@ bool StatsMonitor::create(const yarp::os::Property& options)
     m_isSender = options.find("sender_side").asBool();
     m_source = options.find("source").asString();
     m_destination = options.find("destination").asString();
+    m_carrier = options.find("carrier").asString();
 
     if (!m_isSender) {
         yCError(STATSMONITOR, "Attaching on receiver side is not supported yet.");

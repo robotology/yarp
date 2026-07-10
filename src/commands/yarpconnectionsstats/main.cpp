@@ -129,14 +129,21 @@ class Stats_module : public yarp::os::RFModule
 
         //Print the stats on screen
         yCInfo(YARPCONNINFO) << "=== Connection statistics ===";
+        size_t longest_source = 0;
+        size_t longest_destination = 0;
+        for (auto it=stats.begin(); it!=stats.end(); it++)
+        {
+            if (it->source.length() > longest_source)           { longest_source = it->source.length();}
+            if (it->destination.length() > longest_destination) { longest_destination = it->destination.length(); }
+        }
         for (auto it=stats.begin(); it!=stats.end(); it++)
         {
             std::ostringstream line;
 
             line << std::left
-                 << std::setw(25) << it->source
+                 << std::setw(longest_source+2) << it->source
                  << " -> "
-                 << std::setw(25) << it->destination
+                 << std::setw(longest_destination+2) << it->destination
                  << " | "
                  << std::right
                  << std::setw(12) << it->bytes_per_second << " B/s"
@@ -149,7 +156,7 @@ class Stats_module : public yarp::os::RFModule
                  << " | "
                  << std::setw(8) << std::fixed << std::setprecision(3) << it->timestamp;
 
-            yCInfo(YARPCONNINFO) << line.str();
+            yInfo() << line.str();
         }
 
         // Print IP pair totals
@@ -165,7 +172,7 @@ class Stats_module : public yarp::os::RFModule
                  << " | "
                  << std::right
                  << std::setw(12) << total_bytes << " B/s";
-            yCInfo(YARPCONNINFO) << line.str();
+            yInfo() << line.str();
         }
 
         return true;

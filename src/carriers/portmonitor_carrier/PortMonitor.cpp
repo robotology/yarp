@@ -114,6 +114,13 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     // and for receivers side:
     // file.bottle_compression_zlib+type.dll
     auto [file1, file2] = parseBlocks(carrier_options);
+
+    //This line extract fast_tcp (all the text until the first +)
+    std::string carrier_proto= carrier_options.substr(0, carrier_options.find('+'));
+
+    //Add the carrier
+    options.fromString("(carrier " + carrier_proto + ")",false);
+
     if (proto.getContactable()->getName() == sourceName)
     {
         std::string sendoptions = separateString(file1);
@@ -271,6 +278,7 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
         info.put("destination", options.find("destination").asString());
         info.put("sender_side",  options.find("sender_side").asInt32());
         info.put("receiver_side",options.find("receiver_side").asInt32());
+        info.put("carrier", options.find("carrier").asString());
 
         //here, for multiple portmonitors, only the related parameters should be provided...
         parseParameters(options, info);
