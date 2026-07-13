@@ -48,15 +48,6 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
                    yarp::os::Log::printCallback(),
                    nullptr)
 
-void split(const std::string& s, char delim, std::vector<std::string>& elements)
-{
-    std::istringstream iss(s);
-    std::string item;
-    while (std::getline(iss, item, delim))
-    {
-        elements.push_back(item);
-    }
-}
 } // anonymous namespace
 
 // As per version 5.1.2 of ffmpeg, there seem to be race conditions between sws_scale and
@@ -77,9 +68,8 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     previousStatisticPrintTime = previousFrameTime;
 
     // Parse command line parameters and set them into global variable "paramsMap"
-    std::string str = options.find("carrier").asString();
     int frameRate = 15;
-    if (!getParamsFromCommandLine(str, codec, pixelFormat, frameRate)) {
+    if (!parsePropertyParams(options, codec, pixelFormat, frameRate)) {
         return false;
     }
 
@@ -701,194 +691,141 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
     }
 
     return 0;
-
 }
 
-bool FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, const AVCodec*& codecOut, AVPixelFormat& pixelFormatOut, int& frameRate) {
+bool FfmpegMonitorObject::parsePropertyParams(yarp::os::Property inputoptions, const AVCodec*& codecOut, AVPixelFormat& pixelFormatOut, int& frameRate)
+{
 
-    std::vector<std::string> parameters;
-    // Split command line string using '+' delimiter
-    split(carrierString, '+', parameters);
+    // Set default pixel format
+    pixelFormatOut = FFMPEGPORTMONITOR_DEFAULT_PIXEL_FORMAT;
 
-    bool standardCodec = false;
-    bool customEnc     = false;
-    bool customDec     = false;
+    bool customEnc = false;
+    bool customDec = false;
 
-    // Iterate over result strings
-    for (std::string& param: parameters) {
-
-        // Skip YARP initial parameters
-        if (find(FFMPEGPORTMONITOR_IGNORE_PARAMS.begin(), FFMPEGPORTMONITOR_IGNORE_PARAMS.end(), param) != FFMPEGPORTMONITOR_IGNORE_PARAMS.end()) {
-            continue;
-        }
-
-        // If there is no '.', the param is bad formatted, return error
-        auto pointPosition = param.find('.');
-        if (pointPosition == std::string::npos) {
-            yCError(FFMPEGMONITOR, "Error while parsing parameter %s. Missing '.'!", param.c_str());
-            return false;
-        }
-
-        // Otherwise, separate key and value
-        std::string paramKey = param.substr(0, pointPosition);
-        std::string paramValue = param.substr(pointPosition + 1, param.length());
-
-        // Parsing codec
-        if (paramKey == FFMPEGPORTMONITOR_CL_CODEC_KEY) {
-
-            if (customEnc || customDec)
-            {
-                yCError(FFMPEGMONITOR, "Cannot set both %s and %s/%s together.",
-                        FFMPEGPORTMONITOR_CL_CODEC_KEY.c_str(),
-                        FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY.c_str(),
-                        FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY.c_str());
-                codecOut = nullptr;
-                return false;
-            }
-
-            bool found = false;
-            // Iterate over codecs command line possibilities
-            for (size_t i = 0; i < FFMPEGPORTMONITOR_CL_CODECS.size(); i++) {
-                // If found
-                if (paramValue == FFMPEGPORTMONITOR_CL_CODECS[i]) {
-                    // Set codec id basing on codec command line name
-                    AVCodecID codecId = (AVCodecID) FFMPEGPORTMONITOR_CODE_CODECS[i];
-                    // Find encoder/decoder
-                    if (senderSide) {
-                        codecOut = avcodec_find_encoder(codecId);
-                    } else {
-                        codecOut = avcodec_find_decoder(codecId);
-                    }
-
-                    if (!codecOut) {
-                        yCError(FFMPEGMONITOR, "Can't find codec %s", paramValue.c_str());
-                        codecOut = nullptr;
-                        return false;
-                    }
-
-                    standardCodec = true;
-                    found = true;
-                    break;
-                }
-            }
-
-            // If not found, unrecognized codec, return error
-            if (!found) {
-                yCError(FFMPEGMONITOR, "Unrecognized codec: %s", paramValue.c_str());
-                return false;
-            }
-
-            continue; //avoid to add this parameter to paramsMap
-        }
-        else if (paramKey == FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY)
-        {
-            if (!senderSide)
-            {
-                customEnc = true;
-                continue; //The custom encoder need to be set on the sender side only. Later we check that the custom decoder has been set too.
-            }
-
-            if (standardCodec)
-            {
-                yCError(FFMPEGMONITOR, "Cannot set both %s and %s/%s together.",
-                        FFMPEGPORTMONITOR_CL_CODEC_KEY.c_str(),
-                        FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY.c_str(),
-                        FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY.c_str());
-                codecOut = nullptr;
-                return false;
-            }
-
-
-            codecOut = avcodec_find_encoder_by_name(paramValue.c_str());
-
-            if (!codecOut) {
-                yCError(FFMPEGMONITOR, "Can't find encoder %s", paramValue.c_str());
-                codecOut = nullptr;
-                return false;
-            }
-
-            customEnc = true;
-            continue;  //avoid to add this parameter to paramsMap
-        }
-        else if (paramKey == FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY)
-        {
-            if (senderSide)
-            {
-                customDec = true;
-                continue; //The custom decoder need to be set on the receiver side only. Later we check that the custom encoder has been set too.
-            }
-
-            if (standardCodec)
-            {
-                yCError(FFMPEGMONITOR, "Cannot set both %s and %s/%s together.",
-                        FFMPEGPORTMONITOR_CL_CODEC_KEY.c_str(),
-                        FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY.c_str(),
-                        FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY.c_str());
-                codecOut = nullptr;
-                return false;
-            }
-
-            codecOut = avcodec_find_decoder_by_name(paramValue.c_str());
-
-            if (!codecOut) {
-                yCError(FFMPEGMONITOR, "Can't find decoder %s", paramValue.c_str());
-                codecOut = nullptr;
-                return false;
-            }
-
-            customDec = true;
-            continue;  //avoid to add this parameter to paramsMap
-        }
-        else if (paramKey == FFMPEGPORTMONITOR_CL_PIXEL_FORMAT_KEY)
-        {
-            pixelFormatOut = static_cast<AVPixelFormat>(std::atoi(paramValue.c_str()));
-            continue;  //avoid to add this parameter to paramsMap
-        }
-        else if (paramKey == FFMPEGPORTMONITOR_CL_FRAME_RATE_KEY)
-        {
-            frameRate = std::atoi(paramValue.c_str());
-            continue;  //avoid to add this parameter to paramsMap
-        }
-        else if (paramKey == FFMPEGPORTMONITOR_CL_PRINT_STATISTICS_KEY)
-        {
-            printStatistics = std::atoi(paramValue.c_str());
-            continue;  //avoid to add this parameter to paramsMap
-        }
-
-        // Save param into params map
-        paramsMap.insert( std::pair<std::string, std::string>(paramKey, paramValue) );
+    // checks for encoder/decoders
+    if (senderSide == true && inputoptions.check(FFMPEGPORTMONITOR_CL_DECODER_KEY))
+    {
+        yCError(FFMPEGMONITOR, "`decoder` parameter is not allowed on sender side");
+        return false;
+    }
+    if (senderSide == false && inputoptions.check(FFMPEGPORTMONITOR_CL_ENCODER_KEY))
+    {
+        yCError(FFMPEGMONITOR, "`encoder` parameter is not allowed on receiver side");
+        return false;
     }
 
-    if (!standardCodec && !customEnc && !customDec)
+    if (inputoptions.check(FFMPEGPORTMONITOR_CL_ENCODER_KEY))
     {
+        std::string paramValue = inputoptions.find(FFMPEGPORTMONITOR_CL_ENCODER_KEY).asString();
+
+        codecOut = avcodec_find_encoder_by_name(paramValue.c_str());
+        if (!codecOut)
+        {
+            yCError(FFMPEGMONITOR, "Can't find encoder %s", paramValue.c_str());
+            codecOut = nullptr;
+            return false;
+        }
+        customEnc = true;
+    }
+
+    // parse for custom decoder
+    if (inputoptions.check(FFMPEGPORTMONITOR_CL_DECODER_KEY))
+    {
+        std::string paramValue = inputoptions.find(FFMPEGPORTMONITOR_CL_DECODER_KEY).asString();
+
+        codecOut = avcodec_find_decoder_by_name(paramValue.c_str());
+        if (!codecOut)
+        {
+            yCError(FFMPEGMONITOR, "Can't find decoder %s", paramValue.c_str());
+            codecOut = nullptr;
+            return false;
+        }
+        customDec = true;
+    }
+
+    //extra options: pixel format
+    if (inputoptions.check(FFMPEGPORTMONITOR_CL_PIXEL_FORMAT_KEY))
+    {
+        std::string paramValue = inputoptions.find(FFMPEGPORTMONITOR_CL_PIXEL_FORMAT_KEY).asString();
+        pixelFormatOut = static_cast<AVPixelFormat>(std::atoi(paramValue.c_str()));
+    }
+
+    //extra options: frame rate
+    if (inputoptions.check(FFMPEGPORTMONITOR_CL_FRAME_RATE_KEY))
+    {
+        std::string paramValue = inputoptions.find(FFMPEGPORTMONITOR_CL_FRAME_RATE_KEY).asString();
+        frameRate = std::atoi(paramValue.c_str());
+    }
+
+    // extra options: statistics printing
+    if (inputoptions.check(FFMPEGPORTMONITOR_CL_PRINT_STATISTICS_KEY))
+    {
+        std::string paramValue = inputoptions.find(FFMPEGPORTMONITOR_CL_PRINT_STATISTICS_KEY).asString();
+        printStatistics = std::atoi(paramValue.c_str());
+    }
+
+    // Iterate through all properties and save unknown parameters to paramsMap
+    Bottle propertyBottle;
+    std::string inputoptionsStr = inputoptions.toString();
+    propertyBottle.fromString(inputoptionsStr);
+
+    for (int i = 0; i < propertyBottle.size(); i++)
+    {
+        Value& element = propertyBottle.get(i);
+        if (!element.isList()) { continue; }
+
+        Bottle* entry = element.asList();
+        if (entry->size() < 2) { continue; }
+
+        std::string key = entry->get(0).asString();
+
+        // Skip known parameters
+        if (key == FFMPEGPORTMONITOR_CL_ENCODER_KEY ||
+            key == FFMPEGPORTMONITOR_CL_DECODER_KEY ||
+            key == FFMPEGPORTMONITOR_CL_PIXEL_FORMAT_KEY ||
+            key == FFMPEGPORTMONITOR_CL_FRAME_RATE_KEY ||
+            key == FFMPEGPORTMONITOR_CL_PRINT_STATISTICS_KEY ||
+            key == "type" ||
+            key == "filename" ||
+            key == "source" ||
+            key == "destination" ||
+            key == "sender_side" ||
+            key == "receiver_side" ||
+            key == "carrier")
+        { continue;}
+
+
+        // Add unknown parameter to params map
+        std::string value = entry->get(1).toString();
+        paramsMap[key] = value;
+    }
+
+    if (!customEnc && senderSide==true)
+    {
+        yCWarning(FFMPEGMONITOR, "No encoder specified, using default codec (mpeg2video).");
+
         // Set default codec
         AVCodecID codecId = AV_CODEC_ID_MPEG2VIDEO;
-        if (senderSide) {
-            codecOut = avcodec_find_encoder(codecId);
-        } else {
-            codecOut = avcodec_find_decoder(codecId);
+        codecOut = avcodec_find_encoder(codecId);
+        if (!codecOut) {
+            yCError(FFMPEGMONITOR, "Can't find default codec (mpeg2video).");
+            return false;
         }
+    }
+    if (!customDec && senderSide==false)
+    {
+        yCWarning(FFMPEGMONITOR, "No decoder specified, using default codec (mpeg2video).");
 
+        // Set default codec
+        AVCodecID codecId = AV_CODEC_ID_MPEG2VIDEO;
+        codecOut = avcodec_find_decoder(codecId);
         if (!codecOut) {
             yCError(FFMPEGMONITOR, "Can't find default codec (mpeg2video).");
             return false;
         }
     }
 
-    if (customEnc && !customDec)
-    {
-        yCError(FFMPEGMONITOR, "A custom encoder has been specified, but not a custom decoder.");
-        return false;
-    }
-
-    if (!customEnc && customDec)
-    {
-        yCError(FFMPEGMONITOR, "A custom decoder has been specified, but not a custom encoder.");
-        return false;
-    }
-
     return true;
-
 }
 
 int FfmpegMonitorObject::setCommandLineParams() {

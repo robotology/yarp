@@ -634,5 +634,70 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         }
     }
 
+    SECTION("check write bytestream for mp3.")
+    {
+        #ifdef YARP_MP3_SUPPORTED
+            Sound snd1;
+            snd1.resize(1600, 2);
+            snd1.setFrequency(16000);
+            generate_test_sound(snd1, 1600, 2);
+
+            // First pass: query required buffer size
+            size_t buffer_size = 0;
+            bool b1 = yarp::sig::file::write_bytestream(snd1, nullptr, buffer_size, ".mp3");
+            CHECK(b1);
+            CHECK(buffer_size > 0);
+            INFO("Required buffer size: " << buffer_size << " bytes");
+
+            // Second pass: write to buffer
+            char* buffer = new char[buffer_size];
+            size_t actual_size = buffer_size;
+            bool b2 = yarp::sig::file::write_bytestream(snd1, buffer, actual_size, ".mp3");
+            CHECK(b2);
+            CHECK(actual_size > 0);
+            CHECK(actual_size <= buffer_size);
+            INFO("Actual encoded size: " << actual_size << " bytes");
+
+            // Verify we can decode it back
+            Sound snd2;
+            bool b3 = yarp::sig::file::read_bytestream(snd2, buffer, actual_size, ".mp3");
+            CHECK(b3);
+            CHECK(snd2.getSamples() == snd1.getSamples());
+            CHECK(snd2.getFrequency() == snd1.getFrequency());
+            CHECK(snd2.getChannels() == snd1.getChannels());
+            INFO("Decoded: " << snd2.getSamples() << " samples, "
+                 << snd2.getFrequency() << " Hz, "
+                 << snd2.getChannels() << " channels");
+
+            // Write to file for manual inspection (optional)
+            std::ofstream os("testmp3_bytestream.mp3", std::ios::binary);
+            if (os.is_open())
+            {
+                os.write(buffer, actual_size);
+                os.close();
+                INFO("Written testmp3_bytestream.mp3 for inspection");
+            }
+
+            // Verify the decoded audio has non-zero values (lossy compression check)
+            size_t has_non_zero = 0;
+            for (size_t i = 0; i < snd2.getSamples(); i++)
+            {
+                for (size_t c = 0; c < snd2.getChannels(); c++)
+                {
+                    if (snd2.get(i, c) != 0)
+                    {
+                        has_non_zero++;
+                        break;
+                    }
+                }
+            }
+            CHECK(has_non_zero<50);
+
+            delete[] buffer;
+        #else
+            WARN("MP3 support not available, test skipped");
+        #endif
+    }
+
     NetworkBase::setLocalMode(false);
 }

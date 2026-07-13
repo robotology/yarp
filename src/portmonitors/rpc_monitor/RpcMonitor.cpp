@@ -5,6 +5,7 @@
 
 #include "RpcMonitor.h"
 
+#include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/CommandBottle.h>
 #include <yarp/os/LogComponent.h>
@@ -22,15 +23,6 @@ YARP_LOG_COMPONENT(RPCMONITOR,
                    yarp::os::Log::printCallback(),
                    nullptr)
 
-bool split(const std::string &s, std::map<std::string, std::string>& parameters) {
-    std::istringstream iss(s);
-    std::string item;
-    while (std::getline(iss, item, '+')) {
-        const auto point = item.find('.');
-        parameters[item.substr(0, point)] = item.substr(point + 1);
-    }
-    return true;
-}
 } // namespace
 
 // Monitor: create
@@ -40,24 +32,19 @@ bool RpcMonitor::create(const yarp::os::Property& options)
     source = options.find("source").asString();
     destination = options.find("destination").asString();
     const std::string source_port = (sender ? source : destination) + "/monitor";
-    // Check the 'monitor' parameter
-    const std::string carrier = options.find("carrier").asString();
-    std::map<std::string, std::string> parameters;
-    if (!split(carrier, parameters)) {
-        yCError(RPCMONITOR, "Error parsing the parameters.");
-        return false;
-    }
-    const std::string monitor_port = ((parameters.find("monitor") != parameters.end()) ? parameters["monitor"] : "/monitor");
+
+    const std::string monitor_port = options.check("monitor_name", yarp::os::Value("/monitor")).asString();
 
     if (!sender) {
         yCError(RPCMONITOR, "Attaching on receiver side is not supported yet.");
         return false;
     }
-    if (!port.openFake(source_port)) {
+    if (!port.open(source_port)) {
         yCError(RPCMONITOR, "Could not open port %s.", source_port.c_str());
         return false;
     }
-    if (!port.addOutput(monitor_port)) {
+    if (!yarp::os::Network::connect(source_port, monitor_port, "fast_tcp"))
+    {
         yCError(RPCMONITOR, "Could not connect to port %s.", monitor_port.c_str());
         return false;
     }
@@ -89,7 +76,9 @@ yarp::os::Things& RpcMonitor::update(yarp::os::Things& thing)
         bcmd.addString("[unknown]");
     }
     yCDebug(RPCMONITOR, "Writing: %s", msg.toString().c_str());
-    port.write(msg);
+    if (port.getOutputCount() > 0) {
+        port.write(msg);
+    }
     return thing;
 }
 
@@ -118,6 +107,8 @@ yarp::os::Things& RpcMonitor::updateReply(yarp::os::Things& thing)
         bcmd.addString("[unknown]");
     }
     yCDebug(RPCMONITOR, "Writing: %s", msg.toString().c_str());
-    port.write(msg);
+    if (port.getOutputCount() > 0) {
+        port.write(msg);
+    }
     return thing;
 }

@@ -12,8 +12,9 @@
 namespace yarp::sig::file {
 /**
  * Read a sound from a byte array.
- * @param data sound to read
- * @param bytestream the byte array
+ * @param data sound to read [output]
+ * @param bytestream the byte array [input]
+ * @param streamsize size of the byte array [input]
  * @return true on success
  */
 bool YARP_sig_API read_mp3_bytestream(Sound& data, const char* bytestream, size_t streamsize);
@@ -34,6 +35,16 @@ bool YARP_sig_API read_mp3_file(Sound& data, const char* filename);
  * @return true on success
  */
 bool YARP_sig_API write_mp3_file(const Sound& data, const char* filename, size_t bitrate = 64000);
+
+/**
+ * write a sound from a byte array.
+ * @param data sound to write [input]
+ * @param bytestream the byte array [output]
+ * @param streamsize the size of the byte array [output]
+ * @return true on success
+ */
+bool YARP_sig_API write_mp3_bytestream(const Sound& data, char* bytestream, size_t& streamsize);
+
 } // namespace yarp::sig::file
 
 #endif // YARP_SIG_SOUNDFILE_MP3_H

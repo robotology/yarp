@@ -35,8 +35,9 @@ public:
 
 private:
     bool senderSide;
-    yarp::sig::Sound snd;
-    yarp::os::Things th;
+    yarp::os::Bottle m_bot;
+    yarp::sig::Sound m_snd;
+    yarp::os::Things m_th;
 };
 
 #endif  // YARP_MP3SOUND_CONVERTER_H

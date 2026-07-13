@@ -63,7 +63,14 @@ public:
         if (!portName.empty()) {
             getPeers().remove(portName,this);
         }
-        delete binder;
+        for (auto it=binder.begin(); it!=binder.end(); ++it)
+        {
+            if (*it) {
+                delete *it;
+                *it = nullptr;
+            }
+        }
+        binder.clear();
     }
 
     Carrier *create() const override
@@ -108,7 +115,10 @@ public:
         if(!bReady) {
             return nullptr;
         }
-        return binder;
+        if (binder.empty()) {
+            return nullptr;
+        }
+        return binder[0];
     }
 
 public:
@@ -125,7 +135,7 @@ private:
     yarp::os::DummyConnector con;
     yarp::os::ConnectionReader* localReader {nullptr};
     yarp::os::Things thing;
-    MonitorBinding* binder {nullptr};
+    std::vector<MonitorBinding*> binder;
     PortMonitorGroup *group {nullptr};
     mutable std::mutex mutex;
 };

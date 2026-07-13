@@ -2,10 +2,10 @@
 # image_compression_ffmpeg portmonitor
 ## Description
 
-This port monitor allows you to compress a video stream while transmitting it from a source YARP port to a destination YARP port. The port monitor relies on the open source library Ffmpeg to encode and decode video streams.
+This port monitor allows you to compress a video stream while transmitting it from a source YARP port to a destination YARP port.
+The port monitor relies on the open source library Ffmpeg to encode and decode video streams.
 <br>
 You can choose the desired codec using the command line, along with numerous other possible parameters (see [Parameters](#Parameters)).
-If the "codec" parameter is not set, it will be set to a default value.
 
 ## Installation
 
@@ -33,7 +33,8 @@ to execute 4 recipes at a time.
 The software allows the insertion of a wide range of parameters via the command line.<br>
 The string:
 ```
-yarp connect /grabber /view <protocol>+send.portmonitor.+file.image_compression_ffmpeg+recv.portmonitor+file.image_compression_ffmpeg+type.dll
+yarp connect /grabber /view <protocol>+send.portmonitor+file.image_compression_ffmpeg+encoder.mpeg2video+type.dll+recv.portmonitor+file.image_compression_ffmpeg+decoder.mpeg2video+type.dll
+
 ```
 is the basic command to connect source and receiver through the port monitor; we will refer to this string in the following as “Connection base string”. <br>
 
@@ -46,7 +47,7 @@ The \<protocol\> section in the connection base string represents the protocol u
 In order to insert other parameters into the connection string, you have to follow the syntax below:<br>
 
 ```
-connection_base_string+parameter_name.parameter_value
+...+parameter_name.parameter_value+...
 ```
 concatenating a "+" to the connection base string, followed by the name of the parameter to set and a "." followed by the desired value for the parameter.
 All the parameters will be passed to the compression/decompression context of the Ffmpeg library.
@@ -59,9 +60,8 @@ The default codecs are:
 -   ``h265``
 -   ``mpeg2video``
 
-These codecs can be set via the ``codec`` parameter. If no codec is chosen via the connection string, ``mpeg2video`` codec is used as default. <br>
-In some cases, it might be useful to specify the encoder and the decoder separately. This is possible via the ``custom_enc`` and ``custom_dec`` parameters.
-When specifying a ``custom_enc``, it is also necessary to specify a ``custom_dec``, and viceversa. The availability of a given encoder/decoder depends on ``ffmpeg``.
+These codecs can be set via the ``encoder``/``decoder`` parameters. If no codec is chosen via the connection string, ``mpeg2video`` codec is used as default. <br>
+The availability of a given encoder/decoder depends on ``ffmpeg``.
 It is possible to check which encoder/decoder is available with the commands ``ffmpeg -encoders``/``ffmpeg -decoders``.<br>
 According to the chosen encoder/decoder, the default pixel format (AV_PIX_FMT_YUV420P) might not be available. In this case, an error is printed either on the receiver
 or the sender side, with an indication about the supported pixel formats, and a suggested one. It is possible to specify the desired pixel format with the
@@ -110,7 +110,12 @@ yarpview --name /view
 
 ### Terminal 4 (can be run on both sides)
 ```
-yarp connect /grabber /view fast_tcp+send.portmonitor+file.image_compression_ffmpeg+recv.portmonitor+file.image_compression_ffmpeg+type.dll
+some possibilities:
+yarp connect /grabber /view fast_tcp+send.portmonitor+file.image_compression_ffmpeg+type.dll+recv.portmonitor+file.image_compression_ffmpeg+type.dll
+yarp connect /grabber /view fast_tcp+send.portmonitor+file.image_compression_ffmpeg+encoder.mpeg2video+type.dll+recv.portmonitor+file.image_compression_ffmpeg+decoder.mpeg2video+type.dll
+yarp connect /grabber /view fast_tcp+send.portmonitor+file.image_compression_ffmpeg+encoder.h264+type.dll+recv.portmonitor+file.image_compression_ffmpeg+decoder.h264+type.dll
+yarp connect /grabber /view fast_tcp+send.portmonitor+file.image_compression_ffmpeg+encoder.h265+type.dll+recv.portmonitor+file.image_compression_ffmpeg+decoder.h265+type.dll
+yarp connect /grabber /view fast_tcp+send.portmonitor+file.image_compression_ffmpeg+encoder.mjpeg+type.dll+recv.portmonitor+file.image_compression_ffmpeg+decoder.mjpeg+type.dll
 ```
 <br>
 The following image is the output video stream, which is compressed in sender side, transmitted, decompressed in receiver side and then visualized through the YARP viewer.

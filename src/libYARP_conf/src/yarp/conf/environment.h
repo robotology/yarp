@@ -61,7 +61,6 @@ inline typename ContainerT::value_type join_path(const ContainerT& v)
  * @param found an optional variable to set to true iff variable is found
  * @return the value of the environment variable, or "" if not found
  *
- * @since YARP 3.5
  */
 inline std::string get_string(const std::string& key, bool* found = nullptr)
 {
@@ -82,7 +81,6 @@ inline std::string get_string(const std::string& key, bool* found = nullptr)
  * @param defaultValue the default value to return if the environment variable is not found
  * @return the value of the environment variable, or \p defaultValue if not found
  *
- * @since YARP 3.5
  */
 inline std::string get_string(const std::string& key, const std::string& defaultValue)
 {
@@ -97,7 +95,6 @@ inline std::string get_string(const std::string& key, const std::string& default
  * @param defaultValue the default value to return if the environment variable is not found
  * @return the value of the environment variable, or \p defaultValue if not found
  *
- * @since YARP 3.5
  */
 inline std::string get_string(const std::string& key, const std::string& altKey, const std::string& altDefaultValue, const std::string& altAppend = {})
 {
@@ -113,7 +110,6 @@ inline std::string get_string(const std::string& key, const std::string& altKey,
  * @param found an optional variable to set to true iff variable is found
  * @return the value of the environment variable, or empty if not found
  *
- * @since YARP 3.5
  */
 inline std::vector<std::string> get_path(const std::string& key, bool* found = nullptr)
 {
@@ -127,7 +123,6 @@ inline std::vector<std::string> get_path(const std::string& key, bool* found = n
  * @param defaultValue the default value to return if the environment variable is not found
  * @return the value of the environment variable, or \p defaultValue if not found
  *
- * @since YARP 3.5
  */
 inline std::vector<std::string> get_path(const std::string& key, const std::string& defaultValue)
 {
@@ -143,7 +138,6 @@ inline std::vector<std::string> get_path(const std::string& key, const std::stri
  * @param altAppend a string to append to each directory in the alternative variable (or its default) if \p key is not defined
  * @return the value of the environment variable, or \p defaultValue if not found
  *
- * @since YARP 3.5
  */
 inline std::vector<std::string> get_path(const std::string& key, const std::string& altKey, const std::string& altDefaultValue, const std::string& altAppend = {})
 {
@@ -167,7 +161,6 @@ inline std::vector<std::string> get_path(const std::string& key, const std::stri
  * @param defaultValue the default value to return if the environment variable is not found
  * @return the value of the environment variable, or \p defaultValue if not found
  *
- * @since YARP 3.5
  */
 inline bool get_bool(const std::string& key, bool defaultValue = false)
 {
@@ -185,7 +178,6 @@ inline bool get_bool(const std::string& key, bool defaultValue = false)
  * @param defaultValue the default value to return if the environment variable is not found
  * @return the value of the environment variable, or \p defaultValue if not found
  *
- * @since YARP 3.5
  */
 template <typename T>
 inline T get_numeric(const std::string& key, T defaultValue = static_cast<T>(0))
@@ -204,7 +196,6 @@ inline T get_numeric(const std::string& key, T defaultValue = static_cast<T>(0))
  * @param value the target value
  * @return true if the environment variable was set, false on error.
  *
- * @since YARP 3.5
  */
 inline bool set_string(const std::string& key, const std::string& value)
 {
@@ -223,7 +214,6 @@ inline bool set_string(const std::string& key, const std::string& value)
  * @param value the target value
  * @return true if the environment variable was set, false on error.
  *
- * @since YARP 3.5
  */
 inline bool set_path(const std::string& key, const std::vector<std::string>& value)
 {
@@ -237,7 +227,6 @@ inline bool set_path(const std::string& key, const std::vector<std::string>& val
  * @param value the target value
  * @return true if the environment variable was set, false on error.
  *
- * @since YARP 3.5
  */
 inline bool set_bool(const std::string& key, bool value)
 {
@@ -253,7 +242,6 @@ inline bool set_bool(const std::string& key, bool value)
  * @param value the target value
  * @return true if the environment variable was set, false on error.
  *
- * @since YARP 3.5
  */
 template <typename T>
 inline bool set_numeric(const std::string& key, bool value)
@@ -267,7 +255,6 @@ inline bool set_numeric(const std::string& key, bool value)
  * @param key the environment variable to remove
  *
  * @return true if the operation was successful, false on error.
- * @since YARP 3.5
  */
 inline bool unset(const std::string& key)
 {
@@ -289,57 +276,6 @@ inline bool is_set(const std::string& key)
 {
     return std::getenv(key.c_str()) ? true : false;
 }
-
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
-/**
- * Read a string from an environment variable.
- *
- * @param key the environment variable to read
- * @param found an optional variable to set to true iff variable is found
- * @return the value of the environment variable, or "" if not found
- *
- * @since YARP 3.4
- * @deprecated since YARP 3.5. Use yarp::conf::environment::get_string() instead
- */
-YARP_DEPRECATED_MSG("Use yarp::conf::environment::get_string() instead")
-inline std::string
-getEnvironment(const char* key, bool* found = nullptr)
-{
-    return get_string(key, found);
-}
-
-/**
- * Set or change an environment variable.
- *
- * @param key the environment variable to set or change
- * @param value the target value
- *
- * @since YARP 3.4
- * @deprecated since YARP 3.5. Use yarp::conf::environment::set_string() instead
- */
-YARP_DEPRECATED_MSG("Use yarp::conf::environment::set_string() instead")
-inline void setEnvironment(const std::string& key, const std::string& value)
-{
-    set_string(key, value);
-}
-
-/**
- * Remove an environment variable.
- *
- * @param key the environment variable to remove
- *
- * @since YARP 3.4
- * @deprecated since YARP 3.5. Use yarp::conf::environment::unset() instead
- */
-YARP_DEPRECATED_MSG("Use yarp::conf::environment::unset() instead")
-inline void unsetEnvironment(const std::string& key)
-{
-    unset(key);
-}
-
-
-#endif // YARP_NO_DEPRECATED
 
 } // namespace yarp::conf::environment
 

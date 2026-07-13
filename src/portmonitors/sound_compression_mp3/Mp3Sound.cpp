@@ -47,15 +47,24 @@ bool Mp3SoundConverter::accept(yarp::os::Things& thing)
 {
     if (senderSide)
     {
-        yCError(MP3TOSOUND, "accept(): Sender side not yet supported!");
-        return false;
+        yarp::sig::Sound* snd = thing.cast_as<yarp::sig::Sound>();
+        if(snd == nullptr)
+        {
+            yCError(MP3TOSOUND, "Sender: Data cannot be accepted!");
+            return false;
+        }
     }
     else
     {
         auto* bot = thing.cast_as<Bottle>();
-        if(bot == nullptr || bot->size()!=1)
+        if(bot == nullptr)
         {
-            yCError(MP3TOSOUND, "Data cannot be accepted!");
+            yCError(MP3TOSOUND, "Receiver: Data cannot be accepted, invalid datatype");
+            return false;
+        }
+        if(bot->size() != 1)
+        {
+            yCError(MP3TOSOUND, "Receiver: Data cannot be accepted, invalid format");
             return false;
         }
     }
@@ -66,7 +75,36 @@ yarp::os::Things& Mp3SoundConverter::update(yarp::os::Things& thing)
 {
     if (senderSide)
     {
-        yCError(MP3TOSOUND, "update(): Sender side not yet supported!");
+        yarp::sig::Sound* snd = thing.cast_as<yarp::sig::Sound>();
+        if (snd)
+        {
+            size_t lenght=0;
+            bool success = yarp::sig::file::write_bytestream(*snd, nullptr, lenght, ".mp3");
+            if (!success || lenght == 0)
+            {
+                yCError(MP3TOSOUND, "Failed in allocating buffer size!");
+                return m_th;
+            }
+            char* bs = new char[lenght];
+            success = yarp::sig::file::write_bytestream(*snd, bs, lenght, ".mp3");
+            if (success)
+            {
+                m_bot.clear();
+                yarp::os::Value v(bs, lenght);
+                m_bot.add(v);
+            }
+            else
+            {
+                yCError(MP3TOSOUND, "Encoding failed!");
+            }
+            delete[] bs;
+
+            m_th.setPortWriter(&m_bot);
+        }
+        else
+        {
+            yCError(MP3TOSOUND, "Conversion failed!");
+        }
     }
     else
     {
@@ -76,7 +114,8 @@ yarp::os::Things& Mp3SoundConverter::update(yarp::os::Things& thing)
             const char* binary_data = bot->get(0).asBlob();
             size_t length = bot->get(0).asBlobLength();
 
-            yarp::sig::file::read_bytestream(snd, binary_data, length, ".mp3");
+            bool success = yarp::sig::file::read_bytestream(m_snd, binary_data, length, ".mp3");
+            m_th.setPortWriter(&m_snd);
         }
         else
         {
@@ -84,6 +123,5 @@ yarp::os::Things& Mp3SoundConverter::update(yarp::os::Things& thing)
         }
     }
 
-    th.setPortWriter(&snd);
-    return th;
+    return m_th;
 }

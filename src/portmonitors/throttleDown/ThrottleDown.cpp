@@ -22,28 +22,12 @@ YARP_LOG_COMPONENT(PM_THRD,
                    yarp::os::Log::printCallback(),
                    nullptr)
 
-void split(const std::string& s, char delim, std::vector<std::string>& elements)
-{
-    std::istringstream iss(s);
-    std::string item;
-    while (std::getline(iss, item, delim))
-    {
-        elements.push_back(item);
-    }
-}
-
 }//anonymous namespace
 
 
 bool ThrottleDown::create(const yarp::os::Property& options)
 {
     // parse the user parameters
-    yarp::os::Property m_user_params;
-    std::string str = options.find("carrier").asString();
-    yCDebug(PM_THRD) << "parsed string:" << str << " "<< options.toString();
-    getParamsFromCommandLine(str, m_user_params);
-    yCDebug(PM_THRD) << "parsed params:" << m_user_params.toString();
-
     // get the value of the parameters
     /* if (m_user_params.check("period")) {
         //Float64 have issues related to the '.' character.
@@ -52,8 +36,8 @@ bool ThrottleDown::create(const yarp::os::Property& options)
         m_period = m_user_params.find("period").asFloat64();
         yCDebug(PM_THRD) << "period set:" << m_period;
     }*/
-    if (m_user_params.check("period_ms")) {
-        m_period = m_user_params.find("period_ms").asInt32();
+    if (options.check("period_ms")) {
+        m_period = options.find("period_ms").asInt32();
         m_period /= 1000.0;
         yCDebug(PM_THRD) << "period set:" << m_period;
     }
@@ -66,33 +50,6 @@ bool ThrottleDown::create(const yarp::os::Property& options)
 void ThrottleDown::destroy()
 {
 }
-
-void ThrottleDown::getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop)
-{
-    // Split command line string using '+' delimiter
-    std::vector<std::string> parameters;
-    split(carrierString, '+', parameters);
-
-    // Iterate over result strings
-    for (std::string param : parameters) {
-        // If there is no '.', then the param is bad formatted, skip it.
-        auto pointPosition = param.find('.');
-        if (pointPosition == std::string::npos) {
-            continue;
-        }
-
-        // Otherwise, separate key and value
-        std::string paramKey = param.substr(0, pointPosition);
-        yarp::os::Value paramValue;
-        std::string s = param.substr(pointPosition + 1, param.length());
-        paramValue.fromString(s.c_str());
-
-        // and append to the returned property
-        prop.put(paramKey, paramValue);
-    }
-    return;
-}
-
 
 bool ThrottleDown::setparam(const yarp::os::Property& params)
 {

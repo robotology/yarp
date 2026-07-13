@@ -28,26 +28,6 @@ extern "C" {
 #include <yarp/sig/Image.h>
 
 /**
- * @brief This vector contains all parameters that have to be ignored while parsing command line string.
- *
- */
-static const std::vector<std::string> FFMPEGPORTMONITOR_IGNORE_PARAMS {
-    "tcp",
-    "fast_tcp",
-    "udp",
-    "send.portmonitor",
-    "recv.portmonitor",
-    "file.image_compression_ffmpeg",
-    "type.dll"
-};
-
-/**
- * @brief This string is the "key" value for the codec parameter
- *
- */
-static const std::string FFMPEGPORTMONITOR_CL_CODEC_KEY = "codec";
-
-/**
  * @brief This vector contains the only accepted values for the command line parameter "codec"
  *
  */
@@ -61,13 +41,13 @@ static const std::vector<std::string> FFMPEGPORTMONITOR_CL_CODECS {
  * @brief This string is the "key" value for the custom encoder parameter
  *
  */
-static const std::string FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY = "custom_enc";
+static const std::string FFMPEGPORTMONITOR_CL_ENCODER_KEY = "encoder";
 
 /**
  * @brief This string is the "key" value for the custom decoder parameter
  *
  */
-static const std::string FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY = "custom_dec";
+static const std::string FFMPEGPORTMONITOR_CL_DECODER_KEY = "decoder";
 
 /**
  * @brief This string is the "key" value for the pixel format parameter

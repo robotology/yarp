@@ -6,4 +6,4 @@ Portmonitor plugin for compression and decompression of bottles (or yarp data ty
 Usage:
 -----
 
-yarp connect /src /dest tcp+send.portmonitor+file.bottle_compression_zlib+recv.portmonitor+file.bottle_compression_zlib+type.dll
+yarp connect /src /dest tcp+send.portmonitor+file.bottle_compression_zlib+type.dll+recv.portmonitor+file.bottle_compression_zlib+type.dll

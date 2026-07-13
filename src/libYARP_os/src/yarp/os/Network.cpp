@@ -289,6 +289,81 @@ static std::string extractCarrierNameOnly(const std::string& carrier_name_with_p
 
 */
 
+static bool is_log_port(const std::string& src,
+                        const std::string& dest)
+{
+    if (src.find ("/log")    != std::string::npos &&
+        dest.find("/log")    != std::string::npos &&
+        src.find ("/logger") != std::string::npos &&
+        dest.find("/logger") != std::string::npos)
+    {
+        return true;
+    }
+    return false;
+}
+
+static bool is_stats_port(const std::string& src,
+                          const std::string& dest)
+{
+    if (src.find ("/stats_monitor") != std::string::npos &&
+        dest.find("/stats_monitor") != std::string::npos &&
+        src.find ("/yarpConnectionsStats") != std::string::npos &&
+        dest.find("/yarpConnectionsStats") != std::string::npos)
+    {
+        return true;
+    }
+    return false;
+}
+
+static void addStatsMonitorIfNeeded(const std::string& src,
+                                    const std::string& dest,
+                                    ContactStyle& style,
+                                    int mode)
+{
+    // If YARP_CONNECTIONS_STATS_ENABLE is set in the environment, automatically
+    // inject the stats_monitor portmonitor into the carrier string for every new connection
+    if (mode == YARP_ENACT_CONNECT && !style.carrier.empty())
+    {
+        std::string statsEnabled;
+        bool statsEnabledFound = false;
+        statsEnabled = yarp::conf::environment::get_string("YARP_CONNECTIONS_STATS_ENABLE", &statsEnabledFound);
+        if (statsEnabledFound && statsEnabled == "1")
+        {
+            //The stats and the log ports must be skipped
+            if (!is_log_port(src,dest) && !is_stats_port(src,dest))
+            {
+                //bool stat_portmonitor_is_available = true;
+                bool stat_portmonitor_is_available = yarp::os::YarpPluginSelector::checkPlugin("stats_monitor", "portmonitor");
+                if (stat_portmonitor_is_available)
+                {
+                    //If the connection already uses a portmonitor, we need to concatenate the stats_monitor to the existing portmonitor.
+                    if (style.carrier.find("portmonitor") != std::string::npos)
+                    {
+                        // Find the next available numeric suffix for file/type parameters.
+                        // "file." (no suffix) is treated as the base entry already present;
+                        // we scan "file1.", "file2.", ... and take the first missing index.
+                        int idx = 1;
+                        while (style.carrier.find("file" + std::to_string(idx) + ".") != std::string::npos) {
+                            ++idx;
+                        }
+                        const std::string suffix = std::to_string(idx);
+                        style.carrier += "+file" + suffix + ".stats_monitor+type" + suffix + ".dll";
+                    }
+                    // otherwise, we inject the stats_monitor portmonitor into the carrier string
+                    else
+                    {
+                        style.carrier += "+send.portmonitor+file.stats_monitor+type.dll";
+                    }
+                }
+                else
+                {
+                    yCWarning(NETWORK, "Failure: stats_monitor not available. Using default connection.");
+                }
+            }
+        }
+    }
+}
+
 static int metaConnect(const std::string& src,
                        const std::string& dest,
                        ContactStyle style,
@@ -400,15 +475,7 @@ static int metaConnect(const std::string& src,
             staticDest.getCarrier().c_str());
 
     //DynamicSrc and DynamicDst are the contacts created by connect command
-    //while staticSrc and staticDest are contacts created by querying th server
-
-    if (staticSrc.getCarrier() == "xmlrpc" && (staticDest.getCarrier() == "xmlrpc" || (staticDest.getCarrier().find("rossrv") == 0)) && mode == YARP_ENACT_CONNECT) {
-        // Unconnectable in general
-        // Let's assume the first part is a YARP port, and use "tcp" instead
-        staticSrc.setCarrier("tcp");
-        staticDest.setCarrier("tcp");
-    }
-
+    //while staticSrc and staticDest are contacts created by querying the server
     std::string carrierConstraint;
 
     // see if we can do business with the source port
@@ -621,6 +688,8 @@ static int metaConnect(const std::string& src,
     yCTrace(NETWORK,
             "style_carrier with params  =%s",
             style.carrier.c_str());
+
+    addStatsMonitorIfNeeded(src,dest,style,mode);
 
     bool connectionIsPush = false;
     bool connectionIsPull = false;

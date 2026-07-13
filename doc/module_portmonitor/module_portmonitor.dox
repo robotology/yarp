@@ -6,7 +6,7 @@
 
 \section what_is What is the portmonitor carrier?
 
-In short, it is an extended functionality of a port implemented as a new carrier which allows to dynamically load at run–time script (or dynamically linked libraries such as .so/.dll) and plug it into the port of an existing module without changing the code or recompiling it. Using run-time scripts (currently written in Lua) or DLLs we can access and modify the data traveling through the port using a simple API. In this way extra functionalities of a component can be added during application development time and without the need to modify and rebuild the component itself.
+In short, it is an extended functionality of a port implemented as a new carrier which allows to dynamically load at run–time script (or dynamically linked libraries such as .so/.dll) and plug it into the port of an existing module without changing the code or recompiling it. Using run-time scripts (e.g. Lua/Python) or DLLs we can access and modify the data traveling through the port using a simple API. In this way extra functionalities of a component can be added during application development time and without the need to modify and rebuild the component itself.
 
 
 \section which_is Which functionalities are we talking about?
@@ -23,13 +23,15 @@ In short, it is an extended functionality of a port implemented as a new carrier
 
 \li Enable portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON) in CMake and compile YARP.
 
-\li To be able to use plug-ins written in LUA with the portmonitor carrier you need to compile yarp-lua binding and set the 'LUA_CPATH' to find yarp-lua binding library (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+\li To be able to use plug-ins written in LUA with the portmonitor carrier you need to compile yarp-lua bindings and set the 'LUA_CPATH' to find yarp-lua binding library (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+
+\li To be able to use plug-ins written in Python with the portmonitor carrier you need to compile yarp-python bindings. (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
 
 \li For using compiled plug-ins (.dll/.so) with the portmonitor carrier you only need to put them in system path where commonly DLLs can be found. For example in the Linux machines you can set the `LD_LIBRARY_PATH' to point the folder where you compiled the DLL.
 
 
 \section use How can I use port monitor?
-You should connect two ports using the YARP 'portmonitor' carrier modifier and explicitly tells the carrier which type of plug-in you are using (lua or dll):
+You should connect two ports using the YARP 'portmonitor' carrier modifier and explicitly tells the carrier which type of plug-in you are using (lua, python, dll):
 
 \verbatim
   $ yarp connect /out /in tcp+recv.portmonitor+type.lua+context.myapp+file.my_lua_script
@@ -50,10 +52,43 @@ or a DLL can be loaded instead of the Lua script:
 \endverbatim
 
 - 'recv.portmonitor' or 'send.portmonitor' indicates that a portmonitor carrier modiffier should be used respectively in receiver or sender side.
-- 'type.lua' or 'type.dll' respectively tells the carrier to expect Lua script or a DLL file.
+- 'type.lua' , 'type.dll', 'type.python' respectively tells the carrier to expect Lua/Python script or a DLL file.
 - 'context.myapp' is only used for the scripts  and it tells the resource finder to load the script from the 'myapp' context. If context is not used, the current path where module is launched will be searched for the script file.
 - 'file.my_lua_script' indicates 'my_lua_script' (alternatively my_dll_file) should be loaded by monitor object. For the scripts, the 'my_lua_script' is located using standard YARP Resource Finder policy. The postfix (e.g., '.lua') is not necessary. The DLLs should be located in the system standard path, the same folder the program is running or the paths indicated in `LD_LIBRARY_PATH' on the Linux machines.
 
+\section concatenate Advanced usage: concatenation of multiple portmonitors
+This feature is still experimental.
+You can concatenate multiple portmonitors as in this example, which throttles down a connection, and then adds a simulated delay of 500ms.
+It's importnat to notice the sequence id suffix (1,2,..etc) that has to be applied to both the `file` and the `type` label.
+
+\verbatim
+  $ yarp connect /mysender /myreceiver fast_tcp+send.portmonitor+file.throttleDown+period_ms.100+type.dll+file1.simulated_network_delay+delay_ms.500+type1.dll
+\endverbatim
+
+In this example, the stats_monitor is used to stream some statistics on the connection.
+\verbatim
+  $ yarp connect /mysender /myreceiver fast_tcp+send.portmonitor+file.throttleDown+period_ms.500+type.dll+file1.stats_monitor+type1.dll
+\endverbatim
+
+Test setup:
+\verbatim
+yarp write /mysender --period 0.01      //then type the string `aaaa`
+yarp read /myreceiver
+yarp connect /mysender /myreceiver fast_tcp+send.portmonitor+file.throttleDown+period_ms.500+type.dll+file1.stats_monitor+type1.dll
+yarp read ...  /stats_monitor/mysender/myreceiver/stats:o
+1782921328.0867476 "/mysender" "/myreceiver" fast_tcp [ok] 32.0 2.0    4bytes*2Hz
+\endverbatim
+
+Note that the throttleDown is applied before the stats monitor.
+If the order of the monitors is swapped, then incorrect statics will be displayed, cause they will be computed before the action of the throttleDown.
+
+\verbatim
+yarp write /mysender --period 0.01      //then type the string `aaaa`
+yarp read /myreceiver
+yarp connect /mysender /myreceiver fast_tcp+send.portmonitor+file1.throttleDown+period_ms.500+type1.dll+file.stats_monitor+type.dll
+yarp read ...  /stats_monitor/mysender/myreceiver/stats:o
+1782921466.0506425 "/mysender" "/myreceiver" fast_tcp [ok] 1488.0 93.0  4bytes*~100Hz
+\endverbatim
 
 \section callbacks Portmonitor life cycle and API
 

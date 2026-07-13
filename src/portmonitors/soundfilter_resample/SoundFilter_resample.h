@@ -27,8 +27,6 @@ class SoundFilter_resample : public yarp::os::MonitorObject
     double m_gain = -1;
 
 public:
-    void getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop);
-
     bool create(const yarp::os::Property &options) override;
     void destroy() override;
 

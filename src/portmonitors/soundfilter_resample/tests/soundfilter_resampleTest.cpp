@@ -1,0 +1,81 @@
+/*
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include <yarp/os/SystemClock.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/sig/Sound.h>
+#include <yarp/sig/SoundUtils.h>
+
+#include <yarp/conf/environment.h>
+
+#include <array>
+#include <thread>
+
+#include <catch2/catch_amalgamated.hpp>
+#include <harness.h>
+
+TEST_CASE("pm::soundfilter_resampleTest", "[yarp::pm]")
+{
+    YARP_REQUIRE_PLUGIN("soundfilter_resample", "portmonitor")
+
+    yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
+
+    yarp::os::NetworkBase::setLocalMode(true);
+    yarp::os::Time::delay(1.0);
+
+    struct TestCase {
+        std::string carrier;
+        int expected_frequency;
+        int channels;
+    };
+
+    auto tc = GENERATE(
+        TestCase {"fast_tcp", 16000 ,2},
+        TestCase {"fast_tcp+recv.portmonitor+file.soundfilter_resample+channel.0+frequency.8000+gain_percent.200+type.dll", 8000, 1}
+    );
+
+    SECTION("Test sound resampling")
+    {
+        yarp::os::BufferedPort<yarp::sig::Sound> sender;
+        yarp::os::BufferedPort<yarp::sig::Sound> receiver;
+
+        sender.open("/send");
+        receiver.open("/recv");
+
+        bool b = yarp::os::Network::connect("/send", "/recv", tc.carrier);
+        REQUIRE(b);
+
+        // Create a test sound with 16000 Hz
+        const int original_frequency = 16000;
+        const size_t samples = 1600;
+        const size_t channels = 2;
+
+        yarp::sig::Sound& snd = sender.prepare();
+        snd.setFrequency(original_frequency);
+        snd.resize(samples, channels);
+
+        // Fill with a simple sine wave pattern
+        yarp::sig::utils::makeTone(snd,0.1, channels, original_frequency, 440);
+
+        sender.write();
+
+        yarp::os::Time::delay(0.5);
+
+        yarp::sig::Sound* received = receiver.read();
+        REQUIRE(received != nullptr);
+
+        // Verify the frequency is as expected (original or resampled)
+        CHECK(received->getFrequency() == tc.expected_frequency);
+        CHECK(received->getChannels() == tc.channels);
+
+        receiver.close();
+        sender.close();
+    }
+
+    yarp::os::NetworkBase::setLocalMode(false);
+}
