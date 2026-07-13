@@ -412,6 +412,44 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         CHECK(v[4] == 8.0);
     }
 
+    SECTION("Check conversion between vector and bottle and viceversa")
+    {
+        {
+            Vector  in_v;
+            Bottle  out_b;
+            bool bret = yarp::os::Portable::copyPortable(in_v, out_b);
+            CHECK(bret);
+        }
+        {
+            Vector in_v = {1.0, 2.0, 3.0};
+            Bottle  out_b;
+            bool bret = yarp::os::Portable::copyPortable(in_v, out_b);
+            CHECK(bret);
+            std::string sout_b = out_b.toString();
+            CHECK(sout_b == "1.0 2.0 3.0");
+        }
+        {
+            Bottle  in_b;
+            Vector  out_v;
+            bool bret = yarp::os::Portable::copyPortable(in_b, out_v);
+            CHECK(bret==false);
+        }
+        {
+            Bottle  in_b;
+            in_b.fromString ("(1.0 2.0 3.0)");
+            Vector  out_v;
+            bool bret = yarp::os::Portable::copyPortable(in_b, out_v);
+            CHECK(bret==false);
+        }
+        {
+            Bottle  in_b;
+            in_b.fromString ("1.0 2.0 3.0");
+            Vector  out_v;
+            bool bret = yarp::os::Portable::copyPortable(in_b, out_v);
+            CHECK(bret);
+        }
+    }
+
     SECTION("Regression test for GitHub issue 2189")
     {
         Vector v{1.0, 2.0, 3.0};
