@@ -1,4 +1,4 @@
-name: Sonarcloud on request
+name: Sonarcloud & Coverage on request
 
 on:
   workflow_dispatch:
@@ -89,12 +89,383 @@ jobs:
         echo "::endgroup::"
 
         cat $GITHUB_EVENT_PATH | jq -C
+  codacy-clang-tidy:
+    environment: code-analysis
+    name: 'Codacy - clang-tidy'
+    needs: [select_environment]
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
+
+    # This step is copied from the build step, please keep them in sync until we
+    # find a better way to do it automatically
+    - name: Dependencies [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install dep for gstreamer. It must be the first one.
+          sudo apt-get update
+          sudo apt-get install -y      libunwind-dev
+
+          # Install Robotology dependencies from robotology ppa
+          sudo apt-add-repository -y ppa:robotology/ppa
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.18.0-all.deb
+
+          # Install build tools
+          sudo apt-get install -qq -y ccache \
+                                      ninja-build \
+                                      valgrind
+
+          sudo apt-get install -qq -y libace-dev \
+                                      libsqlite3-dev \
+                                      libtinyxml-dev \
+                                      libtinyxml2-dev \
+                                      libedit-dev \
+                                      qtbase5-dev \
+                                      qtdeclarative5-dev \
+                                      qtmultimedia5-dev \
+                                      libqt5opengl5-dev \
+                                      libqcustomplot-dev \
+                                      libopencv-dev \
+                                      libeigen3-dev \
+                                      libgraphviz-dev \
+                                      libpng-dev \
+                                      libv4l-dev \
+                                      libavcodec-dev \
+                                      libavdevice-dev \
+                                      libavformat-dev \
+                                      libavutil-dev \
+                                      portaudio19-dev \
+                                      libsdl1.2-dev \
+                                      libopenni2-dev \
+                                      libftdi-dev \
+                                      libi2c-dev \
+                                      libjpeg-dev \
+                                      libpcl-dev \
+                                      libsoxr-dev
+
+          sudo apt-get install -y     libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev
+
+          # Install bindings dependencies
+          sudo apt-get install -qq -y mono-mcs \
+                                      liblua5.3-dev \
+                                      lua5.3 \
+                                      tcl-dev \
+                                      tk-dev \
+                                      python3-dev \
+                                      octave-dev \
+                                      ruby-dev \
+                                      ruby \
+                                      libcrypt-dev \
+                                      perl
+
+          # Other tools useful in github actions
+          sudo apt-get install -qq -y jq \
+                                      wget \
+                                      curl \
+                                      lcov \
+                                      gcovr \
+                                      wget \
+                                      curl \
+                                      xsltproc \
+                                      libxml2-utils \
+                                      source-highlight
+
+          # Remove old packages from apt cache
+          sudo apt-get autoclean -qq
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          sudo make install
+
+    - name: Prepare environment
+      env:
+        CODACY_TOKEN: ${{ secrets.CODACY_TOKEN }}
+        CLANG_VERSION: 17
+        CODACY_CLANG_TIDY_VERSION: 1.3.8
+      run: |
+        echo "CLANG_VERSION=${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "CC=/usr/bin/clang-${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "CXX=/usr/bin/clang++-${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "CFLAGS=-fcolor-diagnostics" >> $GITHUB_ENV
+        echo "CXXFLAGS=-fcolor-diagnostics" >> $GITHUB_ENV
+        echo "CLANG_TIDY=/usr/bin/clang-tidy-${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "RUN_CLANG_TIDY=/usr/bin/run-clang-tidy-${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "COLORCLI=1" >> $GITHUB_ENV
+        echo "CLICOLOR=1" >> $GITHUB_ENV
+        echo "CLICOLOR_FORCE=1" >> $GITHUB_ENV
+        echo "YARP_COLORED_OUTPUT=1" >> $GITHUB_ENV
+        echo "PROJECT_TOKEN=${CODACY_TOKEN}" >> $GITHUB_ENV
+        echo "COMMIT=${{ needs.select_environment.outputs.sha }}" >> $GITHUB_ENV
+        echo "CODACY_URL=https://api.codacy.com" >> $GITHUB_ENV
+        echo "CODACY_CLANG_TIDY_VERSION=${CODACY_CLANG_TIDY_VERSION}" >> $GITHUB_ENV
+
+        # Append output bin directory to the PATH
+        echo "PATH=${GITHUB_WORKSPACE}/build/bin:${PATH}"  >> $GITHUB_ENV
+
+    - name: Download codacy-clang-tidy
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          #Install clang 17. `all` option is required for clang-tidy
+          sudo apt-get purge -y llvm* clang*
+          wget -nv https://apt.llvm.org/llvm.sh
+          sudo chmod +x llvm.sh
+          sudo ./llvm.sh 17 all
+
+          # Download codacy-clang-tidy
+          sudo wget https://github.com/codacy/codacy-clang-tidy/releases/download/${CODACY_CLANG_TIDY_VERSION}/codacy-clang-tidy-linux-${CODACY_CLANG_TIDY_VERSION} -O /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
+          sudo chmod -v +x /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
+
+    - name: Run CMake
+      run: |
+        /usr/bin/cmake -S. -Bbuild \
+          -C .ci/initial-cache.gh.linux.cmake \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
+          -DYARP_NO_DEPRECATED:BOOL=ON \
+          -DYARP_COMPILE_BINDINGS:BOOL=OFF
+
+    - name: Link compile_commands.json in the source directory
+      run: |
+        ln -s build/compile_commands.json .
+
+    - name: Run make (required for files generated at build time)
+      run: |
+        (cd build && make)
+
+    - name: List clang-tidy checks
+      run: |
+        # Fix .clang-tidy for clang 10 (see https://reviews.llvm.org/D75621)
+        sed -i 's/;h;hh;hpp;hxx/,h,hh,hpp,hxx/g' .clang-tidy
+
+        # Print the .clang-tidy file
+        cat .clang-tidy
+        echo
+
+        # List checks
+        ${CLANG_TIDY} -list-checks
+
+    - name: Run clang-tidy
+      run: |
+        ${RUN_CLANG_TIDY} | sed "s|${PWD}/||g" | tee /tmp/out1
+
+    - name: Convert the clang-tidy output to a format that the Codacy API accepts
+      run: |
+        cat /tmp/out1 | \
+        /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} | tee /tmp/out2
+
+    - name: Send the results to Codacy
+      run: |
+        set -x
+        cat /tmp/out2 | \
+        curl --silent --show-error --fail \
+            -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+            -H "Content-type: application/json" -d @- \
+            "${CODACY_URL}/2.0/commit/${COMMIT}/issuesRemoteResults"
+        echo
+
+    - name: Signal that Codacy can use the sent results and start a new analysis
+      run: |
+        set -x
+        curl --silent --show-error --fail \
+          -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+          -H "Content-type: application/json" \
+          "${CODACY_URL}/2.0/commit/${COMMIT}/resultsFinal"
+        echo
+
+
+  codacy-coverage:
+    environment: code-analysis
+    name: 'Codacy - coverage'
+    needs: [select_environment]
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
+
+    # This step is copied from the build step, please keep them in sync until we
+    # find a better way to do it automatically
+    - name: Dependencies [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install dep for gstreamer. It must be the first one.
+          sudo apt-get update
+          sudo apt-get install -y      libunwind-dev
+
+          # Install Robotology dependencies from robotology ppa
+          sudo apt-add-repository -y ppa:robotology/ppa
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.18.0-all.deb
+
+          # Install build tools
+          sudo apt-get install -qq -y ccache \
+                                      ninja-build \
+                                      valgrind
+
+          sudo apt-get install -qq -y libace-dev \
+                                      libsqlite3-dev \
+                                      libtinyxml-dev \
+                                      libtinyxml2-dev \
+                                      libedit-dev \
+                                      qtbase5-dev \
+                                      qtdeclarative5-dev \
+                                      qtmultimedia5-dev \
+                                      libqt5opengl5-dev \
+                                      libqcustomplot-dev \
+                                      libopencv-dev \
+                                      libeigen3-dev \
+                                      libgraphviz-dev \
+                                      libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev \
+                                      libpng-dev \
+                                      libv4l-dev \
+                                      libavcodec-dev \
+                                      libavdevice-dev \
+                                      libavformat-dev \
+                                      libavutil-dev \
+                                      portaudio19-dev \
+                                      libsdl1.2-dev \
+                                      libopenni2-dev \
+                                      libftdi-dev \
+                                      libi2c-dev \
+                                      libjpeg-dev \
+                                      libpcl-dev \
+                                      libsoxr-dev
+
+          # Install bindings dependencies
+          sudo apt-get install -qq -y mono-mcs \
+                                      liblua5.3-dev \
+                                      lua5.3 \
+                                      tcl-dev \
+                                      tk-dev \
+                                      python3-dev \
+                                      octave-dev \
+                                      ruby-dev \
+                                      ruby \
+                                      libcrypt-dev \
+                                      perl
+
+          # Other tools useful in github actions
+          sudo apt-get install -qq -y jq \
+                                      wget \
+                                      curl \
+                                      lcov \
+                                      gcovr \
+                                      xsltproc \
+                                      libxml2-utils \
+                                      source-highlight
+
+          # Remove old packages from apt cache
+          sudo apt-get autoclean -qq
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          sudo make install
+
+    - name: Build
+      run: |
+        export CLICOLOR_FORCE=1
+        export YARP_COLORED_OUTPUT=1
+
+        # Append output bin directory to the PATH
+        echo "PATH=${GITHUB_WORKSPACE}/build/bin:${PATH}"  >> $GITHUB_ENV
+        export PATH="${GITHUB_WORKSPACE}/build/bin:${PATH}"
+
+        /usr/bin/cmake -S. -Bbuild \
+          -C .ci/initial-cache.gh.linux.cmake \
+          -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
+          -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always \
+          -DCMAKE_BUILD_TYPE=Profile \
+          "-DCMAKE_C_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+          "-DCMAKE_CXX_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
+          -DYARP_NO_DEPRECATED:BOOL=ON
+
+        (cd build && lcov --directory . --zerocounters)
+
+        (cd build && make && make CTEST_OUTPUT_ON_FAILURE=1 test)
+
+        # Capture coverage info for Profile builds
+        (cd build; lcov --directory . --capture --rc lcov_branch_coverage=1 --output-file coverage.info)
+
+        # Filter out system and test code
+        (cd build; lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'build/*'--rc lcov_branch_coverage=1 --output-file coverage.info)
+
+        # Debug before upload
+        (cd build; lcov --list coverage.info)
+
+    - name: Run codacy-coverage-reporter
+      uses: codacy/codacy-coverage-reporter-action@master
+      with:
+        project-token: ${{ secrets.CODACY_TOKEN }}
+        coverage-reports: build/coverage.info
+
 
   sonarcloud:
     environment: code-analysis
     name: 'SonarCloud'
     needs: [select_environment]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -199,19 +570,18 @@ jobs:
           /usr/bin/cmake --version
 
           # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.15.3-all.deb
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.18.0-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind \
-                                      openjdk-17-jdk \
-                                      openjdk-17-jre
+                                      valgrind
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
                                       libtinyxml-dev \
+                                      libtinyxml2-dev \
                                       libedit-dev \
                                       qtbase5-dev \
                                       qtdeclarative5-dev \
@@ -235,19 +605,20 @@ jobs:
                                       libftdi-dev \
                                       libi2c-dev \
                                       libjpeg-dev \
-                                      libpcl-dev
+                                      libpcl-dev \
+                                      libsoxr-dev
 
-          # Install SWIG and bindings dependencies
-          sudo apt-get install -qq -y swig \
-                                      mono-mcs \
+          # Install bindings dependencies
+          sudo apt-get install -qq -y mono-mcs \
                                       liblua5.3-dev \
                                       lua5.3 \
                                       tcl-dev \
                                       tk-dev \
                                       python3-dev \
-                                      liboctave-dev \
+                                      octave-dev \
                                       ruby-dev \
                                       ruby \
+                                      libcrypt-dev \
                                       perl
 
           # Other tools useful in github actions
@@ -265,6 +636,26 @@ jobs:
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
 
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          sudo make install
+
     - name: Prepare ccache environment variables
       id: init_ccache
       run: |
@@ -279,6 +670,9 @@ jobs:
         echo "CCACHE_MAXSIZE=400M" >> $GITHUB_ENV
         echo "CCACHE_CPP2=yes" >> $GITHUB_ENV
         echo "PATH=/usr/lib/ccache::${PATH}" >> $GITHUB_ENV
+
+        # Append output bin directory to the PATH
+        echo "PATH=${GITHUB_WORKSPACE}/build/bin:${PATH}"  >> $GITHUB_ENV
 
         cat $GITHUB_ENV
 
@@ -298,6 +692,7 @@ jobs:
         # Reset ccache stats before starting
         ccache -z
 
+        gcc --version
         gcov --version
         gcovr --version
 
@@ -362,7 +757,7 @@ jobs:
     - name: Capture coverage info
       run: |
         (cd build && \
-        gcovr --exclude="../extern/*" --sonarqube --branches --output coverage.xml --root .. .)
+        gcovr --exclude="../extern/*" --exclude="^/usr/include/" --gcov-ignore-parse-errors=negative_hits.warn --sonarqube --branches --output coverage.xml --root .. .)
 
     - name: Print coverage info file
       run: |
@@ -414,7 +809,7 @@ jobs:
             -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
             -Dsonar.coverageReportPaths=build/coverage.xml \
             -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
-            -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
+            -Dsonar.exclusions="src/yarp*/**/* src/guis/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
             -Dsonar.coverage.exclusions="\
                  src/libYARP_dev/src/yarp/dev/tests/*,\
                  src/devices/*/tests/*,\
@@ -422,6 +817,7 @@ jobs:
                  src/portmonitors/*/tests/*,\
                  tests/**/*,\
                  src/yarp*/**/*,\
+                 src/guis/*,\
                  robottestingframework-plugins/**/*\
                  " \
             -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
