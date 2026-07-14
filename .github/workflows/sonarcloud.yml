@@ -431,6 +431,12 @@ jobs:
         echo "PATH=${GITHUB_WORKSPACE}/build/bin:${PATH}"  >> $GITHUB_ENV
         export PATH="${GITHUB_WORKSPACE}/build/bin:${PATH}"
 
+        # Print info
+        gcc --version
+        lcov --version
+        gcov --version
+        gcovr --version
+        
         /usr/bin/cmake -S. -Bbuild \
           -C .ci/initial-cache.gh.linux.cmake \
           -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
@@ -446,10 +452,10 @@ jobs:
         (cd build && make && make CTEST_OUTPUT_ON_FAILURE=1 test)
 
         # Capture coverage info for Profile builds
-        (cd build; lcov --directory . --capture --rc lcov_branch_coverage=1 --output-file coverage.info)
+        (cd build; lcov --directory . --no-external --capture --rc lcov_branch_coverage=1 --output-file coverage.info)
 
         # Filter out system and test code
-        (cd build; lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'build/*'--rc lcov_branch_coverage=1 --output-file coverage.info)
+        (cd build; lcov --remove coverage.info 'tests/*' 'example/*' 'extern/*' 'build/*'--rc lcov_branch_coverage=1 --output-file coverage.info)
 
         # Debug before upload
         (cd build; lcov --list coverage.info)
@@ -693,6 +699,7 @@ jobs:
         ccache -z
 
         gcc --version
+        lcov --version
         gcov --version
         gcovr --version
 
@@ -757,7 +764,7 @@ jobs:
     - name: Capture coverage info
       run: |
         (cd build && \
-        gcovr --exclude="../extern/*" --exclude="^/usr/include/" --gcov-ignore-parse-errors=negative_hits.warn --sonarqube --branches --output coverage.xml --root .. .)
+        gcovr --exclude="../extern/*" --sonarqube --branches --output coverage.xml --root .. .)
 
     - name: Print coverage info file
       run: |
