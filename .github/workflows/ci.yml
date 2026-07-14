@@ -2738,7 +2738,7 @@ jobs:
     - name: Capture coverage info
       run: |
         (cd build && \
-        gcovr --exclude="../extern/*" --exclude="^/usr/include/" --gcov-ignore-parse-errors=negative_hits.warn --sonarqube --branches --output coverage.xml --root .. .)
+        gcovr --exclude="../extern/*" --exclude="^/usr/include/" --exclude=".*qrc_.*\.cpp" --gcov-ignore-parse-errors=negative_hits.warn --sonarqube --branches --output coverage.xml --root .. .)
 
     - name: Print coverage info file
       run: |

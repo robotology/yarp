@@ -141,7 +141,7 @@ void parseParameters (yarp::os::Property& inputoptions, yarp::os::Property& outp
     Bottle propertyBottle;
     propertyBottle.fromString(inputoptions.toString());
 
-    for (int i = 0; i < propertyBottle.size(); i++)
+    for (size_t i = 0; i < propertyBottle.size(); i++)
     {
         Value& element = propertyBottle.get(i);
         if (!element.isList()) { continue; }
