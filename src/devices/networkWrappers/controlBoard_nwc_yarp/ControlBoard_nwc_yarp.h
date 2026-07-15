@@ -1,11 +1,10 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_DEV_REMOTECONTROLBOARD_REMOTECONTROLBOARD_H
-#define YARP_DEV_REMOTECONTROLBOARD_REMOTECONTROLBOARD_H
+#ifndef YARP_DEV_CONTROLBOARD_NWC_YARP_H
+#define YARP_DEV_CONTROLBOARD_NWC_YARP_H
 
 #include <yarp/sig/Vector.h>
 
@@ -35,7 +34,7 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 
 #include "stateExtendedReader.h"
-#include "RemoteControlBoard_ParamsParser.h"
+#include "ControlBoard_nwc_yarp_ParamsParser.h"
 #include "ControlBoardMsgs.h"
 
 class DiagnosticThread;
@@ -44,7 +43,7 @@ class DiagnosticThread;
 /**
 * @ingroup dev_impl_network_clients
 *
-* \brief `remote_controlboard`: The client side of the control board, connects to a remote controlboard using the YARP network.
+* \brief `ControlBoard_nwc_yarp`: The client side of the control board, connects to a remote controlboard using the YARP network.
 *
 * This device communicates using the YARP ports opened the controlBoard_nws_yarp device
 * to use a device exposing controlboard method even from a different process (or even computer)
@@ -52,7 +51,7 @@ class DiagnosticThread;
 *
 * Parameters required by this device are shown in class: RemoteControlBoard_ParamsParser
 */
-class RemoteControlBoard :
+class ControlBoard_nwc_yarp :
         public yarp::dev::IPidControl,
         public yarp::dev::IPositionControl,
         public yarp::dev::IVelocityControl,
@@ -109,12 +108,12 @@ protected:
     bool isLive();
 
 public:
-    RemoteControlBoard() = default;
-    RemoteControlBoard(const RemoteControlBoard&) = delete;
-    RemoteControlBoard(RemoteControlBoard&&) = delete;
-    RemoteControlBoard& operator=(const RemoteControlBoard&) = delete;
-    RemoteControlBoard& operator=(RemoteControlBoard&&) = delete;
-    ~RemoteControlBoard() override = default;
+    ControlBoard_nwc_yarp() = default;
+    ControlBoard_nwc_yarp(const ControlBoard_nwc_yarp&) = delete;
+    ControlBoard_nwc_yarp(ControlBoard_nwc_yarp&&) = delete;
+    ControlBoard_nwc_yarp& operator=(const ControlBoard_nwc_yarp&) = delete;
+    ControlBoard_nwc_yarp& operator=(ControlBoard_nwc_yarp&&) = delete;
+    ~ControlBoard_nwc_yarp() override = default;
 
     bool open(Searchable& config) override;
 
@@ -372,4 +371,4 @@ public:
 
 
 
-#endif // YARP_DEV_REMOTECONTROLBOARD_REMOTECONTROLBOARD_H
+#endif // YARP_DEV_CONTROLBOARD_NWC_YARP_H

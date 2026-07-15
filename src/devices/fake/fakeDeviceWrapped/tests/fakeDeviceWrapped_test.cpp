@@ -20,6 +20,9 @@ TEST_CASE("dev::fakeDeviceWrapped", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
+    auto tc = GENERATE("fakeDeviceWrapped",
+                       "fakeDeviceWrappedOld");
+
     SECTION("Checking fakeDeviceWrapped device")
     {
         PolyDriver dd;
@@ -28,7 +31,7 @@ TEST_CASE("dev::fakeDeviceWrapped", "[yarp::dev]")
         ////////"Checking opening device polydrivers"
         {
             Property p_cfg;
-            p_cfg.put("device", "fakeDeviceWrapped");
+            p_cfg.put("device", tc);
             REQUIRE(dd.open(p_cfg));
         }
 
@@ -54,7 +57,7 @@ TEST_CASE("dev::fakeDeviceWrapped", "[yarp::dev]")
         ////////"Checking opening device polydrivers"
         {
             Property p_cfg;
-            p_cfg.put("device", "fakeDeviceWrapped");
+            p_cfg.put("device", tc);
             //this option, should be used only by yarpdev executable: it is used here for testing purposes only,
             //wrapping_enabled=1 will open deviceBundler, fakeDeviceWrapper and perform an attach with fakeDeviceWrapped.
             p_cfg.put("wrapping_enabled", 1);
@@ -68,7 +71,7 @@ TEST_CASE("dev::fakeDeviceWrapped", "[yarp::dev]")
         //This behavior may change in the future, but it is not very important since `wrapping_enabled` is used
         //only by yarpdev executable.
         std::string devicename = dd.id();
-        CHECK (devicename == "fakeDeviceWrapped");
+        CHECK (devicename == tc);
 
         REQUIRE(iTest == nullptr);
 

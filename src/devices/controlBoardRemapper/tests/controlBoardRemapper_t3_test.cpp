@@ -49,8 +49,7 @@ TEST_CASE("dev::ControlBoardRemapperTest3", "[yarp::dev]")
     YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
     YARP_REQUIRE_PLUGIN("controlboardremapper", "device");
     YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
-    //YARP_REQUIRE_PLUGIN("controlBoard_nwc_yarp", "device");
-    YARP_REQUIRE_PLUGIN("remote_controlboard", "device");
+    YARP_REQUIRE_PLUGIN("controlBoard_nwc_yarp", "device");
 
     Network::setLocalMode(true);
 
@@ -106,8 +105,7 @@ TEST_CASE("dev::ControlBoardRemapperTest3", "[yarp::dev]")
         //client side
         {
             Property p_cfg;
-            //p_cfg.put("device", "controlBoard_nwc_yarp");
-            p_cfg.put("device", "remote_controlboard");
+            p_cfg.put("device", "controlBoard_nwc_yarp");
             p_cfg.put("local", "/localalljoints");
             p_cfg.put("remote", "/alljoints");
             REQUIRE(ddnwc.open(p_cfg));
@@ -250,16 +248,14 @@ TEST_CASE("dev::ControlBoardRemapperTest3", "[yarp::dev]")
         //client side
         {
             Property p_cfg;
-            //p_cfg.put("device", "controlBoard_nwc_yarp");
-            p_cfg.put("device", "remote_controlboard");
+            p_cfg.put("device", "controlBoard_nwc_yarp");
             p_cfg.put("local", "/localalljoints1");
             p_cfg.put("remote", "/alljoints1");
             REQUIRE(ddnwc1.open(p_cfg));
         }
         {
             Property p_cfg;
-            //p_cfg.put("device", "controlBoard_nwc_yarp");
-            p_cfg.put("device", "remote_controlboard");
+            p_cfg.put("device", "controlBoard_nwc_yarp");
             p_cfg.put("local", "/localalljoints2");
             p_cfg.put("remote", "/alljoints2");
             REQUIRE(ddnwc2.open(p_cfg));

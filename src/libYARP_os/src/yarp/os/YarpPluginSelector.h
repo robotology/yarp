@@ -12,6 +12,7 @@
 #include <yarp/os/Property.h>
 
 #include <mutex>
+#include <map>
 
 namespace yarp::os {
 
@@ -29,6 +30,9 @@ private:
     Bottle search_path;
     Property config;
     mutable std::mutex mutex;
+
+    // Populated during scan() from "deprecated_alias" fields in .ini files
+    std::map<std::string, std::string> deprecated_aliases;
 
 public:
     /**
@@ -53,6 +57,13 @@ public:
      * through the select method.
      */
     void scan();
+
+    // Returns the map of deprecated alias -> canonical name,
+    // populated from "deprecated_alias" fields in plugin .ini files.
+    std::map<std::string, std::string> getDeprecatedAliases() const
+    {
+        return deprecated_aliases;
+    }
 
     /**
      * @return a list of plugin sections that passed the select method

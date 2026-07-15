@@ -10,9 +10,9 @@ yarp_prepare_plugin(LLM_nwc_yarp
 )
 
 if(NOT SKIP_LLM_nwc_yarp)
-  yarp_add_plugin(LLM_nwc_yarp)
+  yarp_add_plugin(yarp_LLM_nwc_yarp)
 
-  target_sources(LLM_nwc_yarp
+  target_sources(yarp_LLM_nwc_yarp
   PRIVATE
   LLM_nwc_yarp.cpp
   LLM_nwc_yarp.h
@@ -20,11 +20,11 @@ if(NOT SKIP_LLM_nwc_yarp)
   LLM_nwc_yarp_ParamsParser.h
   )
 
-  target_sources(LLM_nwc_yarp PRIVATE $<TARGET_OBJECTS:ILLMMsgs>)
+  target_sources(yarp_LLM_nwc_yarp PRIVATE $<TARGET_OBJECTS:ILLMMsgs>)
 
-  target_include_directories(LLM_nwc_yarp PRIVATE $<TARGET_PROPERTY:ILLMMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_LLM_nwc_yarp PRIVATE $<TARGET_PROPERTY:ILLMMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
-  target_link_libraries(LLM_nwc_yarp
+  target_link_libraries(yarp_LLM_nwc_yarp
   PRIVATE
       YARP::YARP_os
       YARP::YARP_dev
@@ -35,7 +35,7 @@ if(NOT SKIP_LLM_nwc_yarp)
   )
 
   yarp_install(
-  TARGETS LLM_nwc_yarp
+  TARGETS yarp_LLM_nwc_yarp
   EXPORT YARP_${YARP_PLUGIN_MASTER}
   COMPONENT ${YARP_PLUGIN_MASTER}
   LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -45,7 +45,7 @@ if(NOT SKIP_LLM_nwc_yarp)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET LLM_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
+  set_property(TARGET yarp_LLM_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)

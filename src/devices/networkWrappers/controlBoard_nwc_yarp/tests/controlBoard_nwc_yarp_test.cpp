@@ -32,11 +32,11 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
+TEST_CASE("dev::controlBoard_nwc_yarp", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
     YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
-    YARP_REQUIRE_PLUGIN("remote_controlboard", "device");
+    YARP_REQUIRE_PLUGIN("controlBoard_nwc_yarp", "device");
 
     Network::setLocalMode(true);
 
@@ -45,7 +45,12 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         bool(false)
     );
 
-    SECTION("Checking remote_controlboard device (using fakeMotionControl)")
+    auto compatibility_oldclient_name = GENERATE(
+        "controlBoard_nwc_yarp",
+        "remote_controlboard"
+    );
+
+    SECTION("Checking controlBoard_nwc_yarp device (using fakeMotionControl)")
     {
         PolyDriver ddmc;
         PolyDriver ddnws;
@@ -100,7 +105,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         //open the nwc
         {
             Property p_cfg;
-            p_cfg.put("device", "remote_controlboard");
+            p_cfg.put("device", compatibility_oldclient_name);
             p_cfg.put("local", "/local_controlboard");
             p_cfg.put("remote", "/controlboardserver");
             p_cfg.put("use_streaming", use_streaming_config);
@@ -157,7 +162,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         }
     }
 
-    SECTION("Checking remote_controlboard device (using fakeMotionControlMicro)")
+    SECTION("Checking controlBoard_nwc_yarp device (using fakeMotionControlMicro)")
     {
         PolyDriver ddmc;
         PolyDriver ddnws;
@@ -199,7 +204,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         //open the nwc
         {
             Property p_cfg;
-            p_cfg.put("device", "remote_controlboard");
+            p_cfg.put("device", "controlBoard_nwc_yarp");
             p_cfg.put("local", "/local_controlboard");
             p_cfg.put("remote", "/controlboardserver");
             p_cfg.put("use_streaming", use_streaming_config);

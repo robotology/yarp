@@ -1,35 +1,35 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-yarp_prepare_plugin(remote_controlboard
+yarp_prepare_plugin(controlBoard_nwc_yarp
   CATEGORY device
-  TYPE RemoteControlBoard
-  INCLUDE RemoteControlBoard.h
+  TYPE ControlBoard_nwc_yarp
+  INCLUDE ControlBoard_nwc_yarp.h
   EXTRA_CONFIG
     WRAPPER=controlBoard_nws_yarp
   DEFAULT ON
   GENERATE_PARSER
 )
 
-if(NOT SKIP_remote_controlboard)
-  yarp_add_plugin(yarp_remote_controlboard)
+if(NOT SKIP_controlBoard_nwc_yarp)
+  yarp_add_plugin(yarp_controlBoard_nwc_yarp)
 
-  target_sources(yarp_remote_controlboard
+  target_sources(yarp_controlBoard_nwc_yarp
     PRIVATE
-      RemoteControlBoard.cpp
-      RemoteControlBoard.h
-      RemoteControlBoard_ParamsParser.cpp
-      RemoteControlBoard_ParamsParser.h
-      RemoteControlBoardLogComponent.cpp
-      RemoteControlBoardLogComponent.h
+      ControlBoard_nwc_yarp.cpp
+      ControlBoard_nwc_yarp.h
+      ControlBoard_nwc_yarp_ParamsParser.cpp
+      ControlBoard_nwc_yarp_ParamsParser.h
+      ControlBoard_nwc_yarp_LogComponent.cpp
+      ControlBoard_nwc_yarp_LogComponent.h
       stateExtendedReader.cpp
       stateExtendedReader.h
   )
 
-  target_sources(yarp_remote_controlboard PRIVATE $<TARGET_OBJECTS:ControlBoardMsgs>)
-  target_include_directories(yarp_remote_controlboard PRIVATE $<TARGET_PROPERTY:ControlBoardMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_sources(yarp_controlBoard_nwc_yarp PRIVATE $<TARGET_OBJECTS:ControlBoardMsgs>)
+  target_include_directories(yarp_controlBoard_nwc_yarp PRIVATE $<TARGET_PROPERTY:ControlBoardMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
-  target_link_libraries(yarp_remote_controlboard
+  target_link_libraries(yarp_controlBoard_nwc_yarp
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -42,7 +42,7 @@ if(NOT SKIP_remote_controlboard)
   )
 
   yarp_install(
-    TARGETS yarp_remote_controlboard
+    TARGETS yarp_controlBoard_nwc_yarp
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -52,7 +52,7 @@ if(NOT SKIP_remote_controlboard)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_remote_controlboard PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_controlBoard_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)

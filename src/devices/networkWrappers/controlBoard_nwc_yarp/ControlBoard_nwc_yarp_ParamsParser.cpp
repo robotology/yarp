@@ -11,7 +11,7 @@
 // Generated on: Fri May 15 13:26:49 2026
 
 
-#include "RemoteControlBoard_ParamsParser.h"
+#include "ControlBoard_nwc_yarp_ParamsParser.h"
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 

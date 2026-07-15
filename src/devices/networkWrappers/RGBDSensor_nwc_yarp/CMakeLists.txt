@@ -7,6 +7,8 @@ yarp_prepare_plugin(RGBDSensor_nwc_yarp
   INCLUDE RGBDSensor_nwc_yarp.h
   DEFAULT ON
   GENERATE_PARSER
+  EXTRA_CONFIG
+    DEPRECATED_ALIAS=rgbdSensor_nwc_yarp
 )
 
 if(NOT SKIP_RGBDSensorClient)
