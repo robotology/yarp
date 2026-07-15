@@ -5,10 +5,11 @@ yarp_prepare_plugin(controlBoard_nwc_yarp
   CATEGORY device
   TYPE ControlBoard_nwc_yarp
   INCLUDE ControlBoard_nwc_yarp.h
-  EXTRA_CONFIG
-    WRAPPER=controlBoard_nws_yarp
   DEFAULT ON
   GENERATE_PARSER
+  EXTRA_CONFIG
+    WRAPPER=controlBoard_nws_yarp
+    DEPRECATED_ALIAS=remote_controlboard
 )
 
 if(NOT SKIP_controlBoard_nwc_yarp)

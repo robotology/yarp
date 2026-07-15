@@ -64,7 +64,7 @@ TEST_CASE("dev::RGBDSensor_nwc_yarp", "[yarp::dev]")
 
         // wait some time
         yarp::os::SystemClock::delaySystem(1.0);
-        INFO("rgbdSensor_nws_yarp and fakeDepthCamera ready");
+        INFO("RGBDSensor_nws_yarp and fakeDepthCamera ready");
 
         // create the nwc
         {
@@ -145,7 +145,7 @@ TEST_CASE("dev::RGBDSensor_nwc_yarp", "[yarp::dev]")
 
         //wait some time
         yarp::os::SystemClock::delaySystem(1.0);
-        INFO("rgbdSensor_nws_yarp and fakeDepthCamera ready");
+        INFO("RGBDSensor_nws_yarp and fakeDepthCamera ready");
 
         //create the nwc
         {

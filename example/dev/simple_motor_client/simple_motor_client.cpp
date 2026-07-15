@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
 
     Value* val;
     if (!options.check("device", val)) {
-        options.put("device", "remote_controlboard");
+        options.put("device", "controlBoard_nwc_yarp");
     }
     if (!options.check("local", val)) {
         sprintf(name, "/%s/%s/client", v.asString().c_str(), part.asString().c_str());

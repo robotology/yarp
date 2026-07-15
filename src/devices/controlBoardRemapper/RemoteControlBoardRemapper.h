@@ -25,7 +25,7 @@
  * | axesNames      |      -         | vector of strings  | -   |   -           | Yes          | Ordered list of the axes that are part of the remapped device.    |       |
  * | remoteControlBoards |     -     | vector of strings  | -   |   -           | Yes          | List of remote prefix used by the remote controlboards.           | The element of this list are then passed as "remote" parameter to the RemoteControlBoard device. |
  * | localPortPrefix |     -         | string             | -   |   -           | Yes          | All ports opened by this device will start with this prefix       |       |
- * | REMOTE_CONTROLBOARD_OPTIONS | - | group              | -   |   -           | No           | Options that will be passed directly to the remote_controlboard devices | |
+ * | REMOTE_CONTROLBOARD_OPTIONS | - | group              | -   |   -           | No           | Options that will be passed directly to the controlBoard_nwc_yarp devices | |
  * All the passed remote controlboards are opened, and then the axesNames and the opened device are
  * passed to the ControlBoardRemapper device. If different axes
  * in two attached controlboard have the same name, the behaviour of this device is undefined.
@@ -95,7 +95,7 @@ class RemoteControlBoardRemapper : public ControlBoardRemapper
 {
 private:
     /**
-     * List of remote_controlboard devices opened by the RemoteControlBoardRemapper device.
+     * List of controlBoard_nwc_yarp devices opened by the RemoteControlBoardRemapper device.
      */
     std::vector<yarp::dev::PolyDriver*> m_remoteControlBoardDevices;
 

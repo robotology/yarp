@@ -208,7 +208,7 @@ global dd;
 global pos;
 global enc;
 options = yarp.Property;  % create an instance of Property, a nice YARP class for storing name-value (key-value) pairs
-options.put('device','remote_controlboard');  % we add a name-value pair that indicates the YARP device
+options.put('device','controlBoard_nwc_yarp');  % we add a name-value pair that indicates the YARP device
 options.put('remote',fName);  % we add info on to whom we will connect
 options.put('local','/yarpRemotePosEnc');  % we add info on how we will call ourselves on the YARP network
 dd = yarp.PolyDriver(options);  % create a YARP multi-use driver with the given options

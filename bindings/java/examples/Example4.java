@@ -21,7 +21,7 @@ class Example4 {
         // set up a description of the device we want
         // in this case, a remote motor control board
         Property prop = new Property();
-        prop.put("device","remote_controlboard");
+        prop.put("device","controlBoard_nwc_yarp");
         prop.put("local", "/example/motor/client");
         prop.put("remote", "/icubSim/head");  // this is for the icubSim
         // or fake it with "yarpdev --device fakeMotionControl --name /icubSim/head"

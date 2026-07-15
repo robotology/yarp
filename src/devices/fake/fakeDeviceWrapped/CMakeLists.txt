@@ -11,7 +11,7 @@ yarp_prepare_plugin(fakeDeviceWrapped
   INCLUDE FakeDeviceWrapped.h
   EXTRA_CONFIG
     WRAPPER=fakeDeviceWrapper
-    DEPRECATED_ALIAS=FakeDeviceWrappedOld
+    DEPRECATED_ALIAS=fakeDeviceWrappedOld
 )
 
 if(NOT SKIP_fakeDeviceWrapped)

@@ -211,7 +211,7 @@ protected:
                 }
                 yarp::dev::PolyDriver* pd_client = new yarp::dev::PolyDriver;
                 yarp::os::Property clientoptions;
-                clientoptions.put("device", "remote_controlboard");
+                clientoptions.put("device", "controlBoard_nwc_yarp");
                 clientoptions.put("remote", remoteControlBoards);
                 clientoptions.put("local", m_name + "/client/" + client_name);
                 clientoptions.put("carrier", "fast_tcp");

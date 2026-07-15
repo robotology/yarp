@@ -20,7 +20,7 @@ using namespace yarp::os;
 TEST_CASE("dev::fakeCalibrator", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeCalibrator", "device");
-    YARP_REQUIRE_PLUGIN("remote_controlboard", "device");
+    YARP_REQUIRE_PLUGIN("controlBoard_nwc_yarp", "device");
 
     //Opened by yarprotobotinterface, but we need it here to be sure it is available for the test
     YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
@@ -54,7 +54,7 @@ TEST_CASE("dev::fakeCalibrator", "[yarp::dev]")
             yarp::dev::IRemoteCalibrator* icalib = nullptr;
             {
                 Property p_cfg;
-                p_cfg.put("device", "remote_controlboard");
+                p_cfg.put("device", "controlBoard_nwc_yarp");
                 p_cfg.put("local", "/local_controlboard");
                 p_cfg.put("remote", "/robot_test/part_test");
                 REQUIRE(ddnwc.open(p_cfg));

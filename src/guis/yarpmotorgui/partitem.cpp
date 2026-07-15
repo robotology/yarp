@@ -92,7 +92,7 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
 
     // Initializing the polydriver options and instantiating the polydrivers
     m_partOptions.put("local", portLocalName.toLatin1().data());
-    m_partOptions.put("device", "remote_controlboard");
+    m_partOptions.put("device", "controlBoard_nwc_yarp");
     m_partOptions.put("remote", m_robotPartPort);
     m_partOptions.put("carrier", rcb_protocol);
 

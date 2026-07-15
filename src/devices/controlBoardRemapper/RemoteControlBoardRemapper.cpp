@@ -110,7 +110,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
         std::string local = localPortPrefix+remote;
 
         Property options = remoteControlBoardsOptions;
-        options.put("device", "remote_controlboard");
+        options.put("device", "controlBoard_nwc_yarp");
         options.put("local", local);
         options.put("remote", remote);
 
@@ -120,12 +120,12 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
 
         if( !ok || !(m_remoteControlBoardDevices[ctrlBrd]->isValid()) )
         {
-            yCError(REMOTECONTROLBOARDREMAPPER) << "Opening remote_controlboard with remote \"" << remote << "\", opening the device failed.";
+            yCError(REMOTECONTROLBOARDREMAPPER) << "Opening controlBoard_nwc_yarp with remote \"" << remote << "\", opening the device failed.";
             closeAllRemoteControlBoards();
             return false;
         }
 
-        // We use the remote name of the remote_controlboard as the key for it, in absence of anything better
+        // We use the remote name of the controlBoard_nwc_yarp as the key for it, in absence of anything better
         remoteControlBoardsList.push((m_remoteControlBoardDevices[ctrlBrd]),remote.c_str());
     }
 

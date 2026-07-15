@@ -61,7 +61,7 @@ Device "fakeFrameGrabber", C++ class FakeFrameGrabber, wrapped by "grabber"
 Device "grabber", C++ class ServerFrameGrabber, is a network wrapper.
 Device "inertial", C++ class ServerInertial, is a network wrapper.
 Device "sound_grabber", C++ class ServerSoundGrabber, is a network wrapper.
-Device "remote_controlboard", C++ class RemoteControlBoard, wrapped by "controlboard"
+Device "controlBoard_nwc_yarp", C++ class ControlBoard_nwc_yarp, wrapped by "controlboard"
 Device "controlboard", C++ class ServerControlBoard, is a network wrapper.
 Device "portaudioPlayer", available on request (found in <prefix>/lib/yarp/yarp_portaudioPlayer.so library), wrapped by "AudioPlayerWrapper".
 Device "portaudioRecorder", available on request (found in <prefix>/lib/yarp/yarp_portaudioRecorder.so library), wrapped by "AudioRecorderWrapper".

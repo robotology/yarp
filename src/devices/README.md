@@ -66,10 +66,12 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) controlboardremapper
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) remotecontrolboardremapper
 
+* controlBoard_nwc
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) controlBoard_nwc_yarp
+
 * controlBoard_nws
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_ros
-  *  ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_ros2
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_ros2
 
 * DynamixelAX12Ftdi
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) dynamixelAX12Ftdi
@@ -106,8 +108,8 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nwc_yarp
 
 * frameGrabber_nws
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+)  frameGrabber_nws_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_ros
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_ros2
 
 * frameTransformClient
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) frameTransformClient
@@ -115,13 +117,13 @@ The tables shown hereunder report all the information needed to understand the f
 * frameTransformGet
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameTransformGet_nws_yarp
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformGet_nwc_yarp
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformGet_nwc_ros
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformGet_nwc_ros2
   * ![#ff00ff](https://via.placeholder.com/15/ff00ff/000000?text=+) frameTransformGetMultiplexer
 
 * frameTransformSet
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameTransformSet_nws_yarp
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformSet_nwc_yarp
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformSet_nwc_ros
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformSet_nwc_ros2
   * ![#ff00ff](https://via.placeholder.com/15/ff00ff/000000?text=+) frameTransformSetMultiplexer
 
 * frameTransformStorage
@@ -160,7 +162,6 @@ The tables shown hereunder report all the information needed to understand the f
 
 * localization2D_nws
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_ros2
 
 * map2D_nwc_yarp
@@ -168,7 +169,6 @@ The tables shown hereunder report all the information needed to understand the f
 
 * map2D_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_ros2
 
 * map2DStorage
@@ -220,18 +220,13 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **Rangefinder2DClient**
 
 * Rangefinder2D_nws
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_ros2
-
-* RemoteControlBoard
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **remote_controlboard**
 
 * ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) RGBDRosConversionUtils
 
 * rgbdSensor_nws
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros
-  *   ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros2
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros2
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_yarp
 
  * RGBDSensorClient
