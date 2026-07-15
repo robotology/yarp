@@ -56,7 +56,8 @@ bool FrameGrabberControls_Forwarder::setFeature(int feature, double value)
     cmd.addVocab32(VOCAB_FEATURE);
     cmd.addInt32(feature);
     cmd.addFloat64(value);
-    return m_port.write(cmd, response);
+    m_port.write(cmd, response);
+    return response.get(2).asBool();
 }
 
 bool FrameGrabberControls_Forwarder::setFeature(int feature, double value1, double value2)
@@ -69,7 +70,8 @@ bool FrameGrabberControls_Forwarder::setFeature(int feature, double value1, doub
     cmd.addInt32(feature);
     cmd.addFloat64(value1);
     cmd.addFloat64(value2);
-    return m_port.write(cmd, response);
+    m_port.write(cmd, response);
+    return response.get(2).asBool();
 }
 
 bool FrameGrabberControls_Forwarder::getFeature(int feature, double* value)
@@ -124,7 +126,8 @@ bool FrameGrabberControls_Forwarder::setActive(int feature, bool onoff)
     cmd.addVocab32(VOCAB_ACTIVE);
     cmd.addInt32(feature);
     cmd.addInt32(onoff);
-    return m_port.write(cmd, response);
+    m_port.write(cmd, response);
+    return response.get(2).asBool();
 }
 
 bool FrameGrabberControls_Forwarder::getActive(int feature, bool* isActive)
@@ -192,7 +195,8 @@ bool FrameGrabberControls_Forwarder::setMode(int feature, FeatureMode mode)
     cmd.addVocab32(VOCAB_MODE);
     cmd.addInt32(feature);
     cmd.addInt32(mode);
-    return m_port.write(cmd, response);
+    m_port.write(cmd, response);
+    return response.get(2).asBool();
 }
 
 bool FrameGrabberControls_Forwarder::getMode(int feature, FeatureMode* mode)
@@ -217,5 +221,6 @@ bool FrameGrabberControls_Forwarder::setOnePush(int feature)
     cmd.addVocab32(VOCAB_SET);
     cmd.addVocab32(VOCAB_ONEPUSH);
     cmd.addInt32(feature);
-    return m_port.write(cmd, response);
+    m_port.write(cmd, response);
+    return response.get(2).asBool();
 }
