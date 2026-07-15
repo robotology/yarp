@@ -93,14 +93,6 @@ static yarp::os::NameStore* store = nullptr;
 static void init_Network()
 {
     net = new yarp::os::Network;
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    if (verbose) {
-        yarp::os::NetworkBase::setVerbosity(1);
-    }
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
 }
 
 static void fini_Network()

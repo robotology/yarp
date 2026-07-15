@@ -14,13 +14,7 @@
 
 namespace yarp::dev {
 class IControlCalibrationRaw;
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlCalibrationRaw instead") IControlCalibrationRaw IControlCalibration2Raw;
-#endif
 class IControlCalibration;
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlCalibration instead") IControlCalibration IControlCalibration2;
-#endif
 struct CalibrationParameters;
 } // namespace yarp::dev
 

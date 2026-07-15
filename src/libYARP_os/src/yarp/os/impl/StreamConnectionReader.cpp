@@ -100,28 +100,6 @@ bool StreamConnectionReader::expectBlock(Bytes& b)
     return false;
 }
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.2
-std::string StreamConnectionReader::expectString(int len)
-{
-    if (!isGood()) {
-        return {};
-    }
-    char* buf = new char[len];
-    yarp::os::Bytes b(buf, len);
-    yAssert(in != nullptr);
-    yarp::conf::ssize_t r = in->read(b);
-    if (r < 0 || static_cast<size_t>(r) < b.length()) {
-        err = true;
-        delete[] buf;
-        return {};
-    }
-    messageLen -= b.length();
-    std::string s = buf;
-    delete[] buf;
-    return s;
-}
-#endif // YARP_NO_DEPRECATED
-
 std::string StreamConnectionReader::expectLine()
 {
     if (!isGood()) {
