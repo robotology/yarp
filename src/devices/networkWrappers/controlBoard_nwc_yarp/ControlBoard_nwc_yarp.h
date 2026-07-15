@@ -49,7 +49,7 @@ class DiagnosticThread;
 * to use a device exposing controlboard method even from a different process (or even computer)
 * from the one that opened the controlboard device.
 *
-* Parameters required by this device are shown in class: RemoteControlBoard_ParamsParser
+* Parameters required by this device are shown in class: ControlBoard_nwc_yarp_ParamsParser
 */
 class ControlBoard_nwc_yarp :
         public yarp::dev::IPidControl,
@@ -76,7 +76,7 @@ class ControlBoard_nwc_yarp :
         public yarp::dev::ICurrentControl,
         public yarp::dev::IJointFault,
         public yarp::dev::IJointBrake,
-        public RemoteControlBoard_ParamsParser
+        public ControlBoard_nwc_yarp_ParamsParser
 {
 protected:
     yarp::os::Port command_p;
