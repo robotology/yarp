@@ -8,7 +8,7 @@ yarp_prepare_plugin(bayer
   EXTRA_CONFIG
     SUBTYPE=recv
     CODE="not applicable"
-  DEFAULT ON
+  DEFAULT OFF
 )
 
 if(NOT SKIP_bayer)

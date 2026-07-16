@@ -498,7 +498,7 @@ yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader)
  * Class PortMonitorGroup
  */
 
-ElectionOf<PortMonitorGroup> *PortMonitor::peers = nullptr;
+std::unique_ptr<ElectionOf<PortMonitorGroup>> PortMonitor::peers = nullptr;
 
 // Make a singleton manager for finding peer carriers.
 ElectionOf<PortMonitorGroup>& PortMonitor::getPeers()
@@ -507,7 +507,7 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers()
 
     NetworkBase::lock();
     if (peers==nullptr) {
-        peers = new ElectionOf<PortMonitorGroup>;
+        peers = std::make_unique<ElectionOf<PortMonitorGroup>>();
         NetworkBase::unlock();
         yCAssert(PORTMONITORCARRIER, peers);
     } else {
