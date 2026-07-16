@@ -15,7 +15,7 @@ def main():
 
     # set the poly driver options
     options.put("robot", "icub")
-    options.put("device", "remote_controlboard")
+    options.put("device", "controlBoard_nwc_yarp")
     options.put("local", "/example_enc/client")
     options.put("remote", "/icub/left_arm")
 

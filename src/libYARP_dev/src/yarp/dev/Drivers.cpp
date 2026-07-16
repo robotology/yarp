@@ -21,6 +21,7 @@
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/IDeviceDriverParams.h>
 
+#include <map>
 #include <vector>
 #include <sstream>
 #include <iterator>
@@ -36,6 +37,9 @@ YARP_LOG_COMPONENT(DRIVERS, "yarp.dev.Drivers")
 class Drivers::Private : public YarpPluginSelector {
 public:
     std::vector<DriverCreator *> delegates;
+
+    // Maps a deprecated alias name to the canonical (official) device name.
+    std::map<std::string, std::string> deprecatedAliases;
 
     ~Private() override {
         for (auto& delegate : delegates) {
@@ -139,9 +143,21 @@ public:
         }
     }
 
-    DriverCreator *load(const char *name);
+    DriverCreator *load(const std::string& name);
 
-    DriverCreator *find(const char *name) {
+    DriverCreator *find(const std::string& name) {
+        // Check if the requested name is a deprecated alias.
+        auto aliasIt = deprecatedAliases.find(std::string(name));
+        if (aliasIt != deprecatedAliases.end()) {
+            const std::string& canonical = aliasIt->second;
+            yCError(DRIVERS,
+                    "Device name '%s' is deprecated. The official name is '%s'. "
+                    "The program will continue without any issue, but please update your configuration as soon as possible.",
+                    name.c_str(),
+                    canonical.c_str());
+            return find(canonical.c_str());
+        }
+
         for (auto& delegate : delegates) {
             if (delegate == nullptr) {
                 continue;
@@ -154,7 +170,7 @@ public:
         return load(name);
     }
 
-    bool remove(const char *name) {
+    bool remove(const std::string& name) {
         for (auto& delegate : delegates) {
             if (delegate == nullptr) {
                 continue;
@@ -175,12 +191,12 @@ private:
     YarpPlugin<DeviceDriver> plugin;
     SharedLibraryClass<DeviceDriver> dev;
 public:
-    StubDriver(const char *dll_name, const char *fn_name) {
+    StubDriver(const std::string& dll_name, const std::string& fn_name) {
         settings.setLibraryMethodName(dll_name,fn_name);
         init();
     }
 
-    StubDriver(const char *name) {
+    StubDriver(const std::string& name) {
         settings.setPluginName(name);
         YarpPluginSelector selector;
         selector.scan();
@@ -289,12 +305,17 @@ void Drivers::add(DriverCreator *creator) {
 }
 
 
-DriverCreator *Drivers::find(const char *name) {
+DriverCreator *Drivers::find(const std::string& name) {
     return mPriv->find(name);
 }
 
-bool Drivers::remove(const char *name) {
+bool Drivers::remove(const std::string& name) {
     return mPriv->remove(name);
+}
+
+void Drivers::addDeprecatedAlias(const std::string& alias, const std::string& canonical)
+{
+    mPriv->deprecatedAliases[alias] = canonical;
 }
 
 
@@ -307,7 +328,23 @@ DeviceDriver* Drivers::open(yarp::os::Searchable& prop) {
     return poly.take();
 }
 
-DriverCreator* Drivers::Private::load(const char *name) {
+DriverCreator* Drivers::Private::load(const std::string& name) {
+    // Before attempting a direct plugin lookup, check if "name" is a
+    // deprecated alias registered in any .ini file (via "deprecated_alias" field).
+    YarpPluginSelector selector;
+    selector.scan();
+    auto staticAliases = selector.getDeprecatedAliases();
+    auto it = staticAliases.find(name);
+    if (it != staticAliases.end()) {
+        const std::string& canonical = it->second;
+        yCError(DRIVERS,
+                "Device name '%s' is a deprecated alias. The official name is '%s'. "
+                "The program will continue, but please update your configuration.",
+                name.c_str(),
+                canonical.c_str());
+        return load(canonical);
+    }
+
     auto* result = new StubDriver(name);
     if (!result->isValid()) {
         delete result;

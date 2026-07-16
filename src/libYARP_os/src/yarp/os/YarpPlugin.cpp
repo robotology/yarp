@@ -267,12 +267,14 @@ void YarpPluginSelector::scan()
     // Read the .ini files and populate the lists
     plugins.clear();
     search_path.clear();
+    deprecated_aliases.clear();  // <-- reset aliases on re-scan
+
     Bottle inilst = config.findGroup("inifile").tail();
     for (size_t i = 0; i < inilst.size(); i++) {
         std::string inifile = inilst.get(i).asString();
         Bottle inigroup = config.findGroup(inifile);
 
-        // If a .ini file containes a "plugin" key, it identifies a plugin
+        // If a .ini file contains a "plugin" key, it identifies a plugin
         Bottle lst = inigroup.findGroup("plugin").tail();
         for (size_t i = 0; i < lst.size(); i++) {
             std::string plugin_name = lst.get(i).asString();
@@ -280,6 +282,12 @@ void YarpPluginSelector::scan()
             group.add(Value::makeValue(std::string("(inifile \"") + inifile + "\")"));
             if (select(group)) {
                 plugins.addList() = group;
+
+                // Populate deprecated_aliases from "deprecated_alias" field
+                std::string alias = group.find("deprecated_alias").asString();
+                if (!alias.empty()) {
+                    deprecated_aliases[alias] = plugin_name;
+                }
             }
         }
 

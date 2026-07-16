@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GENERATION is ON.
 
-// Generated on: Thu Jun 18 15:05:33 2026
+// Generated on: Thu Jul 16 00:24:16 2026
 
 
 #ifndef JOYPADCONTROL_NWC_YARP_PARAMSPARSER_H

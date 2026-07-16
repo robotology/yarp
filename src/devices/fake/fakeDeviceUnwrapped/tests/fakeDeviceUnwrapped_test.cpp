@@ -20,6 +20,9 @@ TEST_CASE("dev::fakeDeviceUnwrapped", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
+    auto tc = GENERATE("fakeDeviceUnwrapped",
+                       "fakeDeviceUnwrappedOld");
+
     SECTION("Checking fakeDeviceUnwrapped device")
     {
         PolyDriver dd;
@@ -28,7 +31,7 @@ TEST_CASE("dev::fakeDeviceUnwrapped", "[yarp::dev]")
         ////////"Checking opening device polydrivers"
         {
             Property p_cfg;
-            p_cfg.put("device", "fakeDeviceUnwrapped");
+            p_cfg.put("device", tc);
             REQUIRE(dd.open(p_cfg));
         }
 

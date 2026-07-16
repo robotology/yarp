@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "RemoteControlBoard.h"
-#include "RemoteControlBoardLogComponent.h"
+#include "ControlBoard_nwc_yarp.h"
+#include "ControlBoard_nwc_yarp_LogComponent.h"
 #include "stateExtendedReader.h"
 
 #include <cstring>
@@ -87,7 +87,7 @@ public:
                 double min;
                 owner->getEstFrequency(it, av, min, max);
                 owner->resetStat();
-                yCDebug(REMOTECONTROLBOARD,
+                yCDebug(CONTROLBOARD_NWC_YARP,
                         "%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]",
                         ownerName.c_str(),
                         it,
@@ -101,7 +101,7 @@ public:
 };
 
 
-bool RemoteControlBoard::isLive()
+bool ControlBoard_nwc_yarp::isLive()
 {
     if (!m_njIsKnown)
     {
@@ -118,7 +118,7 @@ bool RemoteControlBoard::isLive()
     return m_njIsKnown;
 }
 
-bool RemoteControlBoard::open(Searchable& config)
+bool ControlBoard_nwc_yarp::open(Searchable& config)
 {
     if (!parseParams(config)) { return false; }
 
@@ -147,13 +147,13 @@ bool RemoteControlBoard::open(Searchable& config)
     {
         writeStrict_singleJoint = true;
         writeStrict_moreJoints  = true;
-        yCInfo(REMOTECONTROLBOARD, "RemoteControlBoard is ENABLING the writeStrict option for all commands");
+        yCInfo(CONTROLBOARD_NWC_YARP, "RemoteControlBoard is ENABLING the writeStrict option for all commands");
     }
     else if(m_writeStrict == "off")
     {
         writeStrict_singleJoint = false;
         writeStrict_moreJoints  = false;
-        yCInfo(REMOTECONTROLBOARD, "RemoteControlBoard is DISABLING the writeStrict option for all commands");
+        yCInfo(CONTROLBOARD_NWC_YARP, "RemoteControlBoard is DISABLING the writeStrict option for all commands");
     }
     else if (m_writeStrict.empty())
     {
@@ -161,7 +161,7 @@ bool RemoteControlBoard::open(Searchable& config)
     }
     else
     {
-        yCError(REMOTECONTROLBOARD, "Found writeStrict option with wrong value. Accepted options are 'on' or 'off'");
+        yCError(CONTROLBOARD_NWC_YARP, "Found writeStrict option with wrong value. Accepted options are 'on' or 'off'");
         return false;
     }
 
@@ -201,7 +201,7 @@ bool RemoteControlBoard::open(Searchable& config)
         // ok=Network::connect(command_p.getName(), s1.c_str(), carrier); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
         ok = command_p.addOutput(s1, m_carrier_cmd);
         if (!ok) {
-            yCError(REMOTECONTROLBOARD, "Problem connecting to %s, is the remote device available?", s1.c_str());
+            yCError(CONTROLBOARD_NWC_YARP, "Problem connecting to %s, is the remote device available?", s1.c_str());
             connectionProblem = true;
         }
         // set the QoS preferences for the 'command' port
@@ -224,7 +224,7 @@ bool RemoteControlBoard::open(Searchable& config)
         }
         else
         {
-            yCError(REMOTECONTROLBOARD, "Problem connecting to %s, is the remote device available?", s1.c_str());
+            yCError(CONTROLBOARD_NWC_YARP, "Problem connecting to %s, is the remote device available?", s1.c_str());
             connectionProblem = true;
         }
     }
@@ -242,7 +242,7 @@ bool RemoteControlBoard::open(Searchable& config)
     std::string local_rpc_portname = m_local + "/nwc/rpc:o";
     if (!m_rpcPort.open(local_rpc_portname))
     {
-        yCError(REMOTECONTROLBOARD, "open() error could not open rpc port %s, check network\n", local_rpc_portname.c_str());
+        yCError(CONTROLBOARD_NWC_YARP, "open() error could not open rpc port %s, check network\n", local_rpc_portname.c_str());
         command_p.close();
         extendedIntputStatePort.close();
         return false;
@@ -251,7 +251,7 @@ bool RemoteControlBoard::open(Searchable& config)
     //Attach the ControlBoardMsgs to the port
     if (!m_RPC.yarp().attachAsClient(m_rpcPort))
     {
-        yCError(REMOTECONTROLBOARD, "Error! Cannot attach the port as a client");
+        yCError(CONTROLBOARD_NWC_YARP, "Error! Cannot attach the port as a client");
         command_p.close();
         extendedIntputStatePort.close();
         m_rpcPort.close();
@@ -262,7 +262,7 @@ bool RemoteControlBoard::open(Searchable& config)
     std::string nws_rpc_portname = m_remote + "/nws/rpc:i";
     if (!Network::connect(local_rpc_portname, nws_rpc_portname))
     {
-        yCError(REMOTECONTROLBOARD, "open() error could not connect to %s\n", nws_rpc_portname.c_str());
+        yCError(CONTROLBOARD_NWC_YARP, "open() error could not connect to %s\n", nws_rpc_portname.c_str());
         command_p.close();
         extendedIntputStatePort.close();
         m_rpcPort.close();
@@ -282,7 +282,7 @@ bool RemoteControlBoard::open(Searchable& config)
     {
         if (m_remote!="")
         {
-            yCError(REMOTECONTROLBOARD, "Problems with obtaining the number of controlled axes");
+            yCError(CONTROLBOARD_NWC_YARP, "Problems with obtaining the number of controlled axes");
             command_p.close();
             extendedIntputStatePort.close();
             m_rpcPort.close();
@@ -328,7 +328,7 @@ bool RemoteControlBoard::open(Searchable& config)
     auto ret = m_RPC.getDeviceInterfacesRPC();
     if (!ret.ret)
     {
-       yCError(REMOTECONTROLBOARD, "Unable to getDeviceInterfacesRPC");
+       yCError(CONTROLBOARD_NWC_YARP, "Unable to getDeviceInterfacesRPC");
         command_p.close();
         extendedIntputStatePort.close();
         m_rpcPort.close();
@@ -339,7 +339,7 @@ bool RemoteControlBoard::open(Searchable& config)
     return true;
 }
 
-bool RemoteControlBoard::close()
+bool ControlBoard_nwc_yarp::close()
 {
     if (diagnosticThread!=nullptr)
     {
@@ -370,7 +370,7 @@ bool RemoteControlBoard::close()
         if (auto it = m_device_has_interfaces.find(VALUE);                \
             it == m_device_has_interfaces.end() || !it->second)           \
         {                                                                 \
-            yCError(REMOTECONTROLBOARD,                                   \
+            yCError(CONTROLBOARD_NWC_YARP,                                   \
                     "Device does not implement required interface: %s",   \
                     VALUE);                                               \
             return yarp::dev::ReturnValue::return_code::                  \
@@ -378,12 +378,12 @@ bool RemoteControlBoard::close()
         }                                                                 \
     }
 
-yarp::dev::ReturnValue RemoteControlBoard::getAxes(int *ax)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getAxes(int *ax)
 {
     LOCKMUTEX
     auto ret = m_RPC.getAxesRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getAxesRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getAxesRPC");
         return ret.ret;
     }
     *ax = ret.axes;
@@ -392,253 +392,253 @@ yarp::dev::ReturnValue RemoteControlBoard::getAxes(int *ax)
 
 // BEGIN IPidControl
 
-ReturnValue RemoteControlBoard::getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail)
+ReturnValue ControlBoard_nwc_yarp::getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail)
 {
     LOCKMUTEX
     auto ret = m_RPC.getAvailablePidsRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getAvailablePids");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getAvailablePids");
         return ret.ret;
     }
     avail = ret.avail;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
+ReturnValue ControlBoard_nwc_yarp::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
     LOCKMUTEX
     auto ret = m_RPC.setPidRPC(pidtype, j, pid);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setPidRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setPidRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::setPids(const PidControlTypeEnum& pidtype, const Pid *pids)
+ReturnValue ControlBoard_nwc_yarp::setPids(const PidControlTypeEnum& pidtype, const Pid *pids)
 {
     LOCKMUTEX
     std::vector<Pid> pids_vec(pids, pids + m_nj);
     auto ret = m_RPC.setPidsRPC(pidtype, pids_vec);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setPidsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setPidsRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
+ReturnValue ControlBoard_nwc_yarp::setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
 {
     LOCKMUTEX
     auto ret = m_RPC.setPidReferenceRPC(pidtype, j, ref);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setPidReferenceRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setPidReferenceRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::setPidReferences(const PidControlTypeEnum& pidtype, const double *refs)
+ReturnValue ControlBoard_nwc_yarp::setPidReferences(const PidControlTypeEnum& pidtype, const double *refs)
 {
     LOCKMUTEX
     std::vector<double> pids_refs(refs, refs + m_nj);
     auto ret = m_RPC.setPidReferencesRPC(pidtype, pids_refs);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setPidReferencesRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setPidReferencesRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit)
+ReturnValue ControlBoard_nwc_yarp::setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit)
 {
     LOCKMUTEX
     auto ret = m_RPC.setPidErrorLimitRPC(pidtype, j, limit);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setPidErrorLimitRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setPidErrorLimitRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits)
+ReturnValue ControlBoard_nwc_yarp::setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits)
 {
     LOCKMUTEX
     std::vector<double> pids_lims(limits, limits + m_nj);
     auto ret = m_RPC.setPidErrorLimitsRPC(pidtype, pids_lims);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setPidErrorLimitsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setPidErrorLimitsRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
+ReturnValue ControlBoard_nwc_yarp::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidErrorRPC(pidtype,j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidErrorRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidErrorRPC");
         return ret.ret;
     }
     *err = ret.err;
     return  ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
+ReturnValue ControlBoard_nwc_yarp::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidErrorsRPC(pidtype);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidErrorsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidErrorsRPC");
         return ret.ret;
     }
     std::copy(ret.errs.begin(), ret.errs.end(), errs);
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
+ReturnValue ControlBoard_nwc_yarp::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidRPC(pidtype,j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidRPC");
         return ret.ret;
     }
     *pid = ret.pid;
     return  ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
+ReturnValue ControlBoard_nwc_yarp::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidsRPC(pidtype);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidsRPC");
         return ret.ret;
     }
     std::copy(ret.pids.begin(), ret.pids.end(), pids);
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
+ReturnValue ControlBoard_nwc_yarp::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidReferenceRPC(pidtype,j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidReferenceRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidReferenceRPC");
         return ret.ret;
     }
     *ref = ret.ref;
     return  ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
+ReturnValue ControlBoard_nwc_yarp::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidReferencesRPC(pidtype);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidReferencesRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidReferencesRPC");
         return ret.ret;
     }
     std::copy(ret.refs.begin(), ret.refs.end(), refs);
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit)
+ReturnValue ControlBoard_nwc_yarp::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidErrorLimitRPC(pidtype,j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidErrorLimitRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidErrorLimitRPC");
         return ret.ret;
     }
     *limit = ret.lim;
     return  ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits)
+ReturnValue ControlBoard_nwc_yarp::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidErrorLimitsRPC(pidtype);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidErrorLimits");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidErrorLimits");
         return ret.ret;
     }
     std::copy(ret.lims.begin(), ret.lims.end(), limits);
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::resetPid(const PidControlTypeEnum& pidtype, int j)
+ReturnValue ControlBoard_nwc_yarp::resetPid(const PidControlTypeEnum& pidtype, int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.resetPidRPC(pidtype, j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to resetPidRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to resetPidRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::disablePid(const PidControlTypeEnum& pidtype, int j)
+ReturnValue ControlBoard_nwc_yarp::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.disablePidRPC(pidtype, j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to disablePidRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to disablePidRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::enablePid(const PidControlTypeEnum& pidtype, int j)
+ReturnValue ControlBoard_nwc_yarp::enablePid(const PidControlTypeEnum& pidtype, int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.enablePidRPC(pidtype, j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to enablePidRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to enablePidRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool& enabled)
+ReturnValue ControlBoard_nwc_yarp::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool& enabled)
 {
     LOCKMUTEX
     auto ret = m_RPC.isPidEnabledRPC(pidtype,j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to isPidEnabledRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to isPidEnabledRPC");
         return ret.ret;
     }
     enabled = ret.isEnabled;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out)
+ReturnValue ControlBoard_nwc_yarp::getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidOutputRPC(pidtype,j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidOutputRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidOutputRPC");
         return ret.ret;
     }
     *out = ret.out;
     return  ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
+ReturnValue ControlBoard_nwc_yarp::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidOutputsRPC(pidtype);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidOutputsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidOutputsRPC");
         return ret.ret;
     }
     std::copy(ret.outs.begin(), ret.outs.end(), outs);
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
+ReturnValue ControlBoard_nwc_yarp::setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
 {
     if (m_use_streaming)
     {
@@ -662,14 +662,14 @@ ReturnValue RemoteControlBoard::setPidOffset(const PidControlTypeEnum& pidtype, 
         LOCKMUTEX
         auto ret = m_RPC.setPidOffsetOneRPC(pidtype,j,v);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to velocityMoveOneRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to velocityMoveOneRPC");
             return ret;
         }
         return ret;
     }
 }
 
-ReturnValue RemoteControlBoard::setPidFeedforward(const PidControlTypeEnum& pidtype, int j, double v)
+ReturnValue ControlBoard_nwc_yarp::setPidFeedforward(const PidControlTypeEnum& pidtype, int j, double v)
 {
     if (m_use_streaming)
     {
@@ -693,55 +693,55 @@ ReturnValue RemoteControlBoard::setPidFeedforward(const PidControlTypeEnum& pidt
         LOCKMUTEX
         auto ret = m_RPC.setPidFeedforwardOneRPC(pidtype,j,v);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to velocityMoveOneRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to velocityMoveOneRPC");
             return ret;
         }
         return ret;
     }
 }
 
-ReturnValue RemoteControlBoard::getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, PidExtraInfo& info)
+ReturnValue ControlBoard_nwc_yarp::getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, PidExtraInfo& info)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidExtraInfoRPC(pidtype,j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidExtraInfoRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidExtraInfoRPC");
         return ret.ret;
     }
     info = ret.info;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<PidExtraInfo>& info)
+ReturnValue ControlBoard_nwc_yarp::getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<PidExtraInfo>& info)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidExtraInfosRPC(pidtype);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidExtraInfosRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidExtraInfosRPC");
         return ret.ret;
     }
     info = ret.info;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidOffset(const PidControlTypeEnum& pidtype, int j, double& value)
+ReturnValue ControlBoard_nwc_yarp::getPidOffset(const PidControlTypeEnum& pidtype, int j, double& value)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidOffsetRPC(pidtype,j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidOffsetRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidOffsetRPC");
         return ret.ret;
     }
     value = ret.offset;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getPidFeedforward(const PidControlTypeEnum& pidtype, int j,  double& value)
+ReturnValue ControlBoard_nwc_yarp::getPidFeedforward(const PidControlTypeEnum& pidtype, int j,  double& value)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPidFeedforwardRPC(pidtype,j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPidFeedforwardRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPidFeedforwardRPC");
         return ret.ret;
     }
     value = ret.feedforward;
@@ -752,52 +752,52 @@ ReturnValue RemoteControlBoard::getPidFeedforward(const PidControlTypeEnum& pidt
 
 // BEGIN IEncoder
 
-yarp::dev::ReturnValue RemoteControlBoard::resetEncoder(int j)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::resetEncoder(int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.resetEncoderOneRPC(j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to resetEncoderOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to resetEncoderOneRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::resetEncoders()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::resetEncoders()
 {
     LOCKMUTEX
     auto ret = m_RPC.resetEncoderAllRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to resetEncoderAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to resetEncoderAllRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setEncoder(int j, double val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setEncoder(int j, double val)
 {
     LOCKMUTEX
     auto ret = m_RPC.setEncoderOneRPC(j, val);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setEncoderOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setEncoderOneRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setEncoders(const double *vals)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setEncoders(const double *vals)
 {
     LOCKMUTEX
     std::vector<double> temp(vals, vals + this->m_nj);
     auto ret = m_RPC.setEncoderAllRPC(temp);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setEncoderAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setEncoderAllRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getEncoder(int j, double *v)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getEncoder(int j, double *v)
 {
     double localArrivalTime = 0.0;
 
@@ -807,7 +807,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getEncoder(int j, double *v)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getEncoderTimed(int j, double *v, double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getEncoderTimed(int j, double *v, double *t)
 {
     double localArrivalTime = 0.0;
 
@@ -818,7 +818,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getEncoderTimed(int j, double *v, dou
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getEncoders(double *encs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getEncoders(double *encs)
 {
     double localArrivalTime = 0.0;
 
@@ -828,7 +828,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getEncoders(double *encs)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getEncodersTimed(double *encs, double *ts)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getEncodersTimed(double *encs, double *ts)
 {
     double localArrivalTime=0.0;
 
@@ -839,7 +839,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getEncodersTimed(double *encs, double
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getEncoderSpeed(int j, double *sp)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getEncoderSpeed(int j, double *sp)
 {
     double localArrivalTime=0.0;
 
@@ -849,7 +849,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getEncoderSpeed(int j, double *sp)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getEncoderSpeeds(double *spds)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getEncoderSpeeds(double *spds)
 {
     double localArrivalTime=0.0;
 
@@ -859,7 +859,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getEncoderSpeeds(double *spds)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getEncoderAcceleration(int j, double *acc)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getEncoderAcceleration(int j, double *acc)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -868,7 +868,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getEncoderAcceleration(int j, double 
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getEncoderAccelerations(double *accs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getEncoderAccelerations(double *accs)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -881,36 +881,36 @@ yarp::dev::ReturnValue RemoteControlBoard::getEncoderAccelerations(double *accs)
 
 // BEGIN IRemoteVariable
 
-yarp::dev::ReturnValue RemoteControlBoard::getRemoteVariable(std::string key, yarp::os::Bottle& val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRemoteVariable(std::string key, yarp::os::Bottle& val)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRemoteVariableRPC(key);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRemoteVariable");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRemoteVariable");
         return ret.ret;
     }
     val = ret.val;
     return  ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
 {
     LOCKMUTEX
     auto ret = m_RPC.setRemoteVariableRPC(key, val);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setRemoteVariable");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setRemoteVariable");
         return ret;
     }
     return ret;
 }
 
 
-yarp::dev::ReturnValue RemoteControlBoard::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRemoteVariablesListRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRemoteVariable");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRemoteVariable");
         return ret.ret;
     }
     std::copy(ret.listOfKeys.begin(), ret.listOfKeys.end(), listOfKeys);
@@ -921,19 +921,19 @@ yarp::dev::ReturnValue RemoteControlBoard::getRemoteVariablesList(yarp::os::Bott
 
 // BEGIN IMotor
 
-yarp::dev::ReturnValue RemoteControlBoard::getNumberOfMotors(int *num)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getNumberOfMotors(int *num)
 {
     LOCKMUTEX
     auto ret = m_RPC.getNumberOfMotorsRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getNumberOfMotors");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getNumberOfMotors");
         return ret.ret;
     }
     *num = ret.val;
     return  ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTemperature      (int m, double* val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTemperature      (int m, double* val)
 {
     double localArrivalTime = 0.0;
 
@@ -943,7 +943,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getTemperature      (int m, double* v
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTemperatures     (double *vals)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTemperatures     (double *vals)
 {
     double localArrivalTime = 0.0;
 
@@ -953,47 +953,47 @@ yarp::dev::ReturnValue RemoteControlBoard::getTemperatures     (double *vals)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTemperatureLimit (int m, double* val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTemperatureLimit (int m, double* val)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTemperatureLimitRPC(m);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTemperatureLimit");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTemperatureLimit");
         return ret.ret;
     }
     *val = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setTemperatureLimit (int m, const double val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setTemperatureLimit (int m, const double val)
 {
     LOCKMUTEX
     auto ret = m_RPC.setTemperatureLimitRPC(m, val);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setTemperatureLimit");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setTemperatureLimit");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getGearboxRatio(int m, double* val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getGearboxRatio(int m, double* val)
 {
     LOCKMUTEX
     auto ret = m_RPC.getGearboxRatioRPC(m);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getGearboxRatio");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getGearboxRatio");
         return ret.ret;
     }
     *val = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setGearboxRatio(int m, const double val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setGearboxRatio(int m, const double val)
 {
     LOCKMUTEX
     auto ret = m_RPC.setGearboxRatioRPC(m, val);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setGearboxRatio");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setGearboxRatio");
         return ret;
     }
     return ret;
@@ -1003,75 +1003,75 @@ yarp::dev::ReturnValue RemoteControlBoard::setGearboxRatio(int m, const double v
 
 // BEGIN IMotorEncoder
 
-yarp::dev::ReturnValue RemoteControlBoard::resetMotorEncoder(int j)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::resetMotorEncoder(int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.resetMotorEncoderRPC(j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to resetMotorEncoder");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to resetMotorEncoder");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::resetMotorEncoders()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::resetMotorEncoders()
 {
     LOCKMUTEX
     auto ret = m_RPC.resetMotorEncodersRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to resetMotorEncoders");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to resetMotorEncoders");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setMotorEncoder(int j, const double val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setMotorEncoder(int j, const double val)
 {
     LOCKMUTEX
     auto ret = m_RPC.setMotorEncoderRPC(j, val);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setMotorEncoder");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setMotorEncoder");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setMotorEncoderCountsPerRevolution(int m, const double cpr)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setMotorEncoderCountsPerRevolution(int m, const double cpr)
 {
     LOCKMUTEX
     auto ret = m_RPC.setMotorEncoderCountsPerRevolutionRPC(m, cpr);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setMotorEncoderCountsPerRevolution");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setMotorEncoderCountsPerRevolution");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderCountsPerRevolution(int m, double *cpr)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorEncoderCountsPerRevolution(int m, double *cpr)
 {
     LOCKMUTEX
     auto ret = m_RPC.getMotorEncoderCountsPerRevolutionRPC(m);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getMotorEncoderCountsPerRevolution");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getMotorEncoderCountsPerRevolution");
         return ret.ret;
     }
     *cpr = ret.cpr;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setMotorEncoders(const double *vals)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setMotorEncoders(const double *vals)
 {
     LOCKMUTEX
     std::vector<double> temp(vals, vals + this->m_nj);
     auto ret = m_RPC.setMotorEncodersAllRPC(temp);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setMotorEncoders");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setMotorEncoders");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoder(int j, double *v)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorEncoder(int j, double *v)
 {
     double localArrivalTime = 0.0;
 
@@ -1081,7 +1081,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoder(int j, double *v)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderTimed(int j, double *v, double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorEncoderTimed(int j, double *v, double *t)
 {
     double localArrivalTime = 0.0;
 
@@ -1092,7 +1092,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderTimed(int j, double *v
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoders(double *encs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorEncoders(double *encs)
 {
     double localArrivalTime=0.0;
 
@@ -1102,7 +1102,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoders(double *encs)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorEncodersTimed(double *encs, double *ts)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorEncodersTimed(double *encs, double *ts)
 {
     double localArrivalTime=0.0;
 
@@ -1113,7 +1113,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getMotorEncodersTimed(double *encs, d
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderSpeed(int j, double *sp)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorEncoderSpeed(int j, double *sp)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -1122,7 +1122,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderSpeed(int j, double *s
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderSpeeds(double *spds)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorEncoderSpeeds(double *spds)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -1131,7 +1131,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderSpeeds(double *spds)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderAcceleration(int j, double *acc)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorEncoderAcceleration(int j, double *acc)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -1140,7 +1140,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderAcceleration(int j, do
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderAccelerations(double *accs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorEncoderAccelerations(double *accs)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -1149,12 +1149,12 @@ yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderAccelerations(double *
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getNumberOfMotorEncoders(int *num)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getNumberOfMotorEncoders(int *num)
 {
     LOCKMUTEX
     auto ret = m_RPC.getNumberOfMotorEncodersRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getNumberOfMotorEncodersRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getNumberOfMotorEncodersRPC");
         return ret.ret;
     }
     *num = ret.num;
@@ -1169,7 +1169,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getNumberOfMotorEncoders(int *num)
  * Get the time stamp for the last read data
  * @return last time stamp.
  */
-Stamp RemoteControlBoard::getLastInputStamp()
+Stamp ControlBoard_nwc_yarp::getLastInputStamp()
 {
     Stamp ret;
 //    mutex.lock();
@@ -1182,326 +1182,326 @@ Stamp RemoteControlBoard::getLastInputStamp()
 
 // BEGIN IPositionControl
 
-yarp::dev::ReturnValue RemoteControlBoard::positionMove(int j, double ref)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::positionMove(int j, double ref)
 {
     LOCKMUTEX
     auto ret = m_RPC.positionMoveOneRPC(j, ref);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to positionMoveOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to positionMoveOneRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::positionMove(const int n_joint, const int *joints, const double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::positionMove(const int n_joint, const int *joints, const double *refs)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + n_joint);
     std::vector<double> tempvals(refs, refs + n_joint);
     auto ret = m_RPC.positionMoveGroupRPC(tempjoints, tempvals);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to positionMoveGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to positionMoveGroupRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::positionMove(const double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::positionMove(const double *refs)
 {
     LOCKMUTEX
     std::vector<double> temp(refs, refs + this->m_nj);
     auto ret = m_RPC.positionMoveAllRPC(temp);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to positionMoveAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to positionMoveAllRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTargetPosition(const int joint, double *ref)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTargetPosition(const int joint, double *ref)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTargetPositionOneRPC(joint);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTargetPositionsOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTargetPositionsOneRPC");
         return ret.ret;
     }
     *ref = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTargetPositions(double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTargetPositions(double *refs)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTargetPositionAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTargetPositionAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTargetPositionAllRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), refs);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTargetPositions(const int n_joint, const int *joints, double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTargetPositions(const int n_joint, const int *joints, double *refs)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + n_joint);
     auto ret = m_RPC.getTargetPositionGroupRPC(tempjoints);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTargetPositionGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTargetPositionGroupRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), refs);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::relativeMove(int j, double delta)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::relativeMove(int j, double delta)
 {
     LOCKMUTEX
     auto ret = m_RPC.relativeMoveOneRPC(j, delta);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to relativeMoveOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to relativeMoveOneRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::relativeMove(const int n_joint, const int *joints, const double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::relativeMove(const int n_joint, const int *joints, const double *refs)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + n_joint);
     std::vector<double> tempvals(refs, refs + n_joint);
     auto ret = m_RPC.relativeMoveGroupRPC(tempjoints, tempvals);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to relativeMoveGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to relativeMoveGroupRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::relativeMove(const double *deltas)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::relativeMove(const double *deltas)
 {
     LOCKMUTEX
     std::vector<double> temp(deltas, deltas + this->m_nj);
     auto ret = m_RPC.relativeMoveAllRPC(temp);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to relativeMoveAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to relativeMoveAllRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::checkMotionDone(int j, bool& flag)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::checkMotionDone(int j, bool& flag)
 {
     LOCKMUTEX
     auto ret = m_RPC.checkMotionDoneOneRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to checkMotionDoneOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to checkMotionDoneOneRPC");
         return ret.ret;
     }
     flag = ret.flag;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::checkMotionDone(const std::vector<int>& joints, bool& flag)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::checkMotionDone(const std::vector<int>& joints, bool& flag)
 {
     LOCKMUTEX
     auto ret = m_RPC.checkMotionDoneGroupRPC(joints);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to checkMotionDoneGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to checkMotionDoneGroupRPC");
         return ret.ret;
     }
     flag = ret.flag;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::checkMotionDone(bool& flag)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::checkMotionDone(bool& flag)
 {
     LOCKMUTEX
     auto ret = m_RPC.checkMotionDoneAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to checkMotionDoneAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to checkMotionDoneAllRPC");
         return ret.ret;
     }
     flag = ret.flag;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setTrajSpeed(int j, double sp)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setTrajSpeed(int j, double sp)
 {
     LOCKMUTEX
     auto ret = m_RPC.setTrajSpeedOneRPC(j, sp);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setTrajSpeedOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setTrajSpeedOneRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setTrajSpeeds(const int n_joint, const int *joints, const double *spds)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setTrajSpeeds(const int n_joint, const int *joints, const double *spds)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + n_joint);
     std::vector<double> tempvals(spds, spds + n_joint);
     auto ret = m_RPC.setTrajSpeedGroupRPC(tempjoints, tempvals);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setTrajSpeedGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setTrajSpeedGroupRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setTrajSpeeds(const double *spds)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setTrajSpeeds(const double *spds)
 {
     LOCKMUTEX
     std::vector<double> temp(spds, spds + this->m_nj);
     auto ret = m_RPC.setTrajSpeedAllRPC(temp);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setTrajSpeedAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setTrajSpeedAllRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setTrajAcceleration(int j, double acc)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setTrajAcceleration(int j, double acc)
 {
     LOCKMUTEX
     auto ret = m_RPC.setTrajAccelerationOneRPC(j, acc);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setTrajAccelerationOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setTrajAccelerationOneRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setTrajAccelerations(const int n_joint, const int *joints, const double *accs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setTrajAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + n_joint);
     std::vector<double> tempvals(accs, accs + n_joint);
     auto ret = m_RPC.setTrajAccelerationsGroupRPC(tempjoints, tempvals);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setTrajAccelerationsGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setTrajAccelerationsGroupRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setTrajAccelerations(const double *accs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setTrajAccelerations(const double *accs)
 {
     LOCKMUTEX
     std::vector<double> temp(accs, accs + this->m_nj);
     auto ret = m_RPC.setTrajAccelerationsAllRPC(temp);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setTrajAccelerationsAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setTrajAccelerationsAllRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTrajSpeed(int j, double *ref)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTrajSpeed(int j, double *ref)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTrajSpeedOneRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTrajSpeedOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTrajSpeedOneRPC");
         return ret.ret;
     }
     *ref = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTrajSpeeds(const int n_joint, const int *joints, double *spds)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTrajSpeeds(const int n_joint, const int *joints, double *spds)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + n_joint);
     auto ret = m_RPC.getTrajSpeedsGroupRPC(tempjoints);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTrajSpeedsGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTrajSpeedsGroupRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), spds);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTrajSpeeds(double *spds)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTrajSpeeds(double *spds)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTrajSpeedsAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTrajSpeedsAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTrajSpeedsAllRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), spds);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTrajAcceleration(int j, double *acc)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTrajAcceleration(int j, double *acc)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTrajAccelerationOneRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTrajAccelerationOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTrajAccelerationOneRPC");
         return ret.ret;
     }
     *acc = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTrajAccelerations(const int n_joint, const int *joints, double *accs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTrajAccelerations(const int n_joint, const int *joints, double *accs)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + n_joint);
     auto ret = m_RPC.getTrajAccelerationGroupRPC(tempjoints);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTrajAccelerationsGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTrajAccelerationsGroupRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), accs);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTrajAccelerations(double *accs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTrajAccelerations(double *accs)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTrajAccelerationAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTrajAccelerationsAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTrajAccelerationsAllRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), accs);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::stop(int j)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::stop(int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.stopOneRPC(j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to stopOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to stopOneRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::stop(const int len, const int *joints)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::stop(const int len, const int *joints)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + len);
     auto ret = m_RPC.stopGroupRPC(tempjoints);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to stopGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to stopGroupRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::stop()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::stop()
 {
     LOCKMUTEX
     auto ret = m_RPC.stopAllRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to stopAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to stopAllRPC");
         return ret;
     }
     return ret;
@@ -1510,12 +1510,12 @@ yarp::dev::ReturnValue RemoteControlBoard::stop()
 // END IPositionControl
 
 // BEGIN IJoint Fault
-yarp::dev::ReturnValue RemoteControlBoard::getLastJointFault(int j, int& fault, std::string& message)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getLastJointFault(int j, int& fault, std::string& message)
 {
     LOCKMUTEX
     auto ret = m_RPC.getLastJointFaultRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getLastJointFaultRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getLastJointFaultRPC");
         return ret.ret;
     }
     fault = ret.fault;
@@ -1526,7 +1526,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getLastJointFault(int j, int& fault, 
 
 // BEGIN IVelocityControl
 
-yarp::dev::ReturnValue RemoteControlBoard::velocityMove(int j, double v)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(int j, double v)
 {
     if (m_use_streaming)
     {
@@ -1549,14 +1549,14 @@ yarp::dev::ReturnValue RemoteControlBoard::velocityMove(int j, double v)
         LOCKMUTEX
         auto ret = m_RPC.velocityMoveOneRPC(j,v);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to velocityMoveOneRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to velocityMoveOneRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::velocityMove(const double *v)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(const double *v)
 {
     if (m_use_streaming)
     {
@@ -1579,7 +1579,7 @@ yarp::dev::ReturnValue RemoteControlBoard::velocityMove(const double *v)
         std::vector<double> temp(v, v + this->m_nj);
         auto ret = m_RPC.velocityMoveAllRPC(temp);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to velocityMoveAllRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to velocityMoveAllRPC");
             return ret;
         }
         return ret;
@@ -1590,122 +1590,122 @@ yarp::dev::ReturnValue RemoteControlBoard::velocityMove(const double *v)
 
 // BEGIN IAmplifierControl
 
-yarp::dev::ReturnValue RemoteControlBoard::enableAmp(int j)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::enableAmp(int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.enableAmpRPC(j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to enableAmp");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to enableAmp");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::disableAmp(int j)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::disableAmp(int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.disableAmpRPC(j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to disableAmpRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to disableAmpRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getAmpStatus(int *st)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getAmpStatus(int *st)
 {
     LOCKMUTEX
     auto ret = m_RPC.getAmpStatusAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getAmpStatusAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getAmpStatusAllRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), st);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getAmpStatus(int j, int *st)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getAmpStatus(int j, int *st)
 {
     LOCKMUTEX
     auto ret = m_RPC.getAmpStatusOneRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getAmpStatusOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getAmpStatusOneRPC");
         return ret.ret;
     }
     *st = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setMaxCurrent(int j, double v)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setMaxCurrent(int j, double v)
 {
     LOCKMUTEX
     auto ret = m_RPC.setMaxCurrentRPC(j,v);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setMaxCurrentRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setMaxCurrentRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMaxCurrent(int j, double *v)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMaxCurrent(int j, double *v)
 {
     LOCKMUTEX
     auto ret = m_RPC.getMaxCurrentRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getMaxCurrentRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getMaxCurrentRPC");
         return ret.ret;
     }
     *v = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getNominalCurrent(int m, double *val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getNominalCurrent(int m, double *val)
 {
     LOCKMUTEX
     auto ret = m_RPC.getNominalCurrentRPC(m);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getNominalCurrentRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getNominalCurrentRPC");
         return ret.ret;
     }
     *val = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setNominalCurrent(int m, const double val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setNominalCurrent(int m, const double val)
 {
     LOCKMUTEX
     auto ret = m_RPC.setNominalCurrentRPC(m,val);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setNominalCurrentRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setNominalCurrentRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getPeakCurrent(int m, double *val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getPeakCurrent(int m, double *val)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPeakCurrentRPC(m);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPeakCurrentRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPeakCurrentRPC");
         return ret.ret;
     }
     *val = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setPeakCurrent(int m, const double val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPeakCurrent(int m, const double val)
 {
     LOCKMUTEX
     auto ret = m_RPC.setPeakCurrentRPC(m,val);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setPeakCurrentRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setPeakCurrentRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getPWM(int m, double* val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getPWM(int m, double* val)
 {
     double localArrivalTime = 0.0;
     extendedPortMutex.lock();
@@ -1714,35 +1714,35 @@ yarp::dev::ReturnValue RemoteControlBoard::getPWM(int m, double* val)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getPWMLimit(int m, double* val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getPWMLimit(int m, double* val)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPWMLimitRPC(m);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPWMLimitRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPWMLimitRPC");
         return ret.ret;
     }
     *val = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setPWMLimit(int m, const double val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPWMLimit(int m, const double val)
 {
     LOCKMUTEX
     auto ret = m_RPC.setPWMLimitRPC(m,val);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setPWMLimitRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setPWMLimitRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getPowerSupplyVoltage(int m, double* val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getPowerSupplyVoltage(int m, double* val)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPowerSupplyVoltageRPC(m);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPowerSupplyVoltageRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPowerSupplyVoltageRPC");
         return ret.ret;
     }
     *val = ret.val;
@@ -1753,23 +1753,23 @@ yarp::dev::ReturnValue RemoteControlBoard::getPowerSupplyVoltage(int m, double* 
 
 // BEGIN IControlLimits
 
-ReturnValue RemoteControlBoard::setPosLimits(int axis, double min, double max)
+ReturnValue ControlBoard_nwc_yarp::setPosLimits(int axis, double min, double max)
 {
     LOCKMUTEX
     auto ret = m_RPC.setPosLimitsRPC(axis, min, max);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setPosLimitsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setPosLimitsRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::getPosLimits(int axis, double *min, double *max)
+ReturnValue ControlBoard_nwc_yarp::getPosLimits(int axis, double *min, double *max)
 {
     LOCKMUTEX
     auto ret = m_RPC.getPosLimitsRPC(axis);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getPosLimitsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getPosLimitsRPC");
         return ret.ret;
     }
     *min = ret.min;
@@ -1777,23 +1777,23 @@ ReturnValue RemoteControlBoard::getPosLimits(int axis, double *min, double *max)
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::setVelLimits(int axis, double min, double max)
+ReturnValue ControlBoard_nwc_yarp::setVelLimits(int axis, double min, double max)
 {
     LOCKMUTEX
     auto ret = m_RPC.setVelLimitsRPC(axis, min, max);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setVelLimitsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setVelLimitsRPC");
         return ret;
     }
     return ret;
 }
 
-ReturnValue RemoteControlBoard::getVelLimits(int axis, double *min, double *max)
+ReturnValue ControlBoard_nwc_yarp::getVelLimits(int axis, double *min, double *max)
 {
     LOCKMUTEX
     auto ret = m_RPC.getVelLimitsRPC(axis);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getVelLimitsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getVelLimitsRPC");
         return ret.ret;
     }
     *min = ret.min;
@@ -1805,24 +1805,24 @@ ReturnValue RemoteControlBoard::getVelLimits(int axis, double *min, double *max)
 
 // BEGIN IAxisInfo
 
-yarp::dev::ReturnValue RemoteControlBoard::getAxisName(int j, std::string& name)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getAxisName(int j, std::string& name)
 {
     LOCKMUTEX
     auto ret = m_RPC.getAxisNameRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getAxisNameRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getAxisNameRPC");
         return ret.ret;
     }
     name = ret.name;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getJointType(int j, yarp::dev::JointTypeEnum& type)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getJointType(int j, yarp::dev::JointTypeEnum& type)
 {
     LOCKMUTEX
     auto ret = m_RPC.getJointTypeRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getJointTypeRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getJointTypeRPC");
         return ret.ret;
     }
     type = ret.joint;
@@ -1832,62 +1832,62 @@ yarp::dev::ReturnValue RemoteControlBoard::getJointType(int j, yarp::dev::JointT
 // END IAxisInfo
 
 // BEGIN IControlCalibration
-yarp::dev::ReturnValue RemoteControlBoard::calibrateRobot()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::calibrateRobot()
 {
     LOCKMUTEX
     auto ret = m_RPC.calibrateRobotRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to calibrateRobot");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to calibrateRobot");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::abortCalibration()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::abortCalibration()
 {
     LOCKMUTEX
     auto ret = m_RPC.abortCalibrationRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to abortCalibration");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to abortCalibration");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::abortPark()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::abortPark()
 {
     LOCKMUTEX
     auto ret = m_RPC.abortParkRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to abortPark");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to abortPark");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::park(bool wait)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::park(bool wait)
 {
     LOCKMUTEX
     auto ret = m_RPC.parkRPC(wait);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to park");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to park");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3)
 {
     LOCKMUTEX
     auto ret = m_RPC.calibrateAxisWithParamsRPC(j, ui, v1, v2, v3);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to calibrateAxisWithParams");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to calibrateAxisWithParams");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setCalibrationParameters(int j, const CalibrationParameters& params)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setCalibrationParameters(int j, const CalibrationParameters& params)
 {
     LOCKMUTEX
     yCalibrationParameters cal;
@@ -1899,18 +1899,18 @@ yarp::dev::ReturnValue RemoteControlBoard::setCalibrationParameters(int j, const
     cal.paramZero  = params.paramZero;
     auto ret = m_RPC.setCalibrationParametersRPC(j,cal);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setCalibrationParameters");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setCalibrationParameters");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::calibrationDone(int j)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::calibrationDone(int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.calibrationDoneRPC(j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to calibrationDone");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to calibrationDone");
         return ret;
     }
     return ret;
@@ -1920,24 +1920,24 @@ yarp::dev::ReturnValue RemoteControlBoard::calibrationDone(int j)
 
 // BEGIN ITorqueControl
 
-yarp::dev::ReturnValue RemoteControlBoard::getRefTorque(int j, double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRefTorque(int j, double *t)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefTorqueOneRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefTorqueOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefTorqueOneRPC");
         return ret.ret;
     }
     *t = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getRefTorques(double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRefTorques(double *t)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefTorqueAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefTorqueAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefTorqueAllRPC");
         return ret.ret;
     }
 
@@ -1945,7 +1945,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getRefTorques(double *t)
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setRefTorques(const double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorques(const double *t)
 {
     if (m_use_streaming)
     {
@@ -1971,14 +1971,14 @@ yarp::dev::ReturnValue RemoteControlBoard::setRefTorques(const double *t)
         std::vector<double> temp(t, t + this->m_nj);
         auto ret = m_RPC.setRefTorqueAllRPC(temp);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setRefTorqueAllRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefTorqueAllRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setRefTorque(int j, double v)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorque(int j, double v)
 {
     if (m_use_streaming)
     {
@@ -2003,14 +2003,14 @@ yarp::dev::ReturnValue RemoteControlBoard::setRefTorque(int j, double v)
         LOCKMUTEX
         auto ret = m_RPC.setRefTorqueOneRPC(j,v);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setRefTorqueOneRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefTorqueOneRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setRefTorques(const int n_joint, const int *joints, const double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorques(const int n_joint, const int *joints, const double *t)
 {
     if (m_use_streaming)
     {
@@ -2039,14 +2039,14 @@ yarp::dev::ReturnValue RemoteControlBoard::setRefTorques(const int n_joint, cons
         std::vector<double> tempdata(t, t + n_joint);
         auto ret = m_RPC.setRefTorqueGroupRPC(tempjoints, tempdata);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setRefTorqueGroupRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefTorqueGroupRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setMotorTorqueParams(int j, const MotorTorqueParameters params)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setMotorTorqueParams(int j, const MotorTorqueParameters params)
 {
     LOCKMUTEX
     yMotorTorqueParameters mparams;
@@ -2061,18 +2061,18 @@ yarp::dev::ReturnValue RemoteControlBoard::setMotorTorqueParams(int j, const Mot
     mparams.viscousPos = params.viscousPos;
     auto ret = m_RPC.setMotorTorqueParamsRPC(j, mparams);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setMotorTorqueParamsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setMotorTorqueParamsRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getMotorTorqueParams(int j, MotorTorqueParameters *params)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getMotorTorqueParams(int j, MotorTorqueParameters *params)
 {
     LOCKMUTEX
     auto ret = m_RPC.getMotorTorqueParamsRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getMotorTorqueParamsRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getMotorTorqueParamsRPC");
         return ret.ret;
     }
     (*params).bemf = ret.params.bemf;
@@ -2087,7 +2087,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getMotorTorqueParams(int j, MotorTorq
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTorque(int j, double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTorque(int j, double *t)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -2096,7 +2096,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getTorque(int j, double *t)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTorques(double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTorques(double *t)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -2105,12 +2105,12 @@ yarp::dev::ReturnValue RemoteControlBoard::getTorques(double *t)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTorqueRange(int j, double *min, double* max)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTorqueRange(int j, double *min, double* max)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTorqueRangeOneRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTorqueRangeOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTorqueRangeOneRPC");
         return ret.ret;
     }
     *min = ret.min;
@@ -2118,12 +2118,12 @@ yarp::dev::ReturnValue RemoteControlBoard::getTorqueRange(int j, double *min, do
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTorqueRanges(double *min, double *max)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTorqueRanges(double *min, double *max)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTorqueRangeAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTorqueRangeAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTorqueRangeAllRPC");
         return ret.ret;
     }
     std::copy(ret.mins.begin(), ret.mins.end(), min);
@@ -2135,12 +2135,12 @@ yarp::dev::ReturnValue RemoteControlBoard::getTorqueRanges(double *min, double *
 
 // BEGIN IImpedanceControl
 
-yarp::dev::ReturnValue RemoteControlBoard::getImpedance(int j, double *stiffness, double *damping)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getImpedance(int j, double *stiffness, double *damping)
 {
     LOCKMUTEX
     auto ret = m_RPC.getImpedanceRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getImpedanceRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getImpedanceRPC");
         return ret.ret;
     }
     *stiffness = ret.stiffness;
@@ -2148,46 +2148,46 @@ yarp::dev::ReturnValue RemoteControlBoard::getImpedance(int j, double *stiffness
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getImpedanceOffset(int j, double *offset)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getImpedanceOffset(int j, double *offset)
 {
     LOCKMUTEX
     auto ret = m_RPC.getImpedanceOffsetRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getImpedanceOffsetRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getImpedanceOffsetRPC");
         return ret.ret;
     }
     *offset = ret.offset;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setImpedance(int j, double stiffness, double damping)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setImpedance(int j, double stiffness, double damping)
 {
     LOCKMUTEX
     auto ret = m_RPC.setImpedanceRPC(j,stiffness, damping);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setImpedance");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setImpedance");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setImpedanceOffset(int j, double offset)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setImpedanceOffset(int j, double offset)
 {
     LOCKMUTEX
     auto ret = m_RPC.setImpedanceOffsetRPC(j,offset);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setImpedanceOffset");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setImpedanceOffset");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
     LOCKMUTEX
     auto ret = m_RPC.getCurrentImpedanceLimitRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getCurrentImpedanceLimitRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getCurrentImpedanceLimitRPC");
         return ret.ret;
     }
     *min_stiff = ret.min_stiffness;
@@ -2201,19 +2201,19 @@ yarp::dev::ReturnValue RemoteControlBoard::getCurrentImpedanceLimit(int j, doubl
 
 // BEGIN IControlMode
 
-ReturnValue RemoteControlBoard::getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)
+ReturnValue ControlBoard_nwc_yarp::getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)
 {
     LOCKMUTEX
     auto ret = m_RPC.getAvailableControlModesRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getAvailableControlModes");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getAvailableControlModes");
         return ret.ret;
     }
     avail =ret.avail;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getControlMode(int j, yarp::dev::ControlModeEnum& mode)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getControlMode(int j, yarp::dev::ControlModeEnum& mode)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -2224,7 +2224,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getControlMode(int j, yarp::dev::Cont
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getControlModes(std::vector<yarp::dev::ControlModeEnum>& modes)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getControlModes(std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -2242,7 +2242,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getControlModes(std::vector<yarp::dev
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getControlModes(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getControlModes(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     double localArrivalTime=0.0;
 
@@ -2261,34 +2261,34 @@ yarp::dev::ReturnValue RemoteControlBoard::getControlModes(const std::vector<int
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlMode(int j, yarp::dev::SelectableControlModeEnum mode)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setControlMode(int j, yarp::dev::SelectableControlModeEnum mode)
 {
     LOCKMUTEX
     auto ret = m_RPC.setControlModeOneRPC(j, mode);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setControlMode");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setControlMode");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const std::vector<int>& j, const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setControlModes(const std::vector<int>& j, const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     LOCKMUTEX
     auto ret = m_RPC.setControlModeGroupRPC(j, modes);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setControlModes");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setControlModes");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     LOCKMUTEX
     auto ret = m_RPC.setControlModeAllRPC(modes);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setControlModes");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setControlModes");
         return ret;
     }
     return ret;
@@ -2298,7 +2298,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const std::vector<yar
 
 // BEGIN IPositionDirect
 
-yarp::dev::ReturnValue RemoteControlBoard::setPosition(int j, double ref)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPosition(int j, double ref)
 {
     if (m_use_streaming)
     {
@@ -2321,14 +2321,14 @@ yarp::dev::ReturnValue RemoteControlBoard::setPosition(int j, double ref)
         LOCKMUTEX
         auto ret = m_RPC.setRefPositionOneRPC(j, ref);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setPositionOneRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setPositionOneRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setPositions(const int n_joint, const int *joints, const double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     if (m_use_streaming)
     {
@@ -2357,14 +2357,14 @@ yarp::dev::ReturnValue RemoteControlBoard::setPositions(const int n_joint, const
         std::vector<double> tempdata(refs, refs + n_joint);
         auto ret = m_RPC.setRefPositionGroupRPC(tempjoints, tempdata);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setPositionGroupRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setPositionGroupRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setPositions(const double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPositions(const double *refs)
 {
     if (m_use_streaming)
     {
@@ -2387,44 +2387,44 @@ yarp::dev::ReturnValue RemoteControlBoard::setPositions(const double *refs)
         std::vector<double> temp(refs, refs + m_nj);
         auto ret = m_RPC.setRefPositionAllRPC(temp);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setPositionAllRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setPositionAllRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getRefPosition(const int joint, double* ref)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRefPosition(const int joint, double* ref)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefPositionOneRPC(joint);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefPositionOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefPositionOneRPC");
         return ret.ret;
     }
     *ref = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getRefPositions(double* refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRefPositions(double* refs)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefPositionAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefPositionAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefPositionAllRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), refs);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getRefPositions(const int n_joint, const int* joints, double* refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRefPositions(const int n_joint, const int* joints, double* refs)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + n_joint);
     auto ret = m_RPC.getRefPositionGroupRPC(tempjoints);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefPositionGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefPositionGroupRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), refs);
@@ -2435,7 +2435,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getRefPositions(const int n_joint, co
 
 // BEGIN IVelocityControl
 
-yarp::dev::ReturnValue RemoteControlBoard::velocityMove(const int n_joint, const int *joints, const double *spds)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
     if (m_use_streaming)
     {
@@ -2464,44 +2464,44 @@ yarp::dev::ReturnValue RemoteControlBoard::velocityMove(const int n_joint, const
         std::vector<double> tempdata(spds, spds + n_joint);
         auto ret = m_RPC.velocityMoveGroupRPC(tempjoints, tempdata);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to velocityMoveGroupRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to velocityMoveGroupRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTargetVelocity(const int joint, double* vel)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTargetVelocity(const int joint, double* vel)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTargetVelocityOneRPC(joint);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTargetVelocityOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTargetVelocityOneRPC");
         return ret.ret;
     }
     *vel = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTargetVelocities(double* vels)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTargetVelocities(double* vels)
 {
     LOCKMUTEX
     auto ret = m_RPC.getTargetVelocityAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTargetVelocityAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTargetVelocityAllRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), vels);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getTargetVelocities(const int n_joint, const int* joints, double* vels)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getTargetVelocities(const int n_joint, const int* joints, double* vels)
 {
     LOCKMUTEX
     std::vector<int> tempjoints(joints, joints + n_joint);
     auto ret = m_RPC.getTargetVelocityGroupRPC(tempjoints);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getTargetVelocityGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getTargetVelocityGroupRPC");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), vels);
@@ -2512,7 +2512,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getTargetVelocities(const int n_joint
 
 // BEGIN IInteractionMode
 
-yarp::dev::ReturnValue RemoteControlBoard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum& mode)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getInteractionMode(int axis, yarp::dev::InteractionModeEnum& mode)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -2523,7 +2523,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getInteractionMode(int axis, yarp::de
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getInteractionModes(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getInteractionModes(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     double localArrivalTime=0.0;
 
@@ -2542,7 +2542,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getInteractionModes(const std::vector
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getInteractionModes(std::vector<yarp::dev::InteractionModeEnum>& modes)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getInteractionModes(std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
@@ -2559,33 +2559,33 @@ yarp::dev::ReturnValue RemoteControlBoard::getInteractionModes(std::vector<yarp:
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
     LOCKMUTEX
     auto ret = m_RPC.setInteractionModeOneRPC(axis,mode);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setInteractionModeRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setInteractionModeRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setInteractionModes(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     LOCKMUTEX
     auto ret = m_RPC.setInteractionModesGroupRPC(joints, modes);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setInteractionModesGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setInteractionModesGroupRPC");
         return ret;
     }
     return ret;}
 
-yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes(const std::vector<yarp::dev::InteractionModeEnum>& modes)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setInteractionModes(const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     LOCKMUTEX
     auto ret = m_RPC.setInteractionModesAllRPC(modes);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setInteractionModesAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setInteractionModesAllRPC");
         return ret;
     }
     return ret;}
@@ -2594,101 +2594,101 @@ yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes(const std::vector
 
 // BEGIN IRemoteCalibrator
 
-yarp::dev::ReturnValue RemoteControlBoard::isCalibratorDevicePresent(bool *isCalib)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::isCalibratorDevicePresent(bool *isCalib)
 {
     LOCKMUTEX
     auto ret = m_RPC.isCalibratorDevicePresentRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to isCalibratorDevicePresentRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to isCalibratorDevicePresentRPC");
         return ret.ret;
     }
     *isCalib = ret.isPresent;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::calibrateSingleJoint(int j)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::calibrateSingleJoint(int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.calibrateSingleJointRPC(j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to calibrateSingleJoint");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to calibrateSingleJoint");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::calibrateWholePart()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::calibrateWholePart()
 {
     LOCKMUTEX
     auto ret = m_RPC.calibrateWholePartRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to calibrateWholePart");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to calibrateWholePart");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::homingSingleJoint(int j)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::homingSingleJoint(int j)
 {
     LOCKMUTEX
     auto ret = m_RPC.homingSingleJointRPC(j);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to homingSingleJoint");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to homingSingleJoint");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::homingWholePart()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::homingWholePart()
 {
     LOCKMUTEX
     auto ret = m_RPC.homingWholePartRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to homingWholePart");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to homingWholePart");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::parkSingleJoint(int j, bool _wait)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::parkSingleJoint(int j, bool _wait)
 {
     LOCKMUTEX
     auto ret = m_RPC.parkSingleJointRPC(j,_wait);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to parkSingleJoint");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to parkSingleJoint");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::parkWholePart()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::parkWholePart()
 {
     LOCKMUTEX
     auto ret = m_RPC.parkWholePartRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to parkWholePart");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to parkWholePart");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::quitCalibrate()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::quitCalibrate()
 {
     LOCKMUTEX
     auto ret = m_RPC.quitCalibrateRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to quitCalibrate");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to quitCalibrate");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::quitPark()
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::quitPark()
 {
     LOCKMUTEX
     auto ret = m_RPC.quitParkRPC();
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to quitPark");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to quitPark");
         return ret;
     }
     return ret;
@@ -2698,31 +2698,31 @@ yarp::dev::ReturnValue RemoteControlBoard::quitPark()
 
 // BEGIN ICurrentControl
 
-yarp::dev::ReturnValue RemoteControlBoard::getRefCurrents(double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRefCurrents(double *t)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefCurrentAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefCurrentAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefCurrentAllRPC");
         return ret.ret;
     }
     std::copy(ret.refs.begin(), ret.refs.end(), t);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getRefCurrent(int j, double *t)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRefCurrent(int j, double *t)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefCurrentOneRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefCurrentOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefCurrentOneRPC");
         return ret.ret;
     }
     *t = ret.ref;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setRefCurrents(const double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefCurrents(const double *refs)
 {
     if (m_use_streaming)
     {
@@ -2745,25 +2745,25 @@ yarp::dev::ReturnValue RemoteControlBoard::setRefCurrents(const double *refs)
         std::vector<double> temp(refs, refs + this->m_nj);
         auto ret = m_RPC.setRefCurrentAllRPC(temp);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setRefCurrentAllRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefCurrentAllRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setRefCurrent(int j, double ref)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefCurrent(int j, double ref)
 {
     LOCKMUTEX
     auto ret = m_RPC.setRefCurrentOneRPC(j,ref);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setRefCurrentOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefCurrentOneRPC");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setRefCurrents(const int n_joint, const int *joints, const double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefCurrents(const int n_joint, const int *joints, const double *refs)
 {
     if (m_use_streaming)
     {
@@ -2792,14 +2792,14 @@ yarp::dev::ReturnValue RemoteControlBoard::setRefCurrents(const int n_joint, con
         std::vector<double> tempdata(refs, refs + n_joint);
         auto ret = m_RPC.setRefCurrentGroupRPC(tempjoints, tempdata);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setRefCurrentGroupRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefCurrentGroupRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getCurrents(double *vals)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getCurrents(double *vals)
 {
     if (m_use_streaming)
     {
@@ -2818,7 +2818,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getCurrents(double *vals)
         LOCKMUTEX
         auto ret = m_RPC.getCurrentAllRPC();
         if (!ret.ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to getCurrentAllRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to getCurrentAllRPC");
             return ret.ret;
         }
         std::copy(ret.currs.begin(), ret.currs.end(), vals);
@@ -2826,7 +2826,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getCurrents(double *vals)
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getCurrent(int j, double *val)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getCurrent(int j, double *val)
 {
     if (m_use_streaming)
     {
@@ -2845,7 +2845,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getCurrent(int j, double *val)
         LOCKMUTEX
         auto ret = m_RPC.getCurrentOneRPC(j);
         if (!ret.ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to getCurrentOneRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to getCurrentOneRPC");
             return ret.ret;
         }
         *val = ret.curr;
@@ -2853,12 +2853,12 @@ yarp::dev::ReturnValue RemoteControlBoard::getCurrent(int j, double *val)
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getCurrentRange(int j, double *min, double *max)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getCurrentRange(int j, double *min, double *max)
 {
     LOCKMUTEX
     auto ret = m_RPC.getCurrentRangeOneRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getCurrentRangeOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getCurrentRangeOneRPC");
         return ret.ret;
     }
     *max = ret.max;
@@ -2866,12 +2866,12 @@ yarp::dev::ReturnValue RemoteControlBoard::getCurrentRange(int j, double *min, d
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getCurrentRanges(double *min, double *max)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getCurrentRanges(double *min, double *max)
 {
     LOCKMUTEX
     auto ret = m_RPC.getCurrentRangeAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getCurrentRangeOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getCurrentRangeOneRPC");
         return ret.ret;
     }
     std::copy(ret.mins.begin(), ret.mins.end(), min);
@@ -2882,18 +2882,18 @@ yarp::dev::ReturnValue RemoteControlBoard::getCurrentRanges(double *min, double 
 // END ICurrentControl
 
 // BEGIN IPWMControl
-yarp::dev::ReturnValue RemoteControlBoard::setRefDutyCycle(int j, double v)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefDutyCycle(int j, double v)
 {
     LOCKMUTEX
     auto ret = m_RPC.setRefDutyCycleOneRPC(j,v);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setRefDutyCycle");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefDutyCycle");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setRefDutyCycles(const double *v)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefDutyCycles(const double *v)
 {
     if (m_use_streaming)
     {
@@ -2919,38 +2919,38 @@ yarp::dev::ReturnValue RemoteControlBoard::setRefDutyCycles(const double *v)
         std::vector<double> temp(v, v + this->m_nj);
         auto ret = m_RPC.setRefDutyCycleAllRPC(temp);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setRefDutyCycleAllRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefDutyCycleAllRPC");
             return ret;
         }
         return ret;
     }
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getRefDutyCycle(int j, double *ref)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRefDutyCycle(int j, double *ref)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefDutyCycleOneRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefDutyCycle");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefDutyCycle");
         return ret.ret;
     }
     *ref = ret.val;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getRefDutyCycles(double *refs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getRefDutyCycles(double *refs)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefDutyCycleAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefDutyCycle");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefDutyCycle");
         return ret.ret;
     }
     std::copy(ret.val.begin(), ret.val.end(), refs);
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getDutyCycle(int j, double *out)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getDutyCycle(int j, double *out)
 {
     double localArrivalTime = 0.0;
     extendedPortMutex.lock();
@@ -2959,7 +2959,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getDutyCycle(int j, double *out)
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getDutyCycles(double *outs)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getDutyCycles(double *outs)
 {
     double localArrivalTime = 0.0;
     extendedPortMutex.lock();
@@ -2970,46 +2970,46 @@ yarp::dev::ReturnValue RemoteControlBoard::getDutyCycles(double *outs)
 // END IPWMControl
 
 // BEGIN IJointBrake
-yarp::dev::ReturnValue RemoteControlBoard::isJointBraked(int j, bool& braked) const
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::isJointBraked(int j, bool& braked) const
 {
     LOCKMUTEX
     auto ret = m_RPC.isJointBrakedRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to isJointBraked");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to isJointBraked");
         return ret.ret;
     }
     braked = ret.isBraked;
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setManualBrakeActive(int j, bool active)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setManualBrakeActive(int j, bool active)
 {
     LOCKMUTEX
     auto ret = m_RPC.setManualBrakeActiveRPC(j,active);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setManualBrakeActive");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setManualBrakeActive");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setAutoBrakeEnabled(int j, bool enabled)
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::setAutoBrakeEnabled(int j, bool enabled)
 {
     LOCKMUTEX
     auto ret = m_RPC.setAutoBrakeEnabledRPC(j,enabled);
     if (!ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to setAutoBrakeEnabled");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to setAutoBrakeEnabled");
         return ret;
     }
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getAutoBrakeEnabled(int j, bool& enabled) const
+yarp::dev::ReturnValue ControlBoard_nwc_yarp::getAutoBrakeEnabled(int j, bool& enabled) const
 {
     LOCKMUTEX
     auto ret = m_RPC.getAutoBrakeEnabledRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getAutoBrakeEnabled");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getAutoBrakeEnabled");
         return ret.ret;
     }
     enabled = ret.enabled;
@@ -3018,19 +3018,19 @@ yarp::dev::ReturnValue RemoteControlBoard::getAutoBrakeEnabled(int j, bool& enab
 // END IJointBrake
 
 // IVelocityDirect
-ReturnValue RemoteControlBoard::getAxes(size_t& axes)
+ReturnValue ControlBoard_nwc_yarp::getAxes(size_t& axes)
 {
     LOCKMUTEX
     auto ret = m_RPC.getAxesRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getAxes");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getAxes");
         return ret.ret;
     }
     axes = ret.axes;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::setRefVelocity(int jnt, double vel)
+ReturnValue ControlBoard_nwc_yarp::setRefVelocity(int jnt, double vel)
 {
     if (m_use_streaming)
     {
@@ -3053,14 +3053,14 @@ ReturnValue RemoteControlBoard::setRefVelocity(int jnt, double vel)
         LOCKMUTEX
         auto ret = m_RPC.setRefVelocityOneRPC(jnt,vel);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setRefVelocityOneRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefVelocityOneRPC");
             return ret;
         }
         return ret;
     }
 }
 
-ReturnValue RemoteControlBoard::setRefVelocity(const std::vector<double>& vels)
+ReturnValue ControlBoard_nwc_yarp::setRefVelocity(const std::vector<double>& vels)
 {
     if (m_use_streaming)
     {
@@ -3084,14 +3084,14 @@ ReturnValue RemoteControlBoard::setRefVelocity(const std::vector<double>& vels)
         LOCKMUTEX
         auto ret = m_RPC.setRefVelocityAllRPC(vels);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setRefVelocityAllRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefVelocityAllRPC");
             return ret;
         }
         return ret;
     }
 }
 
-ReturnValue RemoteControlBoard::setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)
+ReturnValue ControlBoard_nwc_yarp::setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)
 {
     if (m_use_streaming)
     {
@@ -3120,43 +3120,43 @@ ReturnValue RemoteControlBoard::setRefVelocity(const std::vector<int>& jnts, con
         LOCKMUTEX
         auto ret = m_RPC.setRefVelocityGroupRPC(jnts,vels);
         if (!ret) {
-            yCError(REMOTECONTROLBOARD, "Unable to setRefVelocityGroupRPC");
+            yCError(CONTROLBOARD_NWC_YARP, "Unable to setRefVelocityGroupRPC");
             return ret;
         }
         return ret;
     }
 }
 
-ReturnValue RemoteControlBoard::getRefVelocity(const int jnt, double& vel)
+ReturnValue ControlBoard_nwc_yarp::getRefVelocity(const int jnt, double& vel)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefVelocityOneRPC(jnt);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefVelocityOneRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefVelocityOneRPC");
         return ret.ret;
     }
     vel = ret.vel;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getRefVelocity(std::vector<double>& vels)
+ReturnValue ControlBoard_nwc_yarp::getRefVelocity(std::vector<double>& vels)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefVelocityAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefVelocityAllRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefVelocityAllRPC");
         return ret.ret;
     }
     vels = ret.vel;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getRefVelocity(const std::vector<int>& jnts, std::vector<double>& vels)
+ReturnValue ControlBoard_nwc_yarp::getRefVelocity(const std::vector<int>& jnts, std::vector<double>& vels)
 {
     LOCKMUTEX
     auto ret = m_RPC.getRefVelocityGroupRPC(jnts);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getRefVelocityGroupRPC");
+        yCError(CONTROLBOARD_NWC_YARP, "Unable to getRefVelocityGroupRPC");
         return ret.ret;
     }
     vels = ret.vel;

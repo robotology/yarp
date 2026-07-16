@@ -85,7 +85,7 @@ int main(int argc, char **argv)
     lStream << id;
     local += lStream.str();
 
-    p.put("device", "remote_controlboard");
+    p.put("device", "controlBoard_nwc_yarp");
     p.put("local", local.c_str());
     p.put("remote", remote.c_str());
     p.put("carrier", protocol.c_str());

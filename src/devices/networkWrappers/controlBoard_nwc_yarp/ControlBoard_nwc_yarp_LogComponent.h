@@ -1,0 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#ifndef YARP_CONTROLBOARD_NWC_YARP_LOGCOMPONENT_H
+#define YARP_CONTROLBOARD_NWC_YARP_LOGCOMPONENT_H
+
+#include <yarp/os/LogComponent.h>
+
+YARP_DECLARE_LOG_COMPONENT(CONTROLBOARD_NWC_YARP)
+
+#endif // YARP_CONTROLBOARD_NWC_YARP_LOGCOMPONENT_H

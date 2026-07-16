@@ -30,10 +30,6 @@ enum class YarpDistortion : std::int32_t
     YARP_FISH_EYE,         /**< Fish eye distortion model */
     YARP_UNSUPPORTED,      /**< Unsupported distortion model */
     YARP_DISTORTION_COUNT, /**< Number of enumeration values. Not a valid input: intended to be used in for-loops. */
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
-    YARP_PLUM_BOB YARP_DEPRECATED_MSG("Use YARP_PLUMB_BOB instead") = YARP_PLUMB_BOB, /**< Deprecated name for plumb bob distortion model */
-#endif
 };
 
 /**

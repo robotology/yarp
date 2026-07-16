@@ -9,7 +9,7 @@ Lorenzo Natale's bug hunting:
 
 In $YARP_ROOT/example/stressTests you find some code + a couple of
 scripts that produce some undesired behavior. It is basically a
-remote_controlboard accessed concurrently from a number of controlboard
+controlBoard_nwc_yarp accessed concurrently from a number of controlboard
 (stressrpc.cpp). Code and scripts are easy, so I don't go too much in
 the details, I just summarize here the behavior I see:
 

@@ -11,7 +11,7 @@ require("yarp")
 yarp.Network()
 
 options = yarp.Property()
-options:put("device", "remote_controlboard")
+options:put("device", "controlBoard_nwc_yarp")
 options:put("local", "/motor/lua/right_arm")
 options:put("remote", "/icubSim/right_arm")
 

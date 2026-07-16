@@ -7,7 +7,7 @@
 
 A simple graphical interface for moving all the joints of a robot with
 sliders.
-Uses \ref remote_controlboard devices to connect to \ref control_board_nws_yarp devices opened by a yarpdev or yarprobotinterface.
+Uses \ref controlBoard_nwc_yarp devices to connect to \ref control_board_nws_yarp devices opened by a yarpdev or yarprobotinterface.
 See also: \ref yarprobotinterface
 
 \image html yarpmotorgui.jpg

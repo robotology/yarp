@@ -596,18 +596,6 @@ bool Port::setTimeout(float timeout)
     return true;
 }
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
-void Port::setVerbosity(int level)
-{
-    YARP_UNUSED(level);
-}
-
-int Port::getVerbosity()
-{
-    return 0;
-}
-#endif
-
 Type Port::getType()
 {
     return IMPL().getType();

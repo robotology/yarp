@@ -6,10 +6,11 @@ yarp_prepare_plugin(RGBDSensor_nws_yarp
   CATEGORY device
   TYPE RGBDSensor_nws_yarp
   INCLUDE RGBDSensor_nws_yarp.h
-  EXTRA_CONFIG
-    WRAPPER=RGBDSensor_nws_yarp
   DEFAULT ON
   GENERATE_PARSER
+  EXTRA_CONFIG
+    WRAPPER=RGBDSensor_nws_yarp
+    DEPRECATED_ALIAS=rgbdSensor_nws_yarp
 )
 
 if(NOT SKIP_RGBDSensor_nws_yarp)

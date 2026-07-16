@@ -9,6 +9,8 @@ yarp_prepare_plugin(fakeDeviceUnwrapped
   CATEGORY device
   TYPE FakeDeviceUnwrapped
   INCLUDE FakeDeviceUnwrapped.h
+  EXTRA_CONFIG
+    DEPRECATED_ALIAS=fakeDeviceUnwrappedOld
 )
 
 if(NOT SKIP_fakeDeviceUnwrapped)

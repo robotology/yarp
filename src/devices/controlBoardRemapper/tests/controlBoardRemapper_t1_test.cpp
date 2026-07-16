@@ -108,7 +108,7 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     CHECK(ctrlmode->setControlModes(settedControlMode)); // setControlModes correctly called
 
     // Check that the read control mode is actually position direct
-    // Let's try 10 times because if the remapper is using some remotecontrolboards,
+    // Let's try 10 times because if the remapper is using some controlBoard_nwc_yarp,
     // it is possible that this return false if it is called before the first message
     // has been received from the controlboard_nws_yarp
     bool getControlModesOk = false;
@@ -200,7 +200,7 @@ static void checkRemapperMicro(yarp::dev::PolyDriver & ddRemapper, int rand, siz
     CHECK_FALSE(ctrlmode->setControlModes(settedControlMode));
 
     // Check that the read control mode is actually position direct
-    // Let's try 10 times because if the remapper is using some remotecontrolboards,
+    // Let's try 10 times because if the remapper is using some controlBoard_nwc_yarp,
     // it is possible that this return false if it is called before the first message
     // has been received from the controlboard_nws_yarp
     bool getControlModesOk = false;

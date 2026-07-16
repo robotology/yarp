@@ -19,7 +19,7 @@ int main(int argc, const char* argv[])
     yarp::dev::IControlCalibration* ical;
 
     yarp::os::Property p;
-    p.put("device", "remote_controlboard");
+    p.put("device", "controlBoard_nwc_yarp");
     p.put("local", "/motortest");     //prefix for local names
     p.put("remote", "/controlboard"); //prefix for remote names
 
