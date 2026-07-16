@@ -56,9 +56,8 @@ bool ImplementImpedanceControl::uninitialize ()
     return true;
 }
 
-ReturnValue ImplementImpedanceControl::getAxes(int *axes)
+ReturnValue ImplementImpedanceControl::getAxes(size_t& axes)
 {
-    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axes)
     return m_iraw->getAxes(axes);
 }
 

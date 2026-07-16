@@ -55,10 +55,10 @@ namespace yarp::dev::tests
         REQUIRE(ipid != nullptr);
         REQUIRE(iaxis != nullptr);
 
-        int ax=0;
+        size_t ax=0;
         bool b = false;
 
-        b = iaxis->getAxes(&ax);
+        b = iaxis->getAxes(ax);
         CHECK(b);
         REQUIRE(ax > 0);
 
@@ -259,8 +259,8 @@ namespace yarp::dev::tests
                 INFO("Testing PidControlTypeEnum: " << dv);
 
                 bool b = false;
-                int ax=0;
-                b = iaxis->getAxes(&ax);
+                size_t ax=0;
+                b = iaxis->getAxes(ax);
                 CHECK(b);
                 REQUIRE(ax > 0);
 

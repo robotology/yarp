@@ -60,7 +60,7 @@ protected:
     yarp::dev::ICurrentControl*   stream_ICurrent {nullptr};
     yarp::dev::IPidControl*       stream_IPid {nullptr};
     yarp::dev::IAxisInfo*         stream_IAxis{ nullptr };
-    int                           stream_nJoints {0};
+    size_t                        stream_nJoints {0};
 
 public:
     /**

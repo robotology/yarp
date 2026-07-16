@@ -63,12 +63,11 @@ bool ImplementEncoders::uninitialize ()
     return true;
 }
 
-ReturnValue ImplementEncoders::getAxes(int *ax)
+ReturnValue ImplementEncoders::getAxes(size_t& ax)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ax)
 
-    (*ax)=castToMapper(m_helper)->axes();
+    (ax)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
 }
 

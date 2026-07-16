@@ -312,8 +312,8 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
             return false;
         }
 
-        int nrOfSubdeviceAxes;
-        bool ok = iencs->getAxes(&nrOfSubdeviceAxes);
+        size_t nrOfSubdeviceAxes;
+        bool ok = iencs->getAxes(nrOfSubdeviceAxes);
 
         if( !ok )
         {
@@ -321,7 +321,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
             return false;
         }
 
-        for(int axInSubDevice =0; axInSubDevice < nrOfSubdeviceAxes; axInSubDevice++)
+        for(size_t axInSubDevice =0; axInSubDevice < nrOfSubdeviceAxes; axInSubDevice++)
         {
             std::string axNameYARP;
             ok = iaxinfos->getAxisName(axInSubDevice,axNameYARP);
@@ -1107,9 +1107,9 @@ ReturnValue ControlBoardRemapper::getPidExtraInfos(const PidControlTypeEnum& pid
 }
 
 /* IPositionControl */
-ReturnValue ControlBoardRemapper::getAxes(int *ax)
+ReturnValue ControlBoardRemapper::getAxes(size_t& ax)
 {
-    *ax=controlledJoints;
+    ax=controlledJoints;
     return ReturnValue_ok;
 }
 
@@ -4805,12 +4805,6 @@ ReturnValue ControlBoardRemapper::getAutoBrakeEnabled(int j, bool& enabled) cons
 }
 
 // IVelocityDirect interface
-
-yarp::dev::ReturnValue ControlBoardRemapper::getAxes(size_t& axes)
-{
-    axes = static_cast<size_t>(controlledJoints);
-    return ReturnValue_ok;
-}
 
 yarp::dev::ReturnValue ControlBoardRemapper::setRefVelocity(int jnt, double vel)
 {

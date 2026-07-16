@@ -228,31 +228,31 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
     }
 
     // Get the number of controlled joints
-    int tmp_axes = 0;
+    size_t tmp_axes = 0;
     if (m_allInterfaces.iAxisInfo)
     {
-        if (!m_allInterfaces.iAxisInfo->getAxes(&tmp_axes)) {
+        if (!m_allInterfaces.iAxisInfo->getAxes(tmp_axes)) {
             yCError(CONTROLBOARD) << "Part <%s>: iAxisInfo->getAxes() failed for subdevice " << partName.c_str();
             return false;
         }
     }
     else if (m_allInterfaces.iEncodersTimed)
     {
-        if (!m_allInterfaces.iEncodersTimed->getAxes(&tmp_axes)) {
+        if (!m_allInterfaces.iEncodersTimed->getAxes(tmp_axes)) {
             yCError(CONTROLBOARD) << "Part <%s>: iEncodersTimed->getAxes() failed for subdevice " << partName.c_str();
             return false;
         }
     }
     else if (m_allInterfaces.iPositionControl)
     {
-        if (!m_allInterfaces.iPositionControl->getAxes(&tmp_axes)) {
+        if (!m_allInterfaces.iPositionControl->getAxes(tmp_axes)) {
             yCError(CONTROLBOARD) << "Part <%s>: iPositionControl->getAxes() failed for subdevice " << partName.c_str();
             return false;
         }
     }
     else if (m_allInterfaces.iVelocityControl)
     {
-        if (!m_allInterfaces.iVelocityControl->getAxes(&tmp_axes)) {
+        if (!m_allInterfaces.iVelocityControl->getAxes(tmp_axes)) {
             yCError(CONTROLBOARD) << "Part <%s>: iVelocityControl->getAxes() failed for subdevice " << partName.c_str();
             return false;
         }

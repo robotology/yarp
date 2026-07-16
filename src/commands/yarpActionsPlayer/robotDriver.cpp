@@ -75,13 +75,13 @@ bool robotDriver::init()
     }
 
     //get the number of the joints
-    ok &= ienc_ll->getAxes(&n_joints);
+    ok &= ienc_ll->getAxes(n_joints);
 
     //set the trajectory duration for the first movement
     m_trajectoryTime.resize(n_joints,4.0);
 
     //set the initial reference speeds to 20
-    for (int i = 0; i < n_joints; i++)
+    for (size_t i = 0; i < n_joints; i++)
     {
         m_stored_speed.push_back(20.0);
     }

@@ -24,8 +24,8 @@ namespace yarp::dev::tests
         REQUIRE(iint != nullptr);
         REQUIRE(iinfo != nullptr);
 
-        int ax;
-        bool b = iinfo->getAxes(&ax);
+        size_t ax=0;
+        bool b = iinfo->getAxes(ax);
         CHECK(b);
         REQUIRE(ax > 0);
 

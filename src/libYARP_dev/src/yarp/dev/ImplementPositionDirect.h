@@ -65,7 +65,7 @@ public:
      */
     virtual ~ImplementPositionDirect();
 
-    yarp::dev::ReturnValue getAxes(int *axes) override;
+    yarp::dev::ReturnValue getAxes(size_t& axes) override;
     yarp::dev::ReturnValue setPosition(int j, double ref) override;
     yarp::dev::ReturnValue setPositions(const int n_joint, const int *joints, const double *refs) override;
     yarp::dev::ReturnValue setPositions(const double *refs) override;
@@ -94,7 +94,7 @@ class YARP_dev_API yarp::dev::StubImplPositionDirectRaw: public IPositionDirect
 public:
     virtual ~StubImplPositionDirectRaw(){}
 
-    yarp::dev::ReturnValue getAxes(int *axis) override
+    yarp::dev::ReturnValue getAxes(size_t& axis) override
     {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
     yarp::dev::ReturnValue setPosition(int j, double ref) override

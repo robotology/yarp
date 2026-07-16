@@ -229,7 +229,7 @@ public:
     yarp::dev::ReturnValue getPidExtraInfos(const yarp::dev::PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units) override;
 
     /* IPositionControl */
-    yarp::dev::ReturnValue getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
     yarp::dev::ReturnValue positionMove(int j, double ref) override;
     yarp::dev::ReturnValue positionMove(const double *refs) override;
     yarp::dev::ReturnValue positionMove(const int n_joints, const int *joints, const double *refs) override;
@@ -430,7 +430,6 @@ public:
     yarp::dev::ReturnValue getAutoBrakeEnabled(int j, bool& enabled) const override;
 
     // IVelocityDirect
-    yarp::dev::ReturnValue getAxes(size_t& axes) override;
     yarp::dev::ReturnValue setRefVelocity(int jnt, double vel) override;
     yarp::dev::ReturnValue setRefVelocity(const std::vector<double>& vels) override;
     yarp::dev::ReturnValue setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels) override;

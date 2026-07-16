@@ -67,14 +67,14 @@ TEST_CASE("dev::ControlBoardCouplingHandlerTest", "[yarp::dev]")
             REQUIRE(iai!=nullptr);
         }
         {
-            int axes = 0;
-            CHECK(iaifmc->getAxes(&axes));
+            size_t axes = 0;
+            CHECK(iaifmc->getAxes(axes));
             CHECK(axes == 3);
         }
         {
-            int axes = 0;
+            size_t axes = 0;
             std::string physical_joint_name;
-            CHECK(iai->getAxes(&axes));
+            CHECK(iai->getAxes(axes));
             CHECK(axes == 4);
             CHECK(iai->getAxisName(0, physical_joint_name));
             CHECK(physical_joint_name == "phys_joint_0");
@@ -86,13 +86,13 @@ TEST_CASE("dev::ControlBoardCouplingHandlerTest", "[yarp::dev]")
             CHECK(physical_joint_name == "phys_joint_3");
         }
         {
-            int axes = 0;
-            CHECK(iaifmc->getAxes(&axes));
+            size_t axes = 0;
+            CHECK(iaifmc->getAxes(axes));
             CHECK(axes == 3);
         }
 
         {
-            // Let's move the underlyng motor control and check the coupling
+            // Let's move the underlying motor control and check the coupling
             CHECK(ipc->setTrajSpeed(0, 1000));
             CHECK(ipc->setTrajSpeed(1, 1000));
             CHECK(ipc->setTrajSpeed(2, 1000));

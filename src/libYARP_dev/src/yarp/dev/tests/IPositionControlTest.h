@@ -25,9 +25,9 @@ namespace yarp::dev::tests
         REQUIRE(icmd != nullptr);
 
         bool b;
-        int ax;
+        size_t ax=0;
 
-        b = ipos->getAxes(&ax);
+        b = ipos->getAxes(ax);
         CHECK(b);
         REQUIRE(ax > 0);
 
@@ -146,9 +146,9 @@ namespace yarp::dev::tests
         REQUIRE(icmd != nullptr);
 
         bool b;
-        int ax;
+        size_t ax=0;
 
-        b = ipos->getAxes(&ax);
+        b = ipos->getAxes(ax);
         CHECK(b);
         REQUIRE(ax > 0);
 

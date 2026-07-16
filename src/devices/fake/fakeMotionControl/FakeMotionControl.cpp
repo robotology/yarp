@@ -1863,9 +1863,9 @@ ReturnValue FakeMotionControl::calibrationDoneRaw(int axis)
 //     Position control interface     //
 ////////////////////////////////////////
 
-ReturnValue FakeMotionControl::getAxes(int *ax)
+ReturnValue FakeMotionControl::getAxes(size_t& ax)
 {
-    *ax=_njoints;
+    ax=_njoints;
 
     return ReturnValue_ok;
 }
@@ -3329,12 +3329,6 @@ ReturnValue FakeMotionControl::setAutoBrakeEnabledRaw(int j, bool enabled)
 ReturnValue FakeMotionControl::getAutoBrakeEnabledRaw(int j, bool& enabled) const
 {
     enabled = _autobraked[j];
-    return ReturnValue_ok;
-}
-
-ReturnValue FakeMotionControl::getAxes(size_t& axes)
-{
-    axes = _njoints;
     return ReturnValue_ok;
 }
 

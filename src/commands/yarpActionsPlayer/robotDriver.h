@@ -20,7 +20,7 @@ class robotDriver
 {
     friend class BroadcastingThread;
 private:
-    int               n_joints=0;
+    size_t            n_joints=0;
     bool              m_verbose=true;
     std::vector<double>         m_trajectoryTime; // default trajectory time in seconds
     std::vector<double>         m_stored_speed;   // joint ref speed

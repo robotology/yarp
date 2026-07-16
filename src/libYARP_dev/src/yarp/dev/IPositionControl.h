@@ -38,7 +38,7 @@ public:
      * @param ax storage to return param
      * @return true/false.
      */
-    virtual yarp::dev::ReturnValue getAxes(int *ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& ax) = 0;
 
     /** Set new reference point for a single axis.
      * @param j joint number
@@ -265,7 +265,7 @@ public:
      * @param ax pointer to storage
      * @return true/false.
      */
-    virtual yarp::dev::ReturnValue getAxes(int *ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& ax) = 0;
 
     /** Set new reference point for a single axis.
      * @param j joint number

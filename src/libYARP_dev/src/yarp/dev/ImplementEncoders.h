@@ -56,7 +56,7 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    yarp::dev::ReturnValue getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
 
     /**
      * Reset encoder, single joint. Set the encoder value to zero

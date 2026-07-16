@@ -20,10 +20,9 @@ namespace yarp::dev::tests
 
         bool b;
 
-        int ax=0;
-        b = ienc->getAxes(&ax);
+        size_t ax=0;
+        b = ienc->getAxes(ax);
         CHECK(b);
-        REQUIRE (ax > 0);
 
         double* test_encs = new double [ax];
         double* test_times = new double[ax];

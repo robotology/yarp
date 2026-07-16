@@ -26,10 +26,9 @@ namespace yarp::dev::tests
         bool b;
         double val, val1, val2;
 
-        int ax;
-        b = itrq->getAxes(&ax);
+        size_t ax = 0;
+        b = itrq->getAxes(ax);
         CHECK(b);
-        REQUIRE(ax > 0);
 
         for (size_t i = 0; i < ax; i++)
         {
@@ -104,11 +103,11 @@ namespace yarp::dev::tests
         REQUIRE(icmd != nullptr);
 
         bool b;
-        int ax;
+        size_t ax=0;
         double val, val1, val2;
         yarp::dev::MotorTorqueParameters param;
 
-        b = itrq->getAxes(&ax);
+        b = itrq->getAxes(ax);
         CHECK(b);
         REQUIRE(ax > 0);
 
