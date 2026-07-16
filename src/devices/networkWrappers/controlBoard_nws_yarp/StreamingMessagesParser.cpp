@@ -48,10 +48,10 @@ void StreamingMessagesParser::reset()
 bool StreamingMessagesParser::initialize()
 {
     stream_nJoints = 0;
-    if (stream_IPosCtrl) { stream_IPosCtrl->getAxes(&stream_nJoints); return true; }
-    if (stream_IVel)     { stream_IVel->getAxes(&stream_nJoints); return true; }
-    if (stream_ITorque)  { stream_ITorque->getAxes(&stream_nJoints); return true; }
-    if (stream_IAxis)    { stream_IAxis->getAxes(&stream_nJoints); return true; }
+    if (stream_IPosCtrl) { stream_IPosCtrl->getAxes(stream_nJoints); return true; }
+    if (stream_IVel)     { stream_IVel->getAxes(stream_nJoints); return true; }
+    if (stream_ITorque)  { stream_ITorque->getAxes(stream_nJoints); return true; }
+    if (stream_IAxis)    { stream_IAxis->getAxes(stream_nJoints); return true; }
 
     yCError(CONTROLBOARD, "Unable to get number of joints");
     return false;

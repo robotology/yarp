@@ -586,9 +586,9 @@ ReturnValue FakeMotionControlMicro::getLastJointFaultRaw(int j, int& fault, std:
     return ReturnValue_ok;
 }
 
-ReturnValue FakeMotionControlMicro::getAxes(int* ax)
+ReturnValue FakeMotionControlMicro::getAxes(size_t& ax)
 {
-    *ax = _njoints;
+    ax = _njoints;
     return ReturnValue_ok;
 }
 // eof

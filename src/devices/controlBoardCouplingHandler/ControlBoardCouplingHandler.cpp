@@ -264,14 +264,14 @@ ReturnValue ControlBoardCouplingHandler::getEncoderAccelerations(double *accs)
 
 /* IAxisInfo */
 
-ReturnValue ControlBoardCouplingHandler::getAxes(int *ax)
+ReturnValue ControlBoardCouplingHandler::getAxes(size_t& ax)
 {
     ReturnValue ok{ReturnValue::return_code::return_value_error_generic};
     if (iJntCoupling) {
         size_t nrOfPhysicalJoints {0};
         ok = iJntCoupling->getNrOfPhysicalJoints(nrOfPhysicalJoints);
         if (ok) {
-            *ax = nrOfPhysicalJoints;
+            ax = nrOfPhysicalJoints;
             return ok;
         }
     }

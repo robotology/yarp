@@ -111,20 +111,20 @@ bool SerialServoBoard::close()
 }
 
 
-ReturnValue SerialServoBoard::getAxes(int* ax)
+ReturnValue SerialServoBoard::getAxes(size_t& ax)
 {
     if (servoboard == SSC32) {
-        *ax = 32;
+        ax = 32;
     } else if (servoboard == MINISSC) {
-        *ax = 8;
+        ax = 8;
     } else if (servoboard == PONTECHSV203X) {
-        *ax = 8;
+        ax = 8;
     } else if (servoboard == MONDOTRONICSMI) {
-        *ax = 2;
+        ax = 2;
     } else if (servoboard == POLOLUUSB16) {
-        *ax = 16;
+        ax = 16;
     } else if (servoboard == PICOPIC) {
-        *ax = 20;
+        ax = 20;
     }
 
     return ReturnValue_ok;

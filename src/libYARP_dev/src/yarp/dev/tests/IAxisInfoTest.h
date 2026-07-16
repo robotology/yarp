@@ -20,10 +20,10 @@ namespace yarp::dev::tests
 
         bool b;
 
-        int ax;
-        b = iinfo->getAxes(&ax);
+        size_t ax=0;
+        b = iinfo->getAxes(ax);
         CHECK(b);
-        CHECK(ax != 0);
+        CHECK(ax > 0);
 
         std::string name;
         b = iinfo->getAxisName(0,name);

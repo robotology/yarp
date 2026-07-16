@@ -38,7 +38,7 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual yarp::dev::ReturnValue getAxes(int *ax)=0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& ax)=0;
 
     /** Set new position for a single axis.
      * @param j joint number
@@ -123,7 +123,7 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual yarp::dev::ReturnValue getAxes(int *axes) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& axes) = 0;
 
     /** Set new position for a single axis.
      * @param j joint number

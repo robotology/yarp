@@ -53,10 +53,9 @@ bool ImplementTorqueControl::uninitialize ()
     return true;
 }
 
-ReturnValue ImplementTorqueControl::getAxes(int *axes)
+ReturnValue ImplementTorqueControl::getAxes(size_t& axes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axes);
 
     return m_iraw->getAxes(axes);
 }

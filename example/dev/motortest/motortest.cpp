@@ -50,11 +50,11 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    IPositionControl* pos;
+    IPositionControl* pos=nullptr;
     dd.view(pos);
 
-    int jnts = 0;
-    pos->getAxes(&jnts);
+    size_t jnts = 0;
+    pos->getAxes(jnts);
     pos->positionMove(0, -45);
 
     yarp::os::Time::delay(1);

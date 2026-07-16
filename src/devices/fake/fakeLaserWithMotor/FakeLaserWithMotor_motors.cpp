@@ -78,9 +78,9 @@ ReturnValue FakeLaserWithMotor::getEncoderTimedRaw(int j, double* encs, double* 
     return ret;
 }
 
-ReturnValue FakeLaserWithMotor::getAxes(int* ax)
+ReturnValue FakeLaserWithMotor::getAxes(size_t& ax)
 {
-    *ax = m_njoints;
+    ax = m_njoints;
     return ReturnValue_ok;
 }
 

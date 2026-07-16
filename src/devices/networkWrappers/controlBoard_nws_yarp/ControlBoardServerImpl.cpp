@@ -283,8 +283,8 @@ return_getAxes ControlBoardRPCd::getAxesRPC() const
         ret.ret = yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
-    int axes=0;
-    ret.ret = m_allInterfaces.iAxisInfo->getAxes(&axes);
+    size_t axes=0;
+    ret.ret = m_allInterfaces.iAxisInfo->getAxes(axes);
     if (!ret.ret) {
         yCError(CB_RPC, "getAxes() failed");
     }

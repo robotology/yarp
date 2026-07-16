@@ -33,7 +33,7 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual yarp::dev::ReturnValue getAxes(int *ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& ax) = 0;
 
     /**
      * Reset encoder, single joint. Set the encoder value to zero
@@ -126,7 +126,7 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual yarp::dev::ReturnValue getAxes(int *ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& ax) = 0;
 
     /**
      * Reset encoder, single joint. Set the encoder value to zero

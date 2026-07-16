@@ -35,7 +35,7 @@ public:
      * @param axis pointer to storage, return value
      * @return true/false.
      */
-    virtual yarp::dev::ReturnValue getAxes(int *axis) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& axis) = 0;
 
     /**
      * Start motion at a given speed, single joint.
@@ -166,7 +166,7 @@ public:
      * param axes pointer to storage
      * @return true/false.
      */
-    virtual yarp::dev::ReturnValue getAxes(int *axes) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& axes) = 0;
 
     /**
      * Start motion at a given speed, single joint.
