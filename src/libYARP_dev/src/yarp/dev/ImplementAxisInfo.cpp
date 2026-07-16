@@ -59,13 +59,12 @@ bool ImplementAxisInfo::uninitialize()
     return true;
 }
 
-ReturnValue ImplementAxisInfo::getAxes(int* ax)
+ReturnValue ImplementAxisInfo::getAxes(size_t& ax)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ax)
 
     ReturnValue ret=ReturnValue_ok;
-    (*ax) = castToMapper(m_helper)->axes();
+    (ax) = castToMapper(m_helper)->axes();
     return ret;
 }
 

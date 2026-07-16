@@ -49,7 +49,7 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual yarp::dev::ReturnValue getAxes(int *ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& ax) = 0;
 
    /** Get the reference value of the torque for all joints.
      * This is NOT the feedback (see getTorques instead).
@@ -150,7 +150,7 @@ public:
      * @return the number of controlled axes.
      * @return true/false on success/failure
      */
-    virtual yarp::dev::ReturnValue getAxes(int *ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& ax) = 0;
 
     /** Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).

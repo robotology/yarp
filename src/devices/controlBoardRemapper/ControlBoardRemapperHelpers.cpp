@@ -179,10 +179,10 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         yCWarning(CONTROLBOARDREMAPPER, "IControlMode interface was not found in subdevice");
     }
 
-    int deviceJoints=0;
+    size_t deviceJoints=0;
     if (pos!=nullptr)
     {
-        if (!pos->getAxes(&deviceJoints))
+        if (!pos->getAxes(deviceJoints))
         {
             yCError(CONTROLBOARDREMAPPER) << "failed to get axes number for subdevice" << k.c_str();
             return false;
@@ -195,7 +195,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
     }
     else if(info!=nullptr)
     {
-        if (!info->getAxes(&deviceJoints))
+        if (!info->getAxes(deviceJoints))
         {
             yCError(CONTROLBOARDREMAPPER) << "failed to get axes number for subdevice" << k.c_str();
             return false;

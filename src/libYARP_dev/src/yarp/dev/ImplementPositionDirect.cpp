@@ -55,12 +55,11 @@ bool ImplementPositionDirect::uninitialize()
     return true;
 }
 
-ReturnValue ImplementPositionDirect::getAxes(int *axes)
+ReturnValue ImplementPositionDirect::getAxes(size_t& axes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axes);
 
-    (*axes)=castToMapper(m_helper)->axes();
+    (axes)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
 }
 

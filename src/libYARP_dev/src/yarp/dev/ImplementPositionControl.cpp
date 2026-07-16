@@ -389,12 +389,11 @@ ReturnValue ImplementPositionControl::stop()
     return m_iraw->stopRaw();
 }
 
-ReturnValue ImplementPositionControl::getAxes(int *axis)
+ReturnValue ImplementPositionControl::getAxes(size_t& axis)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axis);
 
-    (*axis)=castToMapper(m_helper)->axes();
+    (axis)=castToMapper(m_helper)->axes();
 
     return ReturnValue_ok;
 }

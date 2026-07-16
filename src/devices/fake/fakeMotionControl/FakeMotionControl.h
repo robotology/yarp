@@ -345,7 +345,7 @@ public:
     yarp::dev::ReturnValue getPidExtraInfosRaw(const yarp::dev::PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units) override;
 
     // POSITION CONTROL INTERFACE RAW
-    yarp::dev::ReturnValue getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
     yarp::dev::ReturnValue positionMoveRaw(int j, double ref) override;
     yarp::dev::ReturnValue positionMoveRaw(const double *refs) override;
     yarp::dev::ReturnValue relativeMoveRaw(int j, double delta) override;
@@ -540,7 +540,6 @@ public:
     yarp::dev::ReturnValue getAutoBrakeEnabledRaw(int j, bool& enabled) const override;
 
     // IVelocityDirect
-    yarp::dev::ReturnValue getAxes(size_t& axes) override;
     yarp::dev::ReturnValue setRefVelocityRaw(int jnt, double vel) override;
     yarp::dev::ReturnValue setRefVelocityRaw(const std::vector<double>& vels) override;
     yarp::dev::ReturnValue setRefVelocityRaw(const std::vector<int>& jnts, const std::vector<double>& vels) override;
@@ -549,7 +548,7 @@ public:
     yarp::dev::ReturnValue getRefVelocityRaw(const std::vector<int>& jnts, std::vector<double>& vels) override;
 
     // Current interface
-    //yarp::dev::ReturnValue getAxes(int *ax) override;
+    //yarp::dev::ReturnValue getAxes(size_t& ax) override;
     //yarp::dev::ReturnValue getCurrentRaw(int j, double *t) override;
     //yarp::dev::ReturnValue getCurrentsRaw(double *t) override;
     yarp::dev::ReturnValue getCurrentRangeRaw(int j, double *min, double *max) override;

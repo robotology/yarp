@@ -47,7 +47,7 @@ public:
      * @param ax storage to return param
      * @return true/false.
      */
-    virtual yarp::dev::ReturnValue getAxes(int* ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& ax) = 0;
 
     /* Get the name for a particular axis.
     * @param axis joint number
@@ -83,7 +83,7 @@ public:
      * @param ax storage to return param
      * @return true/false.
      */
-    virtual yarp::dev::ReturnValue getAxes(int* ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(size_t& ax) = 0;
 
     /* Get the name for a particular axis.
     * @param axis joint number

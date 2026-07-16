@@ -27,12 +27,9 @@ namespace yarp::dev::tests
         REQUIRE(icmd != nullptr);
 
         bool b=false;
-#if 0
+
         size_t ax=0;
-#else
-        int ax=0;
-#endif
-        b = ipdir->getAxes(&ax);
+        b = ipdir->getAxes(ax);
         CHECK(b);
         REQUIRE(ax != 0);
 
