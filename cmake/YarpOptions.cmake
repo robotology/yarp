@@ -219,6 +219,15 @@ if(YARP_VALGRIND_TESTS)
       CACHE STRING "Valgrind options (--error-exitcode=1 will be appended)")
     mark_as_advanced(VALGRIND_OPTIONS)
     separate_arguments(VALGRIND_OPTIONS UNIX_COMMAND "${VALGRIND_OPTIONS}")
+
+    # Automatically add suppressions file if present in the source tree
+    set(_yarp_valgrind_supp "${CMAKE_SOURCE_DIR}/.ci/valgrind_suppressions.supp")
+    if(EXISTS "${_yarp_valgrind_supp}")
+      list(APPEND VALGRIND_OPTIONS "--suppressions=${_yarp_valgrind_supp}")
+      message(STATUS "valgrind using suppression file: valgrind_suppressions.supp")
+    endif()
+    unset(_yarp_valgrind_supp)
+
     set(VALGRIND_COMMAND "${VALGRIND_EXECUTABLE}" ${VALGRIND_OPTIONS} --error-exitcode=1 --fullpath-after=${CMAKE_SOURCE_DIR}/)
   else()
     message(SEND_ERROR "Valgrind executable not found")
