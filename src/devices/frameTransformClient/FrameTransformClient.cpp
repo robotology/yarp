@@ -311,14 +311,14 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 
     std::string configuration_to_open;
     std::string innerFilePath="config_xml/ftc_local_only.xml";
-    if(!m_testxml_from.empty())
+    if(!m_custom_config_from.empty())
     {
         yarp::os::ResourceFinder findXml;
-        if(!m_testxml_context.empty())
+        if(!m_custom_config_context.empty())
         {
-            findXml.setDefaultContext(m_testxml_context);
+            findXml.setDefaultContext(m_custom_config_context);
         }
-        innerFilePath = findXml.findFileByName(m_testxml_from);
+        innerFilePath = findXml.findFileByName(m_custom_config_from);
         std::ifstream xmlFile(innerFilePath);
         std::stringstream stream_file;
         stream_file << xmlFile.rdbuf();
@@ -327,8 +327,8 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     else
     {
         auto fs = cmrc::frameTransformRC::get_filesystem();
-        if(!m_filexml_option.empty()) { innerFilePath="config_xml/"+ m_filexml_option;}
-        cfg.unput("filexml_option");
+        if(!m_config_name.empty()) { innerFilePath="config_xml/"+ m_config_name;}
+        cfg.unput("config_name");
         auto xmlFile = fs.open(innerFilePath);
         for(const auto& lemma : xmlFile)
         {
