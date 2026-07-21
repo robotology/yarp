@@ -287,6 +287,7 @@ TAB_SIZE               = 4
 
 ALIASES                = "project=\par Project\n" \
                          "company=\par Company\n" \
+                         "zoomimage{2}=<a class=\"image-link\" href=\"\1\" target=\"_blank\" title=\"Click to open the full-size image\"><img class=\"doc-diagram\" src=\"\1\" alt=\"\2\" /></a>" \
                          case=
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
@@ -1025,7 +1026,7 @@ EXAMPLE_RECURSIVE      = YES
 
 IMAGE_PATH    = @CMAKE_SOURCE_DIR@/doc/images \
                 @CMAKE_SOURCE_DIR@/.github \
-                @CMAKE_SOURCE_DIR@/src/commands/yarp/doc \ 
+                @CMAKE_SOURCE_DIR@/src/commands/yarp/doc \
                 @CMAKE_SOURCE_DIR@/src/commands/yarp-config/doc \
                 @CMAKE_SOURCE_DIR@/src/commands/yarpActionsPlayer/doc \
                 @CMAKE_SOURCE_DIR@/src/commands/yarpconnectionsinfo/doc \
@@ -1054,8 +1055,8 @@ IMAGE_PATH    = @CMAKE_SOURCE_DIR@/doc/images \
                 @CMAKE_SOURCE_DIR@/src/guis/yarpopencvdisplay/doc \
                 @CMAKE_SOURCE_DIR@/src/guis/yarpscope/doc \
                 @CMAKE_SOURCE_DIR@/src/guis/yarpview/doc \
-                @CMAKE_SOURCE_DIR@/src/guis/yarpviz/doc 
- 
+                @CMAKE_SOURCE_DIR@/src/guis/yarpviz/doc
+
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
 # by executing (via popen()) the command:
