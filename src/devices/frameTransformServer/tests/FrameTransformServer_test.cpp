@@ -32,7 +32,7 @@ TEST_CASE("dev::FrameTransformServerTest", "[yarp::dev]")
         yarp::os::Property p;
 
         p.put("device", "frameTransformServer");
-        p.put("filexml_option", "fts_yarp_only.xml");
+        p.put("config_name", "fts_yarp_only.xml");
         REQUIRE(pd.open(p));
         yarp::os::Time::delay(0.5);
         REQUIRE(pd.close());

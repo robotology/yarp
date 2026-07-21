@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GENERATION is ON.
 
-// Generated on: Thu Jul 16 00:24:17 2026
+// Generated on: Tue Jul 21 15:05:51 2026
 
 
 #include "FrameTransformServer_ParamsParser.h"
@@ -28,9 +28,9 @@ FrameTransformServer_ParamsParser::FrameTransformServer_ParamsParser()
 std::vector<std::string> FrameTransformServer_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
-    params.push_back("testxml_from");
-    params.push_back("testxml_context");
-    params.push_back("filexml_option");
+    params.push_back("custom_config_from");
+    params.push_back("custom_config_context");
+    params.push_back("config_name");
     params.push_back("local_rpc");
     params.push_back("FrameTransform_verbose_debug");
     params.push_back("period");
@@ -40,19 +40,19 @@ std::vector<std::string> FrameTransformServer_ParamsParser::getListOfParams() co
 
 bool FrameTransformServer_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
 {
-    if (paramName =="testxml_from")
+    if (paramName =="custom_config_from")
     {
-        paramValue = m_testxml_from;
+        paramValue = m_custom_config_from;
         return true;
     }
-    if (paramName =="testxml_context")
+    if (paramName =="custom_config_context")
     {
-        paramValue = m_testxml_context;
+        paramValue = m_custom_config_context;
         return true;
     }
-    if (paramName =="filexml_option")
+    if (paramName =="config_name")
     {
-        paramValue = m_filexml_option;
+        paramValue = m_config_name;
         return true;
     }
     if (paramName =="local_rpc")
@@ -98,46 +98,46 @@ bool      FrameTransformServer_ParamsParser::parseParams(const yarp::os::Searcha
 
     m_provided_configuration = config.toString();
     yarp::os::Property prop_check(m_provided_configuration.c_str());
-    //Parser of parameter testxml_from
+    //Parser of parameter custom_config_from
     {
-        if (config.check("testxml_from"))
+        if (config.check("custom_config_from"))
         {
-            m_testxml_from = config.find("testxml_from").asString();
-            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'testxml_from' using value:" << m_testxml_from;
+            m_custom_config_from = config.find("custom_config_from").asString();
+            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'custom_config_from' using value:" << m_custom_config_from;
         }
         else
         {
-            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'testxml_from' using DEFAULT value:" << m_testxml_from;
+            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'custom_config_from' using DEFAULT value:" << m_custom_config_from;
         }
-        prop_check.unput("testxml_from");
+        prop_check.unput("custom_config_from");
     }
 
-    //Parser of parameter testxml_context
+    //Parser of parameter custom_config_context
     {
-        if (config.check("testxml_context"))
+        if (config.check("custom_config_context"))
         {
-            m_testxml_context = config.find("testxml_context").asString();
-            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'testxml_context' using value:" << m_testxml_context;
+            m_custom_config_context = config.find("custom_config_context").asString();
+            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'custom_config_context' using value:" << m_custom_config_context;
         }
         else
         {
-            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'testxml_context' using DEFAULT value:" << m_testxml_context;
+            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'custom_config_context' using DEFAULT value:" << m_custom_config_context;
         }
-        prop_check.unput("testxml_context");
+        prop_check.unput("custom_config_context");
     }
 
-    //Parser of parameter filexml_option
+    //Parser of parameter config_name
     {
-        if (config.check("filexml_option"))
+        if (config.check("config_name"))
         {
-            m_filexml_option = config.find("filexml_option").asString();
-            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'filexml_option' using value:" << m_filexml_option;
+            m_config_name = config.find("config_name").asString();
+            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'config_name' using value:" << m_config_name;
         }
         else
         {
-            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'filexml_option' using DEFAULT value:" << m_filexml_option;
+            yCInfo(FrameTransformServerParamsCOMPONENT) << "Parameter 'config_name' using DEFAULT value:" << m_config_name;
         }
-        prop_check.unput("filexml_option");
+        prop_check.unput("config_name");
     }
 
     //Parser of parameter local_rpc
@@ -218,15 +218,15 @@ std::string      FrameTransformServer_ParamsParser::getDocumentationOfDevicePara
     doc = doc + std::string("This is the help for device: FrameTransformServer\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'testxml_from': xml configuration file name\n");
-    doc = doc + std::string("'testxml_context': xml configuration file context\n");
-    doc = doc + std::string("'filexml_option': The name of the xml file containing the needed configuration. if used, the name will be appended to config_xml/\n");
+    doc = doc + std::string("'custom_config_from': xml configuration file name\n");
+    doc = doc + std::string("'custom_config_context': xml configuration file context\n");
+    doc = doc + std::string("'config_name': The name of the xml file containing the needed configuration. if used, the name will be appended to config_xml/\n");
     doc = doc + std::string("'local_rpc': Full name of the rpc port\n");
     doc = doc + std::string("'FrameTransform_verbose_debug': Enable debug prints\n");
     doc = doc + std::string("'period': thread period\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device frameTransformServer --testxml_from <optional_value> --testxml_context <optional_value> --filexml_option fts_yarp_only.xml --local_rpc /ftServer/rpc --FrameTransform_verbose_debug false --period 0.10\n";
+    doc = doc + " yarpdev --device frameTransformServer --custom_config_from <optional_value> --custom_config_context <optional_value> --config_name fts_yarp_only.xml --local_rpc /ftServer/rpc --FrameTransform_verbose_debug false --period 0.10\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device frameTransformServer\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
