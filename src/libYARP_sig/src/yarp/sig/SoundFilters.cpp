@@ -55,9 +55,7 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
     return false;
 #else
     //configuration
-    soxr_io_spec_t tit;
-    tit.itype = SOXR_INT16_I;
-    tit.otype = SOXR_INT16_I;
+    soxr_io_spec_t tit = soxr_io_spec(SOXR_INT16_I, SOXR_INT16_I);
     tit.scale = 1.0;
 
     double irate = snd.getFrequency();
@@ -96,6 +94,7 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
         yCError(SOUNDFILTERS) << "libsoxr resample failed";
         delete[]arri;
         delete[]arro;
+        return false;
     }
 
     //copy from buffer to sound
