@@ -13,7 +13,7 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IPositionControl.h>
 #include <catch2/catch_amalgamated.hpp>
-#include "utils.h"
+#include "TestUtils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;

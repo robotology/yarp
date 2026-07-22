@@ -12,7 +12,7 @@
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <catch2/catch_amalgamated.hpp>
-#include "Utils.h"
+#include "TestUtils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;

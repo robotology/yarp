@@ -16,7 +16,7 @@
 #include <numeric>
 #include <vector>
 
-#include "Utils.h"
+#include "TestUtils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;

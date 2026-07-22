@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "Utils.h"
+#include "TestUtils.h"
 
 #include <yarp/os/Time.h>
 #include <memory>

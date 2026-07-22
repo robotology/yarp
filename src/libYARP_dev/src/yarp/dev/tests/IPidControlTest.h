@@ -14,7 +14,7 @@
 #include <yarp/dev/IAxisInfo.h>
 #include <catch2/catch_amalgamated.hpp>
 
-#include "Utils.h"
+#include "TestUtils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
