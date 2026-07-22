@@ -9,6 +9,7 @@
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/INavigation2D.h>
 #include <catch2/catch_amalgamated.hpp>
+#include "utils.h"
 
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
@@ -21,7 +22,8 @@ namespace yarp::dev::tests
     {
         bool b0, b1;
         b0 = inav->setInitialPose(Map2DLocation("map_1", 10.2, 20.1, angle1)); CHECK(b0);
-        yarp::os::Time::delay(0.1);
+        wait_safe(); // Allow some time for the command to take effect
+
         INFO("Testing angle" + std::to_string(angle1) + " is similar to:" + std::to_string(angle2));
         bool is_near;
         b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2), is_near, 0.1, 10.0);   CHECK(b1); CHECK(is_near);
@@ -54,12 +56,12 @@ namespace yarp::dev::tests
         {
             bool is_inside;
             b0 = inav->setInitialPose(my_current_loc); CHECK(b0);
-            yarp::os::Time::delay(0.1);
+            wait_safe(); // Allow some time for the command to take effect
             b0 = inav->getCurrentPosition(loc_to_be_tested); CHECK(b0); CHECK(loc_to_be_tested == my_current_loc);
             b1 = inav->checkInsideArea("area_test",is_inside);  CHECK(b1); CHECK(!is_inside);
             b1 = inav->checkInsideArea(area_test,is_inside);    CHECK(b1); CHECK(!is_inside);
             b0 = inav->setInitialPose(Map2DLocation("map_1", 0, 0, 0)); CHECK(b0);
-            yarp::os::Time::delay(0.1);
+            wait_safe(); // Allow some time for the command to take effect
             b0 = inav->getCurrentPosition(loc_to_be_tested); CHECK(loc_to_be_tested == Map2DLocation("map_1", 0, 0, 0));
             b1 = inav->checkInsideArea("area_test",is_inside);  CHECK(b1); CHECK(is_inside);
             b1 = inav->checkInsideArea(area_test,is_inside);    CHECK(b1); CHECK(is_inside);
@@ -70,14 +72,14 @@ namespace yarp::dev::tests
             Map2DArea area_data;
 
             b0 = inav->setInitialPose(my_current_loc_zero); CHECK(b0);
-            yarp::os::Time::delay(0.1);
+            wait_safe(); // Allow some time for the command to take effect
 
             b0 = inav->findCurrentArea(area_name, area_data); CHECK(b0);
             CHECK(area_name == "area_test");
             CHECK(area_data == area_test);
 
             b0 = inav->setInitialPose(my_current_loc_wrong); CHECK(b0);
-            yarp::os::Time::delay(0.1);
+            wait_safe(); // Allow some time for the command to take effect
 
             b0 = inav->findCurrentArea(area_name, area_data); CHECK(b0);
             CHECK(area_name == "");
@@ -88,7 +90,7 @@ namespace yarp::dev::tests
             double lin_tol = 1.0; //m
             double ang_tol = 1.0; //deg
             b0 = inav->setInitialPose(my_current_loc); CHECK(b0);
-            yarp::os::Time::delay(0.1);
+            wait_safe(); // Allow some time for the command to take effect
             bool is_near;
             b1 = inav->checkNearToLocation("loc_test", is_near, lin_tol, ang_tol); CHECK(b1); CHECK(is_near);
             b1 = inav->checkNearToLocation(loc_test, is_near, lin_tol, ang_tol); CHECK(b1); CHECK(is_near);
@@ -97,7 +99,7 @@ namespace yarp::dev::tests
             double lin_tol = 0.0001; //m
             double ang_tol = 0.0001; //deg
             b0 = inav->setInitialPose(my_current_loc); CHECK(b0);
-            yarp::os::Time::delay(0.1);
+            wait_safe(); // Allow some time for the command to take effect
             bool is_near;
             b1 = inav->checkNearToLocation("loc_test", is_near, lin_tol, ang_tol); CHECK(b1); CHECK(!is_near);
             b1 = inav->checkNearToLocation(loc_test, is_near, lin_tol, ang_tol); CHECK(b1); CHECK(!is_near);
@@ -106,7 +108,7 @@ namespace yarp::dev::tests
             double lin_tol = 1.0; //m
             Map2DLocation my_current_loc2 = my_current_loc; my_current_loc2.theta = 90;
             b0 = inav->setInitialPose(my_current_loc2); CHECK(b0);
-            yarp::os::Time::delay(0.1);
+            wait_safe(); // Allow some time for the command to take effect
             bool is_near;
             b1 = inav->checkNearToLocation("loc_test", is_near, lin_tol); CHECK(b1); CHECK(is_near);
             b1 = inav->checkNearToLocation(loc_test, is_near, lin_tol); CHECK(b1); CHECK(is_near);
@@ -115,7 +117,9 @@ namespace yarp::dev::tests
             double lin_tol = 0.1; //m
             double ang_tol = 0.1; //deg
             bool is_near;
-            b0 = inav->setInitialPose(my_current_loc); CHECK(b0); yarp::os::Time::delay(0.1);
+            b0 = inav->setInitialPose(my_current_loc);
+            CHECK(b0);
+            wait_safe(); // Allow some time for the command to take effect
             b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5), is_near, lin_tol, ang_tol); CHECK(b1);
             b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 + 180), is_near, lin_tol, ang_tol); CHECK(b1); CHECK(!is_near);
             b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 + 360), is_near, lin_tol, ang_tol); CHECK(b1); CHECK(is_near);
@@ -146,7 +150,9 @@ namespace yarp::dev::tests
             test_similar_angles(inav, -2.0, -718.0);
         }
         {
-            b0 = inav->setInitialPose(my_current_loc); CHECK(b0); yarp::os::Time::delay(0.1);
+            b0 = inav->setInitialPose(my_current_loc);
+            CHECK(b0);
+            wait_safe(); // Allow some time for the command to take effect
             yarp::dev::OdometryData my_current_odom;
             b1 = inav->getEstimatedOdometry(my_current_odom); CHECK(b1);
             INFO("Current position is:" + my_current_loc.toString());
@@ -231,7 +237,7 @@ namespace yarp::dev::tests
             {
                 break;
             }
-            yarp::os::Time::delay(0.1);
+            wait_safe();
             count++;
             if (count>200) {CHECK(0); break; }
         }
@@ -245,7 +251,7 @@ namespace yarp::dev::tests
             {
                 break;
             }
-            yarp::os::Time::delay(0.1);
+            wait_safe();
             count++;
             if (count > 200) { CHECK(0); break; }
         } while (1);

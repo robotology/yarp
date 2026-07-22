@@ -13,6 +13,7 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/os/Time.h>
 #include <catch2/catch_amalgamated.hpp>
+#include "Utils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -35,6 +36,12 @@ namespace yarp::dev::tests
         {
             b = icmd->setControlMode(i, yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY);
             CHECK(b);
+            wait_safe(); // Allow some time for the command to take effect
+
+            yarp::dev::ControlModeEnum mode_ret;
+            b = icmd->getControlMode(i, mode_ret);
+            CHECK(b);
+            CHECK(mode_ret == yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY);
         }
 
         const double ref_test=1.123;
@@ -47,7 +54,7 @@ namespace yarp::dev::tests
 
         b = ivel->velocityMove(0, ref_test);
         CHECK(b);
-        yarp::os::Time::delay(0.050);
+        wait_safe();
         b = ivel->getTargetVelocity(0,&ref);
         CHECK(b);
         CHECK(fabs(ref - ref_test) < 0.001);

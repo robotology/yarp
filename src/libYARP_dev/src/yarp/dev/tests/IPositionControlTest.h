@@ -13,6 +13,7 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IPositionControl.h>
 #include <catch2/catch_amalgamated.hpp>
+#include "utils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -35,6 +36,12 @@ namespace yarp::dev::tests
         {
             b = icmd->setControlMode(i, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
             CHECK(b);
+            wait_safe(); // Allow some time for the command to take effect
+
+            yarp::dev::ControlModeEnum mode_ret;
+            b = icmd->getControlMode(i, mode_ret);
+            CHECK(b);
+            CHECK(mode_ret == yarp::dev::ControlModeEnum::VOCAB_CM_POSITION);
         }
 
         {

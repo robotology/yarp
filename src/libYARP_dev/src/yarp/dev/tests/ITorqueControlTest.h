@@ -12,6 +12,7 @@
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <catch2/catch_amalgamated.hpp>
+#include "Utils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -35,6 +36,12 @@ namespace yarp::dev::tests
         {
             b = icmd->setControlMode(i, yarp::dev::SelectableControlModeEnum::VOCAB_CM_TORQUE);
             CHECK(b);
+            wait_safe(); // Allow some time for the command to take effect
+
+            yarp::dev::ControlModeEnum mode_ret;
+            b = icmd->getControlMode(i, mode_ret);
+            CHECK(b);
+            CHECK(mode_ret == yarp::dev::ControlModeEnum::VOCAB_CM_TORQUE);
         }
 
         auto vals = std::vector<double>(ax);

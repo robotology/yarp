@@ -40,7 +40,7 @@ namespace yarp::dev::tests
         {
             b = icmd->setControlMode(i, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT);
             CHECK(b);
-            yarp::os::Time::delay(0.10); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             yarp::dev::ControlModeEnum mode_ret;
             b = icmd->getControlMode(i, mode_ret);
@@ -59,7 +59,7 @@ namespace yarp::dev::tests
 
             b = ipdir->setPosition(0, ref);
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             b = ipdir->getRefPosition(0, ref);
             CHECK(b);
@@ -70,7 +70,7 @@ namespace yarp::dev::tests
 
             b = ipdir->setPositions(refs);
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             b = ipdir->getRefPositions(refs);
             CHECK(b);
@@ -81,7 +81,7 @@ namespace yarp::dev::tests
 
             b = ipdir->setPositions(joints, refs);
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             b = ipdir->getRefPositions(joints, refs);
             CHECK(b);
@@ -98,7 +98,7 @@ namespace yarp::dev::tests
 
             b = ipdir->setPosition(0, ref);
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             b = ipdir->getRefPosition(0, &ref);
             CHECK(b);
@@ -109,7 +109,7 @@ namespace yarp::dev::tests
 
             b = ipdir->setPositions(refs.data());
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             b = ipdir->getRefPositions(refs.data());
             CHECK(b);
@@ -120,7 +120,7 @@ namespace yarp::dev::tests
 
             b = ipdir->setPositions(ax, joints.data(), refs.data());
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             b = ipdir->getRefPositions(ax, joints.data(), refs.data());
             CHECK(b);

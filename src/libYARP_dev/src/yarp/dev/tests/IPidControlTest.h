@@ -141,8 +141,7 @@ namespace yarp::dev::tests
             CHECK(pidoff == 0);
             b = ipid->setPidOffset(pp,0,42);
             CHECK(b);
-            //Streaming message sent on separated thread, delay required before get()
-            yarp::os::Time::delay(0.050);
+            wait_safe(); // Allow some time for the command to take effect
             b = ipid->getPidOffset(pp,0,pidoff);
             CHECK(b);
             CHECK(pidoff == 42);
@@ -156,8 +155,8 @@ namespace yarp::dev::tests
             CHECK(pidffd == 0);
             b = ipid->setPidFeedforward(pp,0,43);
             CHECK(b);
-            //Streaming message sent on separated thread, delay required before get()
-            yarp::os::Time::delay(0.050);
+            wait_safe(); // Allow some time for the command to take effect
+
             b = ipid->getPidFeedforward(pp,0,pidffd);
             CHECK(b);
             CHECK(pidffd == 43);

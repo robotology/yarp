@@ -5,6 +5,7 @@
 
 #include "Utils.h"
 
+#include <yarp/os/Time.h>
 #include <memory>
 #include <numeric>
 
@@ -12,6 +13,11 @@ using namespace std;
 
 namespace yarp::dev::tests
 {
+    void YARP_dev_API wait_safe(const double seconds)
+    {
+        yarp::os::Time::delay(seconds);
+    }
+
     // Utility function to compare two int vectors for equality
     bool YARP_dev_API vectors_equal(const std::vector<double>& a, const std::vector<double>& b)
     {

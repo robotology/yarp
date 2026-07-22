@@ -10,84 +10,86 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IAxisInfo.h>
 #include <catch2/catch_amalgamated.hpp>
+#include "utils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
 
-#define COMMAND_DELAY 1.0
-
-void test_single_joint(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
-{
-    REQUIRE(icmd != nullptr);
-    bool b = false;
-    b = icmd->setControlMode(0, mode);
-    CHECK(b);
-    yarp::os::SystemClock::delaySystem(COMMAND_DELAY);
-    ControlModeEnum ret;
-    b = icmd->getControlMode(0, ret);
-    CHECK(b);
-    CHECK(mode==(SelectableControlModeEnum)ret);
-}
-
-void test_all_joints(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
-{
-    REQUIRE(icmd != nullptr);
-    REQUIRE(iinfo != nullptr);
-    int ax = 0; bool bax = false;
-    bax = iinfo->getAxes(&ax);
-    REQUIRE(bax);
-    REQUIRE(ax==2);
-
-    bool b = false;
-    std::vector<SelectableControlModeEnum> modes (2);
-    modes[0]=mode;
-    modes[1]=mode;
-    b = icmd->setControlModes(modes);
-    CHECK(b);
-    yarp::os::SystemClock::delaySystem(COMMAND_DELAY);
-    std::vector<ControlModeEnum> rets (2);
-    b = icmd->getControlModes(rets);
-    CHECK(b);
-    CHECK(mode == (SelectableControlModeEnum) rets[0]);
-    CHECK(mode == (SelectableControlModeEnum) rets[1]);
-}
-
-void test_multi_joint(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
-{
-    REQUIRE(icmd != nullptr);
-    REQUIRE(iinfo != nullptr);
-    int ax=0; bool bax= false;
-    bax=iinfo->getAxes(&ax);
-    REQUIRE (bax);
-    REQUIRE (ax==2);
-
-    bool b = false;
-    std::vector <SelectableControlModeEnum> modes (2);
-    modes[0] = mode;
-    modes[1] = mode;
-    std::vector<int> joints (2);
-    joints[0] = 0;
-    joints[1] = 1;
-    b = icmd->setControlModes(joints,modes);
-    CHECK(b);
-    yarp::os::SystemClock::delaySystem(COMMAND_DELAY);
-    std::vector<ControlModeEnum> rets (2);
-    b = icmd->getControlModes(joints,rets);
-    CHECK(b);
-    CHECK(mode == (SelectableControlModeEnum) rets[0]);
-    CHECK(mode == (SelectableControlModeEnum) rets[1]);
-}
-
-void test_joint(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
-{
-    REQUIRE(icmd != nullptr);
-    test_single_joint(icmd, iinfo, mode);
-    test_all_joints(icmd, iinfo, mode);
-    test_multi_joint(icmd, iinfo, mode);
-}
-
 namespace yarp::dev::tests
 {
+    void test_single_joint(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
+    {
+        REQUIRE(icmd != nullptr);
+        bool b = false;
+        b = icmd->setControlMode(0, mode);
+        CHECK(b);
+        wait_safe(); // Allow some time for the command to take effect
+
+        ControlModeEnum ret;
+        b = icmd->getControlMode(0, ret);
+        CHECK(b);
+        CHECK(mode==(SelectableControlModeEnum)ret);
+    }
+
+    void test_all_joints(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
+    {
+        REQUIRE(icmd != nullptr);
+        REQUIRE(iinfo != nullptr);
+        int ax = 0; bool bax = false;
+        bax = iinfo->getAxes(&ax);
+        REQUIRE(bax);
+        REQUIRE(ax==2);
+
+        bool b = false;
+        std::vector<SelectableControlModeEnum> modes (2);
+        modes[0]=mode;
+        modes[1]=mode;
+        b = icmd->setControlModes(modes);
+        CHECK(b);
+        wait_safe(); // Allow some time for the command to take effect
+
+        std::vector<ControlModeEnum> rets (2);
+        b = icmd->getControlModes(rets);
+        CHECK(b);
+        CHECK(mode == (SelectableControlModeEnum) rets[0]);
+        CHECK(mode == (SelectableControlModeEnum) rets[1]);
+    }
+
+    void test_multi_joint(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
+    {
+        REQUIRE(icmd != nullptr);
+        REQUIRE(iinfo != nullptr);
+        int ax=0; bool bax= false;
+        bax=iinfo->getAxes(&ax);
+        REQUIRE (bax);
+        REQUIRE (ax==2);
+
+        bool b = false;
+        std::vector <SelectableControlModeEnum> modes (2);
+        modes[0] = mode;
+        modes[1] = mode;
+        std::vector<int> joints (2);
+        joints[0] = 0;
+        joints[1] = 1;
+        b = icmd->setControlModes(joints,modes);
+        CHECK(b);
+        wait_safe(); // Allow some time for the command to take effect
+
+        std::vector<ControlModeEnum> rets (2);
+        b = icmd->getControlModes(joints,rets);
+        CHECK(b);
+        CHECK(mode == (SelectableControlModeEnum) rets[0]);
+        CHECK(mode == (SelectableControlModeEnum) rets[1]);
+    }
+
+    void test_joint(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
+    {
+        REQUIRE(icmd != nullptr);
+        test_single_joint(icmd, iinfo, mode);
+        test_all_joints(icmd, iinfo, mode);
+        test_multi_joint(icmd, iinfo, mode);
+    }
+
     inline void exec_iControlMode_test_1(IControlMode* icmd, IAxisInfo* iinfo)
     {
         REQUIRE(icmd != nullptr);
