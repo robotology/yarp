@@ -88,7 +88,36 @@ bool YARP_sig_API sum(yarp::sig::Image& OutImg,
                       size_t off_x,
                       size_t off_y);
 
-} // namespace yarp::sig::utils
+enum class RotateOption
+{
+    rotate_cw,
+    rotate_ccw,
+    rotate_180,
+    rotate_none
+};
 
+enum class FlipOption
+{
+    flip_x,
+    flip_y,
+    flip_xy,
+    flip_none
+};
+
+/**
+ * @brief Rotate and/or flip an image.
+ * @param[in] InImg input image.
+ * @param[out] OutImg result of the rotation and/or flip operation.
+ * @param[in] rotateflag rotation option. Default is no rotation.
+ * @param[in] flipflag flip option. Default is no flip.
+ * @note Input and output images must have same pixel type. The output image is resized to match the rotated/flipped dimensions.
+ * @return true on success, false otherwise.
+ */
+    bool YARP_sig_API rotate(yarp::sig::Image& OutImg,
+                      const yarp::sig::Image& InImg,
+                      RotateOption rotateflag=RotateOption::rotate_none,
+                      FlipOption flipflag=FlipOption::flip_none);
+
+} // namespace yarp::sig::utils
 
 #endif // YARP_SIG_IMAGEUTILS_H

@@ -9,6 +9,13 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
+#if defined (YARP_HAS_OPENCV)
+#include <yarp/cv/Cv.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/videoio/videoio.hpp>
+#endif
+
 using namespace yarp::sig;
 
 static bool checkImages(const Image& bigImg, const Image& smallImg1, const Image& smallImg2)
@@ -205,4 +212,105 @@ bool utils::sum(Image& OutImg, const Image& InImg, bool enable_colorkey, int col
     }
 
     return true;
+}
+
+bool utils::rotate(yarp::sig::Image& OutImg,
+                      const yarp::sig::Image& InImg,
+                      RotateOption rotateflag,
+                      FlipOption flipflag)
+{
+#if !defined (YARP_HAS_OPENCV)
+    yError() << "libopencv not available";
+    return false;
+#else
+
+    // Resolve rotation flag locally from enum
+    const bool doRotate = (rotateflag != RotateOption::rotate_none);
+    ::cv::RotateFlags rot_flags = ::cv::ROTATE_90_CLOCKWISE; // default, overridden below
+    if (doRotate)
+    {
+        switch (rotateflag)
+        {
+            case RotateOption::rotate_cw:  rot_flags = ::cv::ROTATE_90_CLOCKWISE;        break;
+            case RotateOption::rotate_ccw: rot_flags = ::cv::ROTATE_90_COUNTERCLOCKWISE; break;
+            case RotateOption::rotate_180: rot_flags = ::cv::ROTATE_180;                 break;
+            default: break;
+        }
+    }
+
+    // Resolve flip code locally from enum
+    const bool doFlip = (flipflag != FlipOption::flip_none);
+    int flip_code = 0; // default, overridden below
+    if (doFlip)
+    {
+        switch (flipflag)
+        {
+            case FlipOption::flip_x:  flip_code =  0; break;
+            case FlipOption::flip_y:  flip_code =  1; break;
+            case FlipOption::flip_xy: flip_code = -1; break;
+            default: break;
+        }
+    }
+
+    // Beware in the following code, OutImg.copy() is required because
+    // cv::Mat is a temporary object and will be destroyed at the end of the statement.
+    // Also notice that OutImg = yarp::cv::fromCvMat(...) is not enough because it will not copy the data,
+    // will call the Move assignment operator, since yarp::cv::fromCvMat() is an rvalue.
+    if (InImg.getPixelCode() == VOCAB_PIXEL_RGB)
+    {
+        ::cv::Mat cvInImage = yarp::cv::toCvMat(InImg);
+        ::cv::Mat cvOutImage1;
+        ::cv::Mat cvOutImage2;
+
+        if (!doFlip && doRotate) {
+            // just rotation
+            ::cv::rotate(cvInImage, cvOutImage1, rot_flags);
+            OutImg.copy(yarp::cv::fromCvMat<yarp::sig::PixelRgb>(cvOutImage1));
+        } else if (doFlip && !doRotate) {
+            // just flip
+            ::cv::flip(cvInImage, cvOutImage1, flip_code);
+            OutImg.copy(yarp::cv::fromCvMat<yarp::sig::PixelRgb>(cvOutImage1));
+        } else if (!doFlip && !doRotate) {
+            // just copy
+            OutImg.copy(yarp::cv::fromCvMat<yarp::sig::PixelRgb>(cvInImage));
+        } else {
+            // first a rotation, then a flip
+            ::cv::rotate(cvInImage, cvOutImage1, rot_flags);
+            ::cv::flip(cvOutImage1, cvOutImage2, flip_code);
+            OutImg.copy(yarp::cv::fromCvMat<yarp::sig::PixelRgb>(cvOutImage2));
+        }
+    }
+    else if (InImg.getPixelCode() == VOCAB_PIXEL_MONO_FLOAT)
+    {
+        ::cv::Mat cvInImage = yarp::cv::toCvMat(InImg);
+        ::cv::Mat cvOutImage1;
+        ::cv::Mat cvOutImage2;
+
+        if (!doFlip && doRotate) {
+            // just rotation
+            ::cv::rotate(cvInImage, cvOutImage1, rot_flags);
+            OutImg.copy(yarp::cv::fromCvMat<yarp::sig::PixelFloat>(cvOutImage1));
+        } else if (doFlip && !doRotate) {
+            // just flip
+            ::cv::flip(cvInImage, cvOutImage1, flip_code);
+            OutImg.copy(yarp::cv::fromCvMat<yarp::sig::PixelFloat>(cvOutImage1));
+        } else if (!doFlip && !doRotate)
+        {
+            // just copy
+            OutImg.copy(yarp::cv::fromCvMat<yarp::sig::PixelFloat>(cvInImage));
+        } else
+        {
+            // first a rotation, then a flip
+            ::cv::rotate(cvInImage, cvOutImage1, rot_flags);
+            ::cv::flip(cvOutImage1, cvOutImage2, flip_code);
+            OutImg.copy(yarp::cv::fromCvMat<yarp::sig::PixelFloat>(cvOutImage2));
+        }
+    }
+    else
+    {
+        yError("Invalid Image type!");
+        return false;
+    }
+    return true;
+#endif
 }

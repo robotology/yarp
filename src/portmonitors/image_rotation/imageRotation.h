@@ -10,7 +10,7 @@
 #include <yarp/os/Things.h>
 #include <yarp/os/MonitorObject.h>
 #include <yarp/sig/Image.h>
-#include <yarp/cv/Cv.h>
+#include <yarp/sig/ImageUtils.h>
 
  /**
   * @ingroup portmonitors_lists
@@ -38,14 +38,8 @@ private:
     yarp::sig::ImageOf<yarp::sig::PixelFloat> m_outImgFloat;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> m_outImgRgb;
 
-    std::string m_options_rotate_str = "rotate_cw";
-    std::string m_options_flip_str = "flip_none";
-    cv::RotateFlags m_rot_flags;
-    int m_flip_code;
-
-    cv::Mat m_cvInImage;
-    cv::Mat m_cvOutImage1;
-    cv::Mat m_cvOutImage2;
+    yarp::sig::utils::RotateOption m_rotate_option {yarp::sig::utils::RotateOption::rotate_cw};
+    yarp::sig::utils::FlipOption   m_flip_option   {yarp::sig::utils::FlipOption::flip_none};
 };
 
 #endif  // YARP_PORTMONITOR_IMAGEROTATION_H
