@@ -215,6 +215,12 @@ jobs:
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.18.0",
           }
+# This cannot run yet (unmet dependencies) 
+#        - {
+#            cmake_version: "3.31.*",
+#            cmake_generator: "Unix Makefiles",
+#            ycm_version: "0.18.0",
+#          }
     steps:
     - name: remove any previous installation of cmake
       run: |
@@ -2423,8 +2429,8 @@ jobs:
           -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
           -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always \
           -DCMAKE_BUILD_TYPE=Profile \
-          "-DCMAKE_C_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
-          "-DCMAKE_CXX_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+          "-DCMAKE_C_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -fprofile-update=atomic -DNDEBUG" \
+          "-DCMAKE_CXX_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -fprofile-update=atomic -DNDEBUG" \
           -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
           -DYARP_NO_DEPRECATED:BOOL=ON
 
@@ -2433,10 +2439,21 @@ jobs:
         (cd build && make && make CTEST_OUTPUT_ON_FAILURE=1 test)
 
         # Capture coverage info for Profile builds
-        (cd build; lcov --directory . --no-external --capture --rc lcov_branch_coverage=1 --output-file coverage.info)
+        (cd build; lcov --directory . \
+            --no-external \
+            --capture \
+            --rc branch_coverage=1 \
+            --ignore-errors mismatch,negative \
+            --output-file coverage.info)
 
         # Filter out system and test code
-        (cd build; lcov --remove coverage.info 'tests/*' 'example/*' 'extern/*' 'build/*'--rc lcov_branch_coverage=1 --output-file coverage.info)
+        (cd build; lcov --remove coverage.info \
+            'tests/*' \
+            'example/*' \
+            'extern/*' \
+            'build/*' \
+            --rc branch_coverage=1 \
+            --output-file coverage.info)
 
         # Debug before upload
         (cd build; lcov --list coverage.info)
