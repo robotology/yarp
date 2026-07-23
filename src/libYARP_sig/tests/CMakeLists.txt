@@ -20,6 +20,10 @@ if (YARP_HAS_FFMPEG)
    target_compile_definitions(harness_sig PRIVATE YARP_MP3_SUPPORTED)
 endif()
 
+if (YARP_HAS_OpenCV)
+   target_compile_definitions(harness_sig PRIVATE YARP_OPENCV_SUPPORTED)
+endif()
+
 target_link_libraries(harness_sig
   PRIVATE
     YARP_harness

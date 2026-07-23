@@ -334,26 +334,31 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         Bottle reply;
 
         cmd.fromString("[add] [one] 5");
+        reply.clear();
         client_port.write(cmd,reply);
         INFO("cmd " << cmd.toString() << " reply " << reply.toString());
 
         CHECK(reply.get(0).asInt32() == 6);
 
         cmd.fromString("[test] [void] 5");
+        reply.clear();
         client_port.write(cmd,reply);
         INFO("cmd " << cmd.toString() << " reply " << reply.toString());
 
         cmd.fromString("[add] [one] 6");
+        reply.clear();
         client_port.write(cmd,reply);
         INFO("cmd " << cmd.toString() << " reply " << reply.toString());
 
         CHECK(reply.get(0).asInt32() == 7);
 
         cmd.fromString("[test] [1way] 5");
+        reply.clear();
         client_port.write(cmd,reply);
-        INFO("cmd " << cmd.toString() << " reply " << reply.toString());
+        INFO("cmd " << cmd.toString() << " reply " << reply.toString() << " (reply will be empty)");
 
         cmd.fromString("[add] [one] 7");
+        reply.clear();
         client_port.write(cmd,reply);
         INFO("cmd " << cmd.toString() << " reply " << reply.toString());
 

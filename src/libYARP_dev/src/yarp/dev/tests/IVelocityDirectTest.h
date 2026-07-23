@@ -14,7 +14,7 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IVelocityDirect.h>
 #include <catch2/catch_amalgamated.hpp>
-#include "Utils.h"
+#include "TestUtils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -37,7 +37,7 @@ namespace yarp::dev::tests
         {
             b = icmd->setControlMode(i, yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY_DIRECT);
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             yarp::dev::ControlModeEnum mode_ret;
             b = icmd->getControlMode(i, mode_ret);
@@ -55,7 +55,7 @@ namespace yarp::dev::tests
 
             b = ivdir->setRefVelocity(0, ref);
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             b = ivdir->getRefVelocity(0, ref);
             CHECK(b);
@@ -66,7 +66,7 @@ namespace yarp::dev::tests
 
             b = ivdir->setRefVelocity(refs);
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             b = ivdir->getRefVelocity(refs);
             CHECK(b);
@@ -77,7 +77,7 @@ namespace yarp::dev::tests
 
             b = ivdir->setRefVelocity(joints, refs);
             CHECK(b);
-            yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
+            wait_safe(); // Allow some time for the command to take effect
 
             b = ivdir->getRefVelocity(joints, refs);
             CHECK(b);

@@ -164,6 +164,17 @@ if(YARP_HAS_SOXR)
   list(APPEND YARP_sig_PRIVATE_DEPS SOXR)
 endif()
 
+if(YARP_HAS_OpenCV)
+  target_include_directories(YARP_sig SYSTEM PRIVATE ${OPENCV_INCLUDE_DIR})
+  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_OPENCV)
+  target_link_libraries(YARP_sig PRIVATE ${OPENCV_LIBRARIES})
+  list(APPEND YARP_sig_PRIVATE_DEPS OpenCV)
+  target_link_libraries(YARP_sig
+    PRIVATE
+      YARP::YARP_cv
+   )
+endif()
+
 if(YARP_HAS_ZLIB)
   target_include_directories(YARP_sig SYSTEM PRIVATE ${ZLIB_INCLUDE_DIR})
   target_compile_definitions(YARP_sig PRIVATE YARP_HAS_ZLIB)

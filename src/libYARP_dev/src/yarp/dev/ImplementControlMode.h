@@ -47,6 +47,10 @@ public:
     yarp::dev::ReturnValue setControlModes(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
     yarp::dev::ReturnValue setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
 
+#if ALLOW_OLD_CONTROL_MODE_INTERFACE
+    using IControlMode::getControlMode;
+    using IControlMode::setControlMode;
+#endif
 };
 
 #endif // YARP_DEV_IMPLEMENTCONTROLMODE_H

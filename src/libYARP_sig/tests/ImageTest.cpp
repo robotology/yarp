@@ -849,6 +849,45 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
         CHECK(ok); // Checking data consistency bottom split
     }
 
+    SECTION("test image rotation")
+    {
+      // Without OpenCV, the rotation function is not implemented,
+      // so we skip this test if OpenCV is not available
+      #if defined (YARP_OPENCV_SUPPORTED)
+        ImageOf<PixelRgb> inImg, outImg;
+        inImg.resize(10, 10);
+
+        PixelRgb pixelValue {255, 0, 0};
+
+        for (size_t u = 0; u <= 5; u++) {
+            for (size_t v = 0; v <= 5; v++) {
+                inImg.pixel(u, v) = pixelValue;
+            }
+        }
+
+        CHECK(utils::rotate(outImg, inImg, yarp::sig::utils::RotateOption::rotate_cw,
+                                           yarp::sig::utils::FlipOption::flip_none));
+
+        CHECK(utils::rotate(outImg, inImg, yarp::sig::utils::RotateOption::rotate_ccw,
+                                           yarp::sig::utils::FlipOption::flip_none));
+
+        CHECK(utils::rotate(outImg, inImg, yarp::sig::utils::RotateOption::rotate_180,
+                                           yarp::sig::utils::FlipOption::flip_none));
+
+        CHECK(utils::rotate(outImg, inImg, yarp::sig::utils::RotateOption::rotate_none,
+                                           yarp::sig::utils::FlipOption::flip_none));
+
+        CHECK(utils::rotate(outImg, inImg, yarp::sig::utils::RotateOption::rotate_none,
+                                           yarp::sig::utils::FlipOption::flip_x));
+
+        CHECK(utils::rotate(outImg, inImg, yarp::sig::utils::RotateOption::rotate_none,
+                                           yarp::sig::utils::FlipOption::flip_y));
+
+        CHECK(utils::rotate(outImg, inImg, yarp::sig::utils::RotateOption::rotate_none,
+                                           yarp::sig::utils::FlipOption::flip_xy));
+      #endif
+    }
+
     SECTION("test image crop.")
     {
         ImageOf<PixelRgb> inImg, outImg;

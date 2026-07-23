@@ -49,9 +49,9 @@ TEST_CASE("pm::depthimage_to_monoTest", "[yarp::pm]")
         bool b = yarp::os::Network::connect("/send", "/recv", tc.carrier);
         REQUIRE(b);
 
-        // Create a test depth image (10x10 pixels)
-        constexpr int width = 10;
-        constexpr int height = 10;
+        // Create a test depth image (16x16 pixels)
+        constexpr int width = 16;
+        constexpr int height = 16;
 
         yarp::sig::ImageOf<yarp::sig::PixelFloat>& depthImg = sender.prepare();
         depthImg.resize(width, height);

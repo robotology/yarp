@@ -162,7 +162,8 @@ RUN cd yarp && cd bindings &&  mkdir build && cd build && \
     make -j11
 
 # Install YARP completion
-RUN sudo ln -s /usr/local/share/bash-completion/completions/yarp /usr/share/bash-completion/completions
+USER root
+RUN ln -s /usr/local/share/bash-completion/completions/yarp /usr/share/bash-completion/completions
 
 # Set environmental variables
 USER $robotology_install_user

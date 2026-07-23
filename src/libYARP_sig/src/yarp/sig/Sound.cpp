@@ -397,7 +397,7 @@ bool Sound::read(ConnectionReader& connection)
 
     //markers data
     m_markers.clear();
-    for (int i = 0; i < markersListLen; i++)
+    for (size_t i = 0; i < markersListLen; i++)
     {
         int innerTag = connection.expectInt32();
         if (innerTag != BOTTLE_TAG_LIST) {

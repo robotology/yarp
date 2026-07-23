@@ -70,7 +70,7 @@ template<> struct convert_code_from_cv<yarp::sig::PixelBgra> : std::integral_con
 
 
 template<typename T>
-::cv::Mat yarp::cv::toCvMat(yarp::sig::ImageOf<T>& yarpImage)
+::cv::Mat yarp::cv::toCvMat(const yarp::sig::ImageOf<T>& yarpImage)
 {
     ::cv::Mat outMat (yarpImage.height(), yarpImage.width(), yarp::cv::type_code<T>::value,
                       yarpImage.getRawImage(), yarpImage.getRowSize()); // RVO
@@ -81,7 +81,7 @@ template<typename T>
     return outMat;
 }
 
-inline ::cv::Mat yarp::cv::toCvMat(yarp::sig::Image& yarpImage)
+inline ::cv::Mat yarp::cv::toCvMat(const yarp::sig::Image& yarpImage)
 {
     int val=-1;
     int type=0;
@@ -103,7 +103,7 @@ inline ::cv::Mat yarp::cv::toCvMat(yarp::sig::Image& yarpImage)
 }
 
 template<typename T>
-yarp::sig::ImageOf<T> yarp::cv::fromCvMat(::cv::Mat& cvImage)
+yarp::sig::ImageOf<T> yarp::cv::fromCvMat(const ::cv::Mat& cvImage)
 {
     constexpr size_t align_8_bytes = 8;
     constexpr size_t align_4_bytes = 4;

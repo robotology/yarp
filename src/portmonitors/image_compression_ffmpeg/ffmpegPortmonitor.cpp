@@ -769,7 +769,7 @@ bool FfmpegMonitorObject::parsePropertyParams(yarp::os::Property inputoptions, c
     std::string inputoptionsStr = inputoptions.toString();
     propertyBottle.fromString(inputoptionsStr);
 
-    for (int i = 0; i < propertyBottle.size(); i++)
+    for (size_t i = 0; i < propertyBottle.size(); i++)
     {
         Value& element = propertyBottle.get(i);
         if (!element.isList()) { continue; }

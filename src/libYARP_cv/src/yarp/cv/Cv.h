@@ -21,7 +21,7 @@ namespace yarp::cv {
  * are currently supported.
  * @return the resulting cv::Mat.
  */
-::cv::Mat toCvMat(yarp::sig::Image& yarpImage);
+::cv::Mat toCvMat(const yarp::sig::Image& yarpImage);
 
 /**
  * Convert a yarp::sig::ImageOf to a cv::Mat object
@@ -37,7 +37,7 @@ namespace yarp::cv {
  * @return the resulting cv::Mat.
  */
 template<typename T>
-::cv::Mat toCvMat(yarp::sig::ImageOf<T>& yarpImage);
+::cv::Mat toCvMat(const yarp::sig::ImageOf<T>& yarpImage);
 
 /**
  * Convert a cv::Mat to a yarp::sig::ImageOf object.
@@ -57,7 +57,7 @@ template<typename T>
  * @return the resulting yarp::sig::ImageOf.
  */
 template<typename T>
-yarp::sig::ImageOf<T> fromCvMat(::cv::Mat& cvImage);
+yarp::sig::ImageOf<T> fromCvMat(const ::cv::Mat& cvImage);
 
 } // namespace yarp::cv
 

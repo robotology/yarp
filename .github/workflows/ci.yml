@@ -105,7 +105,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -126,7 +126,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -147,7 +147,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -248,7 +248,7 @@ jobs:
         grep YCM_VERSION /usr/share/cmake/YCM/YCMConfig.cmake
 
     - name: Clone Yarp repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -1318,7 +1318,7 @@ jobs:
     steps:
 
     - name: Clone repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -1479,7 +1479,12 @@ jobs:
           brew update
           brew install ccache
           brew install ace
-          brew install sqlite tinyxml2 libedit libpng qt5 opencv eigen graphviz libsoxr
+          brew install sqlite tinyxml2 libedit libpng eigen graphviz libsoxr
+          brew install opencv
+          #Unlink qt5 to avoid conflicts with qt6 (opencv)
+          brew unlink qtbase qtdeclarative qtsvg
+          brew install qt5
+          brew link --overwrite qtbase qtdeclarative qtsvg
 
     - name: Install SWIG [Linux]
       if: runner.os == 'Linux'
@@ -2069,10 +2074,10 @@ jobs:
     environment: code-analysis
     name: 'Codacy - clang-tidy'
     needs: [select_environment, run-cmake]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -2104,9 +2109,7 @@ jobs:
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind \
-                                      openjdk-8-jdk \
-                                      openjdk-8-jre
+                                      valgrind
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -2133,7 +2136,8 @@ jobs:
                                       libftdi-dev \
                                       libi2c-dev \
                                       libjpeg-dev \
-                                      libpcl-dev
+                                      libpcl-dev \
+                                      libsoxr-dev
 
           sudo apt-get install -y     libgstreamer1.0-dev \
                                       libgstreamer-plugins-base1.0-dev
@@ -2145,7 +2149,7 @@ jobs:
                                       tcl-dev \
                                       tk-dev \
                                       python3-dev \
-                                      liboctave-dev \
+                                      octave-dev \
                                       ruby-dev \
                                       ruby \
                                       libcrypt-dev \
@@ -2207,6 +2211,9 @@ jobs:
         echo "COMMIT=${{ needs.select_environment.outputs.sha }}" >> $GITHUB_ENV
         echo "CODACY_URL=https://api.codacy.com" >> $GITHUB_ENV
         echo "CODACY_CLANG_TIDY_VERSION=${CODACY_CLANG_TIDY_VERSION}" >> $GITHUB_ENV
+
+        # Append output bin directory to the PATH
+        echo "PATH=${GITHUB_WORKSPACE}/build/bin:${PATH}"  >> $GITHUB_ENV
 
     - name: Download codacy-clang-tidy
       if: runner.os == 'Linux'
@@ -2283,10 +2290,10 @@ jobs:
     environment: code-analysis
     name: 'Codacy - coverage'
     needs: [select_environment, run-cmake]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -2318,9 +2325,7 @@ jobs:
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind \
-                                      openjdk-8-jdk \
-                                      openjdk-8-jre
+                                      valgrind
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -2349,7 +2354,8 @@ jobs:
                                       libftdi-dev \
                                       libi2c-dev \
                                       libjpeg-dev \
-                                      libpcl-dev
+                                      libpcl-dev \
+                                      libsoxr-dev
 
           # Install bindings dependencies
           sudo apt-get install -qq -y mono-mcs \
@@ -2358,7 +2364,7 @@ jobs:
                                       tcl-dev \
                                       tk-dev \
                                       python3-dev \
-                                      liboctave-dev \
+                                      octave-dev \
                                       ruby-dev \
                                       ruby \
                                       libcrypt-dev \
@@ -2402,6 +2408,16 @@ jobs:
         export CLICOLOR_FORCE=1
         export YARP_COLORED_OUTPUT=1
 
+        # Append output bin directory to the PATH
+        echo "PATH=${GITHUB_WORKSPACE}/build/bin:${PATH}"  >> $GITHUB_ENV
+        export PATH="${GITHUB_WORKSPACE}/build/bin:${PATH}"
+
+        # Print info
+        gcc --version
+        lcov --version
+        gcov --version
+        gcovr --version
+        
         /usr/bin/cmake -S. -Bbuild \
           -C .ci/initial-cache.gh.linux.cmake \
           -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
@@ -2417,10 +2433,21 @@ jobs:
         (cd build && make && make CTEST_OUTPUT_ON_FAILURE=1 test)
 
         # Capture coverage info for Profile builds
-        (cd build; lcov --directory . --capture --rc lcov_branch_coverage=1 --output-file coverage.info)
+        (cd build; lcov --directory . \
+            --no-external \
+            --capture \
+            --rc branch_coverage=1 \
+            --ignore-errors mismatch \
+            --output-file coverage.info)
 
         # Filter out system and test code
-        (cd build; lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'build/*'--rc lcov_branch_coverage=1 --output-file coverage.info)
+        (cd build; lcov --remove coverage.info \
+            'tests/*' \
+            'example/*' \
+            'extern/*' \
+            'build/*' \
+            --rc branch_coverage=1 \
+            --output-file coverage.info)
 
         # Debug before upload
         (cd build; lcov --list coverage.info)
@@ -2436,10 +2463,10 @@ jobs:
     environment: code-analysis
     name: 'SonarCloud'
     needs: [select_environment, run-cmake]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -2547,9 +2574,7 @@ jobs:
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind \
-                                      openjdk-8-jdk \
-                                      openjdk-8-jre
+                                      valgrind
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -2578,7 +2603,8 @@ jobs:
                                       libftdi-dev \
                                       libi2c-dev \
                                       libjpeg-dev \
-                                      libpcl-dev
+                                      libpcl-dev \
+                                      libsoxr-dev
 
           # Install bindings dependencies
           sudo apt-get install -qq -y mono-mcs \
@@ -2587,7 +2613,7 @@ jobs:
                                       tcl-dev \
                                       tk-dev \
                                       python3-dev \
-                                      liboctave-dev \
+                                      octave-dev \
                                       ruby-dev \
                                       ruby \
                                       libcrypt-dev \
@@ -2643,6 +2669,9 @@ jobs:
         echo "CCACHE_CPP2=yes" >> $GITHUB_ENV
         echo "PATH=/usr/lib/ccache::${PATH}" >> $GITHUB_ENV
 
+        # Append output bin directory to the PATH
+        echo "PATH=${GITHUB_WORKSPACE}/build/bin:${PATH}"  >> $GITHUB_ENV
+
         cat $GITHUB_ENV
 
         echo "ccache_path=${CCACHE_HOME_PATH}" >> $GITHUB_OUTPUT
@@ -2661,6 +2690,8 @@ jobs:
         # Reset ccache stats before starting
         ccache -z
 
+        gcc --version
+        lcov --version
         gcov --version
         gcovr --version
 
@@ -2725,7 +2756,7 @@ jobs:
     - name: Capture coverage info
       run: |
         (cd build && \
-        gcovr --exclude="../extern/*" --sonarqube --branches --output coverage.xml --root .. .)
+        gcovr --exclude="../extern/*" --exclude="^/usr/include/" --exclude=".*qrc_.*\.cpp" --gcov-ignore-parse-errors=negative_hits.warn --sonarqube --branches --output coverage.xml --root .. .)
 
     - name: Print coverage info file
       run: |
