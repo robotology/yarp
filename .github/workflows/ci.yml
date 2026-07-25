@@ -2439,24 +2439,27 @@ jobs:
         (cd build && make && make CTEST_OUTPUT_ON_FAILURE=1 test)
 
         # Capture coverage info for Profile builds
-        (cd build; lcov --directory . \
+        # NOTE: run from the repo root (not from inside build/) so that
+        # --no-external treats the whole repository (src/ included) as
+        # "internal", instead of only the generated files under build/.
+        lcov --directory build \
             --no-external \
             --capture \
             --rc branch_coverage=1 \
             --ignore-errors mismatch,negative \
-            --output-file coverage.info)
+            --output-file build/coverage.info
 
         # Filter out system and test code
-        (cd build; lcov --remove coverage.info \
+        lcov --remove build/coverage.info \
             'tests/*' \
             'example/*' \
             'extern/*' \
-            'build/*' \
+            --ignore-errors unused \
             --rc branch_coverage=1 \
-            --output-file coverage.info)
+            --output-file build/coverage.info
 
         # Debug before upload
-        (cd build; lcov --list coverage.info)
+        lcov --list build/coverage.info
 
     - name: Run codacy-coverage-reporter
       uses: codacy/codacy-coverage-reporter-action@master
@@ -2491,7 +2494,7 @@ jobs:
         SONAR_TESTS: 'tests'
         SONAR_CFAMILY_GCOV_REPORTSPATH: 'build/coverage.info'
         SONAR_CFAMILY_CACHE_ENABLED: true
-        SONAR_SCANNER_VERSION: '5.0.1.3006'
+        SONAR_SCANNER_VERSION: '8.0.1.6346'
         SONAR_THREADS: 2
       run: |
         # Internal variables
@@ -2522,7 +2525,7 @@ jobs:
 
         echo "SONAR_SCANNER_VERSION=${SONAR_SCANNER_VERSION}" >> $GITHUB_ENV
 
-        SONAR_SCANNER_HOME=${SONAR_HOME}/sonar-scanner-${SONAR_SCANNER_VERSION}-linux
+        SONAR_SCANNER_HOME=${SONAR_HOME}/sonar-scanner-${SONAR_SCANNER_VERSION}-linux-x64
         echo "SONAR_SCANNER_HOME=${SONAR_SCANNER_HOME}" >> $GITHUB_ENV
 
         echo "SONAR_SCANNER_OPTS=${SONAR_SCANNER_OPTS:--server}" >> $GITHUB_ENV
@@ -2543,7 +2546,7 @@ jobs:
         cat $GITHUB_ENV
 
         # Download sonar-scanner
-        curl -sSLo ${SONAR_HOME}/sonar-scanner.zip https://binaries${SONAR_HOME_PATH}source.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+        curl -sSLo ${SONAR_HOME}/sonar-scanner.zip https://binaries${SONAR_HOME_PATH}source.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux-x64.zip
         unzip -o ${SONAR_HOME}/sonar-scanner.zip -d ${SONAR_HOME}/
 
         # Download build-wrapper
@@ -2762,11 +2765,21 @@ jobs:
     - name: Capture coverage info
       run: |
         (cd build && \
-        gcovr --exclude="../extern/*" --exclude="^/usr/include/" --exclude=".*qrc_.*\.cpp" --gcov-ignore-parse-errors=negative_hits.warn --sonarqube --branches --output coverage.xml --root .. .)
+        gcovr --exclude="../extern/*" \
+              --exclude="^/usr/include/" \
+              --exclude=".*qrc_.*\.cpp" \
+              --gcov-ignore-parse-errors=all \
+              --sonarqube --branches --output coverage.xml --root .. .)
 
     - name: Print coverage info file
       run: |
         xmllint --format build/coverage.xml | source-highlight -s xml --out-format=esc -o STDOUT
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
 
     - name: Run sonar scanner
       env:
