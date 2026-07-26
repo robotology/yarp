@@ -2256,6 +2256,12 @@ jobs:
         # Fix .clang-tidy for clang 10 (see https://reviews.llvm.org/D75621)
         sed -i 's/;h;hh;hpp;hxx/,h,hh,hpp,hxx/g' .clang-tidy
 
+        # Disable misc-include-cleaner (too noisy / not relevant for this project)
+        sed -i "s/-misc-static-assert,/-misc-static-assert,-misc-include-cleaner,/" .clang-tidy
+
+        # Restrict header warnings to the project sources, excluding extern/ and build/
+        sed -i "s|HeaderFilterRegex: '.*'|HeaderFilterRegex: '^(?!.*/(extern\|build)/).*$'|" .clang-tidy
+
         # Print the .clang-tidy file
         cat .clang-tidy
         echo
@@ -2265,7 +2271,8 @@ jobs:
 
     - name: Run clang-tidy
       run: |
-        ${RUN_CLANG_TIDY} | sed "s|${PWD}/||g" | tee /tmp/out1
+        # excluding .cpp files inside extern/ and build/ folders
+        ${RUN_CLANG_TIDY} '^((?!/extern/|/build/).)*$' | sed "s|${PWD}/||g" | tee /tmp/out1
 
     - name: Convert the clang-tidy output to a format that the Codacy API accepts
       run: |

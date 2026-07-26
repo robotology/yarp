@@ -30,7 +30,7 @@ TEST_CASE("math::RandTest", "[yarp::math]")
     SECTION("checking random generation with normal distribution...")
     {
 
-        const int N=10000;
+        const int N=50000;
         double u=1.0;
         double sigma=2;
 

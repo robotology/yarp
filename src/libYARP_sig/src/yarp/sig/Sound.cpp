@@ -310,12 +310,19 @@ Sound::audio_sample Sound::get(size_t location, size_t channel) const
 
 void Sound::clear()
 {
+    resize(0,0);
+    m_markers.clear();
+    m_frequency =0;
+}
+
+void Sound::zero()
+{
     size_t size = this->getRawDataSize();
     unsigned char* p  = this->getRawData();
     memset(p,0,size);
 }
 
-bool Sound::clearChannel(size_t chan)
+bool Sound::zeroChannel(size_t chan)
 {
     if (chan > this->m_channels) {
         return false;

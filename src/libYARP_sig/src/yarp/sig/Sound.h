@@ -91,6 +91,11 @@ public:
       */
     Sound subSound(size_t first_sample, size_t len);
 
+    /*
+     *   Reset the sound (i.e. reset the number of samples, channels, frequency etc to zero)
+    */
+    void clear();
+
     /**
      * Set the sound size.
      * @param samples the number of samples
@@ -122,7 +127,7 @@ public:
     /**
      * set all the samples to zero (silence)
      */
-    void clear();
+    void zero();
 
     /**
      * Normalize a specific channel of the sound
@@ -183,7 +188,7 @@ public:
      * @ param channel the channel number
      * @return true iff operation is successful;
      */
-    bool clearChannel(size_t channel);
+    bool zeroChannel(size_t channel);
 
     /**
      * Get the frequency of the sound (i.e. the number of samples per second)

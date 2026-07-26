@@ -35,13 +35,13 @@ TEST_CASE("pm::image_rotationTest", "[yarp::pm]")
 
     auto tc = GENERATE(
         // No rotation - dimensions stay same
-        TestCase {"fast_tcp", 20, 10},
+        TestCase {"fast_tcp", 32, 16},
         // 90 degree clockwise rotation - dimensions swap
-        TestCase {"fast_tcp+recv.portmonitor+file.image_rotation+options_rotate.rotate_cw+type.dll", 10, 20},
+        TestCase {"fast_tcp+recv.portmonitor+file.image_rotation+options_rotate.rotate_cw+type.dll", 16, 32},
         // 90 degree counter-clockwise rotation - dimensions swap
-        TestCase {"fast_tcp+recv.portmonitor+file.image_rotation+options_rotate.rotate_ccw+type.dll", 10, 20},
+        TestCase {"fast_tcp+recv.portmonitor+file.image_rotation+options_rotate.rotate_ccw+type.dll", 16, 32},
         // 180 degree rotation - dimensions stay same
-        TestCase {"fast_tcp+recv.portmonitor+file.image_rotation+options_rotate.rotate_180+type.dll", 20, 10}
+        TestCase {"fast_tcp+recv.portmonitor+file.image_rotation+options_rotate.rotate_180+type.dll", 32, 16}
     );
 
     SECTION("Test image rotation with expected dimensions: " + std::to_string(tc.expected_width) + "x" + std::to_string(tc.expected_height))
@@ -56,8 +56,8 @@ TEST_CASE("pm::image_rotationTest", "[yarp::pm]")
         REQUIRE(b);
 
         // Create a test image with known dimensions (wider than tall)
-        const size_t original_width = 20;
-        const size_t original_height = 10;
+        const size_t original_width = 32;
+        const size_t original_height = 16;
 
         yarp::sig::ImageOf<yarp::sig::PixelRgb>& img = sender.prepare();
         img.resize(original_width, original_height);
@@ -65,8 +65,8 @@ TEST_CASE("pm::image_rotationTest", "[yarp::pm]")
         // Fill with a pattern to verify rotation
         for (size_t y = 0; y < original_height; y++) {
             for (size_t x = 0; x < original_width; x++) {
-                img.pixel(x, y).r = static_cast<unsigned char>(x * 10);
-                img.pixel(x, y).g = static_cast<unsigned char>(y * 20);
+                img.pixel(x, y).r = static_cast<unsigned char>(x * 11);
+                img.pixel(x, y).g = static_cast<unsigned char>(y * 22);
                 img.pixel(x, y).b = 128;
             }
         }
