@@ -16,7 +16,7 @@
 #include "MonitorEvent.h"
 
 #include <mutex>
-
+#include <memory>
 
 class PortMonitor;
 
@@ -64,6 +64,23 @@ public:
             getPeers().remove(portName,this);
         }
         for (auto it=binder.begin(); it!=binder.end(); ++it)
+        {
+            if (*it) {
+                delete *it;
+                *it = nullptr;
+            }
+        }
+        binder.clear();
+    }
+
+    void close() override
+    {
+        bReady = false;
+        if (!portName.empty()) {
+            getPeers().remove(portName, this);
+            portName.clear();
+        }
+        for (auto it = binder.begin(); it != binder.end(); ++it)
         {
             if (*it) {
                 delete *it;
@@ -126,7 +143,7 @@ public:
     std::string sourceName;
 
 private:
-    static yarp::os::ElectionOf<PortMonitorGroup> *peers;
+    static std::unique_ptr<yarp::os::ElectionOf<PortMonitorGroup>> peers;
     static yarp::os::ElectionOf<PortMonitorGroup>& getPeers();
 
 

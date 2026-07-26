@@ -33,7 +33,7 @@ set(YARP_dev_test_HDRS
     IJointBrakeTest.h
     IJointFaultTest.h
     IControlLimitsTest.h
-    Utils.h
+    TestUtils.h
 )
 
 set(YARP_dev_test_SRCS
@@ -65,7 +65,7 @@ set(YARP_dev_test_SRCS
     IJointBrakeTest.cpp
     IJointFaultTest.cpp
     IControlLimitsTest.cpp
-    Utils.cpp
+    TestUtils.cpp
 )
 
 if(TARGET YARP::YARP_math)

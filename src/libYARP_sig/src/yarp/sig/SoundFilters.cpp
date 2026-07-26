@@ -30,18 +30,21 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
     if (frequency == 0)
     {
         yCError(SOUNDFILTERS) << "invalid frequency value = 0";
+        snd.clear();
         return false;
     }
 #ifndef MULTICHANS_TESTED
     if (snd.getChannels() != 1)
     {
         yCError(SOUNDFILTERS) << "only 1 channel is currently supported";
+        snd.clear();
         return false;
     }
 #endif
     if (snd.getSamples() == 0)
     {
         yCError(SOUNDFILTERS) << "empty sound received?!";
+        snd.clear();
         return false;
     }
     if (static_cast<unsigned>(snd.getFrequency()) == frequency)
@@ -52,12 +55,11 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
 
 #if !defined (YARP_HAS_SOXR)
     yCError(SOUNDFILTERS) << "libsoxr not available";
+    snd.clear();
     return false;
 #else
     //configuration
-    soxr_io_spec_t tit;
-    tit.itype = SOXR_INT16_I;
-    tit.otype = SOXR_INT16_I;
+    soxr_io_spec_t tit = soxr_io_spec(SOXR_INT16_I, SOXR_INT16_I);
     tit.scale = 1.0;
 
     double irate = snd.getFrequency();
@@ -96,6 +98,7 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
         yCError(SOUNDFILTERS) << "libsoxr resample failed";
         delete[]arri;
         delete[]arro;
+        return false;
     }
 
     //copy from buffer to sound

@@ -27,7 +27,14 @@ jobs:
               work_dir: "docker/",
               yarp_branch: "master",
               yarp_branch_label: "yarp4.0"  
-          }
+            }
+          - {
+              base_image: "ubuntu:26.04",
+              base_image_label: "ubuntu26.04",
+              work_dir: "docker/",
+              yarp_branch: "master",
+              yarp_branch_label: "yarp4.0"  
+            }
     permissions:
       contents: read
       packages: write

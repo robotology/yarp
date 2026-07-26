@@ -51,6 +51,28 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         CHECK(siz_samps == 10);
         CHECK(v1.size() == 30);
         CHECK(v2.size() == 30);
+        snd1.clear();
+        siz_chans = snd1.getChannels();
+        siz_samps = snd1.getSamples();
+        CHECK(siz_chans == 0);
+        CHECK(siz_samps == 0);
+        auto v3 = snd1.getInterleavedAudioRawData();
+        auto v4 = snd1.getNonInterleavedAudioRawData();
+        CHECK(v3.size() == 0);
+        CHECK(v4.size() == 0);
+    }
+
+    SECTION("check zero")
+    {
+        Sound snd1;
+        snd1.resize(10, 3);
+        snd1.set(42,0,0);
+        CHECK (snd1.getChannels() == 3);
+        CHECK (snd1.getSamples() == 10);
+        snd1.zero();
+        CHECK (snd1.getChannels() == 3);
+        CHECK (snd1.getSamples() == 10);
+        CHECK (snd1.getSafe(0,0) == 0);
     }
 
     SECTION("check set/get sample.")

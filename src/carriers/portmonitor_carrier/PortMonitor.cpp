@@ -141,7 +141,7 @@ void parseParameters (yarp::os::Property& inputoptions, yarp::os::Property& outp
     Bottle propertyBottle;
     propertyBottle.fromString(inputoptions.toString());
 
-    for (int i = 0; i < propertyBottle.size(); i++)
+    for (size_t i = 0; i < propertyBottle.size(); i++)
     {
         Value& element = propertyBottle.get(i);
         if (!element.isList()) { continue; }
@@ -498,7 +498,7 @@ yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader)
  * Class PortMonitorGroup
  */
 
-ElectionOf<PortMonitorGroup> *PortMonitor::peers = nullptr;
+std::unique_ptr<ElectionOf<PortMonitorGroup>> PortMonitor::peers = nullptr;
 
 // Make a singleton manager for finding peer carriers.
 ElectionOf<PortMonitorGroup>& PortMonitor::getPeers()
@@ -507,7 +507,7 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers()
 
     NetworkBase::lock();
     if (peers==nullptr) {
-        peers = new ElectionOf<PortMonitorGroup>;
+        peers = std::make_unique<ElectionOf<PortMonitorGroup>>();
         NetworkBase::unlock();
         yCAssert(PORTMONITORCARRIER, peers);
     } else {

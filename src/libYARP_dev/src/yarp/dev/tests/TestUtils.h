@@ -3,14 +3,15 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef TESTUTILS_H
+#define TESTUTILS_H
 
 #include <vector>
 #include <yarp/dev/api.h>
 
 namespace yarp::dev::tests
 {
+    void YARP_dev_API wait_safe(double sec = 0.1);
     bool YARP_dev_API vectors_equal(const std::vector<double>& a, const std::vector<double>& b);
     bool YARP_dev_API vectors_equal(const std::vector<int>& a, const std::vector<int>& b);
     bool YARP_dev_API vectors_equal(const std::size_t siz, const double* a, const double* b);

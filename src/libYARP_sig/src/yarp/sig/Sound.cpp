@@ -310,12 +310,19 @@ Sound::audio_sample Sound::get(size_t location, size_t channel) const
 
 void Sound::clear()
 {
+    resize(0,0);
+    m_markers.clear();
+    m_frequency =0;
+}
+
+void Sound::zero()
+{
     size_t size = this->getRawDataSize();
     unsigned char* p  = this->getRawData();
     memset(p,0,size);
 }
 
-bool Sound::clearChannel(size_t chan)
+bool Sound::zeroChannel(size_t chan)
 {
     if (chan > this->m_channels) {
         return false;
@@ -397,7 +404,7 @@ bool Sound::read(ConnectionReader& connection)
 
     //markers data
     m_markers.clear();
-    for (int i = 0; i < markersListLen; i++)
+    for (size_t i = 0; i < markersListLen; i++)
     {
         int innerTag = connection.expectInt32();
         if (innerTag != BOTTLE_TAG_LIST) {

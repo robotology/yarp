@@ -53,7 +53,8 @@ namespace
 #if defined (YARP_HAS_FFMPEG)
 bool decode(AVCodecContext* dec_ctx, AVPacket* pkt, AVFrame* frame, Sound& sound_block)
 {
-    int i, ch;
+    int i;
+    size_t ch;
     int ret, data_size;
     /* send the packet with the compressed data to the decoder */
     ret = avcodec_send_packet(dec_ctx, pkt);

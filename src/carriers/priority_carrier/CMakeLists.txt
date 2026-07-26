@@ -9,7 +9,7 @@ yarp_prepare_plugin(priority
     SUBTYPE=recv
     CODE="not applicable"
   DEPENDS "TARGET YARP::YARP_math"
-  DEFAULT ON
+  DEFAULT OFF
 )
 
 if(NOT SKIP_priority)

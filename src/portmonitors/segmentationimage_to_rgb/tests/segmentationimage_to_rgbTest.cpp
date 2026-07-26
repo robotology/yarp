@@ -49,8 +49,8 @@ TEST_CASE("pm::segmentationimage_to_rgbTest", "[yarp::pm]")
         REQUIRE(b);
 
         // Create a test segmentation image (mono image with pixel codes)
-        const size_t width = 10;
-        const size_t height = 10;
+        const size_t width = 16;
+        const size_t height = 16;
 
         yarp::sig::FlexImage& img = sender.prepare();
         img.setPixelCode(VOCAB_PIXEL_MONO);

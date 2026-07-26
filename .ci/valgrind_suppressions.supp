@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
+# SPDX-License-Identifier: BSD-3-Clause
+
+# Suppress memory leaks from libgsl static initialization.
+# These allocations happen inside _dl_open when libgsl.so is loaded
+# for the first time (e.g. in sig::MatrixTest via YARP_gsl).
+# They are intentional: GSL allocates global state during library init
+# that is never freed explicitly, relying on OS cleanup at process exit.
+
+{
+   libgsl_dl_open_leak_1
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:_dl_init
+   fun:_dl_open
+   ...
+}
+
+{
+   libgsl_dl_open_leak_2
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:call_init.part.0
+   fun:_dl_init
+   ...
+}

@@ -93,7 +93,7 @@ ReturnValue ImplementControlMode::getControlModes(const std::vector<int>& joints
     VECCHECK_GET_SOME(IMPLEMENT_LAYER_COMPONENT,joints,modes);
 
     std::vector<int> vectorInt_tmp(joints.size());
-    for(int idx=0; idx<joints.size(); idx++)
+    for(size_t idx=0; idx<joints.size(); idx++)
     {
         vectorInt_tmp[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
@@ -117,7 +117,7 @@ ReturnValue ImplementControlMode::setControlModes(const std::vector<int>& joints
     VECCHECK_SET_SOME(IMPLEMENT_LAYER_COMPONENT,joints, modes)
 
     std::vector<int> vectorInt_tmp(joints.size());
-    for(int idx=0; idx<joints.size(); idx++)
+    for(size_t idx=0; idx<joints.size(); idx++)
     {
         vectorInt_tmp[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
