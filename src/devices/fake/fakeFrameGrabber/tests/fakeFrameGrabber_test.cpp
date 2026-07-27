@@ -11,6 +11,7 @@
 #include <yarp/dev/tests/IFrameGrabberControlsTest.h>
 #include <yarp/dev/tests/IFrameGrabberControlsDC1394Test.h>
 #include <yarp/dev/tests/IRgbVisualParamsTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
@@ -42,6 +43,7 @@ TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
         Property p;
         p.put("device", "fakeFrameGrabber");
         REQUIRE(dd.open(p));
+         yarp::dev::tests::exec_params_test(&dd);
 
         // Get the IFrameGrabberImage interface
         IFrameGrabberImage* iFrameGrabberImage = nullptr;

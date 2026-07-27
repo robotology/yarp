@@ -279,6 +279,7 @@ bool Lidar2DDeviceBase::applyLimitsOnLaserData()
 
 bool Lidar2DDeviceBase::updateLidarData()
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     bool b = true;
     b &= acquireDataFromHW();
     if (!b) {

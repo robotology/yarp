@@ -88,6 +88,9 @@ public:
 public:
     //Lidar2DDeviceBase
     bool acquireDataFromHW() override final;
+
+private:
+    bool utility_insideCameraFov (size_t i, double left_elem, double right_elem);
 };
 
 #endif

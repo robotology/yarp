@@ -11,6 +11,7 @@
 
 #include <string>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -34,6 +35,8 @@ TEST_CASE("dev::simulatedWorld_nws_yarp", "[yarp::dev]")
         p_nws.put("device","simulatedWorld_nws_yarp");
         p_nws.put("name", "/sim_nws");
         REQUIRE(dd_nws.open(p_nws));
+        yarp::dev::tests::exec_params_test(&dd_nws);
+
         yarp::os::SystemClock::delaySystem(1.0);
         CHECK(dd_nws.close());
     }

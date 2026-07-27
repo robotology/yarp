@@ -7,6 +7,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -29,6 +30,7 @@ TEST_CASE("dev::Fake_nws_yarp", "[yarp::dev]")
             Property p_cfg;
             p_cfg.put("device", "fakeDevice_nws_yarp");
             REQUIRE(dd.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&dd);
         }
 
         yarp::os::Time::delay(1.0);
@@ -49,10 +51,12 @@ TEST_CASE("dev::Fake_nws_yarp", "[yarp::dev]")
             Property pnws_cfg;
             pnws_cfg.put("device", "fakeDevice_nws_yarp");
             REQUIRE(ddnws.open(pnws_cfg));
+            yarp::dev::tests::exec_params_test(&ddnws);
 
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeDeviceUnwrapped");
             REQUIRE(ddfake.open(pdev_cfg));
+            yarp::dev::tests::exec_params_test(&ddfake);
 
             {yarp::dev::WrapperSingle* ww_nws = nullptr; ddnws.view(ww_nws);
             REQUIRE(ww_nws);

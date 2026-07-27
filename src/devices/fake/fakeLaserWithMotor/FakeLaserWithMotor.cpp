@@ -229,9 +229,7 @@ void FakeLaserWithMotor::run()
 */
         }
     }
-    m_mutex.lock();
     updateLidarData();
-    m_mutex.unlock();
     return;
 }
 

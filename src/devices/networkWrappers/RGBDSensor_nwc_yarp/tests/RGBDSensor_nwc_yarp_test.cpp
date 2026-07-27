@@ -11,6 +11,7 @@
 #include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/tests/IFrameGrabberControlsTest.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -165,6 +166,7 @@ TEST_CASE("dev::RGBDSensor_nwc_yarp", "[yarp::dev]")
             pnwc_cfg.put("ImageCarrier",   "fast_tcp");
             pnwc_cfg.put("DepthCarrier",   "fast_tcp");
             REQUIRE(ddnwc.open(pnwc_cfg));
+            yarp::dev::tests::exec_params_test(&ddnwc);
         }
         REQUIRE(ddnwc.view(irgbd));
         REQUIRE(ddnwc.view(ictl));

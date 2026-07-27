@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -36,6 +37,7 @@ TEST_CASE("dev::audioPlayerWrapper", "[yarp::dev]")
 
         p_nws.put("device", "AudioPlayerWrapper");
         REQUIRE(dd_nws.open(p_nws));
+        yarp::dev::tests::exec_params_test(&dd_nws);
         yarp::os::SystemClock::delaySystem(0.5);
 
         yarp::os::SystemClock::delaySystem(1.0);

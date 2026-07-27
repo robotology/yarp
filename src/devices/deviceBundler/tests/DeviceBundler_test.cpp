@@ -9,6 +9,7 @@
 #include <yarp/os/Network.h>
 #include <iostream>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -31,6 +32,7 @@ TEST_CASE("dev::DeviceBundlerTest", "[yarp::dev]")
         p.put("name", "/battery_nws_yarp");
         p.put("attached_device", "fakeBattery");
         REQUIRE(pd.open(p));
+        yarp::dev::tests::exec_params_test(&pd);
         yarp::os::Time::delay(1.0);
         REQUIRE(pd.close());
     }

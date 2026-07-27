@@ -9,6 +9,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IRangefinder2DTest.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -37,11 +38,13 @@ TEST_CASE("dev::Rangefinder2DTransformerTest", "[yarp::dev]")
             Property& cm_cfg = plas_cfg.addGroup("CONSTANT_MODE");
             cm_cfg.put("const_distance", 0.5);
             REQUIRE(ddlas.open(plas_cfg));
+            yarp::dev::tests::exec_params_test(&ddlas);
         }
         {
             Property ptrf_cfg;
             ptrf_cfg.put("device", "rangefinder2DTransformer");
             REQUIRE(ddtrf.open(ptrf_cfg));
+            yarp::dev::tests::exec_params_test(&ddtrf);
         }
 
         //attach the nws to the fakelaser device

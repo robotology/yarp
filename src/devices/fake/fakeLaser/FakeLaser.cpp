@@ -435,9 +435,7 @@ bool FakeLaser::acquireDataFromHW()
 
 void FakeLaser::run()
 {
-    m_mutex.lock();
     updateLidarData();
-    m_mutex.unlock();
     return;
 }
 

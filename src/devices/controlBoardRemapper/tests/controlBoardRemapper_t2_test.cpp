@@ -24,6 +24,7 @@
 #include <yarp/dev/tests/IJointBrakeTest.h>
 #include <yarp/dev/tests/IPositionDirectTest.h>
 #include <yarp/dev/tests/IVelocityDirectTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>

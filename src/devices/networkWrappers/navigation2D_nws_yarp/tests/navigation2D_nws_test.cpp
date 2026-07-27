@@ -8,6 +8,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/INavigation2DTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -32,6 +33,7 @@ TEST_CASE("dev::Navigation2DNwsTest", "[yarp::dev]")
             Property pnavserver_cfg;
             pnavserver_cfg.put("device", "navigation2D_nws_yarp");
             REQUIRE(ddnavserver.open(pnavserver_cfg));
+            yarp::dev::tests::exec_params_test(&ddnavserver);
         }
 
         //"Close all polydrivers and check"

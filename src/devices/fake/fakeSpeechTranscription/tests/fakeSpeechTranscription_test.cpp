@@ -7,6 +7,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -31,6 +32,8 @@ TEST_CASE("dev::fakeSpeechTranscription", "[yarp::dev]")
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeSpeechTranscription");
             REQUIRE(ddfake.open(pdev_cfg));
+            yarp::dev::tests::exec_params_test(&ddfake);
+
             REQUIRE(ddfake.view(istr));
         }
 

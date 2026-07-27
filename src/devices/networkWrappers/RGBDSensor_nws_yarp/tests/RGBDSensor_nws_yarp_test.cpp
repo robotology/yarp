@@ -9,6 +9,7 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/tests/IRGBDSensorTest.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -63,6 +64,8 @@ TEST_CASE("dev::RGBDSensor_nws_yarpTest", "[yarp::dev]")
             p_fake.put("dep_h", 24);
             REQUIRE(dd_fake.open(p_fake));
             REQUIRE(dd_nws.open(p_nws));
+            yarp::dev::tests::exec_params_test(&dd_fake);
+            yarp::dev::tests::exec_params_test(&dd_nws);
 
             yarp::os::SystemClock::delaySystem(0.5);
 

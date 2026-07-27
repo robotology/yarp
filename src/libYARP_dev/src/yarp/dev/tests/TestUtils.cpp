@@ -6,6 +6,7 @@
 #include "TestUtils.h"
 
 #include <yarp/os/Time.h>
+#include <yarp/os/LogStream.h>
 #include <memory>
 #include <numeric>
 
@@ -27,6 +28,20 @@ namespace yarp::dev::tests
     bool YARP_dev_API vectors_equal(const std::vector<int>& a, const std::vector<int>& b)
     {
         return a.size() == b.size() && std::equal(a.begin(), a.end(), b.begin());
+    }
+
+    bool YARP_dev_API check_approximate(double value, double expected, double tolerance)
+    {
+        if (tolerance < 0.0)
+        {
+            tolerance = -tolerance; // Ensure tolerance is non-negative
+        }
+        if (std::abs(value - expected) <= tolerance)
+        {
+            return true;
+        }
+        yError() << "Value:" << value << ", Expected Value:" << expected;
+        return false;
     }
 
     bool YARP_dev_API vectors_equal(const size_t siz, const double* a, const double* b)

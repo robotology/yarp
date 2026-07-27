@@ -7,6 +7,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IJointCoupling.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -27,6 +28,7 @@ TEST_CASE("dev::fakeJointCoupling", "[yarp::dev]")
             Property p_cfg;
             p_cfg.put("device", "fakeJointCoupling");
             REQUIRE(ddjc.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&ddjc);
         }
 
         REQUIRE(ddjc.view(ijc));

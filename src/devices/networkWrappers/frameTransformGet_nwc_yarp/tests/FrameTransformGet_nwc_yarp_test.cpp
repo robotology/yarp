@@ -13,6 +13,7 @@
 #include <yarp/dev/WrapperSingle.h>
 
 #include <yarp/dev/tests/IFrameTransformStorageTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>

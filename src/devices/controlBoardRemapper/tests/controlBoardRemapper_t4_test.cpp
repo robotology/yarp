@@ -37,6 +37,7 @@
 #include <yarp/dev/tests/IJointFaultTest.h>
 #include <yarp/dev/tests/IControlLimitsTest.h>
 #include <yarp/dev/tests/IImpedanceControlTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -64,6 +65,7 @@ TEST_CASE("dev::ControlBoardRemapperTest4", "[yarp::dev]")
             Property& grp = p_cfg.addGroup("GENERAL");
             grp.put("Joints", 2);
             REQUIRE(ddfakemc.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&ddfakemc);
         }
         {
             Property p_cfg;
@@ -73,6 +75,7 @@ TEST_CASE("dev::ControlBoardRemapperTest4", "[yarp::dev]")
             p_cfg.put("networks", jlist);
             p_cfg.put("net0", "0 1 0 1");
             REQUIRE(ddremapper.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&ddremapper);
         }
         {
             yarp::dev::IMultipleWrapper* ww_rem=nullptr; ddremapper.view(ww_rem);

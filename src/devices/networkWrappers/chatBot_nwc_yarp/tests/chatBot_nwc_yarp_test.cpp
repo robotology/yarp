@@ -10,6 +10,8 @@
 #include <yarp/dev/tests/IChatBotTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
+#include <yarp/dev/tests/ParametersTest.h>
+
 #include <harness.h>
 
 using namespace yarp::dev;
@@ -53,6 +55,7 @@ TEST_CASE("dev::ChatBot_nwc", "[yarp::dev]")
             pnwc_cfg.put("remote", "/chatBot_nws/rpc");
             REQUIRE(ddnwc.open(pnwc_cfg));
             REQUIRE(ddnwc.view(iChatBot));
+            yarp::dev::tests::exec_params_test(&ddnwc);
         }
 
         yarp::dev::tests::exec_iChatBot_test_1(iChatBot);

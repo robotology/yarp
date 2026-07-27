@@ -10,6 +10,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/INavigation2DTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -91,6 +92,8 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
             pnavclient_cfg.put("map_locations_server", "/map2D_nws_yarp");
             pnavclient_cfg.put("localization_server", "/localization2D_nws_yarp");
             REQUIRE(ddnavclient.open(pnavclient_cfg));
+            yarp::dev::tests::exec_params_test(&ddnavclient);
+
             REQUIRE(ddnavclient.view(inav));
         }
 

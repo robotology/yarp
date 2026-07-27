@@ -110,6 +110,12 @@ namespace yarp::dev::tests
             CHECK(r);
             CHECK(w == 10);
             CHECK(h == 11);
+            int ht = 0;
+            ht = irgbd->getDepthHeight();
+            CHECK(ht == 11);
+            int wt = 0;
+            wt = irgbd->getDepthWidth();
+            CHECK(wt == 10);
         }
         {
             ReturnValue r;

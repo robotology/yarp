@@ -8,6 +8,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/ILLM.h>
 #include <yarp/dev/tests/ILLMTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -31,6 +32,8 @@ TEST_CASE("dev::fakeLLMDeviceTest", "[yarp::dev]")
             Property llm_cfg;
             llm_cfg.put("device", "fakeLLMDevice");
             REQUIRE(fakellmdev.open(llm_cfg));
+            yarp::dev::tests::exec_params_test(&fakellmdev);
+
             REQUIRE(fakellmdev.view(illm));
         }
 

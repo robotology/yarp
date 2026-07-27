@@ -8,6 +8,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IRangefinder2DTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -35,6 +36,8 @@ TEST_CASE("dev::FakeLaserTest", "[yarp::dev]")
             Property& cm_cfg= las_cfg.addGroup("CONSTANT_MODE");
             cm_cfg.put("const_distance", 0.5);
             REQUIRE(fakelaserdev.open(las_cfg));
+            yarp::dev::tests::exec_params_test(&fakelaserdev);
+
             REQUIRE(fakelaserdev.view(irng));
         }
 

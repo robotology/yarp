@@ -15,6 +15,7 @@
 #include <array>
 #include <string>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -41,6 +42,7 @@ TEST_CASE("dev::fakeDepthCamera_miniTest", "[yarp::dev]")
         p.put("dep_w", 32);
         p.put("dep_h", 24);
         REQUIRE(dd.open(p));
+        yarp::dev::tests::exec_params_test(&dd);
 
         // Get the IFrameGrabberImage interface
         IRGBDSensor* irgbd = nullptr;

@@ -12,6 +12,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IMap2DTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -37,6 +38,7 @@ TEST_CASE("dev::Map2DStorageTest", "[yarp::dev]")
             Property pmapstorage_cfg;
             pmapstorage_cfg.put("device", "map2DStorage");
             REQUIRE(ddmapstorage.open(pmapstorage_cfg));
+            yarp::dev::tests::exec_params_test(&ddmapstorage);
             REQUIRE(ddmapstorage.view(imap));
         }
 

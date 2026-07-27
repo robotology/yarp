@@ -8,6 +8,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -40,6 +41,7 @@ TEST_CASE("dev::serialPort_nwc_yarp", "[yarp::dev]")
             pdev_cfg.put("comport", "fakePort");
             pdev_cfg.put("baudrate", 9600);
             REQUIRE(ddfake.open(pdev_cfg));
+            yarp::dev::tests::exec_params_test(&ddfake);
 
             {yarp::dev::WrapperSingle* ww_nws=nullptr; ddnws.view(ww_nws);
             REQUIRE(ww_nws);
@@ -51,6 +53,8 @@ TEST_CASE("dev::serialPort_nwc_yarp", "[yarp::dev]")
             pnwc_cfg.put("local", "/serialPort_nwc_yarp");
             pnwc_cfg.put("remote", "/serialPort_nws_yarp/rpc");
             REQUIRE(ddnwc.open(pnwc_cfg));
+            yarp::dev::tests::exec_params_test(&ddnwc);
+
             REQUIRE(ddnwc.view(iser));
         }
 

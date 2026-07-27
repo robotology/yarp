@@ -618,7 +618,7 @@ IDepthVisualParamsMsgs_return_getDepthHeight RGBDSensorMsgsImpl::getDepthHeightR
         return response;
     }
 
-    int h = m_irgbd->getDepthWidth();
+    int h = m_irgbd->getDepthHeight();
 
     if (h <= 0) {
         response.ret = ReturnValue::return_code::return_value_error_method_failed;

@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include <yarp/dev/tests/IFrameTransformTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>

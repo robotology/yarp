@@ -7,6 +7,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -35,10 +36,12 @@ TEST_CASE("dev::mobileBaseVelocityControl_nws_yarp", "[yarp::dev]")
             pnws_cfg.put("device", "mobileBaseVelocityControl_nws_yarp");
             pnws_cfg.put("local",  "/mobileBaseVelocityControl_nws_yarp");
             REQUIRE(ddnws.open(pnws_cfg));
+            yarp::dev::tests::exec_params_test(&ddnws);
 
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeNavigation");
             REQUIRE(ddfake.open(pdev_cfg));
+            yarp::dev::tests::exec_params_test(&ddfake);
 
             {yarp::dev::WrapperSingle* ww_nws=nullptr; ddnws.view(ww_nws);
             REQUIRE(ww_nws);
@@ -50,6 +53,8 @@ TEST_CASE("dev::mobileBaseVelocityControl_nws_yarp", "[yarp::dev]")
             pclient_cfg.put("local",  "/mobileBaseVelocityControl_nwc_yarp");
             pclient_cfg.put("server", "/mobileBaseVelocityControl_nws_yarp");
             REQUIRE(ddnwc.open(pclient_cfg));
+            yarp::dev::tests::exec_params_test(&ddnwc);
+
             REQUIRE(ddnwc.view(ivel));
         }
 

@@ -12,6 +12,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IMap2DTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -41,10 +42,12 @@ TEST_CASE("dev::Map2DnwcTest", "[yarp::dev]")
             Property pmapserver_cfg;
             pmapserver_cfg.put("device", "map2D_nws_yarp");
             REQUIRE(ddmapserver.open(pmapserver_cfg));
+            yarp::dev::tests::exec_params_test(&ddmapserver);
 
             Property pmapstorage_cfg;
             pmapstorage_cfg.put("device", "map2DStorage");
             REQUIRE(ddmapstorage.open(pmapstorage_cfg));
+            yarp::dev::tests::exec_params_test(&ddmapstorage);
 
             {yarp::dev::WrapperSingle* ww_nws=nullptr; ddmapserver.view(ww_nws);
             REQUIRE(ww_nws);
@@ -56,6 +59,7 @@ TEST_CASE("dev::Map2DnwcTest", "[yarp::dev]")
             pmapclient_cfg.put("local", "/mapClientTest");
             pmapclient_cfg.put("remote", "/map2D_nws_yarp");
             REQUIRE(ddmapclient.open(pmapclient_cfg));
+            yarp::dev::tests::exec_params_test(&ddmapclient);
             REQUIRE(ddmapclient.view(imap));
         }
 

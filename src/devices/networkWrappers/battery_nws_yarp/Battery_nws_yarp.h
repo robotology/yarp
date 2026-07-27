@@ -70,7 +70,7 @@ class Battery_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
         public yarp::os::PortReader,
-        Battery_nws_yarp_ParamsParser
+        public Battery_nws_yarp_ParamsParser
 {
 public:
     Battery_nws_yarp();

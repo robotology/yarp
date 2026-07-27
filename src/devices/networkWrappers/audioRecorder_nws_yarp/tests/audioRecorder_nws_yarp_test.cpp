@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -39,6 +40,7 @@ void test_fakeMicrophone (size_t channels)
 
     REQUIRE(dd_fake.open(p_fake));
     REQUIRE(dd_nws.open(p_nws));
+    yarp::dev::tests::exec_params_test(&dd_nws);
     yarp::os::SystemClock::delaySystem(0.5);
 
     {yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);

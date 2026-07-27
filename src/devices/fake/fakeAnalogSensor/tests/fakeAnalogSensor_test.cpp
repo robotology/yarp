@@ -7,6 +7,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -31,6 +32,7 @@ TEST_CASE("dev::fakeAnalogSensor", "[yarp::dev]")
             p_cfg.put("device", "fakeAnalogSensor");
             p_cfg.put("period", "0.010");
             REQUIRE(ddmc.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&ddmc);
         }
 
         ddmc.view(ianalog);

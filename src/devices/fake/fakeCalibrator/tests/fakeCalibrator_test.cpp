@@ -11,6 +11,7 @@
 #include <yarp/robotinterface/Param.h>
 #include <yarp/robotinterface/XMLReader.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 

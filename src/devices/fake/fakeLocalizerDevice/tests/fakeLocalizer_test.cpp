@@ -8,6 +8,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/tests/ILocalization2DTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -31,6 +32,7 @@ TEST_CASE("dev::fakeLocalizer", "[yarp::dev]")
             Property p_cfg;
             p_cfg.put("device", "fakeLocalizer");
             REQUIRE(dd.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&dd);
         }
 
         dd.view(iloc);

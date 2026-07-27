@@ -9,6 +9,7 @@
 #include <yarp/os/Network.h>
 #include <iostream>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <yarp/dev/WrapperSingle.h>
 
 #include <catch2/catch_amalgamated.hpp>

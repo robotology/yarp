@@ -74,7 +74,7 @@ class SimulatedWorld_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
         public yarp::os::PortReader,
-        SimulatedWorld_nws_yarp_ParamsParser
+        public SimulatedWorld_nws_yarp_ParamsParser
 {
 public:
     SimulatedWorld_nws_yarp();

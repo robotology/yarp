@@ -57,7 +57,7 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
         return false;
     }
     prop.fromString(config.findGroup("RGBD_SENSOR_CLIENT").toString());
-    prop.put("device", "RGBDSensorClient");
+    prop.put("device", "RGBDSensor_nwc_yarp");
 
     driver.open(prop);
     if (!driver.isValid())
@@ -136,6 +136,7 @@ bool LaserFromDepth::threadInit()
     yCDebug(LASER_FROM_DEPTH) << "... done!\n";
 #endif
 
+    m_device_status = yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE;
     return true;
 }
 
@@ -155,7 +156,10 @@ bool LaserFromDepth::acquireDataFromHW()
     if (m_depth_image.width() != m_depth_width ||
         m_depth_image.height() != m_depth_height)
     {
-        yCError(LASER_FROM_DEPTH) << "invalid image size";
+        yCError(LASER_FROM_DEPTH) << "invalid image size:" <<
+        m_depth_image.width() << "," <<m_depth_image.height() <<
+        "vs." <<
+        m_depth_width << "," << m_depth_height;
         return false;
     }
 
@@ -179,9 +183,7 @@ bool LaserFromDepth::acquireDataFromHW()
 
 void LaserFromDepth::run()
 {
-    m_mutex.lock();
     updateLidarData();
-    m_mutex.unlock();
     return;
 }
 

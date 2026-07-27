@@ -11,6 +11,7 @@
 #include <yarp/dev/WrapperSingle.h>
 
 #include <vector>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -52,6 +53,7 @@ TEST_CASE("dev::ControlBoardCouplingHandlerTest", "[yarp::dev]")
             p_cfg.put("device", "controlBoardCouplingHandler");
             p_cfg.put("coupling_device", "fakeJointCoupling"); // 3 act axes, 4 phys joints
             REQUIRE(ddcch.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&ddcch);
         }
         //attach
         {

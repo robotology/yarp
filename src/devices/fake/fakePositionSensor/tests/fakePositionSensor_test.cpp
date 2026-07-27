@@ -8,6 +8,7 @@
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/tests/IPositionSensorsTest.h>
 #include <yarp/dev/tests/IOrientationSensorsTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -32,6 +33,7 @@ TEST_CASE("dev::fakePositionSensor", "[yarp::dev]")
             Property p_cfg;
             p_cfg.put("device", "fakePositionSensor");
             REQUIRE(dd.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&dd);
         }
 
         dd.view(ipos);

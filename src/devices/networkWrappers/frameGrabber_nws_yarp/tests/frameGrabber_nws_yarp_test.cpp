@@ -8,6 +8,7 @@
 
 #include <yarp/dev/tests/IFrameGrabberImageTest.h>
 #include <yarp/dev/tests/IRgbVisualParamsTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
@@ -45,7 +46,10 @@ TEST_CASE("dev::frameGrabber_nws_yarpTest", "[yarp::dev]")
         p_fake.put("device", "fakeFrameGrabber");
 
         REQUIRE(dd_fake.open(p_fake));
+        yarp::dev::tests::exec_params_test(&dd_fake);
         REQUIRE(dd_nws.open(p_nws));
+        yarp::dev::tests::exec_params_test(&dd_nws);
+
         yarp::os::SystemClock::delaySystem(0.5);
 
         {yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);

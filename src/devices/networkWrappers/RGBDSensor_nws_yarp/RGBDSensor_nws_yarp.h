@@ -57,7 +57,7 @@ class RGBDSensor_nws_yarp :
         public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread,
         public yarp::os::PortReader,
-        RGBDSensor_nws_yarp_ParamsParser
+        public RGBDSensor_nws_yarp_ParamsParser
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat>    DepthImage;

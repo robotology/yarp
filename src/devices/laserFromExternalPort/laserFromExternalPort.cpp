@@ -289,6 +289,7 @@ bool LaserFromExternalPort::threadInit()
     yCDebug(LASER_FROM_EXTERNAL_PORT) <<"... done!\n");
 #endif
 
+    m_device_status = yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE;
     return true;
 }
 
@@ -429,9 +430,7 @@ bool LaserFromExternalPort::acquireDataFromHW()
 
 void LaserFromExternalPort::run()
 {
-    m_mutex.lock();
     updateLidarData();
-    m_mutex.unlock();
     return;
 }
 

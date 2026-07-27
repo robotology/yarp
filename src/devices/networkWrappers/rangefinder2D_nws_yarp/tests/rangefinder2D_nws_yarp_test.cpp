@@ -9,6 +9,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IRangefinder2DTest.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -35,6 +36,7 @@ TEST_CASE("dev::Rangefinder2D_nws_yarpTest", "[yarp::dev]")
             nws_cfg.put("period", "0.010");
             nws_cfg.put("name", "/laser");
             REQUIRE(nws_driver.open(nws_cfg));
+            yarp::dev::tests::exec_params_test(&nws_driver);
         }
 
         //Close all polydrivers and check

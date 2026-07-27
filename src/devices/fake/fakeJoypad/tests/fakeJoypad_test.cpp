@@ -9,6 +9,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IJoypadControllerTest.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -32,6 +33,8 @@ TEST_CASE("dev::fakeJoypad", "[yarp::dev]")
             Property cfg;
             cfg.put("device", "fakeJoypad");
             REQUIRE(fakedev.open(cfg));
+            yarp::dev::tests::exec_params_test(&fakedev);
+
             REQUIRE(fakedev.view(ijoy));
         }
 

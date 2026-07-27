@@ -26,6 +26,7 @@
 #include <yarp/dev/tests/IControlLimitsTest.h>
 #include <yarp/dev/tests/IPositionDirectTest.h>
 #include <yarp/dev/tests/IVelocityDirectTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -70,6 +71,7 @@ TEST_CASE("dev::fakeMotionControl", "[yarp::dev]")
             Property& grp = p_cfg.addGroup("GENERAL");
             grp.put("Joints", 2);
             REQUIRE(ddmc.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&ddmc);
         }
 
         ddmc.view(ipos);    REQUIRE(ipos);

@@ -9,6 +9,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/INavigation2DTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -36,6 +37,8 @@ TEST_CASE("dev::FakeNavigationTest", "[yarp::dev]")
             Property pfakeNavigation;
             pfakeNavigation.put("device", "fakeNavigation");
             REQUIRE(ddfakeNavigation.open(pfakeNavigation));
+            yarp::dev::tests::exec_params_test(&ddfakeNavigation);
+
             REQUIRE(ddfakeNavigation.view(inav_target));
             REQUIRE(inav_target);
             REQUIRE(ddfakeNavigation.view(inav_control));

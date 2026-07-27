@@ -8,6 +8,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/IChatBot.h>
 #include <yarp/dev/tests/IChatBotTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -31,6 +32,7 @@ TEST_CASE("dev::fakeChatBotDeviceTest", "[yarp::dev]")
             Property chatBot_cfg;
             chatBot_cfg.put("device", "fakeChatBotDevice");
             REQUIRE(fakeChatBotdev.open(chatBot_cfg));
+            yarp::dev::tests::exec_params_test(&fakeChatBotdev);
             REQUIRE(fakeChatBotdev.view(iChatBot));
         }
 

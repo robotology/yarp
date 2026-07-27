@@ -6,6 +6,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -29,6 +30,7 @@ TEST_CASE("dev::controlBoard_nws_yarp", "[yarp::dev]")
             pcfg.put("device", "controlBoard_nws_yarp");
             pcfg.put("name", "/controlboard");
             REQUIRE(ddnws.open(pcfg));
+            yarp::dev::tests::exec_params_test(&ddnws);
         }
 
         //"Close all polydrivers and check"

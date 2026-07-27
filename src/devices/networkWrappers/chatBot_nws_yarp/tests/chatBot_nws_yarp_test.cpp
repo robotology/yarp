@@ -9,6 +9,7 @@
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <yarp/sig/Sound.h>
 
@@ -32,6 +33,7 @@ TEST_CASE("dev::chatBot_nws_yarp", "[yarp::dev]")
             pnws_cfg.put("device", "chatBot_nws_yarp");
             pnws_cfg.put("name", "/chatBot_nws");
             REQUIRE(dd.open(pnws_cfg));
+            yarp::dev::tests::exec_params_test(&dd);
         }
 
         yarp::os::Time::delay(1.0);
