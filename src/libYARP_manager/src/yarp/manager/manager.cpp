@@ -131,11 +131,11 @@ bool Manager::addModule(const char* szFileName)
     if (!modload.init()) {
         return false;
     }
-    Module* module = modload.getNextModule();
-    if (!module) {
+    Module* themodule = modload.getNextModule();
+    if (!themodule) {
         return false;
     }
-    return knowledge.addModule(module);
+    return knowledge.addModule(themodule);
 }
 
 
@@ -145,9 +145,9 @@ bool Manager::addModules(const char* szPath)
     if (!modload.init()) {
         return false;
     }
-    Module* module;
-    while ((module = modload.getNextModule())) {
-        knowledge.addModule(module);
+    Module* themodule;
+    while ((themodule = modload.getNextModule())) {
+        knowledge.addModule(themodule);
     }
     return true;
 }
@@ -388,28 +388,28 @@ bool Manager::prepare(bool silent)
     return true;
 }
 
-Broker* Manager::createBroker(Module* module)
+Broker* Manager::createBroker(Module* themodule)
 {
-    if(strlen(module->getBroker()) == 0)
+    if(strlen(themodule->getBroker()) == 0)
     {
-        if (compareString(module->getHost(), "localhost")) {
+        if (compareString(themodule->getHost(), "localhost")) {
             return (new LocalBroker());
         } else {
             return (new YarpBroker());
         }
     }
-    else if(compareString(module->getBroker(), BROKER_YARPDEV))
+    else if(compareString(themodule->getBroker(), BROKER_YARPDEV))
     {
-        if (compareString(module->getHost(), "localhost")) {
+        if (compareString(themodule->getHost(), "localhost")) {
             return (new YarpdevLocalBroker());
         } else {
             return (new YarpdevYarprunBroker());
         }
-    } else if (compareString(module->getHost(), "localhost")) {
-        return (new ScriptLocalBroker(module->getBroker()));
+    } else if (compareString(themodule->getHost(), "localhost")) {
+        return (new ScriptLocalBroker(themodule->getBroker()));
     }
 
-    return (new ScriptYarprunBroker(module->getBroker()));
+    return (new ScriptYarprunBroker(themodule->getBroker()));
 }
 
 bool Manager::removeBroker(Executable* exe)

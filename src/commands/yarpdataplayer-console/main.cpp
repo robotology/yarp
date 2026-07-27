@@ -168,10 +168,10 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
             utilities->initialFrame.push_back(utilities->partDetails[x].currFrame);
 
             double totalTime = 0.0;
-            double final = utilities->partDetails[x].timestamp[utilities->partDetails[x].timestamp.length()-1];
-            double initial = utilities->partDetails[x].timestamp[utilities->partDetails[x].currFrame];
+            double finalval = utilities->partDetails[x].timestamp[utilities->partDetails[x].timestamp.length()-1];
+            double initialval = utilities->partDetails[x].timestamp[utilities->partDetails[x].currFrame];
 
-            totalTime = final - initial;
+            totalTime = finalval - initialval;
             if (verbose)
             {
                 yInfo() << "The part " << utilities->partDetails[x].name << " should last for: " << totalTime
@@ -671,6 +671,6 @@ int main(int argc, char *argv[])
     yarp::os::ResourceFinder rf;
     rf.configure(argc,argv);
 
-    dataplayer_module module;
-    return module.runModule(rf);
+    dataplayer_module themodule;
+    return themodule.runModule(rf);
 }

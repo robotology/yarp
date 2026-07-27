@@ -136,7 +136,7 @@ private:
 
     bool createKnowledgeBase(AppLoader &appLoader);
     void clearExecutables();
-    bool isServer(Module* module);
+    bool isServer(Module* themodule);
     bool connectExtraPorts();
     bool checkPortsAvailable(Broker* broker);
     bool allRunning();
@@ -145,7 +145,7 @@ private:
     bool prepare(bool silent=true);
     bool timeout(double base, double t);
     bool updateResource(GenericResource* resource);
-    Broker* createBroker(Module* module);
+    Broker* createBroker(Module* themodule);
     bool removeBroker(Executable* exe);
 };
 

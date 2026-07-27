@@ -8,7 +8,7 @@
 
 using namespace yarp::manager;
 
-Executable::Executable(Broker* _broker, MEvent* _event, Module *module,
+Executable::Executable(Broker* _broker, MEvent* _event, Module* _module,
                     bool _bWatchDog)
 {
     bAutoConnect = true;
@@ -19,7 +19,7 @@ Executable::Executable(Broker* _broker, MEvent* _event, Module *module,
     waitStop = 0.0;
     originalWaitStart = 0.0;
     originalWaitStop  = 0.0;
-    Executable::module = module;
+    themodule = _module;
     logger  = ErrorLogger::Instance();
     broker->setEventSink(dynamic_cast<BrokerEventSink*>(this));
     execMachine = new ExecMachine(this);

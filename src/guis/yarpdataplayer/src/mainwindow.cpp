@@ -1216,13 +1216,10 @@ void InitThread::run()
         qutilities->initialFrame.push_back( qutilities->partDetails[x].currFrame);
 
         double totalTime = 0.0;
-        double final = qutilities->partDetails[x].timestamp[qutilities->partDetails[x].timestamp.length()-1];
-        double initial = qutilities->partDetails[x].timestamp[qutilities->partDetails[x].currFrame];
+        double finalval = qutilities->partDetails[x].timestamp[qutilities->partDetails[x].timestamp.length()-1];
+        double initialval = qutilities->partDetails[x].timestamp[qutilities->partDetails[x].currFrame];
 
-        //LOG("initial timestamp is = %lf\n", initial);
-        //LOG("final timestamp is  = %lf\n", final);
-
-        totalTime = final - initial;
+        totalTime = finalval - initialval;
 
         if (qutilities->verbose){
             yInfo() << "The part " << qutilities->partDetails[x].name.c_str() << " should last for: " << totalTime << " with " << qutilities->partDetails[x].maxFrame << " frames";

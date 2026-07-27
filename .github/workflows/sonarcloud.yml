@@ -269,8 +269,13 @@ jobs:
         # Fix .clang-tidy for clang 10 (see https://reviews.llvm.org/D75621)
         sed -i 's/;h;hh;hpp;hxx/,h,hh,hpp,hxx/g' .clang-tidy
 
-        # Disable misc-include-cleaner (too noisy / not relevant for this project)
+        # Disable misc-include-cleaner for messages like:
+        # warning: no header providing "yarp::conf::numeric::to_hex_string" is directly included [misc-include-cleaner]
         sed -i "s/-misc-static-assert,/-misc-static-assert,-misc-include-cleaner,/" .clang-tidy
+
+        # Disable readability-magic-numbers, for messages like:
+        # warning: 11 is a magic number; consider replacing it with a named constant
+        sed -i "s/-readability-implicit-bool-cast,/-readability-implicit-bool-cast,-readability-magic-numbers,/" .clang-tidy
 
         # Restrict header warnings to the project sources, excluding extern/ and build/
         sed -i "s|HeaderFilterRegex: '.*'|HeaderFilterRegex: '^(?!.*/(extern\|build)/).*$'|" .clang-tidy

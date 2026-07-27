@@ -10,32 +10,32 @@ using namespace yarp::manager;
 /**
  * Class  ModuleInterface
  */
-ModuleInterface::ModuleInterface(Module* module) :
+ModuleInterface::ModuleInterface(Module* themodule) :
     iRank(0),
     waitStart(0.0),
     waitStop(0.0)
 {
-    if (!module) {
+    if (!themodule) {
         return;
     }
 
-    strName = module->strName;
-    strHost = module->strHost;
-    strParam = module->strParam;
-    strWorkDir = module->strWorkDir;
-    strStdio = module->strStdio;
-    strBroker = module->strBroker;
-    strPrefix = module->strPrefix;
-    strEnvironment = module->strEnvironment;
-    iRank = module->iRank;
-    strTag = module->getLabel();
-    strDisplay = module->getDisplay();
-    waitStart = module->getPostExecWait();
-    waitStop = module->getPostStopWait();
-    if (module->getModel()) {
-        modelBase = *module->getModel();
+    strName = themodule->strName;
+    strHost = themodule->strHost;
+    strParam = themodule->strParam;
+    strWorkDir = themodule->strWorkDir;
+    strStdio = themodule->strStdio;
+    strBroker = themodule->strBroker;
+    strPrefix = themodule->strPrefix;
+    strEnvironment = themodule->strEnvironment;
+    iRank = themodule->iRank;
+    strTag = themodule->getLabel();
+    strDisplay = themodule->getDisplay();
+    waitStart = themodule->getPostExecWait();
+    waitStop = themodule->getPostStopWait();
+    if (themodule->getModel()) {
+        modelBase = *themodule->getModel();
     } else {
-        modelBase = module->getModelBase();
+        modelBase = themodule->getModelBase();
     }
 
    //TODO: resources should be added too

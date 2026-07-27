@@ -271,7 +271,7 @@ public:
      * @param sample_id the sample id of the marker
      * @param channel the channel number of the marker (optional, default value = -1, meaning that the marker is valid for all channels)
      */
-    void  add_marker(std::string marker_label, size_t sample_id, int channel=-1);
+    void  add_marker(const std::string& marker_label, size_t sample_id, int channel=-1);
 
     /**
      * Gets the sample id and channel number of a marker given its label. If the marker is not found, the method returns false and the output parameters are not modified.
@@ -280,7 +280,7 @@ public:
      * @param channel the channel number of the marker (output parameter)
      * @return true if the marker is found, false otherwise
      */
-    bool  get_marker(std::string marker_label, size_t&  sample_id, int& channel) const;
+    bool  get_marker(const std::string& marker_label, size_t&  sample_id, int& channel) const;
 
     /**
      * Gets the number of markers contained in the sound.
@@ -307,7 +307,7 @@ public:
      * Removes a marker given its label. If the marker is not found, the method does nothing.
      * @param marker_label the label of the marker to remove
      */
-    void  remove_marker(std::string marker_label);
+    void  remove_marker(const std::string& marker_label);
 
     /**
      * Removes all the markers contained in the sound.

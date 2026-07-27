@@ -102,7 +102,6 @@ private:
     yarp::dev::IBattery::Battery_status m_battery_status = yarp::dev::IBattery::Battery_status::BATTERY_TIMEOUT;
 
     yarp::os::Stamp m_lastStateStamp;
-    double m_period;
     std::string m_sensorId;
 
     //log stuff

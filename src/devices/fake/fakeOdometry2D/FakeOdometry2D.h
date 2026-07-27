@@ -52,7 +52,6 @@ private:
     yarp::dev::OdometryData m_odometryData;
 
     std::mutex m_odometry_mutex;
-    double m_period;
     double m_timestamp=0;
 };
 

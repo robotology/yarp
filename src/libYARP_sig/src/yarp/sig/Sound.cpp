@@ -160,6 +160,8 @@ Sound& Sound::operator += (const Sound& alt)
 
 const Sound& Sound::operator = (const Sound& alt)
 {
+    if (this == &alt) { return *this; }
+
     init(alt.m_bytesPerSample);
     m_frequency = alt.m_frequency;
     m_channels = alt.m_channels;
@@ -753,7 +755,7 @@ void Sound::findPeak(size_t& channelId, size_t& sampleId, audio_sample& sampleVa
 /// MARKERS
 /// --------------------------------------------------
 
-void  Sound::add_marker(std::string marker_label, size_t sample_id, int channel)
+void  Sound::add_marker(const std::string& marker_label, size_t sample_id, int channel)
 {
     SoundMarker sm;
     sm.sample_id = sample_id;
@@ -763,7 +765,7 @@ void  Sound::add_marker(std::string marker_label, size_t sample_id, int channel)
     m_markers[marker_label] = sm;
 }
 
-bool  Sound::get_marker(std::string marker_label, size_t&  sample_id, int& channel) const
+bool  Sound::get_marker(const std::string& marker_label, size_t&  sample_id, int& channel) const
 {
     auto it = m_markers.find(marker_label);
     if (it == m_markers.end())
@@ -780,7 +782,7 @@ bool  Sound::get_marker(std::string marker_label, size_t&  sample_id, int& chann
     return true;
 }
 
-void  Sound::remove_marker(std::string marker_label)
+void  Sound::remove_marker(const std::string& marker_label)
 {
     m_markers.erase(marker_label);
 }

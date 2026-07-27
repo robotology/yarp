@@ -50,10 +50,10 @@ public:
     bool addApplication(Application* application,
                         char **szAppName_=nullptr,
                         bool modifyName=false);
-    bool addModule(Module* module);
+    bool addModule(Module* themodule);
     bool addResource(GenericResource* resource);
     bool removeApplication(Application* application);
-    bool removeModule(Module* module);
+    bool removeModule(Module* themodule);
     bool removeResource(GenericResource* resource);
 
     bool reasolveDependency(const char* szName,
@@ -104,7 +104,7 @@ public:
     Arbitrator& addArbitratorToApplication(Application* application, Arbitrator &arb);
     bool removeArbitratorFromApplication(Application* application, Arbitrator &arb);
 
-    bool setModulePrefix(Module* module, const char* szPrefix, bool updateBasePrefix=true);
+    bool setModulePrefix(Module* themodule, const char* szPrefix, bool updateBasePrefix=true);
     bool setApplicationPrefix(Application* app, const char* szPrefix, bool updateBasePref=true);
     bool saveApplication(AppSaver* appSaver, Application* application);
 
@@ -141,7 +141,7 @@ private:
 
     std::map<std::string, int> appList;
 
-    bool moduleCompleteness(Module* module);
+    bool moduleCompleteness(Module* themodule);
     void updateNodesLink(Graph& graph, int level);
     void makeResourceLinks(Graph& graph);
     void updateResourceWeight(Graph& graph,
@@ -154,16 +154,16 @@ private:
                                 const char* postfix=nullptr);
     const char* createAppLabel(Application* app);
     Module* replicateModule(Graph& graph,
-                            Module* module, const char* szLabel);
+                            Module* themodule, const char* szLabel);
     Application* replicateApplication(Graph& graph,
                             Application* app, const char* szLabel);
     GenericResource* replicateResource(Graph& graph,
                             GenericResource* res, const char* szLabel);
 
-    Module* addModuleToGraph(Graph& graph, Module* module);
-    bool removeModuleFromGraph(Graph& graph, Module* mod);
+    Module* addModuleToGraph(Graph& graph, Module* themodule);
+    bool removeModuleFromGraph(Graph& graph, Module* themodule);
 
-    bool updateModule(Module* module, ModuleInterface* imod);
+    bool updateModule(Module* themodule, ModuleInterface* imod);
     bool updateApplication(Application* app, ApplicationInterface* iapp);
     bool reason(Graph* graph, Node* initial,
                          ApplicaitonPContainer &applications,

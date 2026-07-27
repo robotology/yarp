@@ -70,7 +70,7 @@ class ConcurentRateWrapper;
 class Executable : public BrokerEventSink
 {
 public:
-    Executable(Broker* _broker, MEvent* _event, Module* module, bool bWatchDog=true);
+    Executable(Broker* _broker, MEvent* _event, Module* themodule, bool bWatchDog=true);
     ~Executable() override;
 
     bool start();
@@ -105,7 +105,7 @@ public:
     const char* getWorkDir() { return strWorkdir.c_str(); }
     const char* getEnv() { return strEnv.c_str(); }
     int getID() { return theID; }
-    Module* getModule() { return module; }
+    Module* getModule() { return themodule; }
 
     void setPostExecWait(double t) { waitStart = t; }
     double getPostExecWait() { return waitStart; }
@@ -143,7 +143,7 @@ private:
     bool bWatchDog;
     Broker* broker;
     MEvent* event;
-    Module* module;
+    Module* themodule;
     CnnContainer connections;
     ResourceContainer resources;
 

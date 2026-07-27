@@ -508,7 +508,7 @@ bool yarp::run::Run::start(const std::string &node, yarp::os::Property &command,
     response=sendMsg(msg, dest_srv);
 
     char buff[16];
-    sprintf(buff, "%d", response.get(0).asInt32());
+    snprintf(buff, sizeof(buff), "%d", response.get(0).asInt32());
     keyv=std::string(buff);
 
     return response.get(0).asInt32()>0?true:false;

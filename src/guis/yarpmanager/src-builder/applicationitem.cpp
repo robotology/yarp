@@ -118,12 +118,12 @@ void ApplicationItem::init()
             ExecutablePContainer exes = mainAppManager->getExecutables();
             for(moditr=exes.begin(); moditr<exes.end(); moditr++){
 
-                Module* module = (*moditr)->getModule();
+                Module* themodule = (*moditr)->getModule();
 
-                if(module == module1){
+                if(themodule == module1){
                     QString id = QString("%1").arg((*moditr)->getID());
                     usedModulesId->append(id.toInt());
-                    addModule(module,id.toInt());
+                    addModule(themodule,id.toInt());
                     break;
                 }
             }
@@ -303,18 +303,18 @@ void ApplicationItem::setModulesAction(QList<QAction *> act)
     modulesAction = act;
 }
 
-BuilderItem * ApplicationItem::addModule(Module *module,int moduleId)
+BuilderItem * ApplicationItem::addModule(Module *themodule,int moduleId)
 {
-    auto* it = new ModuleItem(module,moduleId,true,editingMode,mainAppManager,this);
+    auto* it = new ModuleItem(themodule,moduleId,true,editingMode,mainAppManager,this);
     it->setActions(modulesAction);
     QObject::connect(it->signalHandler(),SIGNAL(moduleSelected(QGraphicsItem*)),sigHandler,SLOT(onModuleSelected(QGraphicsItem*)));
     QObject::connect(it->signalHandler(),SIGNAL(requestNewConnection(QPointF,QGraphicsItem*)),((BuilderScene*)scene()),SLOT(onNewConnectionRequested(QPointF,QGraphicsItem*)));
     QObject::connect(it->signalHandler(),SIGNAL(addNewConnection(QPointF,QGraphicsItem*)),((BuilderScene*)scene()),SLOT(onNewConnectionAdded(QPointF,QGraphicsItem*)));
 
     it->setZValue(zValue()+2);
-    if(module->getModelBase().points.size()>0){
-        it->setPos(module->getModelBase().points[0].x ,
-                module->getModelBase().points[0].y );
+    if(themodule->getModelBase().points.size()>0){
+        it->setPos(themodule->getModelBase().points[0].x ,
+                themodule->getModelBase().points[0].y );
     }else{
         it->setPos(index%900+10 + it->boundingRect().width()/2,
                    (index/900)*100+10 + it->boundingRect().height()/2);
@@ -417,13 +417,13 @@ void ApplicationItem::findInputOutputData(Connection& cnn,  ModulePContainer &mo
     ModulePIterator itr;
     for(itr=modules.begin(); itr!=modules.end(); itr++)
     {
-        Module* module = (*itr);
-        //if(module->owner() == application)
+        Module* themodule = (*itr);
+        //if(themodule->owner() == application)
         {
-            for(int i=0; i<module->inputCount(); i++)
+            for(int i=0; i<themodule->inputCount(); i++)
             {
-                InputData &input = module->getInputAt(i);
-                std::string strInput = std::string(module->getPrefix()) + std::string(input.getPort());
+                InputData &input = themodule->getInputAt(i);
+                std::string strInput = std::string(themodule->getPrefix()) + std::string(input.getPort());
                 if(strTo == strInput)
                 {
                     input_ = &input;
@@ -431,10 +431,10 @@ void ApplicationItem::findInputOutputData(Connection& cnn,  ModulePContainer &mo
                 }
             }
 
-            for(int i=0; i<module->outputCount(); i++)
+            for(int i=0; i<themodule->outputCount(); i++)
             {
-                OutputData &output = module->getOutputAt(i);
-                std::string strOutput = std::string(module->getPrefix()) + std::string(output.getPort());
+                OutputData &output = themodule->getOutputAt(i);
+                std::string strOutput = std::string(themodule->getPrefix()) + std::string(output.getPort());
                 if(strFrom == strOutput)
                 {
                     output_ = &output;
@@ -454,10 +454,10 @@ PortItem* ApplicationItem::findModelFromOutput(OutputData* output)
             auto* application = (ApplicationItem*)it;
             for(int j=0; j<application->getModulesList().count(); j++){
                 if(application->getModulesList().at(j)->type() == QGraphicsItem::UserType + ModuleItemType){
-                    ModuleItem *module = (ModuleItem*)application->getModulesList().at(j);
-                    for(int k=0;k<module->oPorts.count();k++){
-                        PortItem *port = module->oPorts.at(k);
-                        //QString prefix = QString("%1%2").arg(application->getInnerApplication()->getPrefix()).arg(module->getInnerModule()->getBasePrefix());
+                    ModuleItem *themodule = (ModuleItem*)application->getModulesList().at(j);
+                    for(int k=0;k<themodule->oPorts.count();k++){
+                        PortItem *port = themodule->oPorts.at(k);
+                        //QString prefix = QString("%1%2").arg(application->getInnerApplication()->getPrefix()).arg(themodule->getInnerModule()->getBasePrefix());
 
                         //if(!strcmp(port->outData.getPort(), (*output).getPort()) && modulePrefix == prefix)  {
                         if (port->outData == output) {
@@ -471,10 +471,10 @@ PortItem* ApplicationItem::findModelFromOutput(OutputData* output)
 
 
         if(it->type() == (QGraphicsItem::UserType + (int)ModuleItemType)){
-            auto* module = (ModuleItem*)it;
-            for(int k=0;k<module->oPorts.count();k++){
-                PortItem *port = module->oPorts.at(k);
-                //if(!strcmp(port->outData.getPort(), (*output).getPort()) && modulePrefix == QString("%1").arg(module->getInnerModule()->getPrefix()))  {
+            auto* themodule = (ModuleItem*)it;
+            for(int k=0;k<themodule->oPorts.count();k++){
+                PortItem *port = themodule->oPorts.at(k);
+                //if(!strcmp(port->outData.getPort(), (*output).getPort()) && modulePrefix == QString("%1").arg(themodule->getInnerModule()->getPrefix()))  {
                 if(port->outData == output){
                     return port;
                 }
@@ -498,10 +498,10 @@ PortItem*  ApplicationItem::findModelFromInput(InputData* input)
             auto* application = (ApplicationItem*)it;
             for(int j=0;j<application->getModulesList().count();j++){
                 if(application->getModulesList().at(j)->type() == QGraphicsItem::UserType + ModuleItemType){
-                    ModuleItem *module = (ModuleItem*)application->getModulesList().at(j);
-                    for(int k=0;k<module->iPorts.count();k++){
-                        PortItem *port = module->iPorts.at(k);
-                        //QString prefix = QString("%1%2").arg(application->getInnerApplication()->getPrefix()).arg(module->getInnerModule()->getBasePrefix());
+                    ModuleItem *themodule = (ModuleItem*)application->getModulesList().at(j);
+                    for(int k=0;k<themodule->iPorts.count();k++){
+                        PortItem *port = themodule->iPorts.at(k);
+                        //QString prefix = QString("%1%2").arg(application->getInnerApplication()->getPrefix()).arg(themodule->getInnerModule()->getBasePrefix());
                         //if(!strcmp(port->inData.getPort(),(*input).getPort()) && modulePrefix == prefix)  {
                         if(port->inData == input){
                             return port;
@@ -513,10 +513,10 @@ PortItem*  ApplicationItem::findModelFromInput(InputData* input)
         }
 
         if(it->type() == (QGraphicsItem::UserType + (int)ModuleItemType)){
-            auto* module = (ModuleItem*)it;
-            for(int k=0;k<module->iPorts.count();k++){
-                PortItem *port = module->iPorts.at(k);
-                //if(!strcmp(port->inData.getPort(),(*input).getPort()) && modulePrefix == QString("%1").arg(module->getInnerModule()->getPrefix())){
+            auto* themodule = (ModuleItem*)it;
+            for(int k=0;k<themodule->iPorts.count();k++){
+                PortItem *port = themodule->iPorts.at(k);
+                //if(!strcmp(port->inData.getPort(),(*input).getPort()) && modulePrefix == QString("%1").arg(themodule->getInnerModule()->getPrefix())){
                 if(port->inData == input){
                     return port;
                 }
