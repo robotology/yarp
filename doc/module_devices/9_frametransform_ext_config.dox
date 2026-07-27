@@ -1,0 +1,121 @@
+/**
+\defgroup FrameTransform_ext FrameTransform external: configurations involving external devices
+\ingroup dev_tutorials
+
+\tableofcontents
+
+\section FrameTransform_intro Description
+In order to integrate yarp own frame transforms management structure with other ones, like the one used by ROS/ROS2, new devices have been created to allow a bilateral communication between the two environments.\n
+At the moment being the devices can be found in these two repositories:
+- [yarp-devices-ros2](https://github.com/robotology/yarp-devices-ros2)
+- [yarp-devices-ros](https://github.com/robotology-legacy/yarp-devices-ros) (N.B. this repository is not compatible with yarp versions > 3.10, but it is still available for legacy purposes)
+
+The available devices are the following:
+- frameTransformGet
+    - FrameTransformGet_nwc_ros2
+    - FrameTransformGet_nwc_ros
+- frameTransformSet
+    - FrameTransformSet_nwc_ros
+    - FrameTransformSet_nwc_ros2
+.
+
+ In the sections below a brief description and simple graphic representation for each configuration are shown.\n\n
+
+\warning To be able to use these configurations, if you haven't installed the repo built code, you have to add these paths to "$YARP_DATA_DIRS" environment variable:
+- <path_to_yarp-devices-ros2>/share/yarp-devices-ros2
+- <path_to_yarp-devices-ros>/share/yarp-devices-ros
+
+.
+ To see how different client and server configurations can be coupled, see the following page:
+ \ref Fts_ftc_config_ext_config Fts_ftc_config_ext_config
+
+\section FrameTransformClient
+
+- **ROS ONLY** This configuration is to be chosen everytime a bilateral communication (publish and subscribe)
+with ROS is needed.\n
+The picture hereunder shows a simplified schema of the configuration.
+Command line instructions to use the configuration:
+\code{.unparsed}
+yarpdev --device frameTransformClient --custom_config_context ros_frameTransform_config --custom_config_from ftc_ros.xml
+\endcode
+\zoomimage{FTC_ROS_Only.svg, FTC_ROS_Only}
+  - **ROS PUB ONLY** and **ROS SUB ONLY** These two configurations have been added in order to allow
+  a one way communication between the client and the ROS environment, be it publication or subscription.
+  The picture hereunder shows, as in the previous case, a simplified schema of the configuration.
+  To launch these configurations the following commands have to be used:
+  \code{.unparsed}
+  yarpdev --device frameTransformClient --custom_config_context ros_frameTransform_config --custom_config_from ftc_pub_ros.xml
+  \endcode
+  \code{.unparsed}
+  yarpdev --device frameTransformClient --custom_config_context ros_frameTransform_config --custom_config_from ftc_sub_ros.xml
+  \endcode
+  \zoomimage{FTC_ROS_Pub_Only.svg, FTC_ROS_Pub_Only}
+  \zoomimage{FTC_ROS_Sub_Only.svg, FTC_ROS_Sub_Only}
+ *
+  \subsection fts_sec_ros Client configurations that DO need a Server
+The following configurations need, as the section title suggests, a running server component.
+The appropriate client configuration depends on the running server.
+- **YARP AND ROS** The last available version of the client uses both YARP and ROS.\n
+It has to be used when a YARP only server is running and the client needs to store transform
+coming from both YARP and ROS.\n
+To launch this client the following command have to be employed:
+\code{.unparsed}
+yarpdev --device frameTransformClient --custom_config_context ros_frameTransform_config --custom_config_from ftc_full_ros.xml
+\endcode
+\zoomimage{FTC_YARP_+_ROS.svg, FTC_YARP_+_ROS}
+
+- **ROS2 ONLY** This configuration is to be chosen everytime a bilateral communication (publish and subscribe)
+with ROS is needed.\n
+The picture hereunder shows a simplified schema of the configuration.
+Command line instructions to use the configuration:
+\code{.unparsed}
+yarpdev --device frameTransformClient --custom_config_context ros2_frameTransform_config --custom_config_from ftc_ros2.xml
+\endcode
+\zoomimage{FTC_ROS2_Only.svg, FTC_ROS2_Only}
+  - **ROS2 PUB ONLY** and **ROS2 SUB ONLY** These two configurations have been added in order to allow
+  a one way communication between the client and the ROS2 environment, be it publication or subscription.
+  The picture hereunder shows, as in the previous case, a simplified schema of the configuration.
+  To launch these configurations the following commands have to be used:
+  \code{.unparsed}
+  yarpdev --device frameTransformClient --custom_config_context ros2_frameTransform_config --custom_config_from ftc_pub_ros2.xml
+  \endcode
+  \code{.unparsed}
+  yarpdev --device frameTransformClient --custom_config_context ros2_frameTransform_config --custom_config_from ftc_sub_ros2.xml
+  \endcode
+  \zoomimage{FTC_ROS2_Pub_Only.svg, FTC_ROS2_Pub_Only}
+  \zoomimage{FTC_ROS2_Sub_Only.svg, FTC_ROS2_Sub_Only}
+ *
+  \subsection fts_sec_ros2 Client configurations that DO need a Server
+The following configurations need, as the section title suggests, a running server component.
+The appropriate client configuration depends on the running server.
+- **YARP AND ROS2** The last available version of the client uses both YARP and ROS2.\n
+It has to be used when a YARP only server is running and the client needs to store transform
+coming from both YARP and ROS2.\n
+To launch this client the following command have to be employed:
+\code{.unparsed}
+yarpdev --device frameTransformClient --custom_config_context ros2_frameTransform_config --custom_config_from ftc_full_ros2.xml
+\endcode
+\zoomimage{FTC_YARP_+_ROS2.svg, FTC_YARP_+_ROS2}
+
+.
+\section FrameTransformServer
+
+- The first one is the **YARP AND ROS** configuration.\n
+ It starts a server listening to both thrift ports and ros topics, so its updates came from both parts. It has also a small storage inside to update
+ all the clients that connects to it later with the latest transforms.\n
+ the code to launch this server is:
+ \code{.unparsed}
+ yarpdev --device frameTransformServer --custom_config_context ros_frameTransform_config --custom_config_from fts_full_ros.xml
+ \endcode
+ \zoomimage{FTS_YARP_+_ROS.svg, FTS_YARP_+_ROS}
+
+ - The second one is the **YARP AND ROS2** configuration.\n
+ It starts a server listening to both thrift ports and ros topics, so its updates came from both parts. It has also a small storage inside to update
+ all the clients that connects to it later with the latest transforms.\n
+ the code to launch this server is:
+ \code{.unparsed}
+ yarpdev --device frameTransformServer --custom_config_context ros2_frameTransform_config --custom_config_from fts_full_ros2.xml
+ \endcode
+ \zoomimage{FTS_YARP_+_ROS2.svg, FTS_YARP_+_ROS2}
+.
+*/
