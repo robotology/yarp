@@ -133,9 +133,7 @@ bool Rangefinder2D_nws_yarp::open(yarp::os::Searchable &config)
 
 void Rangefinder2D_nws_yarp::threadRelease()
 {
-    streamingPort.interrupt();
     streamingPort.close();
-    rpcPort.interrupt();
     rpcPort.close();
 }
 

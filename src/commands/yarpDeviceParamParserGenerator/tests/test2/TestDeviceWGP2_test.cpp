@@ -98,8 +98,8 @@ TEST_CASE("dev::TestDeviceWGP", "[yarp::dev]")
 
             std::string param_str;
             bool getpv = idevparams->getParamValue("param_vec9", param_str);
-            CHECK(getpv == false);
-            CHECK(param_str.empty());
+            CHECK(getpv == true);
+            CHECK(!param_str.empty());
         }
 
         yarp::os::Time::delay(1.0);

@@ -94,9 +94,9 @@ TEST_CASE("dev::laserFromPointCloud", "[yarp::dev]")
         vals.test_max=5.0;
         vals.test_horizontal_res=1.0;
         vals.test_lsize=360;
-        vals.test_rho = 0.56541570060620461;
-        vals.test_theta=-0.31415926535897931;
-        vals.test_cartesian_x=0.537742;
+        vals.test_rho = 2.089994459; //almost 2meters
+        vals.test_theta=-0.31415926535897931; //-18degrees
+        vals.test_cartesian_x= 1.9877; //almost 2meters
         vals.test_cartesian_y=-0.174723;
         //yarp::dev::tests::exec_iRangefinder2D_test_1(irng, vals);
 

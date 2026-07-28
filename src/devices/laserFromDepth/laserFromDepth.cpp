@@ -167,6 +167,10 @@ bool LaserFromDepth::acquireDataFromHW()
     auto* pointer = (float*)m_depth_image.getPixelAddress(0, m_depth_height / 2);
     double angle, distance, angleShift;
 
+    // angleshift is used to center the laser scan around 0 degrees,
+    // so that the laser scan goes from -deg to +deg.
+    // Example: if resolution is 1 deg and sensorsNum is 60,
+    // the laser scan will go from -30 deg to +30 deg.
     angleShift = m_sensorsNum * m_resolution / 2;
 
     for (size_t elem = 0; elem < m_sensorsNum; elem++)

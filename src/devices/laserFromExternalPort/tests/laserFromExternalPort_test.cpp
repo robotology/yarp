@@ -20,15 +20,13 @@ using namespace yarp::os;
 
 TEST_CASE("dev::laserFromExternalPort", "[yarp::dev]")
 {
-    #if defined(DISABLE_FAILING_TESTS)
-        YARP_SKIP_TEST("Skipping failing tests")
-    #endif
-
     YARP_REQUIRE_PLUGIN("laserFromExternalPort", "device");
     YARP_REQUIRE_PLUGIN("fakeLaser", "device");
     YARP_REQUIRE_PLUGIN("rangefinder2D_nws_yarp", "device");
 
     Network::setLocalMode(true);
+
+    const double test_distance = 0.5;
 
     SECTION("Checking laserFromExternalPort device")
     {
@@ -42,9 +40,10 @@ TEST_CASE("dev::laserFromExternalPort", "[yarp::dev]")
         {
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeLaser");
+            pdev_cfg.put("rpc_test_port", "/fakeLaser1/rpc:i");
             pdev_cfg.put("test", "use_constant");
             Property& cm_cfg= pdev_cfg.addGroup("CONSTANT_MODE");
-            cm_cfg.put("const_distance", 0.5);
+            cm_cfg.put("const_distance", test_distance);
             REQUIRE(ddfake1.open(pdev_cfg));
 
             Property pnws_cfg;
@@ -61,9 +60,10 @@ TEST_CASE("dev::laserFromExternalPort", "[yarp::dev]")
         {
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeLaser");
+            pdev_cfg.put("rpc_test_port", "/fakeLaser2/rpc:i");
             pdev_cfg.put("test", "use_constant");
             Property& cm_cfg= pdev_cfg.addGroup("CONSTANT_MODE");
-            cm_cfg.put("const_distance", 0.5);
+            cm_cfg.put("const_distance", test_distance);
             REQUIRE(ddfake2.open(pdev_cfg));
 
             Property pnws_cfg;
@@ -106,7 +106,11 @@ TEST_CASE("dev::laserFromExternalPort", "[yarp::dev]")
         vals.test_scanrate=0;
         vals.test_max=30.0;
         vals.test_min=0.1;
-        //yarp::dev::tests::exec_iRangefinder2D_test_1(irng, vals);
+        vals.test_rho=test_distance;
+        vals.test_theta=0.0;
+        vals.test_cartesian_x=test_distance;
+        vals.test_cartesian_y=0.0;
+        yarp::dev::tests::exec_iRangefinder2D_test_1(irng, vals);
 
         //"Close all polydrivers and check"
         CHECK(laserdev.close());

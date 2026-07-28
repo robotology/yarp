@@ -120,6 +120,16 @@ bool "
     ADD_DEBUG_COMMENT(s)
     for (const auto& param : m_params)
     {
+        const std::string vec2string_string = "\
+    std::ostringstream oss;\n\
+        oss << \"( \";\n\
+        for (auto x : m_" + param.getFullParamVariable() + ")\n\
+        {\n\
+            oss << x << \" \";\n\
+        }\n\
+        oss << \" )\";\n\
+        paramValue = oss.str();\n";
+
         s << S_TAB1 << "if (paramName ==\"" << param.getFullParamName() << "\")\n";
         s << S_TAB1 << "{\n";
         if (param.type == "string") {
@@ -135,6 +145,9 @@ bool "
         } else if (param.type == "int") {
             s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
             s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "char") {
+            s << S_TAB1 << "    paramValue = std::string(1, m_" << param.getFullParamVariable() << ");\n";
+            s << S_TAB1 << "    return true;\n";
         } else if (param.type == "size_t") {
             s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
             s << S_TAB1 << "    return true;\n";
@@ -144,11 +157,14 @@ bool "
         } else if (param.type == "char") {
             s << S_TAB1 << "    return false;\n";
         } else if (param.type == "vector<int>") {
-            s << S_TAB1 << "    return false;\n";
+            s << S_TAB1 << vec2string_string;
+            s << S_TAB1 << "    return true;\n";
         } else if (param.type == "vector<string>") {
-            s << S_TAB1 << "    return false;\n";
+            s << S_TAB1 << vec2string_string;
+            s << S_TAB1 << "    return true;\n";
         } else if (param.type == "vector<double>") {
-            s << S_TAB1 << "    return false;\n";
+            s << S_TAB1 << vec2string_string;
+            s << S_TAB1 << "    return true;\n";
         }
         s << S_TAB1 << "}\n";
     }

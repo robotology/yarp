@@ -162,7 +162,7 @@ jobs:
         python3 tests/misc/check_tests.py
 
 
-  run-cmake:
+  check-cmake:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
     needs: [select_environment, check-license, check-style]
     runs-on: ubuntu-22.04
@@ -268,7 +268,7 @@ jobs:
 
   build:
     name: '[${{ matrix.config.id }}][${{ matrix.config.os }}|${{ matrix.config.cc }}|${{ matrix.config.cmake_generator }} (${{ matrix.config.cmake_toolset }} ${{ matrix.config.cmake_platform }})|${{ matrix.config.build_type }}] ${{ matrix.config.description }}'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment, check-cmake]
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
@@ -2079,7 +2079,7 @@ jobs:
   codacy-clang-tidy:
     environment: code-analysis
     name: 'Codacy - clang-tidy'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment, check-cmake]
     runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
@@ -2307,7 +2307,7 @@ jobs:
   codacy-coverage:
     environment: code-analysis
     name: 'Codacy - coverage'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment, check-cmake]
     runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
@@ -2483,7 +2483,7 @@ jobs:
   sonarcloud:
     environment: code-analysis
     name: 'SonarCloud'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment, check-cmake]
     runs-on: ubuntu-24.04
     steps:
     - name: Clone repository

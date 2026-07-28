@@ -88,11 +88,11 @@ TEST_CASE("dev::laserFromDepth", "[yarp::dev]")
         vals.test_max=2.5;
         vals.test_horizontal_res=1.125;
         vals.test_lsize=32;
-        vals.test_rho = 0.56541570060620461;
-        vals.test_theta=-0.31415926535897931;
-        vals.test_cartesian_x=0.537742;
-        vals.test_cartesian_y=-0.174723;
-        //yarp::dev::tests::exec_iRangefinder2D_test_1(irng, vals);
+        vals.test_rho = 2.08999; //almost 2m //(small difference due to camera distortion)
+        vals.test_theta=-0.31415926535897931; //-18dgrees
+        vals.test_cartesian_x=1.9877; // a little smaller than 2meters
+        vals.test_cartesian_y=-0.645844; // a little on the left of the center
+        yarp::dev::tests::exec_iRangefinder2D_test_1(irng, vals);
 
         //"Close all polydrivers and check"
         CHECK(laserdev.close());

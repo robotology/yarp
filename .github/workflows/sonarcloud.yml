@@ -92,7 +92,7 @@ jobs:
   codacy-clang-tidy:
     environment: code-analysis
     name: 'Codacy - clang-tidy'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment]
     runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
@@ -320,7 +320,7 @@ jobs:
   codacy-coverage:
     environment: code-analysis
     name: 'Codacy - coverage'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment]
     runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
@@ -496,7 +496,7 @@ jobs:
   sonarcloud:
     environment: code-analysis
     name: 'SonarCloud'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment]
     runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
