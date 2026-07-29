@@ -391,8 +391,8 @@ int DynamixelAX12FtdiDriver::readParameter(unsigned char id, unsigned char param
     }
 }
 
-ReturnValue DynamixelAX12FtdiDriver::getAxes(int *ax) {
-    *ax = numOfAxes;
+ReturnValue DynamixelAX12FtdiDriver::getAxes(size_t& ax) {
+    ax = numOfAxes;
     return ReturnValue_ok;
 }
 

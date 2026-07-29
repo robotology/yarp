@@ -54,7 +54,7 @@ public:
     double* positions;
     double* speeds;
 
-    yarp::dev::ReturnValue getAxes(int* ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
     yarp::dev::ReturnValue positionMove(int j, double ref) override;
     yarp::dev::ReturnValue positionMove(const double* refs) override;
     yarp::dev::ReturnValue relativeMove(int j, double delta) override;

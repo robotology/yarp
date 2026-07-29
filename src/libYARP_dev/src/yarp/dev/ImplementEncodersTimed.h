@@ -56,7 +56,7 @@ public:
 
     virtual ~ImplementEncodersTimed();
 
-    yarp::dev::ReturnValue getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
 
     yarp::dev::ReturnValue resetEncoder(int j) override;
     yarp::dev::ReturnValue resetEncoders() override;

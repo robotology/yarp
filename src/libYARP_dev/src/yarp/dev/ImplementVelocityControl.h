@@ -62,7 +62,7 @@ public:
      */
     virtual ~ImplementVelocityControl();
 
-    yarp::dev::ReturnValue getAxes(int *axes) override;
+    yarp::dev::ReturnValue getAxes(size_t& axes) override;
     yarp::dev::ReturnValue velocityMove(int j, double sp) override;
     yarp::dev::ReturnValue velocityMove(const double *sp) override;
     yarp::dev::ReturnValue setTrajAcceleration(int j, double acc) override;
@@ -98,7 +98,7 @@ public:
 class yarp::dev::StubImplVelocityControlRaw: public IVelocityControlRaw
 {
 public:
-    yarp::dev::ReturnValue getAxes(int *axes) override
+    yarp::dev::ReturnValue getAxes(size_t& axes) override
     {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
     yarp::dev::ReturnValue velocityMoveRaw(int j, double sp) override

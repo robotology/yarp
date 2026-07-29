@@ -829,9 +829,9 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 // Deal with ControlBoardInterfaces pointer arguments that don't translate
 
 %extend yarp::dev::IImpedanceControl {
-    int getAxes() {
-        int buffer;
-        bool ok = self->getAxes(&buffer);
+    size_t getAxes() {
+        size_t buffer;
+        bool ok = self->getAxes(buffer);
         if (!ok) return 0;
         return buffer;
     }
@@ -850,9 +850,9 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 }
 
 %extend yarp::dev::IPositionControl {
-    int getAxes() {
-        int buffer;
-        bool ok = self->getAxes(&buffer);
+    size_t getAxes() {
+        size_t buffer;
+        bool ok = self->getAxes(buffer);
         if (!ok) return 0;
         return buffer;
     }
@@ -944,9 +944,9 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 }
 
 %extend yarp::dev::IVelocityControl {
-    int getAxes() {
-        int buffer;
-        bool ok = self->getAxes(&buffer);
+    size_t getAxes() {
+        size_t buffer;
+        bool ok = self->getAxes(buffer);
         if (!ok) return 0;
         return buffer;
     }
@@ -997,9 +997,9 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 }
 
 %extend yarp::dev::IEncoders {
-    int getAxes() {
-        int buffer;
-        bool ok = self->getAxes(&buffer);
+    size_t getAxes() {
+        size_t buffer;
+        bool ok = self->getAxes(buffer);
         if (!ok) return 0;
         return buffer;
     }
@@ -1244,9 +1244,9 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 }
 
 %extend yarp::dev::IPositionDirect {
-    int getAxes() {
-        int buffer;
-        bool ok = self->getAxes(&buffer);
+    size_t getAxes() {
+        size_t buffer;
+        bool ok = self->getAxes(buffer);
         if (!ok) return 0;
         return buffer;
     }
@@ -1384,9 +1384,9 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 }
 
 %extend yarp::dev::ITorqueControl {
-    int getAxes() {
-        int buffer;
-        bool ok = self->getAxes(&buffer);
+    size_t getAxes() {
+        size_t buffer;
+        bool ok = self->getAxes(buffer);
         if (!ok) return 0;
         return buffer;
     }

@@ -121,10 +121,10 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
 
     if (m_interfaceError == false)
     {
-        int i = 0;
+        size_t i = 0;
         std::string jointname;
-        int number_of_joints;
-        m_iPos->getAxes(&number_of_joints);
+        size_t number_of_joints;
+        m_iPos->getAxes(number_of_joints);
 
         m_controlModes.resize(number_of_joints); //for (i = 0; i < number_of_joints; i++) m_controlModes = 0;
         m_refTrajectorySpeeds.resize(number_of_joints);
@@ -199,7 +199,7 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
         double min_cur = -2.0;
         double max_cur = +2.0;
         std::vector<yarp::dev::SelectableControlModeEnum> available_modes;
-        for (int k = 0; k<number_of_joints; k++)
+        for (size_t k = 0; k<number_of_joints; k++)
         {
             bool bpl  = m_iLim->getPosLimits(k, &min_pos, &max_pos);
             bool bvl  = m_iLim->getVelLimits(k, &min_vel, &max_vel);
@@ -955,9 +955,9 @@ void PartItem::onIdleClicked(JointItem *joint)
 
 void PartItem::onHomeClicked(JointItem *joint)
 {
-    int NUMBER_OF_JOINTS;
+    size_t number_of_joints=0;
     const int jointIndex = joint->getJointIndex();
-    m_iPos->getAxes(&NUMBER_OF_JOINTS);
+    m_iPos->getAxes(number_of_joints);
 
     this->homeJoint(jointIndex);
 }
@@ -1270,8 +1270,8 @@ bool PartItem::homePart()
 bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
 {
     bool ok = true;
-    int NUMBER_OF_JOINTS;
-    m_iPos->getAxes(&NUMBER_OF_JOINTS);
+    size_t number_of_joints=0;
+    m_iPos->getAxes(number_of_joints);
 
     if (positionElement.isNull()) {
         QMessageBox::critical(this, "Operation failed", QString("No custom position supplied in configuration file for part ") + QString(m_partName.c_str()));
@@ -1281,13 +1281,13 @@ bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
     //Look for group called m_robotPartPort_Position and m_robotPartPort_Velocity
     Bottle xtmp, ytmp;
     xtmp = positionElement.findGroup(m_robotPartPort + "_Position");
-    ok = ok && (xtmp.size() == (size_t) NUMBER_OF_JOINTS + 1);
+    ok = ok && (xtmp.size() == (size_t) number_of_joints + 1);
     ytmp = positionElement.findGroup(m_robotPartPort + "_Velocity");
-    ok = ok && (ytmp.size() == (size_t) NUMBER_OF_JOINTS + 1);
+    ok = ok && (ytmp.size() == (size_t) number_of_joints + 1);
 
     if(ok)
     {
-        for (int jointIndex = 0; jointIndex < NUMBER_OF_JOINTS; jointIndex++)
+        for (size_t jointIndex = 0; jointIndex < number_of_joints; jointIndex++)
         {
             double position = xtmp.get(jointIndex+1).asFloat64();
             double velocity = ytmp.get(jointIndex + 1).asFloat64();
@@ -1306,10 +1306,10 @@ bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
 
 void PartItem::idlePart()
 {
-    int NUMBER_OF_JOINTS;
-    m_iPos->getAxes(&NUMBER_OF_JOINTS);
+    size_t number_of_joints=0;
+    m_iPos->getAxes(number_of_joints);
 
-    for (int joint=0; joint < NUMBER_OF_JOINTS; joint++){
+    for (size_t joint=0; joint < number_of_joints; joint++){
         m_ictrlmode->setControlMode(joint, yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE);
     }
 }
@@ -1356,10 +1356,10 @@ bool PartItem::checkAndCycleAllSeq()
 
 void PartItem::runPart()
 {
-    int NUMBER_OF_JOINTS;
-    m_iPos->getAxes(&NUMBER_OF_JOINTS);
+    size_t number_of_joints=0;
+    m_iPos->getAxes(number_of_joints);
 
-    for (int joint=0; joint < NUMBER_OF_JOINTS; joint++){
+    for (size_t joint=0; joint < number_of_joints; joint++){
         //iencs->getEncoder(joint, &posJoint);
         m_ictrlmode->setControlMode(joint, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
     }
@@ -1871,8 +1871,8 @@ void PartItem::onRunTimerTimeout()
 
 void PartItem::fixedTimeMove(SequenceItem sequence)
 {
-    int NUM_JOINTS;
-    m_iPos->getAxes(&NUM_JOINTS);
+    size_t NUM_JOINTS=0;
+    m_iPos->getAxes(NUM_JOINTS);
     auto* cmdPositions = new double[NUM_JOINTS];
     auto* cmdVelocities = new double[NUM_JOINTS];
     auto* startPositions = new double[NUM_JOINTS];
@@ -1883,7 +1883,7 @@ void PartItem::fixedTimeMove(SequenceItem sequence)
     }
 
 
-    for(int k=0; k<NUM_JOINTS; k++){
+    for(size_t k=0; k<NUM_JOINTS; k++){
         cmdVelocities[k] = 0;
         cmdPositions[k] = sequence.getPositions().at(k);
 
@@ -1915,10 +1915,10 @@ void PartItem::onGo(SequenceItem sequenceItem)
         return;
     }
 
-    int NUMBER_OF_JOINTS;
-    m_iPos->getAxes(&NUMBER_OF_JOINTS);
+    size_t number_of_joints=0;
+    m_iPos->getAxes(number_of_joints);
 
-    for(int i=0;i<NUMBER_OF_JOINTS;i++)
+    for(size_t i=0;i<number_of_joints;i++)
     {
         m_iPos->setTrajSpeed(i, sequenceItem.getSpeeds().at(i));
         m_iPos->positionMove(i, sequenceItem.getPositions().at(i));
@@ -2279,8 +2279,8 @@ void PartItem::updateControlMode()
 bool PartItem::updatePart()
 {
     bool ret = false;
-    int number_of_joints=0;
-    m_iPos->getAxes(&number_of_joints);
+    size_t number_of_joints=0;
+    m_iPos->getAxes(number_of_joints);
     if (m_slow_k >= number_of_joints - 1) {
         m_slow_k = 0;
     } else {
@@ -2404,7 +2404,7 @@ bool PartItem::updatePart()
     }
 
     // *** update the widget every cycle ***
-    for (int jk = 0; jk < number_of_joints; jk++)
+    for (size_t jk = 0; jk < number_of_joints; jk++)
     {
         auto* joint = (JointItem*)m_layout->itemAt(jk)->widget();
         if (true) { joint->setPosition(m_positions[jk]); }
@@ -2455,7 +2455,7 @@ bool PartItem::updatePart()
     //optional
     if (m_ijointfault)
     {
-        for (int k = 0; k < number_of_joints; k++)
+        for (size_t k = 0; k < number_of_joints; k++)
         {
             if (m_controlModes[k]==yarp::dev::ControlModeEnum::VOCAB_CM_HW_FAULT)
             {
@@ -2475,7 +2475,7 @@ bool PartItem::updatePart()
     }
 
 
-    for (int k = 0; k < number_of_joints; k++)
+    for (size_t k = 0; k < number_of_joints; k++)
     {
         auto* joint = (JointItem*)m_layout->itemAt(k)->widget();
         switch (m_controlModes[k])

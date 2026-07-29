@@ -49,7 +49,7 @@ public:
      */
     virtual ~ImplementImpedanceControl();
 
-    yarp::dev::ReturnValue getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
     yarp::dev::ReturnValue getImpedance(int j, double *stiffness, double *damping) override;
     yarp::dev::ReturnValue setImpedance(int j, double  stiffness, double  damping) override;
     yarp::dev::ReturnValue setImpedanceOffset(int j, double offset) override;

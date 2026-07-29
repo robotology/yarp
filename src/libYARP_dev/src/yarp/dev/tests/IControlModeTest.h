@@ -35,8 +35,8 @@ namespace yarp::dev::tests
     {
         REQUIRE(icmd != nullptr);
         REQUIRE(iinfo != nullptr);
-        int ax = 0; bool bax = false;
-        bax = iinfo->getAxes(&ax);
+        size_t ax = 0; bool bax = false;
+        bax = iinfo->getAxes(ax);
         REQUIRE(bax);
         REQUIRE(ax==2);
 
@@ -59,8 +59,8 @@ namespace yarp::dev::tests
     {
         REQUIRE(icmd != nullptr);
         REQUIRE(iinfo != nullptr);
-        int ax=0; bool bax= false;
-        bax=iinfo->getAxes(&ax);
+        size_t ax=0; bool bax= false;
+        bax=iinfo->getAxes(ax);
         REQUIRE (bax);
         REQUIRE (ax==2);
 
@@ -96,11 +96,11 @@ namespace yarp::dev::tests
         REQUIRE(iinfo != nullptr);
 
         bool b= false;
-        int ax=0;
+        size_t ax=0;
         std::string name_ret;
         yarp::dev::JointTypeEnum jointtype_ret;
 
-        b = iinfo->getAxes(&ax);
+        b = iinfo->getAxes(ax);
         CHECK(b); CHECK(ax>0);
         b = iinfo->getAxisName(0, name_ret);
         CHECK(b); CHECK (!name_ret.empty());

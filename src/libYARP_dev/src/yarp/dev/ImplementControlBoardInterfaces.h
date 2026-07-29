@@ -34,7 +34,7 @@ class YARP_dev_API yarp::dev::StubImplEncodersRaw: public IEncodersRaw
 public:
     virtual ~StubImplEncodersRaw(){}
 
-    yarp::dev::ReturnValue getAxes(int *ax) override
+    yarp::dev::ReturnValue getAxes(size_t& ax) override
     {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
     yarp::dev::ReturnValue resetEncoderRaw(int j) override

@@ -58,7 +58,7 @@ public:
      */
     virtual ~ImplementTorqueControl();
 
-    yarp::dev::ReturnValue getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
     yarp::dev::ReturnValue getRefTorque(int j, double *) override;
     yarp::dev::ReturnValue getRefTorques(double *t) override;
     yarp::dev::ReturnValue setRefTorques(const double *t) override;

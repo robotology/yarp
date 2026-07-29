@@ -81,8 +81,8 @@ public:
 
     // IPositionControl etc.
 
-    virtual bool getAxes(int *ax) {
-        *ax = njoints;
+    virtual bool getAxes(size_t& ax) {
+        ax = njoints;
         return true;
     }
 

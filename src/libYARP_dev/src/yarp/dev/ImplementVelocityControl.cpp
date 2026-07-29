@@ -54,9 +54,9 @@ bool ImplementVelocityControl::uninitialize()
     return true;
 }
 
-ReturnValue ImplementVelocityControl::getAxes(int *ax)
+ReturnValue ImplementVelocityControl::getAxes(size_t& ax)
 {
-    (*ax)=castToMapper(m_helper)->axes();
+    (ax)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
 }
 

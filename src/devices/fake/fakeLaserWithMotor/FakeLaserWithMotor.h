@@ -179,7 +179,7 @@ public:
     yarp::dev::ReturnValue getEncoderTimedRaw(int j, double* encs, double* stamp) override;
 
     // POSITION CONTROL INTERFACE RAW
-    yarp::dev::ReturnValue getAxes(int* ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
     yarp::dev::ReturnValue positionMoveRaw(int j, double ref) override;
     yarp::dev::ReturnValue positionMoveRaw(const double* refs) override;
     yarp::dev::ReturnValue relativeMoveRaw(int j, double delta) override;

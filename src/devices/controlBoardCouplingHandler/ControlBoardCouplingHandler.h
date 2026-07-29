@@ -105,7 +105,7 @@ public:
     yarp::dev::ReturnValue getEncoderAccelerations(double *accs) override;
 
     /* IAxisInfo */
-    yarp::dev::ReturnValue getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
     yarp::dev::ReturnValue getAxisName(int j, std::string &name) override;
     yarp::dev::ReturnValue getJointType(int j, yarp::dev::JointTypeEnum &type) override;
 

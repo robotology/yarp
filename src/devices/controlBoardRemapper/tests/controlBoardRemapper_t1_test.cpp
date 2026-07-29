@@ -72,8 +72,8 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     REQUIRE(ddRemapper.view(pos)); // interface position correctly opened
     REQUIRE(pos);
 
-    int axes = 0;
-    CHECK(pos->getAxes(&axes)); // getAxes returned correctly
+    size_t axes = 0;
+    CHECK(pos->getAxes(axes)); // getAxes returned correctly
     CHECK((size_t) axes == nrOfRemappedAxes); // remapper seems functional
 
     IPositionDirect *posdir = nullptr;
@@ -130,7 +130,7 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     CHECK(posdir->setPositions(setPosition.data())); // setPositions correctly called
 
     // Set also the speeds in the mean time, so we are sure that we don't get
-    // spurios successful set/get of position because of intermediate buffers
+    // spurious successful set/get of position because of intermediate buffers
     CHECK(pos->setTrajSpeeds(setTrajSpeeds.data())); // setTrajSpeeds correctly called
 
     // Wait some time to make sure that the vector has been correctly propagated
@@ -164,8 +164,8 @@ static void checkRemapperMicro(yarp::dev::PolyDriver & ddRemapper, int rand, siz
     REQUIRE(ddRemapper.view(pos)); // interface position correctly opened
     REQUIRE(pos);
 
-    int axes = 0;
-    CHECK(pos->getAxes(&axes)); // getAxes returned correctly
+    size_t axes = 0;
+    CHECK(pos->getAxes(axes)); // getAxes returned correctly
     CHECK((size_t) axes == nrOfRemappedAxes); // remapper seems functional
 
     IPositionDirect *posdir = nullptr;
@@ -281,8 +281,8 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
             REQUIRE(fmcbs[i]->view(pos)); // interface position correctly opened
             REQUIRE(pos);
 
-            int axes = 0;
-            pos->getAxes(&axes);
+            size_t axes = 0;
+            pos->getAxes(axes);
             CHECK(axes == fmcbsSizes[i]); // fakeMotionControlBoard seems functional
 
             // Open the wrapper
@@ -452,12 +452,12 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
             REQUIRE_FALSE(fmcbs[i]->view(pos)); // interface position correctly not opened
             REQUIRE_FALSE(pos);
 
-            int axes = 0;
+            size_t axes = 0;
 
             IAxisInfoRaw *axisInfo = nullptr;
             REQUIRE(fmcbs[i]->view(axisInfo)); // interface axisInfo correctly opened
             REQUIRE(axisInfo);
-            axisInfo->getAxes(&axes);
+            axisInfo->getAxes(axes);
             CHECK(axes == fmcbsSizes[i]); // fakeMotionControlBoard seems functional
 
             // Open the wrapper

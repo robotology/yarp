@@ -123,7 +123,7 @@ public:
      */
     bool close() override;
 
-    yarp::dev::ReturnValue getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
 
     // IPidControl
     yarp::dev::ReturnValue getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail) override;
@@ -360,7 +360,6 @@ public:
     yarp::dev::ReturnValue getAutoBrakeEnabled(int j, bool& enabled) const override;
 
     // IVelocityDirect
-    yarp::dev::ReturnValue getAxes(size_t& axes) override;
     yarp::dev::ReturnValue setRefVelocity(int jnt, double vel) override;
     yarp::dev::ReturnValue setRefVelocity(const std::vector<double>& vels) override;
     yarp::dev::ReturnValue setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels) override;

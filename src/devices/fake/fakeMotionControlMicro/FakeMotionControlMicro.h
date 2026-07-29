@@ -122,7 +122,7 @@ public:
     ///////////////////////// END MotorEncoder Interface
 
     //////////////////////// BEGIN EncoderInterface
-    yarp::dev::ReturnValue getAxes(int* ax) override;
+    yarp::dev::ReturnValue getAxes(size_t& ax) override;
     yarp::dev::ReturnValue resetEncoderRaw(int j) override;
     yarp::dev::ReturnValue resetEncodersRaw() override;
     yarp::dev::ReturnValue setEncoderRaw(int j, double val) override;

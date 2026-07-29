@@ -378,18 +378,6 @@ bool ControlBoard_nwc_yarp::close()
         }                                                                 \
     }
 
-yarp::dev::ReturnValue ControlBoard_nwc_yarp::getAxes(int *ax)
-{
-    LOCKMUTEX
-    auto ret = m_RPC.getAxesRPC();
-    if (!ret.ret) {
-        yCError(CONTROLBOARD_NWC_YARP, "Unable to getAxesRPC");
-        return ret.ret;
-    }
-    *ax = ret.axes;
-    return ret.ret;
-}
-
 // BEGIN IPidControl
 
 ReturnValue ControlBoard_nwc_yarp::getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail)

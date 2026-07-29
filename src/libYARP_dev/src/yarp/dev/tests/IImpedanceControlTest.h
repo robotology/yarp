@@ -22,11 +22,11 @@ namespace yarp::dev::tests
     {
         REQUIRE(iimp != nullptr);
 
-        int axis=0;
+        size_t axis=0;
         double val = 0;
         bool b = true;
 
-        b = iimp->getAxes(&axis);
+        b = iimp->getAxes(axis);
         CHECK (b);
         CHECK (axis>0);
 

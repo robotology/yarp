@@ -71,7 +71,7 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    yarp::dev::ReturnValue getAxes(int *axis) override;
+    yarp::dev::ReturnValue getAxes(size_t& axis) override;
 
     yarp::dev::ReturnValue positionMove(int j, double ref) override;
     yarp::dev::ReturnValue positionMove(const int n_joint, const int *joints, const double *refs) override;
@@ -128,7 +128,7 @@ private:
 public:
     virtual ~StubImplPositionControlRaw(){}
 
-    yarp::dev::ReturnValue getAxes(int *ax) override
+    yarp::dev::ReturnValue getAxes(size_t& ax) override
     {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
     yarp::dev::ReturnValue positionMoveRaw(int j, double ref) override
