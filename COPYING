@@ -134,6 +134,7 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Simone Girardi
   Fabio Valla
   Arren Glover
+  Giulio Romualdi
   Prashanth Ramadoss
   Alexandros Paraschos
   Plinio Moreno
@@ -144,7 +145,6 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Jonas Ruesch
   Lorenzo Rapetti
   Michael Bucko
-  Giulio Romualdi
   Massimo Regoli
   Nicola Piga
   tumme
@@ -178,10 +178,12 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Naeem Assif Mirza
   Simone
   Ze Ji
+  fincatomarta
   gauraansh
   Alessandro Croci
   Alessandro Croci
   Alvaro14
+  AntonioViscomi
   Austin Kothig
   Carlo Ciliberto
   Carlotta Sartore
@@ -195,6 +197,7 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Francesco Brand
   Giovanni Saponaro
   Giuseppe L'Erario
+  Greg Herlein
   Ines Sorrentino
   Jason Chevrie
   Marco Gabriele Fedozzi
@@ -213,8 +216,8 @@ The list of committers in the YARP repository (ordered by number of commit) is:
 
 The list of copyright holders for YARP is:
   Copyright (C) 1995, 2000, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
-    Istituto Italiano di Tecnologia (IIT) (2845 files)
-    RobotCub Consortium (718 files)
+    Istituto Italiano di Tecnologia (IIT) (3348 files)
+    RobotCub Consortium (707 files)
     Daniel Krieg <krieg@fias.uni-frankfurt.de> (16 files)
     Anne van Rossum <anne@almende.com> (11 files)
     Arjan Gijsberts (9 files)
