@@ -236,3 +236,31 @@ span.lineno a {
     color: #0d5072;
     background-color: #e6ebed;
 }
+
+div.contents a.image-link {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 2rem auto;
+    cursor: zoom-in;
+}
+
+div.contents a.image-link img.doc-diagram {
+    display: block;
+    width: min(45vw, 900px);
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+}
+
+div.contents a.image-link:hover img.doc-diagram {
+    opacity: 0.9;
+}
+
+.doc-diagram {
+    display: block;
+    width: 50%;
+    max-width: 900px;
+    height: auto;
+    margin: 2rem auto;
+}

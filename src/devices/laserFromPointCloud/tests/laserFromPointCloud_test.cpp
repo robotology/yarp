@@ -81,7 +81,7 @@ TEST_CASE("dev::laserFromPointCloud", "[yarp::dev]")
             planesprop.put("ceiling_height", 3.0);
 
             auto& transfprop = las_cfg.addGroup("TRANSFORM_CLIENT");
-            transfprop.put("filexml_option", "ftc_local_only.xml");
+            transfprop.put("config_name", "ftc_local_only.xml");
             las_cfg.put("testWithIndentityTransform", true);
 
             REQUIRE(laserdev.open(las_cfg));

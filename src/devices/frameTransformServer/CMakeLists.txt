@@ -7,7 +7,6 @@ cmrc_add_resource_library(frameTransformServerRC
                           TYPE OBJECT
                           WHENCE robotinterface_xml
                           PREFIX config_xml
-                          robotinterface_xml/fts_full_ros.xml
                           robotinterface_xml/fts_yarp_only.xml)
 set_property(TARGET frameTransformServerRC PROPERTY FOLDER "Plugins/Device/Resources")
 
