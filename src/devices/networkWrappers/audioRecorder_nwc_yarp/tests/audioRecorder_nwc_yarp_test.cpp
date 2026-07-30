@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -44,6 +45,8 @@ TEST_CASE("dev::audioRecorder_nwc_yarp", "[yarp::dev]")
         p_fake.put("device","fakeMicrophone");
         REQUIRE(dd_fake.open(p_fake));
         REQUIRE(dd_nws.open(p_nws));
+        yarp::dev::tests::exec_params_test(&dd_nws);
+
         yarp::os::SystemClock::delaySystem(0.5);
 
         {yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);
@@ -55,6 +58,7 @@ TEST_CASE("dev::audioRecorder_nwc_yarp", "[yarp::dev]")
         p_nwc.put("remote", "/audioRecorder_nws");
         p_nwc.put("local", "/audioRecorder_nwc");
         REQUIRE(dd_nwc.open(p_nwc));
+        yarp::dev::tests::exec_params_test(&dd_nwc);
 
         IAudioGrabberSound* igrab = nullptr;
         REQUIRE(dd_nwc.view(igrab));

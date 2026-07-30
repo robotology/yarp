@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <vector>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -33,6 +34,7 @@ TEST_CASE("dev::robotDescription_nws_yarp_Test", "[yarp::dev]")
         pserver_cfg.put("device", "robotDescription_nws_yarp");
         pserver_cfg.put("local", "/robotDescription_nws_yarp/rpc");
         REQUIRE(ddserver.open(pserver_cfg)); // robotDescription_nws_yarp open reported successful
+        yarp::dev::tests::exec_params_test(&ddserver);
 
         yarp::os::Time::delay(1.0);
 

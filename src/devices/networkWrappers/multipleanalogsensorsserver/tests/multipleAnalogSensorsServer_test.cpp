@@ -15,6 +15,8 @@
 #include <chrono>
 #include <thread>
 
+#include <yarp/dev/tests/ParametersTest.h>
+
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -43,6 +45,7 @@ TEST_CASE("dev::MultipleAnalogSensorsServerTest", "[yarp::dev]")
         pWrapper.put("name", serverPrefix);
         pWrapper.put("period", 10);
         REQUIRE(wrapper.open(pWrapper)); // multipleanalogsensorsserver open reported successful
+        yarp::dev::tests::exec_params_test(&wrapper);
 
         // Close devices
         wrapper.close();

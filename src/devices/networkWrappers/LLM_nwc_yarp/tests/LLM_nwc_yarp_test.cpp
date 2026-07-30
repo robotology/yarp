@@ -8,6 +8,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/ILLMTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -36,10 +37,12 @@ TEST_CASE("dev::LLM_nwc_yarp", "[yarp::dev]")
             pnws_cfg.put("device", "LLM_nws_yarp");
             pnws_cfg.put("name", "/LLM_nws");
             REQUIRE(ddnws.open(pnws_cfg));
+            yarp::dev::tests::exec_params_test(&ddnws);
 
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeLLMDevice");
             REQUIRE(ddfake.open(pdev_cfg));
+            yarp::dev::tests::exec_params_test(&ddfake);
 
             {yarp::dev::WrapperSingle* ww_nws=nullptr; ddnws.view(ww_nws);
             REQUIRE(ww_nws);
@@ -51,6 +54,7 @@ TEST_CASE("dev::LLM_nwc_yarp", "[yarp::dev]")
             pnwc_cfg.put("local", "/LLM_nwc/rpc");
             pnwc_cfg.put("remote", "/LLM_nws/rpc:i");
             REQUIRE(ddnwc.open(pnwc_cfg));
+            yarp::dev::tests::exec_params_test(&ddnwc);
             REQUIRE(ddnwc.view(illm));
         }
 

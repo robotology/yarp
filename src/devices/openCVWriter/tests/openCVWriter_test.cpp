@@ -9,6 +9,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -40,6 +41,7 @@ TEST_CASE("dev::openCVWriterTest", "[yarp::dev]")
             cfg.put("height", 240);
             cfg.put("filename", filepath);
             REQUIRE(dd.open(cfg));
+            yarp::dev::tests::exec_params_test(&dd);
         }
 
         yarp::os::Time::delay(1.0);

@@ -8,6 +8,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/IDeviceDriverParams.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -27,6 +28,7 @@ TEST_CASE("dev::TestDeviceWGP", "[yarp::dev]")
         p_cfg.put("device", "testDeviceWGP2");
         p_cfg.put("help","");
         REQUIRE(dd.open(p_cfg)==false);
+        yarp::dev::tests::exec_params_test(&dd);
     }
 
     SECTION("Checking TestDeviceWGP2 from string with parenthesis")
@@ -96,8 +98,8 @@ TEST_CASE("dev::TestDeviceWGP", "[yarp::dev]")
 
             std::string param_str;
             bool getpv = idevparams->getParamValue("param_vec9", param_str);
-            CHECK(getpv == false);
-            CHECK(param_str.empty());
+            CHECK(getpv == true);
+            CHECK(!param_str.empty());
         }
 
         yarp::os::Time::delay(1.0);

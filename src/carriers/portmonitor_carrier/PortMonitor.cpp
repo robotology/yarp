@@ -190,9 +190,9 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
     if (type.empty() || file.empty())
     {
         if (sender_side)
-            yCError(PORTMONITORCARRIER) << "Missing required 'type' or 'file' parameter on sender side";
+            {yCError(PORTMONITORCARRIER) << "Missing required 'type' or 'file' parameter on sender side";}
         else
-            yCError(PORTMONITORCARRIER) << "Missing required 'type' or 'file' parameter on receiver side";
+            {yCError(PORTMONITORCARRIER) << "Missing required 'type' or 'file' parameter on receiver side";}
         return false;
     }
 

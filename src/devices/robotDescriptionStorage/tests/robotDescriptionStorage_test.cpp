@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <vector>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -34,6 +35,7 @@ TEST_CASE("dev::robotDescriptionStorage_Test", "[yarp::dev]")
         IRobotDescription* idesc = nullptr;
         pcfg.put("device", "robotDescriptionStorage");
         REQUIRE(ddstor.open(pcfg)); // robotDescriptionStorage open reported successful
+        yarp::dev::tests::exec_params_test(&ddstor);
 
         REQUIRE(ddstor.view(idesc)); // IRobotDescription interface open reported successful
         REQUIRE(idesc);

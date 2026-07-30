@@ -97,7 +97,14 @@ void FakeDepthCameraDriver_mini::regenerate_depth_image()
     for (size_t y = 0; y < m_dep_h; y++)
         for (size_t x = 0; x < m_dep_w; x++) {
             auto& p = m_depthImage.pixel(x, y);
-            p = static_cast<double>(index) / (totalPixels - 1);
+            if (m_test_distance_constant>0)
+            {
+                p = m_test_distance_constant;
+            }
+            else
+            {
+              p = static_cast<double>(index) / (totalPixels - 1);
+            }
             ++index;
         }
 }
@@ -177,10 +184,10 @@ ReturnValue FakeDepthCameraDriver_mini::getRgbIntrinsicParam(Property& intrinsic
 {
     std::lock_guard <std::recursive_mutex> lg(m_mutex);
     intrinsic.put("physFocalLength", 0.5);
-    intrinsic.put("focalLengthX",    512);
-    intrinsic.put("focalLengthY",    512);
-    intrinsic.put("principalPointX", 235);
-    intrinsic.put("principalPointY", 231);
+    intrinsic.put("focalLengthX",    m_dep_w/2);
+    intrinsic.put("focalLengthY",    m_dep_h/2);
+    intrinsic.put("principalPointX", (m_dep_w-1)/2);
+    intrinsic.put("principalPointY", (m_dep_h-1)/2);
     intrinsic.put("distortionModel", "plumb_bob");
     intrinsic.put("k1", 0);
     intrinsic.put("k2", 0);
@@ -216,10 +223,13 @@ ReturnValue FakeDepthCameraDriver_mini::getDepthIntrinsicParam(Property& intrins
 {
     std::lock_guard <std::recursive_mutex> lg(m_mutex);
     intrinsic.put("physFocalLength", 0.5);
-    intrinsic.put("focalLengthX",    512);
-    intrinsic.put("focalLengthY",    512);
-    intrinsic.put("principalPointX", 235);
-    intrinsic.put("principalPointY", 231);
+    const double deg2rad = 3.1415926535/180.0;
+    double focal_x = m_dep_w / (2*tan(m_dep_Hfov*deg2rad/2));
+    double focal_y = m_dep_h / (2*tan(m_dep_Vfov*deg2rad/2));
+    intrinsic.put("focalLengthX",    focal_x);
+    intrinsic.put("focalLengthY",    focal_y);
+    intrinsic.put("principalPointX", (m_dep_w-1)/2);
+    intrinsic.put("principalPointY", (m_dep_h-1)/2);
     intrinsic.put("distortionModel", "plumb_bob");
     intrinsic.put("k1", 0);
     intrinsic.put("k2", 0);

@@ -5,6 +5,7 @@
 
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/tests/IJoypadControllerTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
@@ -25,10 +26,6 @@ using namespace yarp::sig;
 
 TEST_CASE("dev::JoypadControl_nwc_yarp", "[yarp::dev]")
 {
-    #if defined(DISABLE_FAILING_TESTS)
-        YARP_SKIP_TEST("Skipping failing tests")
-    #endif
-
     YARP_REQUIRE_PLUGIN("fakeJoypad", "device");
     YARP_REQUIRE_PLUGIN("JoypadControl_nwc_yarp", "device");
     YARP_REQUIRE_PLUGIN("JoypadControl_nws_yarp", "device");
@@ -64,7 +61,11 @@ TEST_CASE("dev::JoypadControl_nwc_yarp", "[yarp::dev]")
         p_nws.put("publish_on_event",publish_on_event_config);
         p_fake.put("device","fakeJoypad");
         REQUIRE(dd_fake.open(p_fake));
+        yarp::dev::tests::exec_params_test(&dd_fake);
+
         REQUIRE(dd_nws.open(p_nws));
+        yarp::dev::tests::exec_params_test(&dd_nws);
+
         yarp::os::SystemClock::delaySystem(0.5);
 
         {yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);
@@ -78,6 +79,7 @@ TEST_CASE("dev::JoypadControl_nwc_yarp", "[yarp::dev]")
         p_nwc.put("use_streaming", use_streaming_config);
         p_nwc.put("use_all_port", use_all_port);
         REQUIRE(dd_nwc.open(p_nwc));
+        yarp::dev::tests::exec_params_test(&dd_nwc);
 
         IJoypadController* ijoy = nullptr;
         REQUIRE(dd_nwc.view(ijoy));

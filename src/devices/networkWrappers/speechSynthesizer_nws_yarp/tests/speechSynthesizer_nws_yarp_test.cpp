@@ -7,6 +7,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -32,6 +33,7 @@ TEST_CASE("dev::speechSynthesizer_nws_yarp", "[yarp::dev]")
             pnws_cfg.put("device", "speechSynthesizer_nws_yarp");
             pnws_cfg.put("name", "/speechSynthesizer_nws");
             REQUIRE(dd.open(pnws_cfg));
+            yarp::dev::tests::exec_params_test(&dd);
         }
 
         yarp::os::Time::delay(1.0);

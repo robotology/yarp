@@ -25,6 +25,7 @@
 #include <yarp/dev/tests/IJointBrakeTest.h>
 #include <yarp/dev/tests/IPositionDirectTest.h>
 #include <yarp/dev/tests/IVelocityDirectTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -110,6 +111,7 @@ TEST_CASE("dev::controlBoard_nwc_yarp", "[yarp::dev]")
             p_cfg.put("remote", "/controlboardserver");
             p_cfg.put("use_streaming", use_streaming_config);
             REQUIRE(ddnwc.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&ddnwc);
         }
 
         yarp::os::Time::delay(0.1);

@@ -199,7 +199,7 @@ server_return_code_t server(double server_wait, std::string datafilename, bool v
     //Creates a payload bottle, consisting of a string with the size requested by the client
     int payload_reqsize = startbot.get(1).asInt32();
     bool use_reply = (startbot.get(2).asInt32() == 1);
-    char* buf = new char[payload_reqsize];
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(payload_reqsize);
 
     if (datafilename.empty())
     {
@@ -236,7 +236,7 @@ server_return_code_t server(double server_wait, std::string datafilename, bool v
     }
 
     Bottle payloadbottle;
-    payloadbottle.addString(buf);
+    payloadbottle.addString(buf.get());
     yCInfo(COMPANION,"Generated a string of %zu bytes, as requested by the client (%d)", payloadbottle.get(0).asString().size() + 1, payload_reqsize);
 
     if (use_reply) {

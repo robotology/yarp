@@ -8,6 +8,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/ISimulatedWorld.h>
 #include <yarp/dev/tests/ISimulatedWorldTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -31,6 +32,7 @@ TEST_CASE("dev::fakeSimulatedWorld", "[yarp::dev]")
             Property p_cfg;
             p_cfg.put("device", "fakeSimulatedWorld");
             REQUIRE(ddmc.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&ddmc);
         }
 
         ddmc.view(isim);

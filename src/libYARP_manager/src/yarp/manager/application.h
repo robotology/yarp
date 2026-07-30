@@ -166,7 +166,7 @@ public:
         waitStart = waitStop = 0.0;
     }
 
-    ModuleInterface(Module* module);
+    ModuleInterface(Module* themodule);
 
     virtual ~ModuleInterface() = default;
 
@@ -210,9 +210,6 @@ public:
     Portmap& getPortmapAt(int index){ return portmaps[index]; }
     bool addPortmap(Portmap &portmap);
     bool removePortmap(Portmap& portmap);
-
-    //void setModule(Module* mod) { module = mod; }
-    //Module* getModule() { return module;}
 
     GraphicModel& getModelBase() { return modelBase;}
     void setModelBase(GraphicModel& mdl) { modelBase = mdl; };

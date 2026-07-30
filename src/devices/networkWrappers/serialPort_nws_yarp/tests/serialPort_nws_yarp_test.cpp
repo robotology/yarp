@@ -7,6 +7,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -51,6 +52,7 @@ TEST_CASE("dev::serialPort_nws_yarp", "[yarp::dev]")
             pnws_cfg.put("device", "serialPort_nws_yarp");
             pnws_cfg.put("name", "/serialPort_nws");
             REQUIRE(ddnws.open(pnws_cfg));
+            yarp::dev::tests::exec_params_test(&ddnws);
 
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeSerialPort");

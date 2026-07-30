@@ -9,6 +9,8 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/ResourceFinder.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
+
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -45,6 +47,7 @@ TEST_CASE("dev::audioFromFileDevice", "[yarp::dev]")
             p_cfg_audio_base.put("channels", 1);
             p_cfg.put("file_name", filepath);
             REQUIRE(dd.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&dd);
         }
 
         dd.view(igrb);

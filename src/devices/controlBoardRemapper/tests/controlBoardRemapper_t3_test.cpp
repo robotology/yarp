@@ -37,6 +37,7 @@
 #include <yarp/dev/tests/IJointFaultTest.h>
 #include <yarp/dev/tests/IControlLimitsTest.h>
 #include <yarp/dev/tests/IImpedanceControlTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>

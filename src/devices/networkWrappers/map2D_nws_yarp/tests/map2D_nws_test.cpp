@@ -13,6 +13,8 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IMap2DTest.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
+
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -36,6 +38,7 @@ TEST_CASE("dev::Map2DnwsTest", "[yarp::dev]")
             Property pmapserver_cfg;
             pmapserver_cfg.put("device", "map2D_nws_yarp");
             REQUIRE(ddmapserver.open(pmapserver_cfg));
+            yarp::dev::tests::exec_params_test(&ddmapserver);
         }
 
         //"Close all polydrivers and check"

@@ -11,6 +11,7 @@
 
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/tests/IOrientationSensorsTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -38,6 +39,7 @@ TEST_CASE("dev::multipleanalogsensorsremapperTest", "[yarp::dev]")
 
         PolyDriver ddRemapper;
         REQUIRE(ddRemapper.open(options));
+        yarp::dev::tests::exec_params_test(&ddRemapper);
 
         yarp::os::Time::now();
         ddRemapper.close();

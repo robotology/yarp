@@ -33,6 +33,7 @@ set(YARP_dev_test_HDRS
     IJointBrakeTest.h
     IJointFaultTest.h
     IControlLimitsTest.h
+    ParametersTest.h
     TestUtils.h
 )
 
@@ -65,6 +66,7 @@ set(YARP_dev_test_SRCS
     IJointBrakeTest.cpp
     IJointFaultTest.cpp
     IControlLimitsTest.cpp
+    ParametersTest.cpp
     TestUtils.cpp
 )
 

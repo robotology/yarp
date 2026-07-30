@@ -10,6 +10,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 #include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <cmath>
 #include <chrono>
@@ -45,6 +46,7 @@ TEST_CASE("dev::MultipleAnalogSensorsClientTest", "[yarp::dev]")
         p.put("constantValue", 1);
 
         REQUIRE(imuSensor.open(p)); // sensor open reported successful
+        yarp::dev::tests::exec_params_test(&imuSensor);
 
         yarp::dev::IOrientationSensors* orientSens=nullptr;
         REQUIRE(imuSensor.view(orientSens)); // IOrientationSensors of fakeIMU correctly opened
@@ -58,6 +60,7 @@ TEST_CASE("dev::MultipleAnalogSensorsClientTest", "[yarp::dev]")
         pWrapper.put("name", serverPrefix);
         pWrapper.put("period", 10);
         REQUIRE(wrapper.open(pWrapper)); // multipleanalogsensorsserver open reported successful
+        yarp::dev::tests::exec_params_test(&wrapper);
 
         yarp::dev::IMultipleWrapper *iwrap = nullptr;
         REQUIRE(wrapper.view(iwrap)); // IMultipleWrapper interface correctly opened for the multipleanalogsensorsserver
@@ -77,6 +80,7 @@ TEST_CASE("dev::MultipleAnalogSensorsClientTest", "[yarp::dev]")
 
         PolyDriver client;
         REQUIRE(client.open(pClient)); // multipleanalogsensorsclient open reported successful
+        yarp::dev::tests::exec_params_test(&client);
 
         // Let make sure that the data get read by the client
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

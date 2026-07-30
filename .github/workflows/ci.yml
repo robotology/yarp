@@ -162,7 +162,7 @@ jobs:
         python3 tests/misc/check_tests.py
 
 
-  run-cmake:
+  check-cmake:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
     needs: [select_environment, check-license, check-style]
     runs-on: ubuntu-22.04
@@ -268,7 +268,7 @@ jobs:
 
   build:
     name: '[${{ matrix.config.id }}][${{ matrix.config.os }}|${{ matrix.config.cc }}|${{ matrix.config.cmake_generator }} (${{ matrix.config.cmake_toolset }} ${{ matrix.config.cmake_platform }})|${{ matrix.config.build_type }}] ${{ matrix.config.description }}'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment, check-cmake]
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
@@ -2079,7 +2079,7 @@ jobs:
   codacy-clang-tidy:
     environment: code-analysis
     name: 'Codacy - clang-tidy'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment, check-cmake]
     runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
@@ -2256,8 +2256,13 @@ jobs:
         # Fix .clang-tidy for clang 10 (see https://reviews.llvm.org/D75621)
         sed -i 's/;h;hh;hpp;hxx/,h,hh,hpp,hxx/g' .clang-tidy
 
-        # Disable misc-include-cleaner (too noisy / not relevant for this project)
+        # Disable misc-include-cleaner for messages like:
+        # warning: no header providing "yarp::conf::numeric::to_hex_string" is directly included [misc-include-cleaner]
         sed -i "s/-misc-static-assert,/-misc-static-assert,-misc-include-cleaner,/" .clang-tidy
+
+        # Disable readability-magic-numbers, for messages like:
+        # warning: 11 is a magic number; consider replacing it with a named constant
+        sed -i "s/-readability-implicit-bool-cast,/-readability-implicit-bool-cast,-readability-magic-numbers,/" .clang-tidy
 
         # Restrict header warnings to the project sources, excluding extern/ and build/
         sed -i "s|HeaderFilterRegex: '.*'|HeaderFilterRegex: '^(?!.*/(extern\|build)/).*$'|" .clang-tidy
@@ -2302,7 +2307,7 @@ jobs:
   codacy-coverage:
     environment: code-analysis
     name: 'Codacy - coverage'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment, check-cmake]
     runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
@@ -2478,7 +2483,7 @@ jobs:
   sonarcloud:
     environment: code-analysis
     name: 'SonarCloud'
-    needs: [select_environment, run-cmake]
+    needs: [select_environment, check-cmake]
     runs-on: ubuntu-24.04
     steps:
     - name: Clone repository
@@ -2834,16 +2839,21 @@ jobs:
             -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
             -Dsonar.coverageReportPaths=build/coverage.xml \
             -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
-            -Dsonar.exclusions="src/yarp*/**/* src/guis/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
+            -Dsonar.exclusions="\
+                 src/libYARP_robottestingframework/**/*,\
+                 src/robottestingframework-plugins/**/*,\
+                 tests/**/*\
+                 " \
             -Dsonar.coverage.exclusions="\
                  src/libYARP_dev/src/yarp/dev/tests/*,\
                  src/devices/*/tests/*,\
                  src/carriers/*/tests/*,\
                  src/portmonitors/*/tests/*,\
-                 tests/**/*,\
-                 src/yarp*/**/*,\
-                 src/guis/*,\
-                 robottestingframework-plugins/**/*\
+                 src/guis/**/*,\
+                 src/libYARP_robottestingframework/**/*,\
+                 src/yarpgstreamerplugins/**/*,\
+                 src/robottestingframework-plugins/**/*,\
+                 tests/**/*\
                  " \
             -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
             ${SONAR_TESTS_CMD_ARG} \

@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -57,6 +58,7 @@ TEST_CASE("dev::SimulatedWorld_nwc_yarp", "[yarp::dev]")
         p_nwc.put("remote", "/simulatedWorld_nws");
         p_nwc.put("local", "/simulatedWorld_nwc");
         REQUIRE(dd_nwc.open(p_nwc));
+        yarp::dev::tests::exec_params_test(&dd_nwc);
 
         ISimulatedWorld* isim = nullptr;
         REQUIRE(dd_nwc.view(isim));

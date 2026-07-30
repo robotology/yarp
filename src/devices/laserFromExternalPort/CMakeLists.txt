@@ -22,11 +22,13 @@ if(NOT SKIP_laserFromExternalPort)
       YARP::YARP_os
       YARP::YARP_sig
       YARP::YARP_dev
+      YARP::YARP_math
   )
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
     YARP_os
     YARP_sig
     YARP_dev
+    YARP_math
   )
 
   yarp_install(
@@ -42,8 +44,8 @@ if(NOT SKIP_laserFromExternalPort)
 
   set_property(TARGET yarp_laserFromExternalPort PROPERTY FOLDER "Plugins/Device")
 
-#  if(YARP_COMPILE_TESTS)
-#    add_subdirectory(tests)
-#  endif()
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
 
 endif()

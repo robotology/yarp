@@ -8,6 +8,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IAxisInfoTest.h>
 #include <yarp/dev/tests/IEncodersTimedTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -32,6 +33,7 @@ TEST_CASE("dev::fakeMotionControlMicro", "[yarp::dev]")
             Property p_cfg;
             p_cfg.put("device", "fakeMotionControlMicro");
             REQUIRE(ddmc.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&ddmc);
         }
 
         ddmc.view(iaxis); REQUIRE(iaxis);

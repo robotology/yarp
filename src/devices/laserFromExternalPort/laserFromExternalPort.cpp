@@ -429,10 +429,8 @@ bool LaserFromExternalPort::acquireDataFromHW()
 
 void LaserFromExternalPort::run()
 {
-    m_mutex.lock();
-    updateLidarData();
-    m_mutex.unlock();
-    return;
+    bool b = updateLidarData();
+    YARP_UNUSED(b);
 }
 
 void LaserFromExternalPort::threadRelease()

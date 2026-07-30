@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <vector>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -54,6 +55,7 @@ TEST_CASE("dev::robotDescriptionClientTest", "[yarp::dev]")
         pclient_cfg.put("local",  "/robotDescription_nwc_yarp/rpc");
         pclient_cfg.put("remote", "/robotDescription_nws_yarp/rpc");
         REQUIRE(ddnwc.open(pclient_cfg)); // robotDescription_nwc_yarp open reported successful
+        yarp::dev::tests::exec_params_test(&ddnwc);
 
         REQUIRE(ddnwc.view(idesc)); // IRobotDescription interface open reported successful
         REQUIRE(idesc);

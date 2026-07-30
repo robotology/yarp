@@ -8,6 +8,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IOdometry2DTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -35,6 +36,7 @@ TEST_CASE("dev::odometry2D_nwc_yarp", "[yarp::dev]")
             Property plas_cfg;
             plas_cfg.put("device", "fakeOdometry2D");
             REQUIRE(ddlas.open(plas_cfg));
+            yarp::dev::tests::exec_params_test(&ddlas);
         }
         {
             Property pnws_cfg;
@@ -42,6 +44,7 @@ TEST_CASE("dev::odometry2D_nwc_yarp", "[yarp::dev]")
             pnws_cfg.put("period", 0.010);
             pnws_cfg.put("name", "/odom");
             REQUIRE(ddnws.open(pnws_cfg));
+            yarp::dev::tests::exec_params_test(&ddnws);
         }
 
         //attach the nws to the fakeOdometry2D device
@@ -60,6 +63,7 @@ TEST_CASE("dev::odometry2D_nwc_yarp", "[yarp::dev]")
             pnwc_cfg.put("local", "/local_odom");
             pnwc_cfg.put("remote", "/odom");
             REQUIRE(ddnwc.open(pnwc_cfg));
+            yarp::dev::tests::exec_params_test(&ddnwc);
         }
         REQUIRE(ddnwc.view(iodom));
 

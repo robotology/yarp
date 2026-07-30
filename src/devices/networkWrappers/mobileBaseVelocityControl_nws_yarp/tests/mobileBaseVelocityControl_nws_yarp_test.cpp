@@ -8,6 +8,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -31,6 +32,7 @@ TEST_CASE("dev::mobileBaseVelocityControl_nws_yarp", "[yarp::dev]")
             p_cfg.put("device", "mobileBaseVelocityControl_nws_yarp");
             p_cfg.put("local",  "/mobileBaseVelocityControl_nws_yarp");
             REQUIRE(dd.open(p_cfg));
+            yarp::dev::tests::exec_params_test(&dd);
         }
 
         yarp::os::Time::delay(1.0);

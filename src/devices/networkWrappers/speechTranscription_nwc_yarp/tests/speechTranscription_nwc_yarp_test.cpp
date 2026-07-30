@@ -8,6 +8,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/ISpeechTranscription.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -52,6 +53,8 @@ TEST_CASE("dev::speechTranscription_nwc_yarp", "[yarp::dev]")
             pclient_cfg.put("local",  "/speechTranscription_nwc_yarp");
             pclient_cfg.put("remote", "/speechTranscription_nws_yarp");
             REQUIRE(ddnwc.open(pclient_cfg));
+            yarp::dev::tests::exec_params_test(&ddnwc);
+
             REQUIRE(ddnwc.view(iSpeech));
         }
 

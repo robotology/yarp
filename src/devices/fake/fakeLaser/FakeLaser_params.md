@@ -1,4 +1,5 @@
 * |  | test                | string |   -   | use_pattern           | Yes      | Choose the modality   | It can be one of the following: no_obstacles, use_pattern, use_mapfile, use_constant, use_square_trap |
+* |  | rpc_test_port       | string |   -   | /fakeLaser/rpc:i      | No       | Full name of the rpc port on which user can send different test commands  |  |
 * |  | localization_port   | string |   -   | /fakeLaser/location:i | No       | Full name of the port to which device connects to receive the localization data   |  |
 * |  | localization_server | string |   -   | /localizationServer   | No       | Full name of the port to which device connects to receive the localization data   |  |
 * |  | localization_client | string |   -   | /fakeLaser/localizationClient | No       | Full name of the local transformClient opened by the device | It cannot be used togheter if localization_port parameter is set |

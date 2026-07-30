@@ -9,6 +9,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <string>
 
@@ -61,7 +62,11 @@ TEST_CASE("dev::joypadControl_nws_yarp", "[yarp::dev]")
         p_fake.put("device", "fakeJoypad");
 
         REQUIRE(dd_fake.open(p_fake));
+        yarp::dev::tests::exec_params_test(&dd_fake);
+
         REQUIRE(dd_nws.open(p_nws));
+        yarp::dev::tests::exec_params_test(&dd_nws);
+
         yarp::os::SystemClock::delaySystem(0.5);
 
         {yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);

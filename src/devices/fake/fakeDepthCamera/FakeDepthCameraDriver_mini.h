@@ -92,7 +92,6 @@ protected:
     void regenerate_rgb_image();
     void regenerate_depth_image();
     std::recursive_mutex                 m_mutex;
-
 };
 
 #endif // YARP_FAKEDEPTHCAMERADRIVER_MINI_H

@@ -11,6 +11,7 @@
 #include <yarp/os/Time.h>
 
 #include <string>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -35,6 +36,7 @@ TEST_CASE("dev::battery_nws_yarp", "[yarp::dev]")
         p_nws.put("device","battery_nws_yarp");
         p_nws.put("name", "/battery");
         REQUIRE(dd_nws.open(p_nws));
+        yarp::dev::tests::exec_params_test(&dd_nws);
         yarp::os::SystemClock::delaySystem(1.0);
         CHECK(dd_nws.close());
     }

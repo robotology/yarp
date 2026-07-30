@@ -9,6 +9,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IRangefinder2DTest.h>
 
+#include <yarp/dev/tests/ParametersTest.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -64,6 +65,7 @@ TEST_CASE("dev::rangefinder2D_nwc_yarp", "[yarp::dev]")
             pnwc_cfg.put("local", "/local_laser");
             pnwc_cfg.put("remote", "/laser");
             REQUIRE(ddnwc.open(pnwc_cfg));
+            yarp::dev::tests::exec_params_test(&ddnwc);
         }
         REQUIRE(ddnwc.view(irng));
 

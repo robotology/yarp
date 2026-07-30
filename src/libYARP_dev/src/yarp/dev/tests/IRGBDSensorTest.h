@@ -72,6 +72,8 @@ namespace yarp::dev::tests
             r2 = irgbd->getDepthImage(img, &stamp);
             CHECK(r1);
             CHECK(r2);
+            yarp::sig::PixelFloat pf = img.safePixel(0,0);
+            CHECK(pf == 2.0);
         }
         {
             yarp::os::Property intrinsic;
@@ -110,6 +112,12 @@ namespace yarp::dev::tests
             CHECK(r);
             CHECK(w == 10);
             CHECK(h == 11);
+            int ht = 0;
+            ht = irgbd->getDepthHeight();
+            CHECK(ht == 11);
+            int wt = 0;
+            wt = irgbd->getDepthWidth();
+            CHECK(wt == 10);
         }
         {
             ReturnValue r;

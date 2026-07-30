@@ -16,6 +16,7 @@
 #include <yarp/dev/tests/IRgbVisualParamsTest.h>
 #include <yarp/dev/tests/IFrameGrabberControlsTest.h>
 #include <yarp/dev/tests/IFrameGrabberControlsDC1394Test.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -81,6 +82,7 @@ TEST_CASE("dev::frameGrabberCropperTest", "[yarp::dev]")
         pr.put("x2", static_cast<int>((width * 2) - 1));
         pr.put("y2", static_cast<int>(height - 1));
         REQUIRE(ddr.open(pr));
+        yarp::dev::tests::exec_params_test(&ddr);
 
         // Attach frameGrabberCropper right
         yarp::dev::IWrapper* wr = nullptr;

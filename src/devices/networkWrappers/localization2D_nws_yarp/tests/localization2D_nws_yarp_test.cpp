@@ -8,6 +8,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/ILocalization2DTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -51,10 +52,12 @@ TEST_CASE("dev::localization2D_nws_yarp", "[yarp::dev]")
             Property pnws_cfg;
             pnws_cfg.put("device", "localization2D_nws_yarp");
             REQUIRE(ddnws.open(pnws_cfg));
+            yarp::dev::tests::exec_params_test(&ddnws);
 
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeLocalizer");
             REQUIRE(ddfake.open(pdev_cfg));
+            yarp::dev::tests::exec_params_test(&ddfake);
 
             {yarp::dev::WrapperSingle* ww_nws=nullptr; ddnws.view(ww_nws);
             REQUIRE(ww_nws);

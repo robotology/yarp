@@ -6,6 +6,7 @@
 #include <yarp/dev/IBattery.h>
 
 #include <yarp/dev/tests/IBatteryTest.h>
+#include <yarp/dev/tests/ParametersTest.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
@@ -58,6 +59,7 @@ TEST_CASE("dev::battery_nwc_yarp", "[yarp::dev]")
         p_nwc.put("local", "/battery_nwc");
         p_nwc.put("no_stream", 1);
         REQUIRE(dd_nwc.open(p_nwc));
+        yarp::dev::tests::exec_params_test(&dd_nwc);
 
         IBattery* ibattery = nullptr;
         REQUIRE(dd_nwc.view(ibattery));

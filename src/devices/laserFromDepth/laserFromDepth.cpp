@@ -57,7 +57,7 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
         return false;
     }
     prop.fromString(config.findGroup("RGBD_SENSOR_CLIENT").toString());
-    prop.put("device", "RGBDSensorClient");
+    prop.put("device", "RGBDSensor_nwc_yarp");
 
     driver.open(prop);
     if (!driver.isValid())
@@ -76,7 +76,11 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
     m_depth_height = iRGBD->getDepthHeight();
     double hfov = 0;
     double vfov = 0;
-    iRGBD->getDepthFOV(hfov, vfov);
+    if (!iRGBD->getDepthFOV(hfov, vfov))
+    {
+        yCError(LASER_FROM_DEPTH) << "Error getting depth FOV";
+        return false;
+    }
     m_sensorsNum = m_depth_width;
     m_resolution = hfov / m_depth_width;
     m_laser_data.resize(m_sensorsNum, 0.0);
@@ -145,8 +149,8 @@ bool LaserFromDepth::acquireDataFromHW()
     double t1 = yarp::os::Time::now();
 #endif
 
-    iRGBD->getDepthImage(m_depth_image);
-    if (m_depth_image.getRawImage() == nullptr)
+    bool success = iRGBD->getDepthImage(m_depth_image);
+    if (!success || m_depth_image.getRawImage() == nullptr)
     {
         yCError(LASER_FROM_DEPTH) << "invalid image received";
         return false;
@@ -155,7 +159,10 @@ bool LaserFromDepth::acquireDataFromHW()
     if (m_depth_image.width() != m_depth_width ||
         m_depth_image.height() != m_depth_height)
     {
-        yCError(LASER_FROM_DEPTH) << "invalid image size";
+        yCError(LASER_FROM_DEPTH) << "invalid image size:" <<
+        m_depth_image.width() << "," <<m_depth_image.height() <<
+        "vs." <<
+        m_depth_width << "," << m_depth_height;
         return false;
     }
 
@@ -163,6 +170,10 @@ bool LaserFromDepth::acquireDataFromHW()
     auto* pointer = (float*)m_depth_image.getPixelAddress(0, m_depth_height / 2);
     double angle, distance, angleShift;
 
+    // angleshift is used to center the laser scan around 0 degrees,
+    // so that the laser scan goes from -deg to +deg.
+    // Example: if resolution is 1 deg and sensorsNum is 60,
+    // the laser scan will go from -30 deg to +30 deg.
     angleShift = m_sensorsNum * m_resolution / 2;
 
     for (size_t elem = 0; elem < m_sensorsNum; elem++)
@@ -179,9 +190,9 @@ bool LaserFromDepth::acquireDataFromHW()
 
 void LaserFromDepth::run()
 {
-    m_mutex.lock();
-    updateLidarData();
-    m_mutex.unlock();
+    bool b = updateLidarData();
+    YARP_UNUSED(b);
+
     return;
 }
 
