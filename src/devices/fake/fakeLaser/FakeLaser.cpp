@@ -427,9 +427,6 @@ bool FakeLaser::acquireDataFromHW()
         }
     }
 
-    //set the device status
-    m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
-
     return true;
 }
 

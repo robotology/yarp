@@ -57,6 +57,7 @@ TEST_CASE("dev::laserFromPointCloud", "[yarp::dev]")
                 REQUIRE(result_att);
             }
         }
+        yarp::dev::tests::wait_safe();
 
         PolyDriver laserdev;
         IRangefinder2D* irng = nullptr;
@@ -72,6 +73,9 @@ TEST_CASE("dev::laserFromPointCloud", "[yarp::dev]")
             rgbdprop.put("remoteDepthPort", "/rgbd_nws/depthImage:o");
             rgbdprop.put("localRpcPort", "/rgbd_nwc/rpc:o");
             rgbdprop.put("remoteRpcPort", "/rgbd_nws/rpc:i");
+            auto& qualityprop = las_cfg.addGroup("POINTCLOUD_QUALITY");
+            qualityprop.put("x_step", 1.0);
+            qualityprop.put("y_step", 1.0);
             auto& planesprop = las_cfg.addGroup("Z_CLIPPING_PLANES");
             planesprop.put("floor_height", 0.15);
             planesprop.put("ceiling_height", 3.0);
@@ -94,11 +98,11 @@ TEST_CASE("dev::laserFromPointCloud", "[yarp::dev]")
         vals.test_max=5.0;
         vals.test_horizontal_res=1.0;
         vals.test_lsize=360;
-        vals.test_rho = 2.089994459; //almost 2meters
-        vals.test_theta=-0.31415926535897931; //-18degrees
-        vals.test_cartesian_x= 1.9877; //almost 2meters
-        vals.test_cartesian_y=-0.174723;
-        //yarp::dev::tests::exec_iRangefinder2D_test_1(irng, vals);
+        vals.test_rho = 2.0; //almost 2meters
+        vals.test_theta=0.0;
+        vals.test_cartesian_x= 2.0; //almost 2meters
+        vals.test_cartesian_y=0.0;
+        yarp::dev::tests::exec_iRangefinder2D_test_1(irng, vals);
 
         //"Close all polydrivers and check"
         CHECK(laserdev.close());

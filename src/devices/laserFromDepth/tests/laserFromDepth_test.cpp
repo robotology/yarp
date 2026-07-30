@@ -92,6 +92,8 @@ TEST_CASE("dev::laserFromDepth", "[yarp::dev]")
         vals.test_theta=-0.31415926535897931; //-18dgrees
         vals.test_cartesian_x=1.9877; // a little smaller than 2meters
         vals.test_cartesian_y=-0.645844; // a little on the left of the center
+        vals.min_angle=-18;
+        vals.max_angle=18;
         yarp::dev::tests::exec_iRangefinder2D_test_1(irng, vals);
 
         //"Close all polydrivers and check"

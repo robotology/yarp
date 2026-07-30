@@ -76,7 +76,11 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
     m_depth_height = iRGBD->getDepthHeight();
     double hfov = 0;
     double vfov = 0;
-    iRGBD->getDepthFOV(hfov, vfov);
+    if (!iRGBD->getDepthFOV(hfov, vfov))
+    {
+        yCError(LASER_FROM_DEPTH) << "Error getting depth FOV";
+        return false;
+    }
     m_sensorsNum = m_depth_width;
     m_resolution = hfov / m_depth_width;
     m_laser_data.resize(m_sensorsNum, 0.0);
@@ -136,7 +140,6 @@ bool LaserFromDepth::threadInit()
     yCDebug(LASER_FROM_DEPTH) << "... done!\n";
 #endif
 
-    m_device_status = yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE;
     return true;
 }
 
@@ -146,8 +149,8 @@ bool LaserFromDepth::acquireDataFromHW()
     double t1 = yarp::os::Time::now();
 #endif
 
-    iRGBD->getDepthImage(m_depth_image);
-    if (m_depth_image.getRawImage() == nullptr)
+    bool success = iRGBD->getDepthImage(m_depth_image);
+    if (!success || m_depth_image.getRawImage() == nullptr)
     {
         yCError(LASER_FROM_DEPTH) << "invalid image received";
         return false;
@@ -187,7 +190,9 @@ bool LaserFromDepth::acquireDataFromHW()
 
 void LaserFromDepth::run()
 {
-    updateLidarData();
+    bool b = updateLidarData();
+    YARP_UNUSED(b);
+
     return;
 }
 

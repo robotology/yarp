@@ -9,6 +9,7 @@
 #include <yarp/dev/IRangefinder2D.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <yarp/dev/tests/TestUtils.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -27,6 +28,8 @@ namespace yarp::dev::tests
         double test_cartesian_y=0;
         double test_theta=0;
         double test_rho=0.5;
+        double min_angle=0;
+        double max_angle=360;
     };
 
     inline void exec_iRangefinder2D_test_1(IRangefinder2D* irf, const ValuestoCheck& v=ValuestoCheck())
@@ -35,12 +38,14 @@ namespace yarp::dev::tests
 
         bool b;
 
+        // wait for the device to be ready
         yarp::dev::IRangefinder2D::Device_status status;
         for (size_t counter = 0; counter<10; counter++)
         {
             b = irf->getDeviceStatus(status);
             CHECK(b);
             if (status == yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE) break;
+            yDebug() << "Device not ready yet, retrying..";
             yarp::os::Time::delay(0.5);
         }
         CHECK(status == yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE);
@@ -54,6 +59,12 @@ namespace yarp::dev::tests
         b = irf->getScanRate(scanrate);
         CHECK(b);
         CHECK(scanrate==v.test_scanrate);
+
+        double min_angle, max_angle;
+        b = irf->getScanLimits(min_angle, max_angle);
+        CHECK(b);
+        CHECK(min_angle == v.min_angle);
+        CHECK(max_angle == v.max_angle);
 
         double hstep;
         b = irf->getHorizontalResolution(hstep);

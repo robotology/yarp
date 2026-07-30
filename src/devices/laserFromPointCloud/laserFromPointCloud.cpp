@@ -139,8 +139,12 @@ bool LaserFromPointCloud::open(yarp::os::Searchable& config)
         bool testWithIndentityTransform = config.check("testWithIndentityTransform");
         if (testWithIndentityTransform)
         {
-            yarp::sig::Matrix tmpeye(4, 4); tmpeye.eye();
-            m_iTc->setTransformStatic(m_camera_frame_id, m_ground_frame_id, tmpeye);
+            yarp::sig::Matrix T(4, 4) ;
+            T(0,0) =  0;  T(0,1) =  0;  T(0,2) =  1;  T(0,3) = 0;
+            T(1,0) = -1;  T(1,1) =  0;  T(1,2) =  0;  T(1,3) = 0;
+            T(2,0) =  0;  T(2,1) = -1;  T(2,2) =  0;  T(2,3) = 0;
+            T(3,0) =  0;  T(3,1) =  0;  T(3,2) =  0;  T(3,3) = 1;
+            m_iTc->setTransformStatic(m_camera_frame_id, m_ground_frame_id, T);
         }
     }
 
@@ -238,7 +242,6 @@ bool LaserFromPointCloud::threadInit()
     yCDebug(LASER_FROM_POINTCLOUD) << "... done!\n");
 #endif
 
-    m_device_status = yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE;
     return true;
 }
 
@@ -254,12 +257,22 @@ void rotate_pc (yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc, const yarp::sig::
     }
 }
 
-bool LaserFromPointCloud::utility_insideCameraFov(size_t i, double left_elem, double right_elem)
+bool LaserFromPointCloud::utility_insideCameraFov(size_t i, double first_elem, double second_elem)
 {
-    if (left_elem <= right_elem)
-        return i >= left_elem && i <= right_elem;
+    if (first_elem <= second_elem)
+        return i >= first_elem && i <= second_elem;
     else
-        return i >= left_elem || i <= right_elem;
+        return i >= first_elem || i <= second_elem;
+}
+
+double computeHFOV(double fx, int width)
+{
+    return 2.0 * std::atan(width / (2.0 * fx)); // radians
+}
+
+double computeHFOVdeg(double fx, int width)
+{
+    return computeHFOV(fx, width) * 180.0 / M_PI;
 }
 
 bool LaserFromPointCloud::acquireDataFromHW()
@@ -294,7 +307,8 @@ bool LaserFromPointCloud::acquireDataFromHW()
     const double myinf = std::numeric_limits<double>::infinity();
     const double mynan = std::nan("");
 
-    //compute the point cloud
+    //compute the point cloud: from the camera u,v camera system,
+    //to the xyz world system
     //To reduce the computational load, decimation of the pointcloud is done using m_pc_stepx, m_pc_stepy
     yarp::sig::PointCloud<yarp::sig::DataXYZ> pc = yarp::sig::utils::depthToPC(m_depth_image, m_intrinsics, m_pc_roi, m_pc_stepx, m_pc_stepy);
 
@@ -319,37 +333,78 @@ bool LaserFromPointCloud::acquireDataFromHW()
     }
 #endif
 
-    //we rototranslate the full pointcloud
+    //we rototranslate the full pointcloud from the camera to the world(lidar) frame.
     rotate_pc(pc, m_transform_mtrx);
 
+    //just for debug puporses
+#if 0
+    {
+        //These numbers are expressed in degrees
+        double c_hfov = computeHFOVdeg(m_intrinsics.focalLengthX,m_depth_width);
+        double c_vfov = computeHFOVdeg(m_intrinsics.focalLengthY,m_depth_height);
+        double g_hfov;
+        double g_vfov;
+        m_iRGBD->getDepthFOV(g_hfov, g_vfov);
+        //hfov = 36 degrees -> +-18 on each side of the camera center
+    }
+#endif
+
     // compute the leftmost and rightmost points of the image
-    //to know which angles are not covered by the camera
+    // to know which angles are not covered by the camera.
+    // the formula uses is the same used in yarp::sig::utils::depthToPC
+    // it is called pin-hole equation.
+    // The y coordinate is set to the middle of the image height, to avoid distortion effects on the borders.
+    double pointx = 0;
+    double pointy = m_depth_image.height()/2.0;
     yarp::sig::Vector left(4);
-    left[0] = (0 - m_intrinsics.principalPointX) / m_intrinsics.focalLengthX * 1000;
-    left[1] = (0 - m_intrinsics.principalPointY) / m_intrinsics.focalLengthY * 1000;
+    left[0] = (pointx - m_intrinsics.principalPointX) / m_intrinsics.focalLengthX * 1000;
+    left[1] = (pointy - m_intrinsics.principalPointY) / m_intrinsics.focalLengthY * 1000;
     left[2] = 1000; //useless z
     left[3] = 1;
 
+    pointx = m_depth_image.width();
     yarp::sig::Vector right(4);
-    right[0] = (m_depth_image.width() - m_intrinsics.principalPointX) / m_intrinsics.focalLengthX * 1000;
-    right[1] = (0 - m_intrinsics.principalPointY) / m_intrinsics.focalLengthY * 1000;
+    right[0] = (pointx - m_intrinsics.principalPointX) / m_intrinsics.focalLengthX * 1000;
+    right[1] = (pointy - m_intrinsics.principalPointY) / m_intrinsics.focalLengthY * 1000;
     right[2] = 1000; //useless z
     right[3] = 1;
 
-    double leftmost_dist;
+    double leftmost_dist_dummy;
     double leftmost_theta;
-    double rightmost_dist;
+    double rightmost_dist_dummy;
     double rightmost_theta;
-    left = m_transform_mtrx * left;
-    right = m_transform_mtrx * right;
+    left = m_transform_mtrx * left;   //only x and y are used, z is useless
+    right = m_transform_mtrx * right; //only x and y are used, z is useless
+
+//just for debug puporses
+#if 0
+    {
+        LaserMeasurementData ldata;
+        double testdummy_dist=0;
+        double testdummy_theta = 0;
+        ldata.set_cartesian(1, 0);
+        ldata.get_polar(testdummy_dist, testdummy_theta);
+        //testdummy_theta should be 0
+        ldata.set_cartesian(0, 1);
+        ldata.get_polar(testdummy_dist, testdummy_theta);
+        //testdummy_theta should be 90
+        ldata.set_cartesian(0, -1);
+        ldata.get_polar(testdummy_dist, testdummy_theta);
+        //testdummy_theta should be -90
+    }
+#endif
 
     LaserMeasurementData data_left;
-    data_left.set_cartesian(left[0], left[1]);
-    data_left.get_polar(leftmost_dist, leftmost_theta);
+    double tmp_lx=left[0];
+    double tmp_ly=left[1];
+    data_left.set_cartesian(tmp_lx, tmp_ly);
+    data_left.get_polar(leftmost_dist_dummy, leftmost_theta);
 
     LaserMeasurementData data_right;
-    data_right.set_cartesian(right[0], right[1]);
-    data_right.get_polar(rightmost_dist, rightmost_theta);
+    double tmp_rx=right[0];
+    double tmp_ry=right[1];
+    data_right.set_cartesian(tmp_rx, tmp_ry);
+    data_right.get_polar(rightmost_dist_dummy, rightmost_theta);
 
     auto normalize_angle = [](double angle_deg)
     {
@@ -365,8 +420,10 @@ bool LaserFromPointCloud::acquireDataFromHW()
     };
 
     // radians -> degrees
-    leftmost_theta = normalize_angle(leftmost_theta * 180 / M_PI);
-    rightmost_theta = normalize_angle(rightmost_theta * 180 / M_PI);
+    leftmost_theta = leftmost_theta * 180 / M_PI;
+    rightmost_theta = rightmost_theta * 180 / M_PI;
+    leftmost_theta = normalize_angle(leftmost_theta);
+    rightmost_theta = normalize_angle(rightmost_theta);
 
     // angle -> laser index
     size_t leftmost_elem  = static_cast<size_t>(leftmost_theta  / m_resolution);
@@ -386,7 +443,7 @@ bool LaserFromPointCloud::acquireDataFromHW()
     // a value will be set later for inf value, while nan value are no more modifiable
     for (size_t i = 0; i < m_sensorsNum; i++)
     {
-        if (utility_insideCameraFov(i, leftmost_elem, rightmost_elem))
+        if (utility_insideCameraFov(i, rightmost_elem, leftmost_elem))
            { m_laser_data[i] = myinf; }
     }
 
@@ -463,7 +520,8 @@ bool LaserFromPointCloud::acquireDataFromHW()
 
 void LaserFromPointCloud::run()
 {
-    updateLidarData();
+    bool b = updateLidarData();
+    YARP_UNUSED(b);
 }
 
 void LaserFromPointCloud::threadRelease()

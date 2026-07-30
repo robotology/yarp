@@ -223,8 +223,11 @@ ReturnValue FakeDepthCameraDriver_mini::getDepthIntrinsicParam(Property& intrins
 {
     std::lock_guard <std::recursive_mutex> lg(m_mutex);
     intrinsic.put("physFocalLength", 0.5);
-    intrinsic.put("focalLengthX",    m_dep_w/2);
-    intrinsic.put("focalLengthY",    m_dep_h/2);
+    const double deg2rad = 3.1415926535/180.0;
+    double focal_x = m_dep_w / (2*tan(m_dep_Hfov*deg2rad/2));
+    double focal_y = m_dep_h / (2*tan(m_dep_Vfov*deg2rad/2));
+    intrinsic.put("focalLengthX",    focal_x);
+    intrinsic.put("focalLengthY",    focal_y);
     intrinsic.put("principalPointX", (m_dep_w-1)/2);
     intrinsic.put("principalPointY", (m_dep_h-1)/2);
     intrinsic.put("distortionModel", "plumb_bob");

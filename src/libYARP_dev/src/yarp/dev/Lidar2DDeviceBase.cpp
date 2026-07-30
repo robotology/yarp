@@ -283,13 +283,21 @@ bool Lidar2DDeviceBase::updateLidarData()
     bool b = true;
     b &= acquireDataFromHW();
     if (!b) {
+        m_device_status = yarp::dev::IRangefinder2D::Device_status::DEVICE_GENERAL_ERROR;
         return false;
     }
     b &= applyLimitsOnLaserData();
     if (!b) {
+        m_device_status = yarp::dev::IRangefinder2D::Device_status::DEVICE_GENERAL_ERROR;
         return false;
     }
     b &= updateTimestamp();
+    if (!b) {
+        m_device_status = yarp::dev::IRangefinder2D::Device_status::DEVICE_GENERAL_ERROR;
+        return false;
+    }
+
+    m_device_status = yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE;
     return b;
 }
 
