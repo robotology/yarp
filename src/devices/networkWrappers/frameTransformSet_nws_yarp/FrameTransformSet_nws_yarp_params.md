@@ -1,0 +1,2 @@
+ * |       | nws_thrift_port_prefix   | bool    | -              | true           | No        | tells whether or not the nws is instanciated by the frameTransformServer device. If true, "/frameTransformServer" will appended to the port name prefix |
+ * |       | default_config           | string  | -              |                | No        | a prefix for the nws thrift rpc port name                                                                                                               |

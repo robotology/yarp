@@ -11,8 +11,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IFrameTransformStorage.h>
 
-
 #include <FrameTransformStorageGetRPC.h>
+#include "FrameTransformGet_nwc_yarp_ParamsParser.h"
 
 /**
  * @ingroup dev_impl_nwc_yarp
@@ -25,17 +25,8 @@
  * When it a method of the interface is called, the request is forwarded on a RPC port (which uses the thrift FrameTransformStorageGetRPC interface) and it returns all the transforms received
  * from the port to the caller.
  * For further information see \subpage FrameTransform.
-
- *   Parameters required by this device are:
- * | Parameter name               | SubParameter | Type    | Units  | Default Value  | Required  | Description                                                                                                                                                                        |
- * |:----------------------------:|:-------------|:-------:|:------:|:--------------:|:------- -:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
- * | default-client               | -            | bool    | -      | true           | No        | tells whether or not the nwc is instantiated by the frameTransformClient device. If true, "/frameTransformClient" will appended to the port name prefix                            |
- * | default-server               | -            | bool    | -      | true           | No        | tells whether or not the nws is instantiated by the frameTransformServer device. If true, "/frameTransformServer/frameTransformGet_nws_yarp" will appended to the port name prefix |
- * | nwc_thrift_port_prefix       | -            | string  | -      | ""             | No        | a prefix for the nwc thrift rpc port name                                                                                                                                          |
- * | nws_thrift_port_prefix       | -            | string  | -      | ""             | No        | a prefix for the nws thrift rpc port name                                                                                                                                          |
- * | input_streaming_port_prefix  | -            | string  | -      | -              | No        | a prefix for the input streaming port name (if the port is enabled)                                                                                                                |
- * | output_streaming_port_prefix | -            | string  | -      | -              | No        | a prefix for the output streaming port name (if the port is enabled)                                                                                                               |
- * | streaming_enabled            | -            | bool    | -      | false          | No        | if enabled, tfs are received from the streaming port instead of using RPCs                                                                                                         |
+ *
+ * Parameters required by this device are shown in class: FrameTransformGet_nwc_yarpParamsParser
  *
  * \section FrameTransformGet_nwc_yarp_port_example Port names examples
  * Here follow some examples of port names obtained with different parameters configurations
@@ -98,7 +89,8 @@
  */
 class FrameTransformGet_nwc_yarp:
     public yarp::dev::DeviceDriver,
-    public yarp::dev::IFrameTransformStorageGet
+    public yarp::dev::IFrameTransformStorageGet,
+    public FrameTransformGet_nwc_yarp_ParamsParser
 {
     class DataReader : public yarp::os::BufferedPort<return_getAllTransforms>
     {
@@ -135,7 +127,6 @@ private:
     std::string    m_defaultServerPrefix{"/frameTransformServer/frameTransformGet_nws_yarp"};
 
     //streaming port
-    bool           m_streaming_port_enabled = false;
     std::string    m_streaming_input_port_name;
     std::string    m_streaming_output_port_name;
     DataReader*    m_dataReader =nullptr;
