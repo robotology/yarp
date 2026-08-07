@@ -245,8 +245,8 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
     {
         // We first allocate three fakeMotionControl boards
         // and their wrappers that we will remap using the remapper
-        std::vector<PolyDriver *> fmcbs;
-        std::vector<PolyDriver *> wrappers;
+        std::vector<std::unique_ptr<PolyDriver>> fmcbs;
+        std::vector<std::unique_ptr<PolyDriver>> wrappers;
         fmcbs.resize(3);
         wrappers.resize(3);
 
@@ -268,7 +268,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
 
         for(int i=0; i < 3; i++)
         {
-            fmcbs[i] = new PolyDriver();
+            fmcbs[i] = std::make_unique<PolyDriver>();
 
             Property p;
 
@@ -287,7 +287,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
             CHECK(axes == fmcbsSizes[i]); // fakeMotionControlBoard seems functional
 
             // Open the wrapper
-            wrappers[i] = new PolyDriver();
+            wrappers[i] = std::make_unique<PolyDriver>();
 
             if(i==0) { p.fromConfig(wrapperA_file_content); }
             if(i==1) { p.fromConfig(wrapperB_file_content); }
@@ -300,7 +300,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
             REQUIRE(iwrap);
 
             PolyDriverList pdList;
-            pdList.push(fmcbs[i],wrapperNetworks[i].c_str());
+            pdList.push(fmcbs[i].get(), wrapperNetworks[i].c_str());
 
             REQUIRE(iwrap->attachAll(pdList)); // controlBoard_nws_yarp attached successfully to the device
         }
@@ -310,7 +310,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
 
         for(int i=0; i < 3; i++)
         {
-            fmcList.push(fmcbs[i],fmcbsNames[i].c_str());
+            fmcList.push(fmcbs[i].get(),fmcbsNames[i].c_str());
         }
 
         // Open a controlboardremapper with the wrong axisName,
@@ -404,11 +404,10 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
         for(int i=0; i < 3; i++)
         {
             wrappers[i]->close();
-            delete wrappers[i];
-            wrappers[i] = nullptr;
+        }
+        for(int i=0; i < 3; i++)
+        {
             fmcbs[i]->close();
-            delete fmcbs[i];
-            fmcbs[i] = nullptr;
         }
     }
 
@@ -416,8 +415,8 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
     {
         // We first allocate three fakeMotionControl boards
         // and their wrappers that we will remap using the remapper
-        std::vector<PolyDriver *> fmcbs;
-        std::vector<PolyDriver *> wrappers;
+        std::vector<std::unique_ptr<PolyDriver>> fmcbs;
+        std::vector<std::unique_ptr<PolyDriver>> wrappers;
         fmcbs.resize(3);
         wrappers.resize(3);
 
@@ -439,7 +438,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
 
         for(int i=0; i < 3; i++)
         {
-            fmcbs[i] = new PolyDriver();
+            fmcbs[i] = std::make_unique<PolyDriver>();
 
             Property p;
 
@@ -462,7 +461,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
             CHECK(axes == fmcbsSizes[i]); // fakeMotionControlBoard seems functional
 
             // Open the wrapper
-            wrappers[i] = new PolyDriver();
+            wrappers[i] = std::make_unique<PolyDriver>();
 
             if(i==0) { p.fromConfig(wrapperA_file_content); }
             if(i==1) { p.fromConfig(wrapperB_file_content); }
@@ -475,7 +474,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
             REQUIRE(iwrap);
 
             PolyDriverList pdList;
-            pdList.push(fmcbs[i],wrapperNetworks[i].c_str());
+            pdList.push(fmcbs[i].get(),wrapperNetworks[i].c_str());
 
             REQUIRE(iwrap->attachAll(pdList)); // controlBoard_nws_yarp attached successfully to the device
         }
@@ -485,7 +484,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
 
         for(int i=0; i < 3; i++)
         {
-            fmcList.push(fmcbs[i],fmcbsNames[i].c_str());
+            fmcList.push(fmcbs[i].get(),fmcbsNames[i].c_str());
         }
 
         // Open a controlboardremapper with the wrong axisName,
@@ -579,11 +578,10 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
         for(int i=0; i < 3; i++)
         {
             wrappers[i]->close();
-            delete wrappers[i];
-            wrappers[i] = nullptr;
+        }
+        for(int i=0; i < 3; i++)
+        {
             fmcbs[i]->close();
-            delete fmcbs[i];
-            fmcbs[i] = nullptr;
         }
     }
 
