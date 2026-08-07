@@ -30,8 +30,6 @@ void RemoteControlBoardRemapper::closeAllRemoteControlBoards()
         if( m_remoteControlBoardDevice )
         {
             m_remoteControlBoardDevice->close();
-            delete m_remoteControlBoardDevice;
-            m_remoteControlBoardDevice = nullptr;
         }
     }
 
@@ -99,7 +97,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
 
     // Parameters loaded, open all the remote controlboards
 
-    m_remoteControlBoardDevices.resize(remoteControlBoardsPorts.size(),nullptr);
+    m_remoteControlBoardDevices.resize(remoteControlBoardsPorts.size());
 
     PolyDriverList remoteControlBoardsList;
 
@@ -114,7 +112,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
         options.put("local", local);
         options.put("remote", remote);
 
-        m_remoteControlBoardDevices[ctrlBrd] = new PolyDriver();
+        m_remoteControlBoardDevices[ctrlBrd] = std::make_unique<PolyDriver>();
 
         bool ok = m_remoteControlBoardDevices[ctrlBrd]->open(options);
 
@@ -126,7 +124,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
         }
 
         // We use the remote name of the controlBoard_nwc_yarp as the key for it, in absence of anything better
-        remoteControlBoardsList.push((m_remoteControlBoardDevices[ctrlBrd]),remote.c_str());
+        remoteControlBoardsList.push((m_remoteControlBoardDevices[ctrlBrd].get()),remote.c_str());
     }
 
     // Device opened, now we open the ControlBoardRemapper and then we call attachAll

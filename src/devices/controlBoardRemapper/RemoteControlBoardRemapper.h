@@ -97,8 +97,7 @@ private:
     /**
      * List of controlBoard_nwc_yarp devices opened by the RemoteControlBoardRemapper device.
      */
-    std::vector<yarp::dev::PolyDriver*> m_remoteControlBoardDevices;
-
+    std::vector<std::unique_ptr<yarp::dev::PolyDriver>> m_remoteControlBoardDevices;
 
     // Close all opened remote controlboards
     void closeAllRemoteControlBoards();
