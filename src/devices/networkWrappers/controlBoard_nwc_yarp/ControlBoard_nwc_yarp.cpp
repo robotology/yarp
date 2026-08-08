@@ -341,6 +341,8 @@ bool ControlBoard_nwc_yarp::open(Searchable& config)
 
 bool ControlBoard_nwc_yarp::close()
 {
+    extendedIntputStatePort.disableCallback();
+
     if (diagnosticThread!=nullptr)
     {
         diagnosticThread->stop();
@@ -351,7 +353,6 @@ bool ControlBoard_nwc_yarp::close()
 
     m_rpcPort.interrupt(); // TBC
     command_p.interrupt(); // TBC
-    extendedIntputStatePort.interrupt(); // TBC
 
     m_rpcPort.close();
     command_p.close();

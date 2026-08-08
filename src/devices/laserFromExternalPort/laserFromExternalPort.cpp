@@ -236,6 +236,13 @@ bool LaserFromExternalPort::open(yarp::os::Searchable& config)
 
 bool LaserFromExternalPort::close()
 {
+    std::lock_guard<std::mutex> guard(m_mutex);
+
+    for (auto it=m_input_ports.begin(); it!= m_input_ports.end(); it++)
+    {
+        it->disableCallback();
+    }
+
     PeriodicThread::stop();
 
     for (auto it=m_input_ports.begin(); it!= m_input_ports.end(); it++)
