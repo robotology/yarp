@@ -82,7 +82,7 @@ bool ImageReadRGB_JPG(ImageOf<PixelRgb>& img, const char* filename)
     cinfo.err = jpeg_std_error(&jerr);
 
     FILE* fp = fopen(filename, "rb");
-    if (fp == NULL)
+    if (!fp)
     {
         yCError(IMAGEFILE) << "Error: failed to open" << filename;
         return false;
@@ -163,6 +163,11 @@ bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
 {
 #if defined (YARP_HAS_PNG)
     FILE* fp = fopen(filename, "rb");
+    if (!fp)
+    {
+        yCError(IMAGEFILE) << "Error: failed to open" << filename;
+        return false;
+    }
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (!png)
@@ -343,8 +348,7 @@ bool ImageReadRGB_PxM(ImageOf<PixelRgb> &img, const char *filename)
     int width, height, color, num;
     FILE *fp=nullptr;
     fp = fopen(filename, "rb");
-
-    if(fp==nullptr)
+    if(!fp)
     {
         yCError(IMAGEFILE, "Error opening %s, check if file exists.\n", filename);
         return false;
@@ -401,7 +405,9 @@ bool ImageReadRGB_PxM(ImageOf<PixelRgb> &img, const char *filename)
 bool ImageReadFloat_CompressedHeaderless(ImageOf<PixelFloat>& dest, const std::string& filename)
 {
     FILE* fp = fopen(filename.c_str(), "rb");
-    if (fp == nullptr) {
+    if (!fp)
+    {
+        yCError(IMAGEFILE) << "Error: failed to open" << filename;
         return false;
     }
 
@@ -471,7 +477,9 @@ bool ImageReadFloat_CompressedHeaderless(ImageOf<PixelFloat>& dest, const std::s
 bool ImageReadFloat_PlainHeaderless(ImageOf<PixelFloat>& dest, const std::string& filename)
 {
     FILE *fp = fopen(filename.c_str(), "rb");
-    if (fp == nullptr) {
+    if (!fp)
+    {
+        yCError(IMAGEFILE) << "Error: failed to open" << filename;
         return false;
     }
 
@@ -504,8 +512,7 @@ bool ImageReadBGR_PxM(ImageOf<PixelBgr> &img, const char *filename)
     int width, height, color, num;
     FILE *fp=nullptr;
     fp = fopen(filename, "rb");
-
-    if(fp==nullptr)
+    if(!fp)
     {
         yCError(IMAGEFILE, "Error opening %s, check if file exists.\n", filename);
         return false;
@@ -551,8 +558,7 @@ bool ImageReadMono_PxM(ImageOf<PixelMono> &img, const char *filename)
     int width, height, color, num;
     FILE *fp=nullptr;
     fp = fopen(filename, "rb");
-
-    if(fp==nullptr)
+    if(!fp)
     {
         yCError(IMAGEFILE, "Error opening %s, check if file exists.\n", filename);
         return false;
@@ -821,8 +827,9 @@ bool SaveFloatCompressed(char* src, const char* filename, size_t h, size_t w, si
     }
 
     FILE* fp = fopen(filename, "wb");
-    if (fp == nullptr)
+    if (!fp)
     {
+        yCError(IMAGEFILE, "Unable to open file");
         return false;
     }
 
@@ -841,8 +848,9 @@ bool SaveFloatCompressed(char* src, const char* filename, size_t h, size_t w, si
 bool SaveFloatRaw(char* src, const char* filename, size_t h, size_t w, size_t rowSize)
 {
     FILE* fp = fopen(filename, "wb");
-    if (fp == nullptr)
+    if (!fp)
     {
+        yCError(IMAGEFILE, "Unable to open file");
         return false;
     }
 

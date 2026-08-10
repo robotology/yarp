@@ -9,7 +9,7 @@
 #include <vector>
 
 
-#define RES(v) ((std::vector<PolyDriverDescriptor> *)v)
+#define RES(v) (static_cast<std::vector<PolyDriverDescriptor>*> (v))
 
 using namespace yarp::dev;
 
@@ -52,4 +52,9 @@ const PolyDriverList &PolyDriverList::operator=(const PolyDriverList &l)
 {
     *RES(descriptors)=*RES(l.descriptors);
     return *this;
+}
+
+void PolyDriverList::clear()
+{
+    RES(descriptors)->clear();
 }
