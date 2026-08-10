@@ -1,0 +1,264 @@
+name: PR Analysis (SonarCloud & Codacy)
+
+# Runs ONLY after 'CI Workflow' (ci.yml) has completed. This workflow runs
+# in the base repository's context, so it has access to the secrets
+# (SONAR_TOKEN, CODACY_TOKEN, ...) even if the upstream build was triggered
+# by a PR opened from an external fork.
+on:
+  workflow_run:
+    workflows: ["CI Workflow"]
+    types: [completed]
+
+# GITHUB_TOKEN with minimal permissions: read-only. No step in this
+# workflow executes PR code (no cmake/make/repo scripts) - it only
+# downloads the results already produced by the build jobs and feeds them
+# to sonar-scanner / the Codacy API, which read them without executing
+# them.
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  sonar-scan:
+    name: 'Run SonarCloud scan'
+    runs-on: ubuntu-24.04
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
+    - name: Download analysis artifact from the build workflow
+      uses: actions/download-artifact@v4
+      with:
+        name: sonar-data
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Read metadata
+      id: meta
+      run: |
+        echo "sha=$(jq -r .sha sonar-metadata.json)" >> $GITHUB_OUTPUT
+        echo "pr_number=$(jq -r .pr_number sonar-metadata.json)" >> $GITHUB_OUTPUT
+        echo "head_ref=$(jq -r .head_ref sonar-metadata.json)" >> $GITHUB_OUTPUT
+        echo "base_ref=$(jq -r .base_ref sonar-metadata.json)" >> $GITHUB_OUTPUT
+        echo "event_name=$(jq -r .event_name sonar-metadata.json)" >> $GITHUB_OUTPUT
+        echo "repository_owner=$(jq -r .repository_owner sonar-metadata.json)" >> $GITHUB_OUTPUT
+        echo "repository_name=$(jq -r .repository_name sonar-metadata.json)" >> $GITHUB_OUTPUT
+        echo "yarp_version=$(jq -r .yarp_version sonar-metadata.json)" >> $GITHUB_OUTPUT
+
+    # Read-only checkout of the source at the same commit that was built:
+    # sonar-scanner needs to read the files (for metrics/duplication), but
+    # NO repo script is executed here, only sonar-scanner itself.
+    # 'allow-unsafe-pr-checkout: true' is a deliberate choice: the token's
+    # permissions are reduced to the minimum (see 'permissions:' above) and
+    # no build command runs in this workflow.
+    - name: Checkout source (read-only, for sonar-scanner)
+      uses: actions/checkout@v5
+      with:
+        repository: ${{ steps.meta.outputs.repository_owner }}/${{ steps.meta.outputs.repository_name }}
+        ref: ${{ steps.meta.outputs.sha }}
+        fetch-depth: 0
+        persist-credentials: false
+        allow-unsafe-pr-checkout: true
+
+    - name: Verify build artifacts are in place
+      run: |
+        # actions/download-artifact restores the same relative paths that
+        # were used when uploading (build/coverage.xml,
+        # build/JUnitTestResults.xml, build_wrapper_output_directory/,
+        # compile_commands.json), so no file needs to be moved here.
+        ls -la build_wrapper_output_directory compile_commands.json build/coverage.xml build/JUnitTestResults.xml
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Get Sonar and Prepare Environment
+      id: get_sonar
+      env:
+        SONAR_ORGANIZATION: ${{ steps.meta.outputs.repository_owner }}
+        SONAR_PROJECT_KEY: ${{ steps.meta.outputs.repository_owner }}_${{ steps.meta.outputs.repository_name }}
+        SONAR_PROJECT_NAME: ${{ steps.meta.outputs.repository_name }}
+        SONAR_PROJECT_DESCRIPTION: 'Yet Another Robot Platform'
+        SONAR_PROJECT_VERSION: ${{ steps.meta.outputs.yarp_version }}
+        SONAR_LINKS_HOMEPAGE: 'https://www.yarp.it/'
+        SONAR_SOURCES: 'src'
+        SONAR_TESTS: 'tests'
+        SONAR_CFAMILY_CACHE_ENABLED: true
+        SONAR_SCANNER_VERSION: '8.0.1.6346'
+        SONAR_THREADS: 2
+      run: |
+        SONAR_HOME_PATH=.sonar
+        SONAR_CACHE_PATH=${SONAR_HOME_PATH}/cache
+        SONAR_HOME=${HOME}/${SONAR_HOME_PATH}
+
+        echo "SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY}" >> $GITHUB_ENV
+        echo "SONAR_PROJECT_NAME=${SONAR_PROJECT_NAME}" >> $GITHUB_ENV
+        echo "SONAR_ORGANIZATION=${SONAR_ORGANIZATION}" >> $GITHUB_ENV
+        [[ ! -z "${SONAR_PROJECT_VERSION}" ]] && echo "SONAR_PROJECT_VERSION=${SONAR_PROJECT_VERSION}" >> $GITHUB_ENV
+
+        echo "SONAR_LINKS_HOMEPAGE=${SONAR_LINKS_HOMEPAGE:-https://github.com/${GITHUB_REPOSITORY}/}" >> $GITHUB_ENV
+        echo "SONAR_LINKS_CI=${SONAR_LINKS_CI:-https://github.com/${GITHUB_REPOSITORY}/actions/}" >> $GITHUB_ENV
+        echo "SONAR_LINKS_ISSUE=${SONAR_LINKS_ISSUE:-https://github.com/${GITHUB_REPOSITORY}/issues/}" >> $GITHUB_ENV
+        echo "SONAR_LINKS_SCM=${SONAR_LINKS_SCM:-https://github.com/${GITHUB_REPOSITORY}/}" >> $GITHUB_ENV
+
+        echo "SONAR_HOST_URL=${SONAR_HOST_URL:-https://sonarcloud.io}" >> $GITHUB_ENV
+        echo "SONAR_SCANNER_VERSION=${SONAR_SCANNER_VERSION}" >> $GITHUB_ENV
+
+        SONAR_SCANNER_HOME=${SONAR_HOME}/sonar-scanner-${SONAR_SCANNER_VERSION}-linux-x64
+        echo "SONAR_SCANNER_HOME=${SONAR_SCANNER_HOME}" >> $GITHUB_ENV
+        echo "SONAR_SCANNER_OPTS=${SONAR_SCANNER_OPTS:--server}" >> $GITHUB_ENV
+        echo "SONAR_SOURCES=${SONAR_SOURCES:-src}" >> $GITHUB_ENV
+        [[ -v SONAR_TESTS ]] && echo "SONAR_TESTS=${SONAR_TESTS}" >> $GITHUB_ENV
+        echo "SONAR_SOURCEENCODING=${SONAR_SOURCEENCODING:-UTF-8}" >> $GITHUB_ENV
+        echo "SONAR_THREADS=${SONAR_THREADS:-1}" >> $GITHUB_ENV
+        echo "SONAR_CFAMILY_CACHE_ENABLED=$([[ $SONAR_CFAMILY_CACHE_ENABLED = true ]] && echo true || echo false)" >> $GITHUB_ENV
+        [[ $SONAR_CFAMILY_CACHE_ENABLED = true ]] && echo "SONAR_CFAMILY_CACHE_PATH=${SONAR_CACHE_PATH}" >> $GITHUB_ENV
+        echo "PATH=${SONAR_HOME}/build-wrapper-linux-x86:${SONAR_SCANNER_HOME}/bin:${PATH}" >> $GITHUB_ENV
+
+        mkdir -p ${SONAR_HOME}
+        mkdir -p ${SONAR_CACHE_PATH}
+
+        curl -sSLo ${SONAR_HOME}/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux-x64.zip
+        unzip -o ${SONAR_HOME}/sonar-scanner.zip -d ${SONAR_HOME}/
+
+        echo "sonar_path=${SONAR_HOME_PATH}" >> $GITHUB_OUTPUT
+        echo "sonar_cache_path=${SONAR_CACHE_PATH}" >> $GITHUB_OUTPUT
+
+    - name: Handle sonar scanner cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.get_sonar.outputs.sonar_cache_path }}
+        key: sonar-scanner-cache-${{ github.event.workflow_run.id }}
+        restore-keys: |
+          sonar-scanner-cache-
+
+    - name: Run sonar scanner
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        [[ -v SONAR_TOKEN ]] && SONAR_TOKEN_CMD_ARG="-Dsonar.login=${SONAR_TOKEN}"
+        [[ -v SONAR_ORGANIZATION ]] && SONAR_ORGANIZATION_CMD_ARG="-Dsonar.organization=${SONAR_ORGANIZATION}"
+        [[ -v SONAR_PROJECT_NAME ]] && SONAR_PROJECT_NAME_CMD_ARG="-Dsonar.projectName=${SONAR_PROJECT_NAME}"
+        [[ -v SONAR_PROJECT_DESCRIPTION ]] && SONAR_PROJECT_DESCRIPTION_CMD_ARG="-Dsonar.projectDescription=${SONAR_PROJECT_DESCRIPTION}"
+        [[ -v SONAR_PROJECT_VERSION ]] && SONAR_PROJECT_VERSION_CMD_ARG="-Dsonar.projectVersion=${SONAR_PROJECT_VERSION}"
+
+        if [[ "${{ steps.meta.outputs.event_name }}" == "pull_request" ]]; then
+          SONAR_PR_CMD_ARGS="\
+            -Dsonar.pullrequest.provider=github \
+            -Dsonar.pullrequest.github.repository=${SONAR_ORGANIZATION}/${SONAR_PROJECT_NAME} \
+            -Dsonar.pullrequest.branch=${{ steps.meta.outputs.head_ref }} \
+            -Dsonar.pullrequest.key=${{ steps.meta.outputs.pr_number }} \
+            -Dsonar.pullrequest.base=${{ steps.meta.outputs.base_ref }} \
+            -Dsonar.pullrequest.github.endpoint=https://api.github.com"
+        fi
+
+        [[ -v SONAR_TESTS ]] && SONAR_TESTS_CMD_ARG="-Dsonar.tests=${SONAR_TESTS}"
+        [[ -v SONAR_CFAMILY_CACHE_PATH ]] && SONAR_CFAMILY_CACHE_PATH_CMD_ARG="-Dsonar.cfamily.cache.path=${SONAR_CFAMILY_CACHE_PATH}"
+
+        sonar-scanner \
+            -Dsonar.host.url="${SONAR_HOST_URL}" \
+            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+            -Dsonar.language=c++ \
+            -Dsonar.sources=${SONAR_SOURCES} \
+            -Dsonar.links.homepage=${SONAR_LINKS_HOMEPAGE} \
+            -Dsonar.links.ci=${SONAR_LINKS_CI} \
+            -Dsonar.links.issue=${SONAR_LINKS_ISSUE} \
+            -Dsonar.links.scm=${SONAR_LINKS_SCM} \
+            -Dsonar.cfamily.build-wrapper-output=build_wrapper_output_directory \
+            -Dsonar.sourceEncoding=${SONAR_SOURCEENCODING} \
+            -Dsonar.cfamily.threads=${SONAR_THREADS} \
+            -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
+            -Dsonar.coverageReportPaths=build/coverage.xml \
+            -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
+            -Dsonar.exclusions="\
+                 src/libYARP_robottestingframework/**/*,\
+                 src/robottestingframework-plugins/**/*,\
+                 tests/**/*\
+                 " \
+            -Dsonar.coverage.exclusions="\
+                 src/libYARP_dev/src/yarp/dev/tests/*,\
+                 src/devices/*/tests/*,\
+                 src/carriers/*/tests/*,\
+                 src/portmonitors/*/tests/*,\
+                 src/guis/**/*,\
+                 src/libYARP_robottestingframework/**/*,\
+                 src/yarpgstreamerplugins/**/*,\
+                 src/robottestingframework-plugins/**/*,\
+                 tests/**/*\
+                 " \
+            -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
+            ${SONAR_TESTS_CMD_ARG} \
+            ${SONAR_PROJECT_NAME_CMD_ARG} \
+            ${SONAR_PROJECT_DESCRIPTION_CMD_ARG} \
+            ${SONAR_PROJECT_VERSION_CMD_ARG} \
+            ${SONAR_PR_CMD_ARGS} \
+            ${SONAR_TOKEN_CMD_ARG} \
+            ${SONAR_ORGANIZATION_CMD_ARG} \
+            ${SONAR_CFAMILY_CACHE_PATH_CMD_ARG}
+
+  codacy-clang-tidy-report:
+    name: 'Upload clang-tidy results to Codacy'
+    runs-on: ubuntu-24.04
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
+    - name: Download analysis artifact from the build workflow
+      uses: actions/download-artifact@v4
+      with:
+        name: codacy-clang-tidy-data
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Read metadata
+      id: meta
+      run: |
+        echo "sha=$(jq -r .sha codacy-clang-tidy-metadata.json)" >> $GITHUB_OUTPUT
+
+    # No checkout and no code execution here: this job only forwards a
+    # results file that was already generated by the build workflow to the
+    # Codacy API over HTTPS.
+    - name: Send the results to Codacy
+      env:
+        PROJECT_TOKEN: ${{ secrets.CODACY_TOKEN }}
+        CODACY_URL: https://api.codacy.com
+        COMMIT: ${{ steps.meta.outputs.sha }}
+      run: |
+        set -x
+        cat clang-tidy-codacy-results.json | \
+        curl --silent --show-error --fail \
+            -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+            -H "Content-type: application/json" -d @- \
+            "${CODACY_URL}/2.0/commit/${COMMIT}/issuesRemoteResults"
+        echo
+
+    - name: Signal that Codacy can use the sent results and start a new analysis
+      env:
+        PROJECT_TOKEN: ${{ secrets.CODACY_TOKEN }}
+        CODACY_URL: https://api.codacy.com
+        COMMIT: ${{ steps.meta.outputs.sha }}
+      run: |
+        set -x
+        curl --silent --show-error --fail \
+          -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+          -H "Content-type: application/json" \
+          "${CODACY_URL}/2.0/commit/${COMMIT}/resultsFinal"
+        echo
+
+  codacy-coverage-report:
+    name: 'Upload coverage to Codacy'
+    runs-on: ubuntu-24.04
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
+    - name: Download analysis artifact from the build workflow
+      uses: actions/download-artifact@v4
+      with:
+        name: codacy-coverage-data
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    # No checkout and no code execution here: this job only uploads a
+    # coverage report that was already generated by the build workflow.
+    - name: Run codacy-coverage-reporter
+      uses: codacy/codacy-coverage-reporter-action@master
+      with:
+        project-token: ${{ secrets.CODACY_TOKEN }}
+        coverage-reports: build/coverage.info
