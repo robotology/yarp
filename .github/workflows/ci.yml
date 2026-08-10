@@ -2,7 +2,7 @@ name: CI Workflow
 
 on:
   push:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
     branches:
       - 'master'
@@ -11,6 +11,15 @@ on:
       - 'CI/*'
   release:
     types: [published]
+
+# No job in this workflow uses secrets: it also runs on PRs from external
+# forks, because GitHub does not pass secrets to jobs triggered by
+# 'pull_request' when the PR comes from a fork. The actual SonarCloud/Codacy
+# analysis (which needs the secrets) has been moved to pr-analysis.yml,
+# which starts after this workflow via 'workflow_run' and never executes
+# PR code.
+permissions:
+  contents: read
 
 jobs:
 
@@ -39,14 +48,14 @@ jobs:
         echo "repository_name=$(cat $GITHUB_EVENT_PATH | jq -r .repository.name)" >> $GITHUB_OUTPUT
         echo "repository=${{ github.repository }}" >> $GITHUB_OUTPUT
 
-        if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
-          echo "environment=code-analysis_unsafe" >> $GITHUB_OUTPUT
+        if [[ "$GITHUB_EVENT_NAME" = "pull_request" ]]; then
+          echo "environment=code-analysis" >> $GITHUB_OUTPUT
           echo "ref=refs/pull/$(cat $GITHUB_EVENT_PATH | jq -r .number)/merge" >> $GITHUB_OUTPUT
         else
           echo "environment=code-analysis" >> $GITHUB_OUTPUT
           echo "ref=${{ github.ref }}" >> $GITHUB_OUTPUT
         fi
-        if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
+        if [[ "$GITHUB_EVENT_NAME" = "pull_request" ]]; then
           echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
           echo "head_ref=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
           echo "base_ref=${GITHUB_BASE_REF}" >> $GITHUB_OUTPUT
@@ -2076,9 +2085,9 @@ jobs:
         execute_process_x(COMMAND ccache -z)
 
 
-  codacy-clang-tidy:
+  codacy-clang-tidy-build:
     environment: code-analysis
-    name: 'Codacy - clang-tidy'
+    name: 'Codacy - clang-tidy (build)'
     needs: [select_environment, check-cmake]
     runs-on: ubuntu-24.04
     steps:
@@ -2198,7 +2207,6 @@ jobs:
 
     - name: Prepare environment
       env:
-        CODACY_TOKEN: ${{ secrets.CODACY_TOKEN }}
         CLANG_VERSION: 17
         CODACY_CLANG_TIDY_VERSION: 1.3.8
       run: |
@@ -2213,9 +2221,6 @@ jobs:
         echo "CLICOLOR=1" >> $GITHUB_ENV
         echo "CLICOLOR_FORCE=1" >> $GITHUB_ENV
         echo "YARP_COLORED_OUTPUT=1" >> $GITHUB_ENV
-        echo "PROJECT_TOKEN=${CODACY_TOKEN}" >> $GITHUB_ENV
-        echo "COMMIT=${{ needs.select_environment.outputs.sha }}" >> $GITHUB_ENV
-        echo "CODACY_URL=https://api.codacy.com" >> $GITHUB_ENV
         echo "CODACY_CLANG_TIDY_VERSION=${CODACY_CLANG_TIDY_VERSION}" >> $GITHUB_ENV
 
         # Append output bin directory to the PATH
@@ -2284,29 +2289,35 @@ jobs:
         cat /tmp/out1 | \
         /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} | tee /tmp/out2
 
-    - name: Send the results to Codacy
+    - name: Write metadata for the analysis workflow
       run: |
-        set -x
-        cat /tmp/out2 | \
-        curl --silent --show-error --fail \
-            -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
-            -H "Content-type: application/json" -d @- \
-            "${CODACY_URL}/2.0/commit/${COMMIT}/issuesRemoteResults"
-        echo
+        cp /tmp/out2 clang-tidy-codacy-results.json
 
-    - name: Signal that Codacy can use the sent results and start a new analysis
-      run: |
-        set -x
-        curl --silent --show-error --fail \
-          -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
-          -H "Content-type: application/json" \
-          "${CODACY_URL}/2.0/commit/${COMMIT}/resultsFinal"
-        echo
+        cat > codacy-clang-tidy-metadata.json << JSON
+        {
+          "sha": "${{ needs.select_environment.outputs.sha }}"
+        }
+        JSON
+        cat codacy-clang-tidy-metadata.json
+
+    # No secrets and no upload here: this job only produces the clang-tidy
+    # results in the format expected by the Codacy API and publishes them
+    # as an artifact. The actual upload to Codacy happens in
+    # pr-analysis.yml, which has access to the secret but never executes
+    # PR code.
+    - name: Upload analysis artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: codacy-clang-tidy-data
+        retention-days: 1
+        path: |
+          codacy-clang-tidy-metadata.json
+          clang-tidy-codacy-results.json
 
 
-  codacy-coverage:
+  codacy-coverage-build:
     environment: code-analysis
-    name: 'Codacy - coverage'
+    name: 'Codacy - coverage (build)'
     needs: [select_environment, check-cmake]
     runs-on: ubuntu-24.04
     steps:
@@ -2473,16 +2484,32 @@ jobs:
         # Debug before upload
         lcov --list build/coverage.info
 
-    - name: Run codacy-coverage-reporter
-      uses: codacy/codacy-coverage-reporter-action@master
+    - name: Write metadata for the analysis workflow
+      run: |
+        cat > codacy-coverage-metadata.json << JSON
+        {
+          "sha": "${{ needs.select_environment.outputs.sha }}"
+        }
+        JSON
+        cat codacy-coverage-metadata.json
+
+    # No secrets and no upload here: this job only produces the coverage
+    # report and publishes it as an artifact. The actual upload to Codacy
+    # happens in pr-analysis.yml, which has access to the secret but never
+    # executes PR code.
+    - name: Upload analysis artifact
+      uses: actions/upload-artifact@v4
       with:
-        project-token: ${{ secrets.CODACY_TOKEN }}
-        coverage-reports: build/coverage.info
+        name: codacy-coverage-data
+        retention-days: 1
+        path: |
+          codacy-coverage-metadata.json
+          build/coverage.info
 
 
-  sonarcloud:
+  sonarcloud-build:
     environment: code-analysis
-    name: 'SonarCloud'
+    name: 'SonarCloud - Build & Prepare'
     needs: [select_environment, check-cmake]
     runs-on: ubuntu-24.04
     steps:
@@ -2787,80 +2814,35 @@ jobs:
       run: |
         xmllint --format build/coverage.xml | source-highlight -s xml --out-format=esc -o STDOUT
 
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '21'
-
-    - name: Run sonar scanner
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Write metadata for the analysis workflow
       run: |
+        cat > sonar-metadata.json << JSON
+        {
+          "event_name": "${{ github.event_name }}",
+          "repository": "${{ needs.select_environment.outputs.repository }}",
+          "repository_owner": "${{ needs.select_environment.outputs.repository_owner }}",
+          "repository_name": "${{ needs.select_environment.outputs.repository_name }}",
+          "sha": "${{ needs.select_environment.outputs.sha }}",
+          "head_ref": "${{ needs.select_environment.outputs.head_ref }}",
+          "base_ref": "${{ needs.select_environment.outputs.base_ref }}",
+          "pr_number": "${{ needs.select_environment.outputs.pr_number }}",
+          "yarp_version": "${{ needs.select_environment.outputs.yarp_version }}"
+        }
+        JSON
+        cat sonar-metadata.json
 
-        # Run sonar scanner (here, arguments are passed through the command line but most of them can be written in the sonar-project.properties file)
-        [[ -v SONAR_TOKEN ]] && SONAR_TOKEN_CMD_ARG="-Dsonar.login=${SONAR_TOKEN}"
-        [[ -v SONAR_ORGANIZATION ]] && SONAR_ORGANIZATION_CMD_ARG="-Dsonar.organization=${SONAR_ORGANIZATION}"
-        [[ -v SONAR_PROJECT_NAME ]] && SONAR_PROJECT_NAME_CMD_ARG="-Dsonar.projectName=${SONAR_PROJECT_NAME}"
-        [[ -v SONAR_PROJECT_DESCRIPTION ]] && SONAR_PROJECT_DESCRIPTION_CMD_ARG="-Dsonar.projectDescription=${SONAR_PROJECT_DESCRIPTION}"
-        [[ -v SONAR_PROJECT_VERSION ]] && SONAR_PROJECT_VERSION_CMD_ARG="-Dsonar.projectVersion=${SONAR_PROJECT_VERSION}"
-
-        if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
-          SONAR_PR_CMD_ARGS="\
-            -Dsonar.pullrequest.provider=github \
-            -Dsonar.pullrequest.github.repository=${SONAR_ORGANIZATION}/${SONAR_PROJECT_NAME} \
-            -Dsonar.pullrequest.branch=${{ needs.select_environment.outputs.head_ref }} \
-            -Dsonar.pullrequest.key=${{ needs.select_environment.outputs.pr_number }} \
-            -Dsonar.pullrequest.base=${{ needs.select_environment.outputs.base_ref }} \
-            -Dsonar.pullrequest.github.endpoint=https://api.github.com"
-        fi
-
-        # Paths to test files
-        [[ -v SONAR_TESTS ]] && SONAR_TESTS_CMD_ARG="-Dsonar.tests=${SONAR_TESTS}"
-
-        # Path to cache
-        [[ -v SONAR_CFAMILY_CACHE_PATH ]] && SONAR_CFAMILY_CACHE_PATH_CMD_ARG="-Dsonar.cfamily.cache.path=${SONAR_CFAMILY_CACHE_PATH}"
-
-        set -x
-
-        sonar-scanner \
-            -Dsonar.host.url="${SONAR_HOST_URL}" \
-            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-            -Dsonar.language=c++ \
-            -Dsonar.sources=${SONAR_SOURCES} \
-            -Dsonar.links.homepage=${SONAR_LINKS_HOMEPAGE} \
-            -Dsonar.links.ci=${SONAR_LINKS_CI} \
-            -Dsonar.links.issue=${SONAR_LINKS_ISSUE} \
-            -Dsonar.links.scm=${SONAR_LINKS_SCM} \
-            -Dsonar.cfamily.build-wrapper-output=build_wrapper_output_directory \
-            -Dsonar.sourceEncoding=${SONAR_SOURCEENCODING} \
-            -Dsonar.cfamily.threads=${SONAR_THREADS} \
-            -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
-            -Dsonar.coverageReportPaths=build/coverage.xml \
-            -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
-            -Dsonar.exclusions="\
-                 src/libYARP_robottestingframework/**/*,\
-                 src/robottestingframework-plugins/**/*,\
-                 tests/**/*\
-                 " \
-            -Dsonar.coverage.exclusions="\
-                 src/libYARP_dev/src/yarp/dev/tests/*,\
-                 src/devices/*/tests/*,\
-                 src/carriers/*/tests/*,\
-                 src/portmonitors/*/tests/*,\
-                 src/guis/**/*,\
-                 src/libYARP_robottestingframework/**/*,\
-                 src/yarpgstreamerplugins/**/*,\
-                 src/robottestingframework-plugins/**/*,\
-                 tests/**/*\
-                 " \
-            -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
-            ${SONAR_TESTS_CMD_ARG} \
-            ${SONAR_PROJECT_NAME_CMD_ARG} \
-            ${SONAR_PROJECT_DESCRIPTION_CMD_ARG} \
-            ${SONAR_PROJECT_VERSION_CMD_ARG} \
-            ${SONAR_PR_CMD_ARGS} \
-            ${SONAR_TOKEN_CMD_ARG} \
-            ${SONAR_ORGANIZATION_CMD_ARG} \
-            ${SONAR_CFAMILY_CACHE_PATH_CMD_ARG}
+    # No secrets and no analysis step here: this job just produces the
+    # build/coverage results and publishes them as an artifact. The actual
+    # 'sonar-scanner' run happens in pr-analysis.yml, which has access to
+    # the secrets but never executes PR code.
+    - name: Upload analysis artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: sonar-data
+        retention-days: 1
+        path: |
+          sonar-metadata.json
+          build/coverage.xml
+          build/JUnitTestResults.xml
+          build_wrapper_output_directory
+          compile_commands.json
