@@ -127,7 +127,7 @@ jobs:
         echo "sonar_cache_path=${SONAR_CACHE_PATH}" >> $GITHUB_OUTPUT
 
     - name: Handle sonar scanner cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.get_sonar.outputs.sonar_cache_path }}
         key: sonar-scanner-cache-${{ github.event.workflow_run.id }}
