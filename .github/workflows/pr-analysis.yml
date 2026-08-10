@@ -22,7 +22,9 @@ jobs:
   sonar-scan:
     name: 'Run SonarCloud scan'
     runs-on: ubuntu-24.04
-    if: github.event.workflow_run.conclusion == 'success'
+    # NOTE - If the following condition is enabled, this workflow will not be
+    # executed if a single job in the previous workflow fails.
+    # if: github.event.workflow_run.conclusion == 'success'
     steps:
     - name: Download analysis artifact from the build workflow
       uses: actions/download-artifact@v4
@@ -199,7 +201,9 @@ jobs:
   codacy-clang-tidy-report:
     name: 'Upload clang-tidy results to Codacy'
     runs-on: ubuntu-24.04
-    if: github.event.workflow_run.conclusion == 'success'
+    # NOTE - If the following condition is enabled, this workflow will not be
+    # executed if a single job in the previous workflow fails.
+    # if: github.event.workflow_run.conclusion == 'success'
     steps:
     - name: Download analysis artifact from the build workflow
       uses: actions/download-artifact@v4
@@ -246,7 +250,9 @@ jobs:
   codacy-coverage-report:
     name: 'Upload coverage to Codacy'
     runs-on: ubuntu-24.04
-    if: github.event.workflow_run.conclusion == 'success'
+    # NOTE - If the following condition is enabled, this workflow will not be
+    # executed if a single job in the previous workflow fails.
+    # if: github.event.workflow_run.conclusion == 'success'
     steps:
     - name: Download analysis artifact from the build workflow
       uses: actions/download-artifact@v4
