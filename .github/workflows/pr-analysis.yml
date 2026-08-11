@@ -47,12 +47,27 @@ jobs:
   sonar-scan:
     name: 'Run SonarCloud scan'
     runs-on: ubuntu-24.04
+    environment: code-analysis
     needs: [report-pending-status]
     # NOTE - If the following condition is enabled, this workflow will not be
     # executed if a single job in the previous workflow fails.
     # if: github.event.workflow_run.conclusion == 'success'
     if: github.event.workflow_run.event == 'pull_request'
     steps:
+    # This checks out a specific commit SHA within the SAME repository this
+    # workflow runs in (not a cross-repository/fork checkout, since ci.yml
+    # already runs under the 'pull_request' event on the base repo) - so no
+    # 'allow-unsafe-pr-checkout' flag is needed here, this is a plain
+    # read-only checkout. It must run BEFORE downloading the artifact:
+    # actions/checkout runs 'git clean' right after checking out, which
+    # would otherwise wipe out any file downloaded before it.
+    - name: Checkout source (read-only, for sonar-scanner)
+      uses: actions/checkout@v5
+      with:
+        ref: ${{ github.event.workflow_run.head_sha }}
+        fetch-depth: 0
+        persist-credentials: false
+
     - name: Download analysis artifact from the build workflow
       uses: actions/download-artifact@v4
       with:
@@ -72,28 +87,13 @@ jobs:
         echo "repository_name=$(jq -r .repository_name sonar-metadata.json)" >> $GITHUB_OUTPUT
         echo "yarp_version=$(jq -r .yarp_version sonar-metadata.json)" >> $GITHUB_OUTPUT
 
-    # Read-only checkout of the source at the same commit that was built:
-    # sonar-scanner needs to read the files (for metrics/duplication), but
-    # NO repo script is executed here, only sonar-scanner itself.
-    # 'allow-unsafe-pr-checkout: true' is a deliberate choice: the token's
-    # permissions are reduced to the minimum (see 'permissions:' above) and
-    # no build command runs in this workflow.
-    - name: Checkout source (read-only, for sonar-scanner)
-      uses: actions/checkout@v5
-      with:
-        repository: ${{ steps.meta.outputs.repository_owner }}/${{ steps.meta.outputs.repository_name }}
-        ref: ${{ steps.meta.outputs.sha }}
-        fetch-depth: 0
-        persist-credentials: false
-        allow-unsafe-pr-checkout: true
-
     - name: Verify build artifacts are in place
       run: |
         # actions/download-artifact restores the same relative paths that
         # were used when uploading (build/coverage.xml,
-        # build/JUnitTestResults.xml, build_wrapper_output_directory/,
-        # compile_commands.json), so no file needs to be moved here.
-        ls -la build_wrapper_output_directory compile_commands.json build/coverage.xml build/JUnitTestResults.xml
+        # build/JUnitTestResults.xml, build_wrapper_output_directory/), so
+        # no file needs to be moved here.
+        ls -la build_wrapper_output_directory build/coverage.xml build/JUnitTestResults.xml
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
@@ -228,6 +228,7 @@ jobs:
   codacy-clang-tidy-report:
     name: 'Upload clang-tidy results to Codacy'
     runs-on: ubuntu-24.04
+    environment: code-analysis
     needs: [report-pending-status]
     # NOTE - If the following condition is enabled, this workflow will not be
     # executed if a single job in the previous workflow fails.
@@ -279,6 +280,7 @@ jobs:
   codacy-coverage-report:
     name: 'Upload coverage to Codacy'
     runs-on: ubuntu-24.04
+    environment: code-analysis
     needs: [report-pending-status]
     # NOTE - If the following condition is enabled, this workflow will not be
     # executed if a single job in the previous workflow fails.
