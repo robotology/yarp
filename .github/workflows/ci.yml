@@ -2845,4 +2845,3 @@ jobs:
           build/coverage.xml
           build/JUnitTestResults.xml
           build_wrapper_output_directory
-          compile_commands.json
