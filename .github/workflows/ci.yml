@@ -1339,7 +1339,7 @@ jobs:
         ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Handle cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           .ccache
@@ -2744,7 +2744,7 @@ jobs:
         gcovr --version
 
     - name: Handle cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ${{ steps.init_ccache.outputs.ccache_path }}
