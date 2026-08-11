@@ -25,6 +25,7 @@ jobs:
     # NOTE - If the following condition is enabled, this workflow will not be
     # executed if a single job in the previous workflow fails.
     # if: github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.event == 'pull_request'
     steps:
     - name: Download analysis artifact from the build workflow
       uses: actions/download-artifact@v4
@@ -204,6 +205,7 @@ jobs:
     # NOTE - If the following condition is enabled, this workflow will not be
     # executed if a single job in the previous workflow fails.
     # if: github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.event == 'pull_request'
     steps:
     - name: Download analysis artifact from the build workflow
       uses: actions/download-artifact@v4
@@ -253,6 +255,7 @@ jobs:
     # NOTE - If the following condition is enabled, this workflow will not be
     # executed if a single job in the previous workflow fails.
     # if: github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.event == 'pull_request'
     steps:
     - name: Download analysis artifact from the build workflow
       uses: actions/download-artifact@v4
