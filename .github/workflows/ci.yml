@@ -2778,6 +2778,15 @@ jobs:
         ln -s build/compile_commands.json .
 
     - name: Build inside the build-wrapper
+      env:
+        # build-wrapper captures C/C++ analysis data by observing actual
+        # compiler process invocations. If ccache serves everything from
+        # cache, no real compiler process runs and build-wrapper captures
+        # zero translation units (SonarCloud then fails with "0 files
+        # were analyzed"). Disabling ccache here forces a full, clean
+        # build for this step only - the rest of the job still benefits
+        # from the cache.
+        CCACHE_DISABLE: 1
       run: |
         build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build --config Profile
 
