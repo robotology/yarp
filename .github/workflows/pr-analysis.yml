@@ -54,11 +54,18 @@ jobs:
     # if: github.event.workflow_run.conclusion == 'success'
     if: github.event.workflow_run.event == 'pull_request'
     steps:
-    # This checks out a specific commit SHA within the SAME repository this
-    # workflow runs in (not a cross-repository/fork checkout, since ci.yml
-    # already runs under the 'pull_request' event on the base repo) - so no
-    # 'allow-unsafe-pr-checkout' flag is needed here, this is a plain
-    # read-only checkout. It must run BEFORE downloading the artifact:
+    # actions/checkout blocks checking out a fork PR's commit in a
+    # privileged context (secrets available) regardless of whether
+    # 'repository:' is explicit - the risk is the same either way: this
+    # workflow has access to the secrets, and the commit content comes
+    # from an external fork. sonar-scanner needs to read the actual PR
+    # source (to compute metrics/duplication), so the checkout itself is
+    # unavoidable here - but NO script from the checked-out code is ever
+    # executed in this workflow (no cmake/make), only sonar-scanner reads
+    # the files. 'allow-unsafe-pr-checkout: true' is a deliberate,
+    # reviewed opt-in, combined with minimal token permissions
+    # ('permissions:' above) and 'persist-credentials: false'.
+    # This checkout must run BEFORE downloading the artifact:
     # actions/checkout runs 'git clean' right after checking out, which
     # would otherwise wipe out any file downloaded before it.
     - name: Checkout source (read-only, for sonar-scanner)
@@ -67,6 +74,7 @@ jobs:
         ref: ${{ github.event.workflow_run.head_sha }}
         fetch-depth: 0
         persist-credentials: false
+        allow-unsafe-pr-checkout: true
 
     - name: Download analysis artifact from the build workflow
       uses: actions/download-artifact@v4
