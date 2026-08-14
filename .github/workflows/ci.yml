@@ -2758,8 +2758,23 @@ jobs:
         export CLICOLOR_FORCE=1
         export YARP_COLORED_OUTPUT=1
 
+        # CMAKE_C_COMPILER/CMAKE_CXX_COMPILER are pinned explicitly here to
+        # the real compiler binaries (not autodetected via PATH). PATH has
+        # /usr/lib/ccache first (see 'Prepare ccache environment
+        # variables' above), so without this CMake would resolve the
+        # compiler to the ccache masquerade path (e.g.
+        # /usr/lib/ccache/c++). build-wrapper records that resolved
+        # absolute path, and sonar-scanner - running later in a separate,
+        # clean job (pr-analysis.yml) - needs to re-invoke that same path
+        # to probe the compiler's default standard/include paths. That
+        # runner has no ccache masquerade set up, so the probe would
+        # silently fail and CFamily would end up analyzing 0 files.
+        # Pinning to /usr/bin/cc and /usr/bin/c++ - present identically on
+        # both runners - avoids the whole issue.
         /usr/bin/cmake -S. -Bbuild \
           -C .ci/initial-cache.gh.linux.cmake \
+          -DCMAKE_C_COMPILER=/usr/bin/cc \
+          -DCMAKE_CXX_COMPILER=/usr/bin/c++ \
           -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
           -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always \
           -DCMAKE_BUILD_TYPE=Profile \
@@ -2785,7 +2800,9 @@ jobs:
         # zero translation units (SonarCloud then fails with "0 files
         # were analyzed"). Disabling ccache here forces a full, clean
         # build for this step only - the rest of the job still benefits
-        # from the cache.
+        # from the cache. (The compiler itself is already pinned to a
+        # real, non-ccache path at CMake configure time above, so this is
+        # just about forcing real compilation.)
         CCACHE_DISABLE: 1
       run: |
         build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build --config Profile
