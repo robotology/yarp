@@ -103,6 +103,41 @@ jobs:
         # no file needs to be moved here.
         ls -la build_wrapper_output_directory build/coverage.xml build/JUnitTestResults.xml
 
+    # Diagnostic step: dump exactly which compiler executable(s)
+    # build-wrapper actually captured, and check whether that same path
+    # exists and runs on THIS runner (the one CFamily will try to
+    # re-invoke to probe the compiler). This tells us directly whether
+    # the "0 files analyzed" error is a path/compiler-availability issue,
+    # instead of guessing.
+    - name: Debug - inspect captured compiler paths
+      run: |
+        echo "---- ls build_wrapper_output_directory ----"
+        ls -la build_wrapper_output_directory
+
+        echo "---- unique 'executable' fields in build-wrapper-dump.json ----"
+        jq -r '.captures[].executable' build_wrapper_output_directory/build-wrapper-dump.json | sort -u
+
+        echo "---- unique 'compiler' fields ----"
+        jq -r '.captures[].compiler' build_wrapper_output_directory/build-wrapper-dump.json | sort -u
+
+        echo "---- first capture entry (full) ----"
+        jq '.captures[0]' build_wrapper_output_directory/build-wrapper-dump.json
+
+        echo "---- does each captured executable exist here, and does it run? ----"
+        for exe in $(jq -r '.captures[].executable' build_wrapper_output_directory/build-wrapper-dump.json | sort -u); do
+          echo "== $exe =="
+          if [ -e "$exe" ]; then
+            ls -la "$exe"
+            "$exe" --version || echo "(failed to run --version)"
+          else
+            echo "MISSING on this runner"
+          fi
+        done
+
+        echo "---- for comparison: what 'cc'/'c++' resolve to here ----"
+        which cc c++ || true
+        cc --version || true
+
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -120,7 +155,14 @@ jobs:
         SONAR_LINKS_HOMEPAGE: 'https://www.yarp.it/'
         SONAR_SOURCES: 'src'
         SONAR_TESTS: 'tests'
-        SONAR_CFAMILY_CACHE_ENABLED: true
+        # TEMPORARY - diagnostic: the CFamily incremental analysis cache
+        # appears to be in an inconsistent state server-side ("Existing
+        # cache invalidated and deleted" followed by "2605/2605 files
+        # marked as unchanged", which is contradictory), right before
+        # every "0 files were analyzed" failure so far. Disabling it to
+        # rule out a server-side caching bug. Restore to 'true' once
+        # confirmed either way.
+        SONAR_CFAMILY_CACHE_ENABLED: false
         SONAR_SCANNER_VERSION: '8.0.1.6346'
         SONAR_THREADS: 2
       run: |
