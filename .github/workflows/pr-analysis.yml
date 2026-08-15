@@ -114,29 +114,23 @@ jobs:
         echo "---- ls build_wrapper_output_directory ----"
         ls -la build_wrapper_output_directory
 
-        echo "---- unique 'executable' fields in build-wrapper-dump.json ----"
-        jq -r '.captures[].executable' build_wrapper_output_directory/build-wrapper-dump.json | sort -u
+        echo "---- file type ----"
+        file build_wrapper_output_directory/build-wrapper-dump.json
 
-        echo "---- unique 'compiler' fields ----"
-        jq -r '.captures[].compiler' build_wrapper_output_directory/build-wrapper-dump.json | sort -u
+        echo "---- first 200 bytes (hex) ----"
+        head -c 200 build_wrapper_output_directory/build-wrapper-dump.json | xxd
 
-        echo "---- first capture entry (full) ----"
-        jq '.captures[0]' build_wrapper_output_directory/build-wrapper-dump.json
+        echo "---- first 5 lines (raw) ----"
+        head -n 5 build_wrapper_output_directory/build-wrapper-dump.json
 
-        echo "---- does each captured executable exist here, and does it run? ----"
-        for exe in $(jq -r '.captures[].executable' build_wrapper_output_directory/build-wrapper-dump.json | sort -u); do
-          echo "== $exe =="
-          if [ -e "$exe" ]; then
-            ls -la "$exe"
-            "$exe" --version || echo "(failed to run --version)"
-          else
-            echo "MISSING on this runner"
-          fi
-        done
+        echo "---- jq parse attempt (may fail, that's the point) ----"
+        jq -r '.captures[].executable' build_wrapper_output_directory/build-wrapper-dump.json 2>&1 | head -20 || true
 
-        echo "---- for comparison: what 'cc'/'c++' resolve to here ----"
-        which cc c++ || true
-        cc --version || true
+        echo "---- build-wrapper.log: errors/warnings from the BUILD run ----"
+        grep -i "error\|warn\|skip\|fail" build_wrapper_output_directory/build-wrapper.log | head -80 || true
+
+        echo "---- build-wrapper.log: last 40 lines ----"
+        tail -n 40 build_wrapper_output_directory/build-wrapper.log
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
