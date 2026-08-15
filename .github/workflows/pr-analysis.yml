@@ -114,23 +114,38 @@ jobs:
         echo "---- ls build_wrapper_output_directory ----"
         ls -la build_wrapper_output_directory
 
-        echo "---- file type ----"
-        file build_wrapper_output_directory/build-wrapper-dump.json
+        # build-wrapper-dump.json starts with a '#'-prefixed copyright/
+        # license header before the actual JSON body - strip it first.
+        echo "---- unique 'executable' fields (after stripping comment header) ----"
+        grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | \
+          jq -r '.captures[].executable' | sort -u
 
-        echo "---- first 200 bytes (hex) ----"
-        head -c 200 build_wrapper_output_directory/build-wrapper-dump.json | xxd
+        echo "---- unique 'compiler' fields ----"
+        grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | \
+          jq -r '.captures[].compiler' | sort -u
 
-        echo "---- first 5 lines (raw) ----"
-        head -n 5 build_wrapper_output_directory/build-wrapper-dump.json
+        echo "---- number of captures ----"
+        grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | \
+          jq '.captures | length'
 
-        echo "---- jq parse attempt (may fail, that's the point) ----"
-        jq -r '.captures[].executable' build_wrapper_output_directory/build-wrapper-dump.json 2>&1 | head -20 || true
+        echo "---- first capture entry (full) ----"
+        grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | \
+          jq '.captures[0]'
 
-        echo "---- build-wrapper.log: errors/warnings from the BUILD run ----"
-        grep -i "error\|warn\|skip\|fail" build_wrapper_output_directory/build-wrapper.log | head -80 || true
+        echo "---- does each captured executable exist here, and does it run? ----"
+        for exe in $(grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | jq -r '.captures[].executable' | sort -u); do
+          echo "== $exe =="
+          if [ -e "$exe" ]; then
+            ls -la "$exe"
+            "$exe" --version || echo "(failed to run --version)"
+          else
+            echo "MISSING on this runner"
+          fi
+        done
 
-        echo "---- build-wrapper.log: last 40 lines ----"
-        tail -n 40 build_wrapper_output_directory/build-wrapper.log
+        echo "---- for comparison: what 'cc'/'c++' resolve to here ----"
+        which cc c++ || true
+        cc --version || true
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
