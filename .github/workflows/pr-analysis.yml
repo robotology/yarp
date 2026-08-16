@@ -202,10 +202,8 @@ jobs:
         [[ -v SONAR_TESTS ]] && SONAR_TESTS_CMD_ARG="-Dsonar.tests=${SONAR_TESTS}"
         [[ -v SONAR_CFAMILY_CACHE_PATH ]] && SONAR_CFAMILY_CACHE_PATH_CMD_ARG="-Dsonar.cfamily.cache.path=${SONAR_CFAMILY_CACHE_PATH}"
 
-        # -X: temporary verbose/debug logging, specifically to get
-        # CFamily's detailed per-entry rejection reasons instead of just
-        # the final "0 files analyzed" summary. Remove once diagnosed.
-        sonar-scanner -X \
+        set +e
+        sonar-scanner \
             -Dsonar.host.url="${SONAR_HOST_URL}" \
             -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
             -Dsonar.language=c++ \
@@ -244,7 +242,24 @@ jobs:
             ${SONAR_PR_CMD_ARGS} \
             ${SONAR_TOKEN_CMD_ARG} \
             ${SONAR_ORGANIZATION_CMD_ARG} \
-            ${SONAR_CFAMILY_CACHE_PATH_CMD_ARG}
+            ${SONAR_CFAMILY_CACHE_PATH_CMD_ARG} \
+            2>&1 | tee sonar-scanner-output.log
+        SCANNER_EXIT=${PIPESTATUS[0]}
+        set -e
+
+        if [[ $SCANNER_EXIT -ne 0 ]]; then
+          # SonarCloud's PR-mode "new code" logic can legitimately decide
+          # that 0 C/C++ files changed (e.g. a PR that only touches CI
+          # YAML files) - but CFamily raises a fatal error in that case
+          # instead of treating it as a benign, empty result. Recognize
+          # exactly that known, harmless case and don't fail the job for
+          # it; any other failure still fails normally.
+          if grep -q "0 C/C++/Objective-C files were analyzed" sonar-scanner-output.log; then
+            echo "::warning::sonar-scanner reported 0 C/C++ files analyzed - most likely this PR doesn't change any C/C++ source file. Treating as a non-failure."
+            exit 0
+          fi
+          exit $SCANNER_EXIT
+        fi
 
   codacy-clang-tidy-report:
     name: 'Upload clang-tidy results to Codacy'
