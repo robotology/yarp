@@ -172,7 +172,7 @@ jobs:
         # rule out a server-side caching bug. Restore to 'true' once
         # confirmed either way.
         SONAR_CFAMILY_CACHE_ENABLED: false
-        SONAR_SCANNER_VERSION: '8.0.1.6346'
+        SONAR_SCANNER_VERSION: '8.1.0.6389'
         SONAR_THREADS: 2
       run: |
         SONAR_HOME_PATH=.sonar
@@ -243,7 +243,10 @@ jobs:
         [[ -v SONAR_TESTS ]] && SONAR_TESTS_CMD_ARG="-Dsonar.tests=${SONAR_TESTS}"
         [[ -v SONAR_CFAMILY_CACHE_PATH ]] && SONAR_CFAMILY_CACHE_PATH_CMD_ARG="-Dsonar.cfamily.cache.path=${SONAR_CFAMILY_CACHE_PATH}"
 
-        sonar-scanner \
+        # -X: temporary verbose/debug logging, specifically to get
+        # CFamily's detailed per-entry rejection reasons instead of just
+        # the final "0 files analyzed" summary. Remove once diagnosed.
+        sonar-scanner -X \
             -Dsonar.host.url="${SONAR_HOST_URL}" \
             -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
             -Dsonar.language=c++ \
@@ -252,7 +255,7 @@ jobs:
             -Dsonar.links.ci=${SONAR_LINKS_CI} \
             -Dsonar.links.issue=${SONAR_LINKS_ISSUE} \
             -Dsonar.links.scm=${SONAR_LINKS_SCM} \
-            -Dsonar.cfamily.build-wrapper-output=build_wrapper_output_directory \
+            -Dsonar.cfamily.compile-commands=build_wrapper_output_directory/compile_commands.json \
             -Dsonar.sourceEncoding=${SONAR_SOURCEENCODING} \
             -Dsonar.cfamily.threads=${SONAR_THREADS} \
             -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
