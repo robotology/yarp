@@ -99,53 +99,12 @@ jobs:
       run: |
         # actions/download-artifact restores the same relative paths that
         # were used when uploading (build/coverage.xml,
-        # build/JUnitTestResults.xml, build_wrapper_output_directory/), so
-        # no file needs to be moved here.
-        ls -la build_wrapper_output_directory build/coverage.xml build/JUnitTestResults.xml
-
-    # Diagnostic step: dump exactly which compiler executable(s)
-    # build-wrapper actually captured, and check whether that same path
-    # exists and runs on THIS runner (the one CFamily will try to
-    # re-invoke to probe the compiler). This tells us directly whether
-    # the "0 files analyzed" error is a path/compiler-availability issue,
-    # instead of guessing.
-    - name: Debug - inspect captured compiler paths
-      run: |
-        echo "---- ls build_wrapper_output_directory ----"
-        ls -la build_wrapper_output_directory
-
-        # build-wrapper-dump.json starts with a '#'-prefixed copyright/
-        # license header before the actual JSON body - strip it first.
-        echo "---- unique 'executable' fields (after stripping comment header) ----"
-        grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | \
-          jq -r '.captures[].executable' | sort -u
-
-        echo "---- unique 'compiler' fields ----"
-        grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | \
-          jq -r '.captures[].compiler' | sort -u
-
-        echo "---- number of captures ----"
-        grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | \
-          jq '.captures | length'
-
-        echo "---- first capture entry (full) ----"
-        grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | \
-          jq '.captures[0]'
-
-        echo "---- does each captured executable exist here, and does it run? ----"
-        for exe in $(grep -v '^#' build_wrapper_output_directory/build-wrapper-dump.json | jq -r '.captures[].executable' | sort -u); do
-          echo "== $exe =="
-          if [ -e "$exe" ]; then
-            ls -la "$exe"
-            "$exe" --version || echo "(failed to run --version)"
-          else
-            echo "MISSING on this runner"
-          fi
-        done
-
-        echo "---- for comparison: what 'cc'/'c++' resolve to here ----"
-        which cc c++ || true
-        cc --version || true
+        # build/JUnitTestResults.xml, sonar-cfamily/compile_commands.json),
+        # so no file needs to be moved here. Only compile_commands.json is
+        # published (not the whole build_wrapper_output_directory) to
+        # force sonar-scanner into "Compilation Database" mode - see the
+        # comment in ci.yml's 'sonarcloud-build' job for why.
+        ls -la sonar-cfamily/compile_commands.json build/coverage.xml build/JUnitTestResults.xml
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
@@ -172,7 +131,7 @@ jobs:
         # rule out a server-side caching bug. Restore to 'true' once
         # confirmed either way.
         SONAR_CFAMILY_CACHE_ENABLED: false
-        SONAR_SCANNER_VERSION: '8.0.1.6346'
+        SONAR_SCANNER_VERSION: '8.1.0.6389'
         SONAR_THREADS: 2
       run: |
         SONAR_HOME_PATH=.sonar
@@ -243,7 +202,10 @@ jobs:
         [[ -v SONAR_TESTS ]] && SONAR_TESTS_CMD_ARG="-Dsonar.tests=${SONAR_TESTS}"
         [[ -v SONAR_CFAMILY_CACHE_PATH ]] && SONAR_CFAMILY_CACHE_PATH_CMD_ARG="-Dsonar.cfamily.cache.path=${SONAR_CFAMILY_CACHE_PATH}"
 
-        sonar-scanner \
+        # -X: temporary verbose/debug logging, specifically to get
+        # CFamily's detailed per-entry rejection reasons instead of just
+        # the final "0 files analyzed" summary. Remove once diagnosed.
+        sonar-scanner -X \
             -Dsonar.host.url="${SONAR_HOST_URL}" \
             -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
             -Dsonar.language=c++ \
@@ -252,7 +214,7 @@ jobs:
             -Dsonar.links.ci=${SONAR_LINKS_CI} \
             -Dsonar.links.issue=${SONAR_LINKS_ISSUE} \
             -Dsonar.links.scm=${SONAR_LINKS_SCM} \
-            -Dsonar.cfamily.build-wrapper-output=build_wrapper_output_directory \
+            -Dsonar.cfamily.compile-commands=sonar-cfamily/compile_commands.json \
             -Dsonar.sourceEncoding=${SONAR_SOURCEENCODING} \
             -Dsonar.cfamily.threads=${SONAR_THREADS} \
             -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \

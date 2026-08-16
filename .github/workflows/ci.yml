@@ -303,7 +303,7 @@ jobs:
         SONAR_TESTS: 'tests'
         SONAR_CFAMILY_GCOV_REPORTSPATH: 'build/coverage.info'
         SONAR_CFAMILY_CACHE_ENABLED: true
-        SONAR_SCANNER_VERSION: '8.0.1.6346'
+        SONAR_SCANNER_VERSION: '8.1.0.6389'
         SONAR_THREADS: 2
       run: |
         # Internal variables
@@ -627,6 +627,20 @@ jobs:
         JSON
         cat sonar-metadata.json
 
+        # Only publish compile_commands.json from build_wrapper_output_directory,
+        # not the whole directory. build-wrapper-dump.json (also in there)
+        # has been observed to mislabel a real GCC invocation as
+        # "compiler": "clang", which makes SonarCloud silently analyze 0
+        # files when that file is present ("Build-Wrapper" mode takes
+        # priority over "Compilation Database" mode whenever
+        # build-wrapper-dump.json is found alongside compile_commands.json).
+        # Publishing only compile_commands.json forces sonar-scanner into
+        # "Compilation Database" mode, where it detects the compiler
+        # itself instead of trusting that field. This also drops the huge,
+        # unneeded build-wrapper.log (tens of MB) from the artifact.
+        mkdir -p sonar-cfamily
+        cp build_wrapper_output_directory/compile_commands.json sonar-cfamily/compile_commands.json
+
     # No secrets and no analysis step here: this job just produces the
     # build/coverage results and publishes them as an artifact. The actual
     # 'sonar-scanner' run happens in pr-analysis.yml, which has access to
@@ -640,4 +654,4 @@ jobs:
           sonar-metadata.json
           build/coverage.xml
           build/JUnitTestResults.xml
-          build_wrapper_output_directory
+          sonar-cfamily/compile_commands.json
