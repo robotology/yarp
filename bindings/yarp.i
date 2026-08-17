@@ -310,8 +310,8 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
         return NULL;
     }
 
-    $1 = (int)PyInt_AsLong(PyTuple_GetItem($input,0));   /* int i */
-    $2 = (int)PyInt_AsLong(PyTuple_GetItem($input,1));   /* int j */
+    $1 = (int)PyLong_AsLong(PyTuple_GetItem($input,0));   /* int i */
+    $2 = (int)PyLong_AsLong(PyTuple_GetItem($input,1));   /* int j */
 };
 #endif
 
