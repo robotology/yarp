@@ -31,6 +31,7 @@ TEST_CASE("dev::multipleanalogsensorsremapperTest", "[yarp::dev]")
     {
         Property options;
         options.put("device", "multipleanalogsensorsremapper");
+        options.put("verbose", true);
         Bottle gyrosNames;
         Bottle& gyrosList = gyrosNames.addList();
         gyrosList.addString("head");
@@ -43,6 +44,19 @@ TEST_CASE("dev::multipleanalogsensorsremapperTest", "[yarp::dev]")
 
         yarp::os::Time::now();
         ddRemapper.close();
+    }
+
+    SECTION("Reject misspelled sensor-name options")
+    {
+        Property options;
+        options.put("device", "multipleanalogsensorsremapper");
+        Bottle linearVelocityNames;
+        Bottle& linearVelocityList = linearVelocityNames.addList();
+        linearVelocityList.addString("linear_velocity");
+        options.put("LinearVelocitySensorNames", linearVelocityNames.get(0));
+
+        PolyDriver ddRemapper;
+        CHECK_FALSE(ddRemapper.open(options));
     }
 
     SECTION("Test the multipleanalogsensorsremapper device attached")

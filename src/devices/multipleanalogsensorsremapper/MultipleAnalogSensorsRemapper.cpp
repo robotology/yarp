@@ -5,11 +5,12 @@
 
 #include "MultipleAnalogSensorsRemapper.h"
 
-#include <map>
-
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Searchable.h>
+
+#include <algorithm>
+#include <map>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -129,15 +130,38 @@ bool MultipleAnalogSensorsRemapper::parseOptions(const Property& prop)
     bool ok = true;
 
     m_remappedSensors.resize(MAS_NrOfSensorTypes);
+    std::vector<std::string> validSensorNameOptions;
+    validSensorNameOptions.reserve(MAS_NrOfSensorTypes);
 
     for (size_t i = 0; i < MAS_NrOfSensorTypes; i++)
     {
         auto sensType = static_cast<MAS_SensorType>(i);
         std::string optionName = MAS_getTagFromEnum(sensType) +"Names";
+        validSensorNameOptions.push_back(optionName);
         ok = getVectorOfStringFromListInConfig(optionName , prop, m_remappedSensors[i]);
         if (!ok)
         {
             yCError(MULTIPLEANALOGSENSORSREMAPPER) << optionName << "should be followed by a list of string.";
+            return false;
+        }
+    }
+
+    const std::string namesSuffix = "Names";
+    Bottle configuredOptions(prop.toString());
+    for (size_t i = 0; i < configuredOptions.size(); i++) {
+        Bottle* configuredOption = configuredOptions.get(i).asList();
+        if (configuredOption == nullptr || configuredOption->size() == 0) {
+            continue;
+        }
+
+        const std::string optionName = configuredOption->get(0).asString();
+        const bool hasNamesSuffix = optionName.size() >= namesSuffix.size() && optionName.compare(optionName.size() - namesSuffix.size(), namesSuffix.size(), namesSuffix) == 0;
+        const bool isValidSensorNameOption = std::find(validSensorNameOptions.begin(), validSensorNameOptions.end(), optionName) != validSensorNameOptions.end();
+        if (hasNamesSuffix && !isValidSensorNameOption) {
+            yCError(MULTIPLEANALOGSENSORSREMAPPER, "Unknown sensor-name option '%s'. Valid options are:", optionName.c_str());
+            for (const auto& validOption : validSensorNameOptions) {
+                yCError(MULTIPLEANALOGSENSORSREMAPPER, "   * %s", validOption.c_str());
+            }
             return false;
         }
     }
