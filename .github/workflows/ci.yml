@@ -641,6 +641,29 @@ jobs:
         mkdir -p sonar-cfamily
         cp build_wrapper_output_directory/compile_commands.json sonar-cfamily/compile_commands.json
 
+        # Some entries in compile_commands.json point to source/header
+        # files that only exist as build output (Qt MOC's
+        # mocs_compilation.cpp, IDL-generated *_IDL.cpp, generated config
+        # headers, UI headers, etc.) - they are not part of the git
+        # checkout, so the analysis job (which only checks out git-tracked
+        # sources) would be missing them. Rather than trying to enumerate
+        # exactly which generated files are needed (fragile - easy to
+        # miss a generated header pulled in only via #include), package
+        # the whole build/ tree as a single archive, excluding compiled
+        # binaries (object files, static/shared libraries, the bin/ and
+        # lib/ output directories) since sonar-scanner only needs to read
+        # text/source content, never the compiled output.
+        tar -czf sonar-cfamily/build-tree.tar.gz \
+          --exclude='*.o' \
+          --exclude='*.obj' \
+          --exclude='*.a' \
+          --exclude='*.so' \
+          --exclude='*.so.*' \
+          --exclude='build/bin' \
+          --exclude='build/lib' \
+          build
+        echo "build-tree.tar.gz size: $(du -h sonar-cfamily/build-tree.tar.gz | cut -f1)"
+
     # No secrets and no analysis step here: this job just produces the
     # build/coverage results and publishes them as an artifact. The actual
     # 'sonar-scanner' run happens in pr-analysis.yml, which has access to
@@ -652,6 +675,5 @@ jobs:
         retention-days: 1
         path: |
           sonar-metadata.json
-          build/coverage.xml
-          build/JUnitTestResults.xml
           sonar-cfamily/compile_commands.json
+          sonar-cfamily/build-tree.tar.gz
