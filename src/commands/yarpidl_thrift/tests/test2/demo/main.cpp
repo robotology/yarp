@@ -13,6 +13,7 @@
 #include <TestAnnotatedTypes.h>
 #include <TestSomeMoreTypes.h>
 #include <TestSomeLists.h>
+#include <TestSomeMaps.h>
 #if defined(THRIFT_INCLUDE_PREFIX) && defined(THRIFT_NO_NAMESPACE_PREFIX)
 # include <sub/directory/ClockServer.h>
 #elif defined(THRIFT_INCLUDE_PREFIX)
@@ -818,8 +819,10 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         a.a_i64 = 64;
         a.a_double = 0.64;
         a.a_string = "A string";
-        tmp.read(a);
-        tmp.write(b);
+
+        REQUIRE(tmp.read(a));
+        REQUIRE(tmp.write(b));
+
         CHECK(a.a_bool == b.a_bool);
         CHECK(a.a_i16 == b.a_i16);
         CHECK(a.a_i32 == b.a_i32);
@@ -850,8 +853,12 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         memset(a.a_list_of_binary[1].data(), 0, a.a_list_of_binary[1].size());
         a.a_list_of_binary[1][a.a_list_of_binary[1].size() - 1] = 'D';
 
-        tmp.read(a);
-        tmp.write(b);
+        a.a_list_of_list_of_double.resize(2);
+        a.a_list_of_list_of_double[0] = std::vector<double>({-0.64, 0.64});
+        a.a_list_of_list_of_double[1] = std::vector<double>({-0.32, 0.32});
+
+        REQUIRE(tmp.read(a));
+        REQUIRE(tmp.write(b));
 
         CHECK(b.a_list_of_bool.size() == a.a_list_of_bool.size());
         CHECK(b.a_list_of_bool[0]   == a.a_list_of_bool[0]);
@@ -879,6 +886,64 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         CHECK(b.a_list_of_binary[1].size() == 12);
         CHECK(b.a_list_of_binary[0][5] == 'C');
         CHECK(b.a_list_of_binary[1][11] == 'D');
+
+        CHECK(b.a_list_of_list_of_double.size() == a.a_list_of_list_of_double.size());
+        CHECK(b.a_list_of_list_of_double[0].size() == a.a_list_of_list_of_double[0].size());
+        CHECK(b.a_list_of_list_of_double[0][0] == a.a_list_of_list_of_double[0][0]);
+        CHECK(b.a_list_of_list_of_double[0][1] == a.a_list_of_list_of_double[0][1]);
+        CHECK(b.a_list_of_list_of_double[1].size() == a.a_list_of_list_of_double[1].size());
+        CHECK(b.a_list_of_list_of_double[1][0] == a.a_list_of_list_of_double[1][0]);
+        CHECK(b.a_list_of_list_of_double[1][1] == a.a_list_of_list_of_double[1][1]);
+    }
+
+    SECTION("test some maps")
+    {
+        TestSomeMaps a;
+        TestSomeMaps b;
+        Bottle tmp;
+
+        a.a_map_of_list_of_double["first"] = std::vector<double>({-0.64, 0.64});
+        a.a_map_of_list_of_double["second"] = std::vector<double>({-0.32, 0.32});
+        a.a_map_of_list_of_list_of_double["first"].push_back(std::vector<double>({-0.16, 0.16}));
+        a.a_map_of_list_of_list_of_double["first"].push_back(std::vector<double>({-0.08, 0.08}));
+        a.a_map_of_list_of_list_of_double["second"].push_back(std::vector<double>({-0.04, 0.04}));
+        a.a_map_of_list_of_list_of_double["second"].push_back(std::vector<double>({-0.02, 0.02}));
+
+        a.a_list_of_maps_of_doubles.push_back(std::map<std::string, double>({{"0first", 0.1}, {"0second", 0.2}}));
+        a.a_list_of_maps_of_doubles.push_back(std::map<std::string, double>({{"1first", 1.1}, {"1second", 1.2}}));
+
+        REQUIRE(tmp.read(a));
+        REQUIRE(tmp.write(b));
+
+        CHECK(b.a_map_of_list_of_double.size() == a.a_map_of_list_of_double.size());
+        CHECK(b.a_map_of_list_of_double["first"].size() == a.a_map_of_list_of_double["first"].size());
+        CHECK(b.a_map_of_list_of_double["first"][0] == a.a_map_of_list_of_double["first"][0]);
+        CHECK(b.a_map_of_list_of_double["first"][1] == a.a_map_of_list_of_double["first"][1]);
+        CHECK(b.a_map_of_list_of_double["second"].size() == a.a_map_of_list_of_double["second"].size());
+        CHECK(b.a_map_of_list_of_double["second"][0] == a.a_map_of_list_of_double["second"][0]);
+        CHECK(b.a_map_of_list_of_double["second"][1] == a.a_map_of_list_of_double["second"][1]);
+
+        CHECK(b.a_map_of_list_of_list_of_double.size() == a.a_map_of_list_of_list_of_double.size());
+        CHECK(b.a_map_of_list_of_list_of_double["first"].size() == a.a_map_of_list_of_list_of_double["first"].size());
+        CHECK(b.a_map_of_list_of_list_of_double["first"][0].size() == a.a_map_of_list_of_list_of_double["first"][0].size());
+        CHECK(b.a_map_of_list_of_list_of_double["first"][0][0] == a.a_map_of_list_of_list_of_double["first"][0][0]);
+        CHECK(b.a_map_of_list_of_list_of_double["first"][0][1] == a.a_map_of_list_of_list_of_double["first"][0][1]);
+        CHECK(b.a_map_of_list_of_list_of_double["first"][1].size() == a.a_map_of_list_of_list_of_double["first"][1].size());
+        CHECK(b.a_map_of_list_of_list_of_double["first"][1][0] == a.a_map_of_list_of_list_of_double["first"][1][0]);
+        CHECK(b.a_map_of_list_of_list_of_double["first"][1][1] == a.a_map_of_list_of_list_of_double["first"][1][1]);
+        CHECK(b.a_map_of_list_of_list_of_double["second"].size() == a.a_map_of_list_of_list_of_double["second"].size());
+        CHECK(b.a_map_of_list_of_list_of_double["second"][0].size() == a.a_map_of_list_of_list_of_double["second"][0].size());
+        CHECK(b.a_map_of_list_of_list_of_double["second"][0][0] == a.a_map_of_list_of_list_of_double["second"][0][0]);
+        CHECK(b.a_map_of_list_of_list_of_double["second"][0][1] == a.a_map_of_list_of_list_of_double["second"][0][1]);
+        CHECK(b.a_map_of_list_of_list_of_double["second"][1].size() == a.a_map_of_list_of_list_of_double["second"][1].size());
+        CHECK(b.a_map_of_list_of_list_of_double["second"][1][0] == a.a_map_of_list_of_list_of_double["second"][1][0]);
+        CHECK(b.a_map_of_list_of_list_of_double["second"][1][1] == a.a_map_of_list_of_list_of_double["second"][1][1]);
+
+        CHECK(b.a_list_of_maps_of_doubles.size() == a.a_list_of_maps_of_doubles.size());
+        CHECK(b.a_list_of_maps_of_doubles[0]["0first"] == a.a_list_of_maps_of_doubles[0]["0first"]);
+        CHECK(b.a_list_of_maps_of_doubles[0]["0second"] == a.a_list_of_maps_of_doubles[0]["0second"]);
+        CHECK(b.a_list_of_maps_of_doubles[1]["1first"] == a.a_list_of_maps_of_doubles[1]["1first"]);
+        CHECK(b.a_list_of_maps_of_doubles[1]["1second"] == a.a_list_of_maps_of_doubles[1]["1second"]);
     }
 
     SECTION("test lists with previous data")
@@ -920,8 +985,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         memset(b.a_list_of_binary[2].data(), 0, b.a_list_of_binary[2].size());
         b.a_list_of_binary[2][b.a_list_of_binary[2].size() - 1] = 'G';
 
-        tmp.read(a);
-        tmp.write(b);
+        REQUIRE(tmp.read(a));
+        REQUIRE(tmp.write(b));
 
         CHECK(b.a_list_of_bool.size() == a.a_list_of_bool.size());
         CHECK(b.a_list_of_bool[0]   == a.a_list_of_bool[0]);
@@ -973,8 +1038,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         memset(b.a_list_of_binary[1].data(), 0, b.a_list_of_binary[1].size());
         b.a_list_of_binary[1][b.a_list_of_binary[1].size() - 1] = 'D';
 
-        tmp.read(a);
-        tmp.write(b);
+        REQUIRE(tmp.read(a));
+        REQUIRE(tmp.write(b));
 
         CHECK(b.a_list_of_bool.empty());
         CHECK(b.a_list_of_i8.empty());
@@ -999,8 +1064,10 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         a.a_float32 = 0.32;
         a.a_float64 = 0.64;
         a.a_size = sizeof(TestAnnotatedTypes);
-        tmp.read(a);
-        tmp.write(b);
+
+        REQUIRE(tmp.read(a));
+        REQUIRE(tmp.write(b));
+
         CHECK(a.a_vocab == b.a_vocab);
         CHECK(a.a_ui8 == b.a_ui8);
         CHECK(a.a_ui16 == b.a_ui16);

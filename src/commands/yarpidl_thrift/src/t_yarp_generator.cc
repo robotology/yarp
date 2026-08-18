@@ -48,6 +48,7 @@ class t_yarp_generator : public t_oop_generator
     bool need_common_{false}; //are there consts and typedef that we need to keep in a common file?
     int indent_h_{0};
     int indent_cpp_{0};
+    int nest_level_{0}; // tracks container nesting depth to avoid loop-variable name collisions
 
     // Files
     ofstream_with_content_based_conditional_update f_out_common_;
@@ -436,9 +437,17 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
     } else if (type->is_map()) {
         return "BOTTLE_TAG_LIST";
     } else if (type->is_set()) {
-        return "BOTTLE_TAG_LIST | " + type_to_enum(static_cast<t_set*>(type)->get_elem_type());
+        auto* elem = static_cast<t_set*>(type)->get_elem_type();
+        if (is_complex_type(elem)) {
+            return "BOTTLE_TAG_LIST";
+        }
+        return "BOTTLE_TAG_LIST | " + type_to_enum(elem);
     } else if (type->is_list()) {
-        return "BOTTLE_TAG_LIST | " + type_to_enum(static_cast<t_list*>(type)->get_elem_type());
+        auto* elem = static_cast<t_list*>(type)->get_elem_type();
+        if (is_complex_type(elem)) {
+            return "BOTTLE_TAG_LIST";
+        }
+        return "BOTTLE_TAG_LIST | " + type_to_enum(elem);
     } else if (type->is_xception()) {
         return "::apache::thrift::protocol::T_STRUCT";
     }
@@ -1307,7 +1316,7 @@ void t_yarp_generator::generate_serialize_container(std::ostringstream& f_cpp_,
     } else if (ttype->is_list()) {
         auto* elem_type = static_cast<t_list*>(ttype)->get_elem_type();
         f_cpp_ << indent_cpp() << "if (!writer.writeListBegin("
-                        << type_to_enum(elem_type)
+                        << (get_true_type(elem_type)->is_container() ? "BOTTLE_TAG_LIST" : type_to_enum(elem_type))
                         << ", "
                         << name
                         << ".size()))"
@@ -1576,6 +1585,12 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
+    // Use a nesting-depth-specific loop variable name to avoid shadowing
+    // an outer container's loop variable when this container is nested
+    // (e.g. list<map<...>>, map<..., list<...>>, etc.), which would cause
+    // the outer index embedded in "name" to resolve to the wrong variable.
+    const std::string _i_var = "_i" + std::to_string(nest_level_++);
+
     if (ttype->is_map())
     {
         // Begin scope of _csize
@@ -1589,7 +1604,7 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         f_cpp_ << indent_cpp() << "reader.readMapBegin(_ktype, _vtype, _csize);\n";
 
         // For loop iterates over elements
-        f_cpp_ << indent_cpp() << "for (size_t _i = 0; _i < _csize; ++_i) {\n";
+        f_cpp_ << indent_cpp() << "for (size_t " << _i_var << " = 0; " << _i_var << " < _csize; ++" << _i_var << ") {\n";
         indent_up_cpp();
         {
             generate_deserialize_map_element(f_cpp_, static_cast<t_map*>(ttype), name);
@@ -1615,7 +1630,7 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         f_cpp_ << indent_cpp() << "reader.readSetBegin(_etype, _csize);\n";
 
         // For loop iterates over elements
-        f_cpp_ << indent_cpp() << "for (size_t _i = 0; _i < _csize; ++_i) {\n";
+        f_cpp_ << indent_cpp() << "for (size_t " << _i_var << " = 0; " << _i_var << " < _csize; ++" << _i_var << ") {\n";
         indent_up_cpp();
         {
             generate_deserialize_set_element(f_cpp_, static_cast<t_set*>(ttype), name);
@@ -1634,7 +1649,9 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
     {
         t_container* tcontainer = static_cast<t_container*>(ttype);
         auto* elem_type = static_cast<t_list*>(ttype)->get_elem_type();
-        bool use_push = tcontainer->has_cpp_name() || (static_cast<t_base_type*>(elem_type)->get_base() == t_base_type::TYPE_BOOL);
+        bool use_push = tcontainer->has_cpp_name() ||
+                        (elem_type->is_base_type() &&
+                         static_cast<t_base_type*>(elem_type)->get_base() == t_base_type::TYPE_BOOL);
 
         // Begin scope of _csize
         f_cpp_ << indent_cpp() << "{\n";
@@ -1652,7 +1669,7 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         // and skip the check if the remaining string is empty, but this is
         // less error prone, and the check is performed at compile time anyway
         f_cpp_ << indent_cpp() << "// WireReader removes BOTTLE_TAG_LIST from the tag\n";
-        f_cpp_ << indent_cpp() << "constexpr int expected_tag = ((" << type_to_enum(elem_type) << ") & (~BOTTLE_TAG_LIST));\n";
+        f_cpp_ << indent_cpp() << "constexpr int expected_tag = ((" << (get_true_type(elem_type)->is_container() ? "BOTTLE_TAG_LIST" : type_to_enum(elem_type)) << ") & (~BOTTLE_TAG_LIST));\n";
         f_cpp_ << indent_cpp() << "if constexpr (expected_tag != 0) {\n";
         indent_up_cpp();
         {
@@ -1683,10 +1700,10 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
                 f_cpp_ << indent_cpp() << name << ".resize(_csize);\n";
             }
 
-            f_cpp_ << indent_cpp() << "for (size_t _i = 0; _i < _csize; ++_i) {\n";
+            f_cpp_ << indent_cpp() << "for (size_t " << _i_var << " = 0; " << _i_var << " < _csize; ++" << _i_var << ") {\n";
             indent_up_cpp();
             {
-                generate_deserialize_list_element(f_cpp_, static_cast<t_list*>(ttype), name, use_push, name + "[_i]");
+                generate_deserialize_list_element(f_cpp_, static_cast<t_list*>(ttype), name, use_push, name + "[" + _i_var + "]");
             }
             indent_down_cpp();
             f_cpp_ << indent_cpp() << "}\n";
@@ -1699,6 +1716,8 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         indent_down_cpp();
         f_cpp_ << indent_cpp() << "}\n";
     }
+
+    --nest_level_;
 }
 
 void t_yarp_generator::generate_deserialize_map_element(std::ostringstream& f_cpp_,
