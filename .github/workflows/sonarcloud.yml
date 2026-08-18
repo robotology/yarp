@@ -859,9 +859,9 @@ jobs:
                  " \
             -Dsonar.coverage.exclusions="\
                  src/libYARP_dev/src/yarp/dev/tests/*,\
-                 src/devices/*/tests/*,\
-                 src/carriers/*/tests/*,\
-                 src/portmonitors/*/tests/*,\
+                 src/devices/**/tests/*,\
+                 src/carriers/**/tests/*,\
+                 src/portmonitors/**/tests/*,\
                  src/guis/**/*,\
                  src/libYARP_robottestingframework/**/*,\
                  src/yarpgstreamerplugins/**/*,\
