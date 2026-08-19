@@ -23,6 +23,21 @@ using namespace yarp::os;
 
 TEST_CASE("os::BottleTest", "[yarp::os]")
 {
+    SECTION("testing all(some) types")
+    {
+        {
+            Bottle bot;
+            bot.addInt8(1);
+            bot.addInt16(2);
+            bot.addInt32(3);
+            bot.addInt64(4);
+            bot.addFloat32(0.1);
+            bot.addFloat64(0.2);
+            std::string botdescription = bot.describeBottleCode(bot.getSpecialization());
+            CHECK(botdescription == "mixed");
+        }
+    }
+
     SECTION("testing string representation")
     {
         std::string target = "hello \"my\" \\friend";
