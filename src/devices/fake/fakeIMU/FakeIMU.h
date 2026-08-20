@@ -41,37 +41,37 @@ public:
     bool close() override;
 
     /* IThreeAxisGyroscopes methods */
-    size_t getNrOfThreeAxisGyroscopes() const override;
+    yarp::dev::ReturnValue getNrOfThreeAxisGyroscopes(size_t& num) const override;
     yarp::dev::MAS_status getThreeAxisGyroscopeStatus(size_t sens_index) const override;
-    bool getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const override;
-    bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const override;
-    bool getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+    yarp::dev::ReturnValue getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const override;
+    yarp::dev::ReturnValue getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const override;
+    yarp::dev::ReturnValue getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
     /* IThreeAxisLinearAccelerometers methods */
-    size_t getNrOfThreeAxisLinearAccelerometers() const override;
+    yarp::dev::ReturnValue getNrOfThreeAxisLinearAccelerometers(size_t& num) const override;
     yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(size_t sens_index) const override;
-    bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const override;
-    bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const override;
-    bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+    yarp::dev::ReturnValue getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const override;
+    yarp::dev::ReturnValue getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const override;
+    yarp::dev::ReturnValue getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
     /* IThreeAxisMagnetometers methods */
-    size_t getNrOfThreeAxisMagnetometers() const override;
+    yarp::dev::ReturnValue getNrOfThreeAxisMagnetometers(size_t& num) const override;
     yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const override;
-    bool getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const override;
-    bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const override;
-    bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+    yarp::dev::ReturnValue getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const override;
+    yarp::dev::ReturnValue getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const override;
+    yarp::dev::ReturnValue getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
     /* IOrientationSensors methods */
-    size_t getNrOfOrientationSensors() const override;
+    yarp::dev::ReturnValue getNrOfOrientationSensors(size_t& num) const override;
     yarp::dev::MAS_status getOrientationSensorStatus(size_t sens_index) const override;
-    bool getOrientationSensorName(size_t sens_index, std::string &name) const override;
-    bool getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const override;
-    bool getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const override;
+    yarp::dev::ReturnValue getOrientationSensorName(size_t sens_index, std::string &name) const override;
+    yarp::dev::ReturnValue getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const override;
+    yarp::dev::ReturnValue getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const override;
 
 private:
     yarp::dev::MAS_status genericGetStatus(size_t sens_index) const;
-    bool genericGetSensorName(size_t sens_index, std::string &name) const;
-    bool genericGetFrameName(size_t sens_index, std::string &frameName) const;
+    yarp::dev::ReturnValue genericGetSensorName(size_t sens_index, std::string &name) const;
+    yarp::dev::ReturnValue genericGetFrameName(size_t sens_index, std::string &frameName) const;
 
     bool threadInit() override;
     void run() override;

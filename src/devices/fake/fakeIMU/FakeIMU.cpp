@@ -104,29 +104,30 @@ yarp::dev::MAS_status FakeIMU::genericGetStatus(size_t sens_index) const
     return yarp::dev::MAS_status::MAS_OK;
 }
 
-bool FakeIMU::genericGetSensorName(size_t sens_index, std::string &name) const
+ReturnValue FakeIMU::genericGetSensorName(size_t sens_index, std::string &name) const
 {
     if (sens_index!=0) {
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     name = m_sensorName;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeIMU::genericGetFrameName(size_t sens_index, std::string &frameName) const
+ReturnValue FakeIMU::genericGetFrameName(size_t sens_index, std::string &frameName) const
 {
     if (sens_index!=0) {
-        return false;
+        return ReturnValue_error_generic;
     }
 
     frameName = m_frameName;
-    return true;
+    return ReturnValue_ok;
 }
 
-size_t FakeIMU::getNrOfThreeAxisGyroscopes() const
+ReturnValue FakeIMU::getNrOfThreeAxisGyroscopes(size_t& num) const
 {
-    return 1;
+    num =1;
+    return ReturnValue_ok;
 }
 
 yarp::dev::MAS_status FakeIMU::getThreeAxisGyroscopeStatus(size_t sens_index) const
@@ -134,20 +135,20 @@ yarp::dev::MAS_status FakeIMU::getThreeAxisGyroscopeStatus(size_t sens_index) co
     return genericGetStatus(sens_index);
 }
 
-bool FakeIMU::getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const
+ReturnValue FakeIMU::getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool FakeIMU::getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const
+ReturnValue FakeIMU::getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
 
-bool FakeIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+ReturnValue FakeIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     if (sens_index!=0) {
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     out.resize(3);
@@ -159,12 +160,13 @@ bool FakeIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector&
     yarp::os::Stamp copyStamp(lastStamp);
     timestamp = copyStamp.getTime();
 
-    return true;
+    return ReturnValue_ok;
 }
 
-size_t FakeIMU::getNrOfThreeAxisLinearAccelerometers() const
+ReturnValue FakeIMU::getNrOfThreeAxisLinearAccelerometers(size_t& num) const
 {
-    return 1;
+    num = 1;
+    return ReturnValue_ok;
 }
 
 yarp::dev::MAS_status FakeIMU::getThreeAxisLinearAccelerometerStatus(size_t sens_index) const
@@ -172,20 +174,20 @@ yarp::dev::MAS_status FakeIMU::getThreeAxisLinearAccelerometerStatus(size_t sens
     return genericGetStatus(sens_index);
 }
 
-bool FakeIMU::getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const
+ReturnValue FakeIMU::getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool FakeIMU::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const
+ReturnValue FakeIMU::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
 
-bool FakeIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+ReturnValue FakeIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     if (sens_index!=0) {
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     out.resize(3);
@@ -197,12 +199,13 @@ bool FakeIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::si
     yarp::os::Stamp copyStamp(lastStamp);
     timestamp = copyStamp.getTime();
 
-    return true;
+    return ReturnValue_ok;
 }
 
-size_t FakeIMU::getNrOfThreeAxisMagnetometers() const
+ReturnValue FakeIMU::getNrOfThreeAxisMagnetometers(size_t& num) const
 {
-    return 1;
+    num = 1;
+    return ReturnValue_ok;
 }
 
 yarp::dev::MAS_status FakeIMU::getThreeAxisMagnetometerStatus(size_t sens_index) const
@@ -210,20 +213,20 @@ yarp::dev::MAS_status FakeIMU::getThreeAxisMagnetometerStatus(size_t sens_index)
     return genericGetStatus(sens_index);
 }
 
-bool FakeIMU::getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const
+ReturnValue FakeIMU::getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool FakeIMU::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const
+ReturnValue FakeIMU::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
 
-bool FakeIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+ReturnValue FakeIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     if (sens_index!=0) {
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     out.resize(3);
@@ -235,12 +238,13 @@ bool FakeIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vect
     yarp::os::Stamp copyStamp(lastStamp);
     timestamp = copyStamp.getTime();
 
-    return true;
+    return ReturnValue_ok;
 }
 
-size_t FakeIMU::getNrOfOrientationSensors() const
+ReturnValue FakeIMU::getNrOfOrientationSensors(size_t& num) const
 {
-    return 1;
+   num = 1;
+   return ReturnValue_ok;
 }
 
 yarp::dev::MAS_status FakeIMU::getOrientationSensorStatus(size_t sens_index) const
@@ -248,20 +252,20 @@ yarp::dev::MAS_status FakeIMU::getOrientationSensorStatus(size_t sens_index) con
     return genericGetStatus(sens_index);
 }
 
-bool FakeIMU::getOrientationSensorName(size_t sens_index, std::string &name) const
+ReturnValue FakeIMU::getOrientationSensorName(size_t sens_index, std::string &name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool FakeIMU::getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const
+ReturnValue FakeIMU::getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
 
-bool FakeIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy_out, double& timestamp) const
+ReturnValue FakeIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy_out, double& timestamp) const
 {
     if (sens_index!=0) {
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     rpy_out.resize(3);
@@ -273,5 +277,5 @@ bool FakeIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp:
     yarp::os::Stamp copyStamp(lastStamp);
     timestamp = copyStamp.getTime();
 
-    return true;
+    return ReturnValue_ok;
 }

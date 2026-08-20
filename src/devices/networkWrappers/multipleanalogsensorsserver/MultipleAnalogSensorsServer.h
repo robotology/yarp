@@ -13,6 +13,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+#include <yarp/dev/ReturnValue.h>
 
 // Thrift-generated classes
 #include <yarp/dev/SensorMeasurement.h>
@@ -63,18 +64,19 @@ class MultipleAnalogSensorsServer :
 
     // Metadata to be server via the RPC port
     SensorRPCData m_sensorMetadata;
-    bool populateAllSensorsMetadata();
+    yarp::dev::ReturnValue populateAllSensorsMetadata();
+
     template<typename Interface>
-    bool populateSensorsMetadata(Interface * wrappedDeviceInterface,
+    yarp::dev::ReturnValue populateSensorsMetadata(Interface * wrappedDeviceInterface,
                                  std::vector<SensorMetadata>& metadataVector, const std::string& tag,
-                                 size_t (Interface::*getNrOfSensorsMethodPtr)() const,
-                                 bool (Interface::*getNameMethodPtr)(size_t, std::string&) const,
-                                 bool (Interface::*getFrameNameMethodPtr)(size_t, std::string&) const);
+                                 yarp::dev::ReturnValue (Interface::*getNrOfSensorsMethodPtr)(size_t&) const,
+                                 yarp::dev::ReturnValue (Interface::*getNameMethodPtr)(size_t, std::string&) const,
+                                 yarp::dev::ReturnValue (Interface::*getFrameNameMethodPtr)(size_t, std::string&) const);
     template<typename Interface>
-    bool populateSensorsMetadataNoFrameName(Interface * wrappedDeviceInterface,
+    yarp::dev::ReturnValue populateSensorsMetadataNoFrameName(Interface * wrappedDeviceInterface,
                                             std::vector<SensorMetadata>& metadataVector, const std::string& tag,
-                                            size_t (Interface::*getNrOfSensorsMethodPtr)() const,
-                                            bool (Interface::*getNameMethodPtr)(size_t, std::string&) const);
+                                            yarp::dev::ReturnValue (Interface::*getNrOfSensorsMethodPtr)(size_t&) const,
+                                            yarp::dev::ReturnValue (Interface::*getNameMethodPtr)(size_t, std::string&) const);
 
 
     // Helper methods to resize measure buffers
@@ -97,7 +99,7 @@ class MultipleAnalogSensorsServer :
                            const std::vector< SensorMetadata >& metadataVector,
                            std::vector<  typename yarp::dev::SensorMeasurement >& streamingDataVector,
                            yarp::dev::MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
-                           bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const,
+                           yarp::dev::ReturnValue (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const,
                            const char* sensorType);
 
 

@@ -18,7 +18,9 @@ namespace yarp::dev::tests
     {
         REQUIRE(ios != nullptr);
 
-        int nrOfSensors = ios->getNrOfPositionSensors();
+        size_t nrOfSensors = 0;
+        auto ret = ios->getNrOfPositionSensors(nrOfSensors);
+        CHECK(ret);
         CHECK(nrOfSensors == 1); // getNrOfPositionSensors of multipleanalogsensorsclient works correctly
 
         yarp::sig::Vector sensorMeasure(3, 0.0), clientMeasure(3, 0.0);

@@ -65,17 +65,17 @@ public:
     bool close() override;
 
     //Interfaces
-    size_t getNrOfPositionSensors() const override;
+    yarp::dev::ReturnValue getNrOfPositionSensors(size_t& num) const override;
     yarp::dev::MAS_status getPositionSensorStatus(size_t sens_index) const override;
-    bool getPositionSensorName(size_t sens_index, std::string& name) const override;
-    bool getPositionSensorFrameName(size_t sens_index, std::string& frameName) const override;
-    bool getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
+    yarp::dev::ReturnValue getPositionSensorName(size_t sens_index, std::string& name) const override;
+    yarp::dev::ReturnValue getPositionSensorFrameName(size_t sens_index, std::string& frameName) const override;
+    yarp::dev::ReturnValue getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
 
-    size_t getNrOfOrientationSensors() const override;
+    yarp::dev::ReturnValue getNrOfOrientationSensors(size_t& num) const override;
     yarp::dev::MAS_status getOrientationSensorStatus(size_t sens_index) const override;
-    bool getOrientationSensorName(size_t sens_index, std::string& name) const override;
-    bool getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const override;
-    bool getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
+    yarp::dev::ReturnValue getOrientationSensorName(size_t sens_index, std::string& name) const override;
+    yarp::dev::ReturnValue getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const override;
+    yarp::dev::ReturnValue getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
 
     // RateThread interface
     void run() override;
