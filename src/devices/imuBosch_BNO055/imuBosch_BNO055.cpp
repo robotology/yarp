@@ -720,34 +720,35 @@ yarp::dev::MAS_status BoschIMU::genericGetStatus(size_t sens_index) const
     return yarp::dev::MAS_status::MAS_OK;
 }
 
-bool BoschIMU::genericGetSensorName(size_t sens_index, std::string& name) const
+ReturnValue BoschIMU::genericGetSensorName(size_t sens_index, std::string& name) const
 {
     if (sens_index != 0)
     {
         yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     name = m_sensor_name;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool BoschIMU::genericGetFrameName(size_t sens_index, std::string& frameName) const
+ReturnValue BoschIMU::genericGetFrameName(size_t sens_index, std::string& frameName) const
 {
     if (sens_index != 0)
     {
         yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     frameName = m_frame_name;
-    return true;
+    return ReturnValue_ok;
 
 }
 
-size_t BoschIMU::getNrOfThreeAxisLinearAccelerometers() const
+ReturnValue BoschIMU::getNrOfThreeAxisLinearAccelerometers(size_t& num) const
 {
-    return 1;
+    num = 1;
+    return ReturnValue_ok;
 }
 
 
@@ -756,22 +757,22 @@ yarp::dev::MAS_status BoschIMU::getThreeAxisLinearAccelerometerStatus(size_t sen
     return genericGetStatus(sens_index);
 }
 
-bool BoschIMU::getThreeAxisLinearAccelerometerName(size_t sens_index, std::string& name) const
+ReturnValue BoschIMU::getThreeAxisLinearAccelerometerName(size_t sens_index, std::string& name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool BoschIMU::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string& frameName) const
+ReturnValue BoschIMU::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string& frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
 
-bool BoschIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+ReturnValue BoschIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     if (sens_index != 0)
     {
         yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     out.resize(3);
@@ -781,13 +782,13 @@ bool BoschIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::s
     out[2] = data[5];
 
     timestamp = m_timeStamp;
-    return true;
+    return ReturnValue_ok;
 }
 
 
-size_t BoschIMU::getNrOfThreeAxisGyroscopes() const
+ReturnValue BoschIMU::getNrOfThreeAxisGyroscopes(size_t& num) const
 {
-    return 1;
+    return ReturnValue_ok;
 }
 
 
@@ -796,22 +797,22 @@ yarp::dev::MAS_status BoschIMU::getThreeAxisGyroscopeStatus(size_t sens_index) c
     return genericGetStatus(sens_index);
 }
 
-bool BoschIMU::getThreeAxisGyroscopeName(size_t sens_index, std::string& name) const
+ReturnValue BoschIMU::getThreeAxisGyroscopeName(size_t sens_index, std::string& name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool BoschIMU::getThreeAxisGyroscopeFrameName(size_t sens_index, std::string& frameName) const
+ReturnValue BoschIMU::getThreeAxisGyroscopeFrameName(size_t sens_index, std::string& frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
 
-bool BoschIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+ReturnValue BoschIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     if (sens_index != 0)
     {
         yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     out.resize(3);
@@ -821,12 +822,13 @@ bool BoschIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector
     out[2] = data[8];
 
     timestamp = m_timeStamp;
-    return true;
+    return ReturnValue_ok;
 }
 
-size_t BoschIMU::getNrOfOrientationSensors() const
+ReturnValue BoschIMU::getNrOfOrientationSensors(size_t& num) const
 {
-    return 1;
+    num =1;
+    return ReturnValue_ok;
 }
 
 yarp::dev::MAS_status BoschIMU::getOrientationSensorStatus(size_t sens_index) const
@@ -834,22 +836,22 @@ yarp::dev::MAS_status BoschIMU::getOrientationSensorStatus(size_t sens_index) co
     return genericGetStatus(sens_index);
 }
 
-bool BoschIMU::getOrientationSensorName(size_t sens_index, std::string& name) const
+ReturnValue BoschIMU::getOrientationSensorName(size_t sens_index, std::string& name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool BoschIMU::getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const
+ReturnValue BoschIMU::getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
 
-bool BoschIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const
+ReturnValue BoschIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const
 {
     if (sens_index != 0)
     {
         yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     rpy.resize(3);
@@ -859,12 +861,13 @@ bool BoschIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp
     rpy[2] = data[2];
 
     timestamp = m_timeStamp;
-    return true;
+    return ReturnValue_ok;
 }
 
-size_t BoschIMU::getNrOfThreeAxisMagnetometers() const
+ReturnValue BoschIMU::getNrOfThreeAxisMagnetometers(size_t& num) const
 {
-    return 1;
+    num = 1;
+    return ReturnValue_ok;
 }
 
 yarp::dev::MAS_status BoschIMU::getThreeAxisMagnetometerStatus(size_t sens_index) const
@@ -872,22 +875,22 @@ yarp::dev::MAS_status BoschIMU::getThreeAxisMagnetometerStatus(size_t sens_index
     return genericGetStatus(sens_index);
 }
 
-bool BoschIMU::getThreeAxisMagnetometerName(size_t sens_index, std::string& name) const
+ReturnValue BoschIMU::getThreeAxisMagnetometerName(size_t sens_index, std::string& name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool BoschIMU::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string& frameName) const
+ReturnValue BoschIMU::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string& frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
 
-bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+ReturnValue BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     if (sens_index != 0)
     {
         yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
 
     out.resize(3);
@@ -898,7 +901,7 @@ bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vec
     out[2] = data[11]/ 1000000;
 
     timestamp = m_timeStamp;
-    return true;
+    return ReturnValue_ok;
 }
 
 

@@ -51,7 +51,9 @@ TEST_CASE("dev::MultipleAnalogSensorsClientTest", "[yarp::dev]")
         yarp::dev::IOrientationSensors* orientSens=nullptr;
         REQUIRE(imuSensor.view(orientSens)); // IOrientationSensors of fakeIMU correctly opened
         REQUIRE(orientSens);
-        int nrOfSensors = orientSens->getNrOfOrientationSensors();
+        size_t nrOfSensors = 0;
+        auto ret = orientSens->getNrOfOrientationSensors(nrOfSensors);
+        CHECK(ret);
         CHECK(nrOfSensors == 1); // getNrOfOrientationSensors of fakeIMU works correctly
 
         Property pWrapper;

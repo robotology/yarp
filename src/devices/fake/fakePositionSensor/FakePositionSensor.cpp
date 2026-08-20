@@ -91,10 +91,11 @@ void FakePositionSensor::threadRelease()
 }
 
 
-size_t FakePositionSensor::getNrOfPositionSensors() const
+ReturnValue FakePositionSensor::getNrOfPositionSensors(size_t& num) const
 {
     std::lock_guard<std::mutex> myLockGuard(m_mutex);
-    return m_position_sensors.size();
+    num = m_position_sensors.size();
+    return ReturnValue_ok;
 }
 
 yarp::dev::MAS_status FakePositionSensor::getPositionSensorStatus(size_t sens_index) const
@@ -104,35 +105,36 @@ yarp::dev::MAS_status FakePositionSensor::getPositionSensorStatus(size_t sens_in
     return m_position_sensors[sens_index].m_status;
 }
 
-bool FakePositionSensor::getPositionSensorName(size_t sens_index, std::string& name) const
+ReturnValue FakePositionSensor::getPositionSensorName(size_t sens_index, std::string& name) const
 {
     std::lock_guard<std::mutex> myLockGuard(m_mutex);
-    if (sens_index >= m_position_sensors.size()) return false;
+    if (sens_index >= m_position_sensors.size()) {return ReturnValue_error_input_out_of_bounds;}
     name = m_position_sensors[sens_index].m_name;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakePositionSensor::getPositionSensorFrameName(size_t sens_index, std::string& frameName) const
+ReturnValue FakePositionSensor::getPositionSensorFrameName(size_t sens_index, std::string& frameName) const
 {
     std::lock_guard<std::mutex> myLockGuard(m_mutex);
-    if (sens_index >= m_position_sensors.size()) return false;
+    if (sens_index >= m_position_sensors.size()) {return ReturnValue_error_input_out_of_bounds;}
     frameName = m_position_sensors[sens_index].m_framename;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakePositionSensor::getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const
+ReturnValue FakePositionSensor::getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const
 {
     std::lock_guard<std::mutex> myLockGuard(m_mutex);
-    if (sens_index >= m_position_sensors.size()) return false;
+    if (sens_index >= m_position_sensors.size()) {return ReturnValue_error_input_out_of_bounds;}
     timestamp = m_position_sensors[sens_index].m_timestamp;
     xyz = m_position_sensors[sens_index].m_data;
-    return true;
+    return ReturnValue_ok;
 }
 
-size_t FakePositionSensor::getNrOfOrientationSensors() const
+ReturnValue FakePositionSensor::getNrOfOrientationSensors(size_t& num) const
 {
     std::lock_guard<std::mutex> myLockGuard(m_mutex);
-    return m_orientation_sensors.size();
+    num = m_orientation_sensors.size();
+    return ReturnValue_ok;
 }
 
 yarp::dev::MAS_status FakePositionSensor::getOrientationSensorStatus(size_t sens_index) const
@@ -142,27 +144,27 @@ yarp::dev::MAS_status FakePositionSensor::getOrientationSensorStatus(size_t sens
     return m_orientation_sensors[sens_index].m_status;
 }
 
-bool FakePositionSensor::getOrientationSensorName(size_t sens_index, std::string& name) const
+ReturnValue FakePositionSensor::getOrientationSensorName(size_t sens_index, std::string& name) const
 {
     std::lock_guard<std::mutex> myLockGuard(m_mutex);
-    if (sens_index >= m_orientation_sensors.size()) return false;
+    if (sens_index >= m_orientation_sensors.size()) {return ReturnValue_error_input_out_of_bounds;}
     name = m_orientation_sensors[sens_index].m_name;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakePositionSensor::getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const
+ReturnValue FakePositionSensor::getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const
 {
     std::lock_guard<std::mutex> myLockGuard(m_mutex);
-    if (sens_index >= m_orientation_sensors.size()) return false;
+    if (sens_index >= m_orientation_sensors.size()) {return ReturnValue_error_input_out_of_bounds;}
     frameName = m_orientation_sensors[sens_index].m_framename;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakePositionSensor::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const
+ReturnValue FakePositionSensor::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const
 {
     std::lock_guard<std::mutex> myLockGuard(m_mutex);
-    if (sens_index >= m_orientation_sensors.size()) return false;
+    if (sens_index >= m_orientation_sensors.size()) {return ReturnValue_error_input_out_of_bounds;}
     timestamp = m_orientation_sensors[sens_index].m_timestamp;
     xyz = m_orientation_sensors[sens_index].m_data;
-    return true;
+    return ReturnValue_ok;
 }

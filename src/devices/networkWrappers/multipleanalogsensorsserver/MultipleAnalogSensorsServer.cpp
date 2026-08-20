@@ -13,11 +13,14 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriverList.h>
+#include <yarp/dev/ReturnValue.h>
 
 
 namespace {
 YARP_LOG_COMPONENT(MULTIPLEANALOGSENSORSSERVER, "yarp.device.multipleanalogsensorsserver")
 }
+
+using namespace yarp::dev;
 
 /**
  * Internal identifier of the type of sensors.
@@ -158,37 +161,45 @@ bool MultipleAnalogSensorsServer::close()
 #define MAS_CALL_MEMBER_FN(object, ptrToMember)  ((*object).*(ptrToMember))
 
 template<typename Interface>
-bool MultipleAnalogSensorsServer::populateSensorsMetadata(Interface * wrappedDeviceInterface,
+ReturnValue MultipleAnalogSensorsServer::populateSensorsMetadata(Interface * wrappedDeviceInterface,
                                   std::vector<SensorMetadata>& metadataVector, const std::string& tag,
-                                  size_t (Interface::*getNrOfSensorsMethodPtr)() const,
-                                  bool (Interface::*getNameMethodPtr)(size_t, std::string&) const,
-                                  bool (Interface::*getFrameNameMethodPtr)(size_t, std::string&) const)
+                                  yarp::dev::ReturnValue (Interface::*getNrOfSensorsMethodPtr)(size_t&) const,
+                                  yarp::dev::ReturnValue (Interface::*getNameMethodPtr)(size_t, std::string&) const,
+                                  yarp::dev::ReturnValue (Interface::*getFrameNameMethodPtr)(size_t, std::string&) const)
 {
     if (wrappedDeviceInterface)
     {
-        size_t nrOfSensors = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNrOfSensorsMethodPtr)();
+        size_t nrOfSensors = 0;
+        ReturnValue retnum = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNrOfSensorsMethodPtr)(nrOfSensors);
+        if (!retnum)
+        {
+            yCError(MULTIPLEANALOGSENSORSSERVER,
+                    "Failure in reading number of sensors of type %s.",
+                    tag.c_str());
+            return retnum;
+        }
         metadataVector.resize(nrOfSensors);
         for (size_t i=0; i < nrOfSensors; i++)
         {
             std::string sensorName;
-            bool ok = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNameMethodPtr)(i, sensorName);
-            if (!ok)
+            ReturnValue ret = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNameMethodPtr)(i, sensorName);
+            if (!ret)
             {
                 yCError(MULTIPLEANALOGSENSORSSERVER,
                         "Failure in reading name of sensor of type %s at index %zu.",
                         tag.c_str(),
                         i);
-                return false;
+                return ret;
             }
             std::string frameName;
-            ok = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getFrameNameMethodPtr)(i, frameName);
-            if (!ok)
+            ret = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getFrameNameMethodPtr)(i, frameName);
+            if (!ret)
             {
                 yCError(MULTIPLEANALOGSENSORSSERVER,
                         "Failure in reading frame name of sensor of type %s at index %zu.",
                         tag.c_str(),
                         i);
-                return false;
+                return ret;
             }
 
             metadataVector[i].name = sensorName;
@@ -201,30 +212,38 @@ bool MultipleAnalogSensorsServer::populateSensorsMetadata(Interface * wrappedDev
     {
         metadataVector.resize(0);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
 template<typename Interface>
-bool MultipleAnalogSensorsServer::populateSensorsMetadataNoFrameName(Interface * wrappedDeviceInterface,
+ReturnValue MultipleAnalogSensorsServer::populateSensorsMetadataNoFrameName(Interface * wrappedDeviceInterface,
                                                                      std::vector<SensorMetadata>& metadataVector, const std::string& tag,
-                                                                     size_t (Interface::*getNrOfSensorsMethodPtr)() const,
-                                                                     bool (Interface::*getNameMethodPtr)(size_t, std::string&) const)
+                                                                     yarp::dev::ReturnValue (Interface::*getNrOfSensorsMethodPtr)(size_t&) const,
+                                                                     yarp::dev::ReturnValue (Interface::*getNameMethodPtr)(size_t, std::string&) const)
 {
     if (wrappedDeviceInterface)
     {
-        size_t nrOfSensors = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNrOfSensorsMethodPtr)();
+        size_t nrOfSensors = 0;
+        ReturnValue retnum = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNrOfSensorsMethodPtr)(nrOfSensors);
+        if (!retnum)
+        {
+            yCError(MULTIPLEANALOGSENSORSSERVER,
+                    "Failure in reading number of sensors of type %s.",
+                    tag.c_str());
+            return retnum;
+        }
         metadataVector.resize(nrOfSensors);
         for (size_t i=0; i < nrOfSensors; i++)
         {
             std::string sensorName;
-            bool ok = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNameMethodPtr)(i, sensorName);
-            if (!ok)
+            ReturnValue ret = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNameMethodPtr)(i, sensorName);
+            if (!ret)
             {
                 yCError(MULTIPLEANALOGSENSORSSERVER,
                         "Failure in reading name of sensor of type  %s at index %zu.",
                         tag.c_str(),
                         i);
-                return false;
+                return ret;
             }
 
             metadataVector[i].name = sensorName;
@@ -237,13 +256,13 @@ bool MultipleAnalogSensorsServer::populateSensorsMetadataNoFrameName(Interface *
     {
         metadataVector.resize(0);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool MultipleAnalogSensorsServer::populateAllSensorsMetadata()
+ReturnValue MultipleAnalogSensorsServer::populateAllSensorsMetadata()
 {
-    bool ok = true;
+    ReturnValue ok = ReturnValue_ok;
     ok = ok && populateSensorsMetadata(m_iThreeAxisGyroscopes, m_sensorMetadata.ThreeAxisGyroscopes, "ThreeAxisGyroscopes",
                                        &yarp::dev::IThreeAxisGyroscopes::getNrOfThreeAxisGyroscopes,
                                        &yarp::dev::IThreeAxisGyroscopes::getThreeAxisGyroscopeName,
@@ -464,7 +483,7 @@ bool MultipleAnalogSensorsServer::genericStreamData(Interface* wrappedDeviceInte
                                                     const std::vector< SensorMetadata >& metadataVector,
                                                     std::vector< typename yarp::dev::SensorMeasurement >& streamingDataVector,
                                                     yarp::dev::MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
-                                                    bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const,
+                                                    ReturnValue (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const,
                                                     const char* sensorType)
 {
     if (wrappedDeviceInterface)
