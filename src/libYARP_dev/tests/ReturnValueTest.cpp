@@ -78,6 +78,16 @@ TEST_CASE("dev::ReturnValue", "[yarp::dev]")
         s = val1.toString();
         CHECK(!val1);
         CHECK(s != "unknown");
+
+        val1 = ReturnValue::return_code::return_value_error_not_ready;
+        s = val1.toString();
+        CHECK(!val1);
+        CHECK(s != "unknown");
+
+        val1 = ReturnValue::return_code::return_value_error_deprecated;
+        s = val1.toString();
+        CHECK(!val1);
+        CHECK(s != "unknown");
     }
 
     SECTION("test block 3")
@@ -242,6 +252,7 @@ TEST_CASE("dev::ReturnValue", "[yarp::dev]")
     SECTION("test block 7")
     {
         auto ret1 = test_method1();
+        CHECK(!(ret1 == ReturnValue_error_generic));
         CHECK(ret1 == ReturnValue::return_code::return_value_error_not_implemented_by_device);
         CHECK(!(ret1 == ReturnValue::return_code::return_value_ok));
 

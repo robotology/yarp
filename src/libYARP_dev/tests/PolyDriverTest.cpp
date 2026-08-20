@@ -5,6 +5,7 @@
  */
 
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/PolyDriverList.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/IFrameGrabberImage.h>
@@ -104,6 +105,25 @@ TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
         CHECK(img.width() > 0); // interface seems functional
         result = dd.close();
         CHECK(result); // close reported successful
+    }
+
+    SECTION("test PolyDriverList")
+    {
+        PolyDriverList pdl;
+
+        PolyDriver dd;
+        Property p;
+        p.put("device","devicedrivertest");
+        bool result;
+        result = dd.open(p);
+        REQUIRE(result); // open reported successful
+
+        PolyDriverDescriptor pddesc(&dd, "mydevice1");
+        pdl.push(pddesc);
+
+        //beware: this does not close, neither deallocates the Polydrivers
+        //inside the list.
+        pdl.clear();
     }
 
     SECTION("test Property bug")

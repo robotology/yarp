@@ -52,12 +52,12 @@ public:
     static double normal();
 
     /**
-     * A random number in a specified range.
+     * A random integer in a specified range.
      * @param min is the minimum of the range.
      * @param max is the maximum of the range.
      * @return a random integer in the specified range.
      */
-    static int uniform(int min, int max);
+    static int uniformInt(int min, int max);
 };
 
 } // namespace yarp::os
