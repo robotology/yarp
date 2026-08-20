@@ -31,6 +31,7 @@ target_sources(harness_os PRIVATE
   RouteTest.cpp
   SemaphoreTest.cpp
   StampTest.cpp
+  RandomTest.cpp
   StringInputStreamTest.cpp
   StringOutputStreamTest.cpp
   SystemInfoTest.cpp

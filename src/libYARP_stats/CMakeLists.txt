@@ -10,3 +10,7 @@ yarp_install_basic_package_files(YARP_stats
   DEPENDENCIES ${YARP_stats_PUBLIC_DEPS}
   PRIVATE_DEPENDENCIES ${YARP_stats_PRIVATE_DEPS}
 )
+
+if(YARP_COMPILE_TESTS)
+  add_subdirectory(tests)
+endif()

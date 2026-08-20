@@ -31,6 +31,8 @@ public:
 
     const PolyDriverList &operator=(const PolyDriverList &);
 
+    void clear();
+
 protected:
     //protect use of default copy ctor
     PolyDriverList(const PolyDriverList&);

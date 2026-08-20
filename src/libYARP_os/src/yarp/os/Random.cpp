@@ -35,7 +35,7 @@ void Random::seed(int seed)
 }
 
 
-int Random::uniform(int min, int max)
+int Random::uniformInt(int min, int max)
 {
     std::uniform_int_distribution<int> udist(min, max);
     return udist(randengine);
