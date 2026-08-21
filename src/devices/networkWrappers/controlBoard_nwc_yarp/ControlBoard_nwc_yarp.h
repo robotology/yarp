@@ -33,6 +33,8 @@
 #include <yarp/dev/IJointBrake.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 
+#include <yarp/dev/CommandMessageData.h>
+
 #include "stateExtendedReader.h"
 #include "ControlBoard_nwc_yarp_ParamsParser.h"
 #include "ControlBoardMsgs.h"
@@ -83,7 +85,7 @@ protected:
     DiagnosticThread *diagnosticThread{nullptr};
     yarp::os::Port m_rpcPort;
 
-    yarp::os::PortWriterBuffer<CommandMessage> command_buffer;
+    yarp::os::PortWriterBuffer<yarp::dev::CommandMessageData> command_buffer;
     bool writeStrict_singleJoint{true};
     bool writeStrict_moreJoints{false};
 
@@ -94,8 +96,8 @@ protected:
     // from the YARP .thrift file
     StateExtendedInputPort                          extendedIntputStatePort;  // Buffered port storing new data
     std::mutex extendedPortMutex;
-    yarp::dev::impl::jointData last_singleJoint;     // tmp to store last received data for a particular joint
-    yarp::dev::impl::jointData last_wholePart;         // tmp to store last received data for whole part
+    yarp::dev::JointStateData last_singleJoint;     // tmp to store last received data for a particular joint
+    yarp::dev::JointStateData last_wholePart;         // tmp to store last received data for whole part
 
     mutable Stamp m_lastStamp;  //this is shared among all calls that read encoders
     size_t m_nj{0};

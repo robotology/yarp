@@ -122,7 +122,7 @@ void Odometry2D_nws_yarp::run()
 
     if (m_odometry2D_interface!=nullptr)
     {
-        yarp::dev::OdometryData odometryData;
+        yarp::dev::Nav2D::Odometry odometryData;
         double synchronized_timestamp = 0;
         m_odometry2D_interface->getOdometry(odometryData, &synchronized_timestamp);
 
@@ -138,7 +138,7 @@ void Odometry2D_nws_yarp::run()
         if (m_port_odometry.getOutputCount()>0)
         {
             m_port_odometry.setEnvelope(m_lastStateStamp);
-            yarp::dev::OdometryData &odometryDataFromPort = m_port_odometry.prepare();
+            yarp::dev::Nav2D::Odometry &odometryDataFromPort = m_port_odometry.prepare();
             odometryDataFromPort.odom_x= odometryData.odom_x; //position in the odom reference frame
             odometryDataFromPort.odom_y= odometryData.odom_y;
             odometryDataFromPort.odom_theta= odometryData.odom_theta;

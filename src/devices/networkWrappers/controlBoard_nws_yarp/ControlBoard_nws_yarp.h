@@ -38,7 +38,8 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/sig/Vector.h>
 
-#include <yarp/dev/impl/jointData.h>
+#include <yarp/dev/CommandMessageData.h>
+#include <yarp/dev/JointStateData.h>
 
 #include <string>
 
@@ -77,10 +78,10 @@ private:
     yarp::os::RpcServer               m_rpcPort;
 
     yarp::os::BufferedPort<yarp::sig::Vector> outputPositionStatePort; // Port /state:o streaming out the encoder positions
-    yarp::os::BufferedPort<CommandMessage> inputStreamingPort;         // Input streaming port for high frequency commands
+    yarp::os::BufferedPort<yarp::dev::CommandMessageData> inputStreamingPort;         // Input streaming port for high frequency commands
     yarp::os::Port extendedOutputStatePort;                            // Port /stateExt:o streaming out the struct with the robot data
 
-    yarp::os::PortWriterBuffer<yarp::dev::impl::jointData> extendedOutputState_buffer; // Buffer associated to the extendedOutputStatePort port
+    yarp::os::PortWriterBuffer<yarp::dev::JointStateData> extendedOutputState_buffer; // Buffer associated to the extendedOutputStatePort port
     yarp::os::PortReaderBuffer<yarp::os::Bottle> inputRPC_buffer;                      // Buffer associated to the inputRPCPort port
 
  //   RPCMessagesParser RPC_parser;             // Message parser associated to the inputRPCPort port

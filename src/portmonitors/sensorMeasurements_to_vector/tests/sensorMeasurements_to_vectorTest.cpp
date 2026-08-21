@@ -53,7 +53,7 @@ TEST_CASE("pm::sensorMeasurements_to_vectorTest", "[yarp::pm]")
         yarp::dev::SensorStreamingData& ssd = sender.prepare();
 
         // Add position sensor measurement (3 values)
-        yarp::dev::SensorMeasurement pos_meas;
+        yarp::dev::SensorMeasurementData pos_meas;
         pos_meas.measurement.resize(3);
         pos_meas.measurement[0] = 1.0;
         pos_meas.measurement[1] = 2.0;
@@ -62,7 +62,7 @@ TEST_CASE("pm::sensorMeasurements_to_vectorTest", "[yarp::pm]")
         ssd.PositionSensors.measurements[0] = pos_meas;
 
         // Add orientation sensor measurement (3 values)
-        yarp::dev::SensorMeasurement ori_meas;
+        yarp::dev::SensorMeasurementData ori_meas;
         ori_meas.measurement.resize(3);
         ori_meas.measurement[0] = 4.0;
         ori_meas.measurement[1] = 5.0;

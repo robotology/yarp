@@ -46,7 +46,7 @@ bool SensorMeasurements_to_vector::getparam(yarp::os::Property& params)
 
 bool SensorMeasurements_to_vector::accept(yarp::os::Things& thing)
 {
-    SensorStreamingData* ssd = thing.cast_as<SensorStreamingData>();
+    yarp::dev::SensorStreamingData* ssd = thing.cast_as<yarp::dev::SensorStreamingData>();
     if(ssd == nullptr ||
        ssd->OrientationSensors.measurements.size() != 1 ||
        ssd->OrientationSensors.measurements[0].measurement.size() != 3 ||
@@ -63,7 +63,7 @@ bool SensorMeasurements_to_vector::accept(yarp::os::Things& thing)
 
 yarp::os::Things& SensorMeasurements_to_vector::update(yarp::os::Things& thing)
 {
-    SensorStreamingData* ssd = thing.cast_as<SensorStreamingData>();
+    yarp::dev::SensorStreamingData* ssd = thing.cast_as<yarp::dev::SensorStreamingData>();
     const size_t sensor_id = 0;
     if (ssd)
     {

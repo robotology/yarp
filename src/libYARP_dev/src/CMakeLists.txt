@@ -112,7 +112,10 @@ set(YARP_dev_HDRS
   yarp/dev/ImplementVelocityDirect.h
   yarp/dev/ImplementVirtualAnalogSensor.h
   yarp/dev/Lidar2DDeviceBase.h
+  yarp/dev/LLM_Message.h
+  yarp/dev/MobileBaseVelocity.h
   yarp/dev/MultipleAnalogSensorsInterfaces.h
+  yarp/dev/Odometry.h
   yarp/dev/PidEnums.h
   yarp/dev/PolyDriver.h
   yarp/dev/PolyDriverDescriptor.h
@@ -219,7 +222,10 @@ set(YARP_dev_SRCS
   yarp/dev/ImplementVelocityDirect.cpp
   yarp/dev/ImplementVirtualAnalogSensor.cpp
   yarp/dev/Lidar2DDeviceBase.cpp
+  yarp/dev/LLM_Message.cpp
+  yarp/dev/MobileBaseVelocity.cpp
   yarp/dev/MultipleAnalogSensorsInterfaces.cpp
+  yarp/dev/Odometry.cpp
   yarp/dev/PolyDriver.cpp
   yarp/dev/PolyDriverDescriptor.cpp
   yarp/dev/PolyDriverList.cpp
@@ -254,15 +260,16 @@ include(YarpChooseIDL)
 
 set(YARP_dev_IDL
   idl/BatteryData.thrift
-  idl/stateExt.thrift
+  idl/CommandMessageData.thrift
+  idl/JointStateData.thrift
   idl/DeviceDescriptionData.thrift
   idl/PidData.thrift
 
   idl/OdometryData.thrift
-  idl/OdometryData6D.thrift
-  idl/MobileBaseVelocity.thrift
+  idl/OdometryData6DData.thrift
+  idl/MobileBaseVelocityData.thrift
 
-  idl/LLM_Message.thrift
+  idl/LLM_MessageData.thrift
   idl/SensorStreamingData.thrift
 
   idl/JoypadData.thrift

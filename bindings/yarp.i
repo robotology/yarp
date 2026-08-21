@@ -339,7 +339,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/os/AbstractContactable.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/Network.h>
-%include <yarp/os/PortablePair.h>
 %include <yarp/os/PortReaderCreator.h>
 %include <yarp/os/Property.h>
 %include <yarp/os/Bottle.h>

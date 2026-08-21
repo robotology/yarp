@@ -21,7 +21,7 @@ namespace yarp::dev::tests
         bool b;
 
         yarp::dev::Nav2D::Map2DLocation ll;
-        yarp::dev::OdometryData odom;
+        yarp::dev::Nav2D::Odometry odom;
         yarp::dev::Nav2D::LocalizationStatusEnum status;
         std::vector<yarp::dev::Nav2D::Map2DLocation> poses;
         b = iloc->getCurrentPosition(ll);         CHECK(b);

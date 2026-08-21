@@ -66,7 +66,7 @@ private:
     bool read(yarp::os::ConnectionReader& connection) override;
 
     //buffered ports
-    yarp::os::BufferedPort<yarp::dev::OdometryData> m_port_odometry;
+    yarp::os::BufferedPort<yarp::dev::Nav2D::Odometry> m_port_odometry;
     yarp::os::BufferedPort<yarp::os::Bottle> m_port_velocity;
     yarp::os::BufferedPort<yarp::os::Bottle> m_port_odometer;
     yarp::os::RpcServer                      m_rpcPort;
@@ -78,7 +78,7 @@ private:
     std::string m_rpcPortName;
     std::string m_deviceName;
     size_t m_stampCount{0};
-    yarp::dev::OdometryData m_oldOdometryData{0,0,0,0,0,0,0,0,0};
+    yarp::dev::Nav2D::Odometry m_oldOdometryData;
 
     // timestamp
     yarp::os::Stamp m_lastStateStamp;

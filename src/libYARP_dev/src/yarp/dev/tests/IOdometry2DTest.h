@@ -20,7 +20,7 @@ namespace yarp::dev::tests
 
         bool b;
 
-        yarp::dev::OdometryData odomdata;
+        yarp::dev::Nav2D::Odometry odomdata;
         b = iodom->getOdometry(odomdata);     CHECK(b);
         b = iodom->resetOdometry();           CHECK(b);
     }

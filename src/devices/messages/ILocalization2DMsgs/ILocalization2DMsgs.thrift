@@ -15,10 +15,10 @@ struct yarp_dev_Nav2D_Map2DLocation {
   yarp.includefile = "yarp/dev/Map2DLocation.h"
 )
 
-struct yarp_dev_OdometryData {
+struct yarp_dev_Nav2D_Odometry {
 } (
-  yarp.name = "yarp::dev::OdometryData"
-  yarp.includefile="yarp/dev/OdometryData.h"
+  yarp.name = "yarp::dev::Nav2D::Odometry"
+  yarp.includefile="yarp/dev/Odometry.h"
 )
 
 enum yarp_dev_Nav2D_LocalizationStatusEnum {
@@ -57,7 +57,7 @@ struct return_get_current_position2 {
 
 struct return_get_estimated_odometry {
   1: yReturnValue ret;
-  2: yarp_dev_OdometryData odom;
+  2: yarp_dev_Nav2D_Odometry odom;
 }
 
 service ILocalization2DMsgs

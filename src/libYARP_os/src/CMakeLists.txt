@@ -76,7 +76,6 @@ set(YARP_os_HDRS
   yarp/os/PeriodicThread.h
   yarp/os/Ping.h
   yarp/os/Portable.h
-  yarp/os/PortablePair.h
   yarp/os/Port.h
   yarp/os/PortInfo.h
   yarp/os/PortReaderBuffer.h
@@ -191,7 +190,6 @@ set(YARP_os_SRCS
   yarp/os/PeriodicThread.cpp
   yarp/os/Ping.cpp
   yarp/os/Portable.cpp
-  yarp/os/PortablePair.cpp
   yarp/os/Port.cpp
   yarp/os/PortInfo.cpp
   yarp/os/PortReaderBufferBase.cpp

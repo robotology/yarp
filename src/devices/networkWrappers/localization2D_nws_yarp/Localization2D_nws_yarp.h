@@ -18,7 +18,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ILocalization2D.h>
-#include <yarp/dev/OdometryData.h>
+#include <yarp/dev/Odometry.h>
 #include <math.h>
 
 #include "ILocalization2DServerImpl.h"
@@ -51,7 +51,7 @@ protected:
     std::string                               m_rpcPortName;
     yarp::os::BufferedPort<yarp::dev::Nav2D::Map2DLocation>  m_2DLocationPort;
     std::string                               m_2DLocationPortName;
-    yarp::os::BufferedPort<yarp::dev::OdometryData>  m_odometryPort;
+    yarp::os::BufferedPort<yarp::dev::Nav2D::Odometry>  m_odometryPort;
     std::string                               m_odometryPortName;
 
     //drivers and interfaces

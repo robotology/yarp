@@ -20,7 +20,7 @@
 * \file Map2DArea.h contains the definition of a Map2DArea type
 */
 namespace yarp::dev::Nav2D {
-class YARP_dev_API Map2DArea : public Map2DAreaData
+class YARP_dev_API Map2DArea : public yarp::dev::Map2DAreaData
 {
 public:
     /**

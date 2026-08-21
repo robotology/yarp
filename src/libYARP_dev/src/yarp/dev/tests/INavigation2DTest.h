@@ -153,7 +153,7 @@ namespace yarp::dev::tests
             b0 = inav->setInitialPose(my_current_loc);
             CHECK(b0);
             wait_safe(); // Allow some time for the command to take effect
-            yarp::dev::OdometryData my_current_odom;
+            yarp::dev::Nav2D::Odometry my_current_odom;
             b1 = inav->getEstimatedOdometry(my_current_odom); CHECK(b1);
             INFO("Current position is:" + my_current_loc.toString());
             INFO("Estimated Odometry is:" + my_current_odom.toString());

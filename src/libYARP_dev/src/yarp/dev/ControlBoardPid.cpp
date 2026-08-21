@@ -10,12 +10,12 @@ using namespace yarp::dev;
 
 Pid::Pid(double p, double d, double i,
          double intm, double sc, double omax):
-        PidDataGains(p, d, i, intm, sc, omax, 0.0, 0.0 ,0.0, 0.0)
+        PidGainsData(p, d, i, intm, sc, omax, 0.0, 0.0 ,0.0, 0.0)
 {}
 
 Pid::Pid(double p, double d, double i,
          double intm, double sc, double omax, double st_up, double st_down, double ff) :
-        PidDataGains(p, d, i, intm, sc, omax, 0.0, st_up, st_down, ff)
+        PidGainsData(p, d, i, intm, sc, omax, 0.0, st_up, st_down, ff)
 {}
 
 Pid::~Pid() = default;

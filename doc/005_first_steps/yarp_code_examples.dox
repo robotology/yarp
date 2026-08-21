@@ -170,15 +170,6 @@ example).
 */
 
 
-/**
- * \example os/portable_pair/portable_pair.cpp
-
-Show use of the yarp::os::PortablePair class, to send messages
-of mixed type.  If the component types follow the YARP network
-data format, then their composition will also.
-
-*/
-
 
 
 /**

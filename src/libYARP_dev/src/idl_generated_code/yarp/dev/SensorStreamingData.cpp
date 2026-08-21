@@ -13,18 +13,18 @@
 namespace yarp::dev {
 
 // Constructor with field values
-SensorStreamingData::SensorStreamingData(const SensorMeasurements& ThreeAxisGyroscopes,
-                                         const SensorMeasurements& ThreeAxisLinearAccelerometers,
-                                         const SensorMeasurements& ThreeAxisMagnetometers,
-                                         const SensorMeasurements& OrientationSensors,
-                                         const SensorMeasurements& TemperatureSensors,
-                                         const SensorMeasurements& SixAxisForceTorqueSensors,
-                                         const SensorMeasurements& ContactLoadCellArrays,
-                                         const SensorMeasurements& EncoderArrays,
-                                         const SensorMeasurements& SkinPatches,
-                                         const SensorMeasurements& PositionSensors,
-                                         const SensorMeasurements& LinearVelocitySensors,
-                                         const SensorMeasurements& ThreeAxisAngularAccelerometers) :
+SensorStreamingData::SensorStreamingData(const SensorMeasurementsData& ThreeAxisGyroscopes,
+                                         const SensorMeasurementsData& ThreeAxisLinearAccelerometers,
+                                         const SensorMeasurementsData& ThreeAxisMagnetometers,
+                                         const SensorMeasurementsData& OrientationSensors,
+                                         const SensorMeasurementsData& TemperatureSensors,
+                                         const SensorMeasurementsData& SixAxisForceTorqueSensors,
+                                         const SensorMeasurementsData& ContactLoadCellArrays,
+                                         const SensorMeasurementsData& EncoderArrays,
+                                         const SensorMeasurementsData& SkinPatches,
+                                         const SensorMeasurementsData& PositionSensors,
+                                         const SensorMeasurementsData& LinearVelocitySensors,
+                                         const SensorMeasurementsData& ThreeAxisAngularAccelerometers) :
         WirePortable(),
         ThreeAxisGyroscopes(ThreeAxisGyroscopes),
         ThreeAxisLinearAccelerometers(ThreeAxisLinearAccelerometers),

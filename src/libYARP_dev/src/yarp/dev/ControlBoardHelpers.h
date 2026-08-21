@@ -7,7 +7,6 @@
 #ifndef YARP_DEV_CONTROLBOARDHELPERS_H
 #define YARP_DEV_CONTROLBOARDHELPERS_H
 
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/GenericVocabs.h>
@@ -15,11 +14,6 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-/* the control command message type
- * head is a Bottle which contains the specification of the message type
- * body is a Vector which move the robot accordingly
- */
-typedef yarp::os::PortablePair <yarp::os::Bottle, yarp::sig::Vector> CommandMessage;
 
 /* check whether the last command failed */
 inline yarp::dev::ReturnValue CHECK_FAIL(bool ok, yarp::os::Bottle& response)

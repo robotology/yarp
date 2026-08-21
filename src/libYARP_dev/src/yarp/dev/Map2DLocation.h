@@ -18,7 +18,7 @@
 * \file Map2DLocation.h contains the definition of a Map2DLocation type
 */
 namespace yarp::dev::Nav2D {
-struct YARP_dev_API Map2DLocation : public Map2DLocationData
+struct YARP_dev_API Map2DLocation : public yarp::dev::Map2DLocationData
 {
     /**
      * Constructor

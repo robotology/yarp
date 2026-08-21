@@ -11,7 +11,6 @@
 #include <cstring>
 #include <algorithm>
 
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
@@ -634,7 +633,7 @@ ReturnValue ControlBoard_nwc_yarp::setPidOffset(const PidControlTypeEnum& pidtyp
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_PIDCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_PIDCONTROL_SET_OFFSET);
@@ -665,7 +664,7 @@ ReturnValue ControlBoard_nwc_yarp::setPidFeedforward(const PidControlTypeEnum& p
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_PIDCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_PIDCONTROL_SET_FEEDFORWARD);
@@ -1522,7 +1521,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(int j, double v)
         if (!isLive()) {
            return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_MOVE);
@@ -1552,7 +1551,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(const double *v)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_MOVES);
@@ -1941,7 +1940,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorques(const double *t)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_TORQUECONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_TORQUES_DIRECTS);
@@ -1974,7 +1973,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorque(int j, double v)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_TORQUECONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_TORQUES_DIRECT);
@@ -2006,7 +2005,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorques(const int n_joint, c
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_TORQUECONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_TORQUES_DIRECT_GROUP);
@@ -2294,7 +2293,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPosition(int j, double ref)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_POSITIONDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_POSITION_DIRECT);
@@ -2324,7 +2323,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPositions(const int n_joint, co
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_POSITIONDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_POSITION_DIRECT_GROUP);
@@ -2360,7 +2359,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPositions(const double *refs)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_POSITIONDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_POSITION_DIRECTS);
@@ -2431,7 +2430,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(const int n_joint, co
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_MOVE_GROUP);
@@ -2718,7 +2717,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefCurrents(const double *refs)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_CURRENTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_CURRENT_REFS);
@@ -2759,7 +2758,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefCurrents(const int n_joint, 
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_CURRENTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_CURRENT_REF_GROUP);
@@ -2889,7 +2888,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefDutyCycles(const double *v)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_PWMCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_PWMCONTROL_REF_PWMS);
@@ -3026,7 +3025,7 @@ ReturnValue ControlBoard_nwc_yarp::setRefVelocity(int jnt, double vel)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_ONE);
@@ -3056,7 +3055,7 @@ ReturnValue ControlBoard_nwc_yarp::setRefVelocity(const std::vector<double>& vel
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_ALL);
@@ -3087,7 +3086,7 @@ ReturnValue ControlBoard_nwc_yarp::setRefVelocity(const std::vector<int>& jnts, 
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessage& c = command_buffer.get();
+        CommandMessageData& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_GROUP);

@@ -5,8 +5,8 @@
  */
 
 #include <yarp/dev/api.h>
-#include <yarp/dev/PidDataGains.h>
-#include <yarp/dev/PidDataExtraInfo.h>
+#include <yarp/dev/PidGainsData.h>
+#include <yarp/dev/PidExtraInfoData.h>
 #include <yarp/os/Portable.h>
 #include <string>
 
@@ -20,14 +20,14 @@
 namespace yarp::dev {
 class Pid;
 class PidWithExtraInfo;
-typedef PidDataExtraInfo PidExtraInfo;
+typedef yarp::dev::PidExtraInfoData PidExtraInfo;
 }
 
 
 /*!
  * \brief Contains the parameters for a PID
  */
-class YARP_dev_API yarp::dev::Pid : public yarp::dev::PidDataGains
+class YARP_dev_API yarp::dev::Pid : public yarp::dev::PidGainsData
 {
 public:
     /*!
@@ -150,7 +150,7 @@ class YARP_dev_API yarp::dev::PidWithExtraInfo
 {
     public:
     yarp::dev::Pid pid;
-    yarp::dev::PidDataExtraInfo pidExtraInfo;
+    yarp::dev::PidExtraInfoData pidExtraInfo;
 
     yarp::dev::PidWithExtraInfo& operator=(const yarp::dev::Pid& rhs)
     {
@@ -158,7 +158,7 @@ class YARP_dev_API yarp::dev::PidWithExtraInfo
         return *this;
     }
 
-    yarp::dev::PidWithExtraInfo& operator=(const yarp::dev::PidDataExtraInfo& rhs)
+    yarp::dev::PidWithExtraInfo& operator=(const yarp::dev::PidExtraInfoData& rhs)
     {
         pidExtraInfo = rhs;
         return *this;

@@ -19,7 +19,7 @@
 * \file Map2DObject.h contains the definition of a Map2DObject type
 */
 namespace yarp::dev::Nav2D {
-struct YARP_dev_API Map2DObject : public Map2DObjectData
+struct YARP_dev_API Map2DObject : public yarp::dev::Map2DObjectData
 {
     /**
      * Constructor

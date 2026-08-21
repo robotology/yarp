@@ -12,7 +12,6 @@
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Time.h>
@@ -24,6 +23,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/CommandMessageData.h>
 
 #include <string>
 #include <vector>
@@ -39,16 +39,10 @@
  */
 
 
-/* the control command message type
-* head is a Bottle which contains the specification of the message type
-* body is a Vector which move the robot accordingly
-*/
-typedef yarp::os::PortablePair<yarp::os::Bottle, yarp::sig::Vector> CommandMessage;
-
 /**
 * Callback implementation after buffered input.
 */
-class StreamingMessagesParser : public yarp::os::TypedReaderCallback<CommandMessage>
+class StreamingMessagesParser : public yarp::os::TypedReaderCallback<yarp::dev::CommandMessageData>
 {
 protected:
     yarp::dev::IPositionControl*  stream_IPosCtrl {nullptr};
@@ -76,12 +70,12 @@ public:
 
     void reset();
 
-    using yarp::os::TypedReaderCallback<CommandMessage>::onRead;
+    using yarp::os::TypedReaderCallback<yarp::dev::CommandMessageData>::onRead;
     /**
      * Callback function.
      * @param v is the Vector being received.
      */
-    void onRead(CommandMessage& v) override;
+    void onRead(yarp::dev::CommandMessageData& v) override;
 
     bool initialize();
 };

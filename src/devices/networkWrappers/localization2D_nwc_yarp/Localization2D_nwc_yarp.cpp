@@ -93,7 +93,7 @@ ReturnValue Localization2D_nwc_yarp::setInitialPose(const Map2DLocation& loc, co
     return m_RPC.set_initial_pose2_RPC(loc,cov);
 }
 
-ReturnValue  Localization2D_nwc_yarp::getEstimatedOdometry(yarp::dev::OdometryData& odom)
+ReturnValue  Localization2D_nwc_yarp::getEstimatedOdometry(yarp::dev::Nav2D::Odometry& odom)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto retrpc = m_RPC.get_estimated_odometry_RPC();

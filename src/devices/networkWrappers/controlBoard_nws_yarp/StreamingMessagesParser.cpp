@@ -58,7 +58,7 @@ bool StreamingMessagesParser::initialize()
 }
 
 // streaming port callback
-void StreamingMessagesParser::onRead(CommandMessage& v)
+void StreamingMessagesParser::onRead(yarp::dev::CommandMessageData& v)
 {
     Bottle& b = v.head;
     Vector& cmdVector = v.body;

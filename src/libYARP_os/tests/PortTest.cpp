@@ -15,7 +15,6 @@
 #include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/PortWriterBuffer.h>
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/BufferedPort.h>
@@ -701,40 +700,6 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     }
 #endif // ENABLE_BROKEN_TESTS
 
-    SECTION("checking paired send/receive")
-    {
-        PortReaderBuffer<PortablePair<Bottle, Bottle> > buf;
-
-        Port input;
-        Port output;
-        input.open("/in");
-        output.open("/out");
-
-        buf.setStrict();
-        buf.attach(input);
-
-        output.addOutput(Contact("/in", "tcp"));
-        //Time::delay(duration_200ms);
-
-        PortablePair<Bottle, Bottle> bot1;
-        bot1.head.fromString("1 2 3");
-        bot1.body.fromString("4 5 6 7");
-
-        INFO("writing...");
-        output.write(bot1);
-        bool ok = output.write(bot1);
-        CHECK(ok); // output proceeding
-        INFO("reading...");
-        PortablePair<Bottle, Bottle> *result = buf.read();
-
-        REQUIRE(result!=nullptr); // got something check
-        CHECK(bot1.head.size() == result->head.size()); // head size check
-        CHECK(bot1.body.size() == result->body.size()); // body size check
-
-        output.close();
-        input.close();
-    }
-
     SECTION ("checking reply processing")
     {
         ServiceProvider provider;
@@ -1380,7 +1345,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     SECTION("checking interrupt")
     {
-        PortReaderBuffer<PortablePair<Bottle, Bottle> > buf;
+        PortReaderBuffer<Bottle> buf;
 
         Port input;
         Port output;
@@ -1392,9 +1357,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         output.addOutput(Contact("/in", "tcp"));
 
-        PortablePair<Bottle, Bottle> bot1;
-        bot1.head.fromString("1 2 3");
-        bot1.body.fromString("4 5 6 7");
+        Bottle bot1;
+        bot1.fromString("1 2 3");
 
         INFO("interrupting...");
         output.interrupt();
@@ -1549,8 +1513,6 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     SECTION("checking interrupt for a port with pending reply")
     {
-        PortReaderBuffer<PortablePair<Bottle, Bottle> > buf;
-
         ServiceUser output("/out");
         Port input;
         input.open("/in");

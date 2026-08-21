@@ -13,7 +13,7 @@
 #include <yarp/dev/GenericVocabs.h>
 #include <yarp/dev/PidEnums.h>
 #include <yarp/dev/ControlBoardPid.h>
-#include <yarp/dev/PidDataExtraInfo.h>
+#include <yarp/dev/PidExtraInfoData.h>
 #include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
