@@ -9,7 +9,7 @@
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #include <yarp/conf/version.h>
-#include <yarp/dev/llm/ILLMMsgs.h>
+#include <yarp/dev/ILLMMsgs.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
@@ -22,7 +22,7 @@ namespace
     YARP_LOG_COMPONENT(SERVICE_LOG_COMPONENT, "ILLMMsgs")
 }
 
-namespace yarp::dev::llm {
+namespace yarp::dev {
 
 //ILLMMsgs_getRemoteProtocolVersion_helper declaration
 class ILLMMsgs_getRemoteProtocolVersion_helper :
@@ -1571,4 +1571,4 @@ bool ILLMMsgs::read(yarp::os::ConnectionReader& connection)
     return false;
 }
 
-} // namespace yarp::dev::llm
+} // namespace yarp::dev

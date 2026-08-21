@@ -15,11 +15,11 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <yarp/dev/ReturnValue.h>
-#include <yarp/dev/llm/return_ask.h>
-#include <yarp/dev/llm/return_getConversation.h>
-#include <yarp/dev/llm/return_readPrompt.h>
+#include <yarp/dev/return_ask.h>
+#include <yarp/dev/return_getConversation.h>
+#include <yarp/dev/return_readPrompt.h>
 
-namespace yarp::dev::llm {
+namespace yarp::dev {
 
 class ILLMMsgs :
         public yarp::os::Wire
@@ -53,6 +53,6 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-} // namespace yarp::dev::llm
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_SERVICE_ILLMMSGS_H

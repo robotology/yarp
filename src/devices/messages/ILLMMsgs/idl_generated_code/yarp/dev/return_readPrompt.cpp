@@ -8,9 +8,9 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/llm/return_readPrompt.h>
+#include <yarp/dev/return_readPrompt.h>
 
-namespace yarp::dev::llm {
+namespace yarp::dev {
 
 // Constructor with field values
 return_readPrompt::return_readPrompt(const yarp::dev::ReturnValue& ret,
@@ -179,4 +179,4 @@ bool return_readPrompt::nested_write_prompt(const yarp::os::idl::WireWriter& wri
     return true;
 }
 
-} // namespace yarp::dev::llm
+} // namespace yarp::dev

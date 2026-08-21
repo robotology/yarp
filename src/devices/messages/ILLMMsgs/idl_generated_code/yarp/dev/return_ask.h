@@ -8,30 +8,30 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETCONVERSATION_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETCONVERSATION_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_ASK_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_ASK_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp/dev/ILLM.h>
+#include <yarp/dev/LLM_Message.h>
 #include <yarp/dev/ReturnValue.h>
 
-namespace yarp::dev::llm {
+namespace yarp::dev {
 
-class return_getConversation :
+class return_ask :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     yarp::dev::ReturnValue ret{};
-    std::vector<yarp::dev::LLM_Message> conversation{};
+    yarp::dev::LLM_Message answer{};
 
     // Default constructor
-    return_getConversation() = default;
+    return_ask() = default;
 
     // Constructor with field values
-    return_getConversation(const yarp::dev::ReturnValue& ret,
-                           const std::vector<yarp::dev::LLM_Message>& conversation);
+    return_ask(const yarp::dev::ReturnValue& ret,
+               const yarp::dev::LLM_Message& answer);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -49,7 +49,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_getConversation> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_ask> unwrapped;
 
 private:
     // read/write ret field
@@ -58,13 +58,13 @@ private:
     bool nested_read_ret(yarp::os::idl::WireReader& reader);
     bool nested_write_ret(const yarp::os::idl::WireWriter& writer) const;
 
-    // read/write conversation field
-    bool read_conversation(yarp::os::idl::WireReader& reader);
-    bool write_conversation(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_conversation(yarp::os::idl::WireReader& reader);
-    bool nested_write_conversation(const yarp::os::idl::WireWriter& writer) const;
+    // read/write answer field
+    bool read_answer(yarp::os::idl::WireReader& reader);
+    bool write_answer(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_answer(yarp::os::idl::WireReader& reader);
+    bool nested_write_answer(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp::dev::llm
+} // namespace yarp::dev
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETCONVERSATION_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_ASK_H

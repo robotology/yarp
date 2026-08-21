@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-namespace yarp yarp.dev.llm
+namespace yarp yarp.dev
 
 struct yLLM_Message {
 } (

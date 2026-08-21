@@ -8,9 +8,9 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/llm/return_getConversation.h>
+#include <yarp/dev/return_getConversation.h>
 
-namespace yarp::dev::llm {
+namespace yarp::dev {
 
 // Constructor with field values
 return_getConversation::return_getConversation(const yarp::dev::ReturnValue& ret,
@@ -152,12 +152,12 @@ bool return_getConversation::read_conversation(yarp::os::idl::WireReader& reader
             }
         }
         conversation.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(conversation[_i])) {
+            if (!reader.readNested(conversation[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -203,12 +203,12 @@ bool return_getConversation::nested_read_conversation(yarp::os::idl::WireReader&
             }
         }
         conversation.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(conversation[_i])) {
+            if (!reader.readNested(conversation[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -235,4 +235,4 @@ bool return_getConversation::nested_write_conversation(const yarp::os::idl::Wire
     return true;
 }
 
-} // namespace yarp::dev::llm
+} // namespace yarp::dev

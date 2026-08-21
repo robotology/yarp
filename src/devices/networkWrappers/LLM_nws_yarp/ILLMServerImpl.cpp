@@ -32,10 +32,10 @@ ReturnValue ILLMRPCd::setPrompt(const std::string& prompt)
     return ret;
 }
 
-yarp::dev::llm::return_readPrompt ILLMRPCd::readPrompt()
+yarp::dev::return_readPrompt ILLMRPCd::readPrompt()
 {
 
-    yarp::dev::llm::return_readPrompt ret;
+    yarp::dev::return_readPrompt ret;
 
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
@@ -48,9 +48,9 @@ yarp::dev::llm::return_readPrompt ILLMRPCd::readPrompt()
     return ret;
 }
 
-yarp::dev::llm::return_ask ILLMRPCd::ask(const std::string& question)
+yarp::dev::return_ask ILLMRPCd::ask(const std::string& question)
 {
-    yarp::dev::llm::return_ask ret;
+    yarp::dev::return_ask ret;
 
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
@@ -99,9 +99,9 @@ void ILLMRPCd::m_stream_conversation()
 }
 
 
-yarp::dev::llm::return_getConversation ILLMRPCd::getConversation()
+yarp::dev::return_getConversation ILLMRPCd::getConversation()
 {
-    yarp::dev::llm::return_getConversation ret;
+    yarp::dev::return_getConversation ret;
 
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
