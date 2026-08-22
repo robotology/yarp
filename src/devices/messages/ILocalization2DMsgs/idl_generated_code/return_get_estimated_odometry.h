@@ -13,7 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp/dev/OdometryData.h>
+#include <yarp/dev/Odometry.h>
 #include <yarp/dev/ReturnValue.h>
 
 class return_get_estimated_odometry :
@@ -22,14 +22,14 @@ class return_get_estimated_odometry :
 public:
     // Fields
     yarp::dev::ReturnValue ret{};
-    yarp::dev::OdometryData odom{};
+    yarp::dev::Nav2D::Odometry odom{};
 
     // Default constructor
     return_get_estimated_odometry() = default;
 
     // Constructor with field values
     return_get_estimated_odometry(const yarp::dev::ReturnValue& ret,
-                                  const yarp::dev::OdometryData& odom);
+                                  const yarp::dev::Nav2D::Odometry& odom);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;

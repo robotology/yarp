@@ -39,7 +39,7 @@ OdometryData2DInputPortProcessor::OdometryData2DInputPortProcessor()
     resetStat();
 }
 
-void OdometryData2DInputPortProcessor::onRead(yarp::dev::OdometryData& b)
+void OdometryData2DInputPortProcessor::onRead(yarp::dev::Nav2D::Odometry& b)
 {
     now=SystemClock::nowSystem();
     mutex.lock();
@@ -93,7 +93,7 @@ void OdometryData2DInputPortProcessor::onRead(yarp::dev::OdometryData& b)
     mutex.unlock();
 }
 
-inline bool OdometryData2DInputPortProcessor::getLast(yarp::dev::OdometryData& data, Stamp& stmp)
+inline bool OdometryData2DInputPortProcessor::getLast(yarp::dev::Nav2D::Odometry& data, Stamp& stmp)
 {
     mutex.lock();
     data=lastScan;
@@ -192,10 +192,10 @@ bool Odometry2D_nwc_yarp::close()
     return true;
 }
 
-ReturnValue Odometry2D_nwc_yarp::getOdometry(yarp::dev::OdometryData& odom, double* timestamp)
+ReturnValue Odometry2D_nwc_yarp::getOdometry(yarp::dev::Nav2D::Odometry& odom, double* timestamp)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    yarp::dev::OdometryData measure;
+    yarp::dev::Nav2D::Odometry measure;
     bool recv = m_inputPort.getLast(measure, m_lastTs);
 
     odom = measure;

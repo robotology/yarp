@@ -79,7 +79,7 @@ public:
     yarp::dev::ReturnValue   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
     yarp::dev::ReturnValue   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
     yarp::dev::ReturnValue   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
-    yarp::dev::ReturnValue   getEstimatedOdometry(yarp::dev::OdometryData& odom)  override;
+    yarp::dev::ReturnValue   getEstimatedOdometry(yarp::dev::Nav2D::Odometry& odom)  override;
     yarp::dev::ReturnValue   startLocalizationService() override;
     yarp::dev::ReturnValue   stopLocalizationService() override;
 };

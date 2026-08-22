@@ -10,7 +10,7 @@
 #include "StreamingMessagesParser.h"
 
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/impl/jointData.h>
+#include <yarp/dev/JointStateData.h>
 
 #include <numeric>
 #include <cmath>
@@ -18,7 +18,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
-using yarp::dev::impl::jointData;
+using yarp::dev::JointStateData;
 
 const double DEFAULT_PERIOD = 0.02;
 
@@ -348,7 +348,7 @@ void ControlBoard_nws_yarp::run()
         yCIWarning(CONTROLBOARD, id()) << "Number of streaming input messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
     }
     // handle stateExt first
-    jointData& data = extendedOutputState_buffer.get();
+    JointStateData& data = extendedOutputState_buffer.get();
 
     data.jointPosition.resize(subdevice_joints);
     data.jointVelocity.resize(subdevice_joints);

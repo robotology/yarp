@@ -24,14 +24,14 @@ class SensorStreamingDataInputPort :
         public yarp::os::BufferedPort< yarp::dev::SensorStreamingData>
 {
 public:
-     yarp::dev::SensorStreamingData receivedData;
+    yarp::dev::SensorStreamingData receivedData;
     mutable yarp::dev::MAS_status status{yarp::dev::MAS_WAITING_FOR_FIRST_READ};
     mutable std::mutex dataMutex;
     double timeoutInSeconds{0.01};
     double lastTimeStampReadInSeconds{0.0};
 
     using yarp::os::BufferedPort< yarp::dev::SensorStreamingData>::onRead;
-    void onRead( yarp::dev::SensorStreamingData &v) override;
+    void onRead(yarp::dev::SensorStreamingData &v) override;
     void updateTimeoutStatus() const;
 };
 

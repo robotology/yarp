@@ -7,6 +7,7 @@
 #define FAKE_LLMDEVICE_H
 
 #include <yarp/dev/ILLM.h>
+#include <yarp/dev/LLM_Message.h>
 #include <vector>
 #include <yarp/dev/DeviceDriver.h>
 #include "FakeLLMDevice_ParamsParser.h"

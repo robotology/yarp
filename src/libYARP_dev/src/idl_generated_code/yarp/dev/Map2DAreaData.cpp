@@ -160,12 +160,12 @@ bool Map2DAreaData::read_points(yarp::os::idl::WireReader& reader)
             }
         }
         points.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(points[_i])) {
+            if (!reader.readNested(points[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -211,12 +211,12 @@ bool Map2DAreaData::nested_read_points(yarp::os::idl::WireReader& reader)
             }
         }
         points.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(points[_i])) {
+            if (!reader.readNested(points[_i0])) {
                 reader.fail();
                 return false;
             }

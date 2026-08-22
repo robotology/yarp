@@ -13,7 +13,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/INavigation2D.h>
-#include "MobileBaseVelocityControlRPC.h"
+#include "INavigation2DVelocityActionsMsgs.h"
 
 #include <mutex>
 #include <string>
@@ -36,9 +36,9 @@ class MobileBaseVelocityControl_nwc_yarp:
         public MobileBaseVelocityControl_nwc_yarp_ParamsParser
 {
 protected:
-    std::mutex                    m_mutex;
-    yarp::os::Port                m_rpc_port;
-    MobileBaseVelocityControlRPC  m_RPC;
+    std::mutex                        m_mutex;
+    yarp::os::Port                    m_rpc_port;
+    INavigation2DVelocityActionsMsgs  m_RPC;
 
 public:
 

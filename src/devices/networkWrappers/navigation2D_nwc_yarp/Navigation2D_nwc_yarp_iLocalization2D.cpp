@@ -56,7 +56,7 @@ ReturnValue  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc, yarp:
     return ret.ret;
 }
 
-ReturnValue  Navigation2D_nwc_yarp::getEstimatedOdometry(yarp::dev::OdometryData& odom)
+ReturnValue  Navigation2D_nwc_yarp::getEstimatedOdometry(yarp::dev::Nav2D::Odometry& odom)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_loc_RPC.get_estimated_odometry_RPC();

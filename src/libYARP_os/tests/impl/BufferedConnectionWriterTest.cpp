@@ -8,7 +8,6 @@
 
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/sig/Image.h>
 
@@ -19,9 +18,7 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 
-typedef PortablePair<PortablePair<PortablePair<Bottle, ImageOf<PixelRgb> >,
-                                  PortablePair<ImageOf<PixelRgb>, Stamp> >,
-                     Bottle> Monster;
+
 
 TEST_CASE("os::impl::BufferedConnectionWriterTest", "[yarp::os][yarp::os::impl]")
 {
@@ -109,22 +106,6 @@ TEST_CASE("os::impl::BufferedConnectionWriterTest", "[yarp::os][yarp::os::impl]"
             bbr.write(img2);
             CHECK(img2.width() == img1.width()); // image width still matches
             CHECK(img2.height() == img1.height()); // image height still matches
-
-            // Now send something completely different
-            Monster m1, m2;
-            m1.body.fromString("hello (1 (2 (3))) {1 2 3} [done]");
-            m1.head.head.body.resize(41, 12);
-            m1.head.body.head.resize(17, 63);
-            bbr.restart();
-            m1.write(bbr);
-            bbr.write(m2);
-            CHECK(m2.body.get(0).asString() == "hello"); // tail matches
-            // Now resend, checking that no memory is allocated
-            m2 = Monster();
-            bbr.restart();
-            m1.write(bbr);
-            bbr.write(m2);
-            CHECK(m2.body.get(0).asString() == "hello"); // tail still matches
 
             // Now send something completely different
             Stamp stamp1(42, 1.23), stamp2;

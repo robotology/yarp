@@ -11,7 +11,6 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/DummyConnector.h>
-#include <yarp/os/PortablePair.h>
 
 #include <yarp/gsl/Gsl.h>
 #include <yarp/gsl/impl/gsl_structs.h>
@@ -464,48 +463,6 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
             }
         }
         CHECK(ok); // data matches
-    }
-
-    SECTION("checking portable-pair serialization...")
-    {
-        // potential problem reported by Miguel Sarabia Del Castillo
-
-        Matrix m;
-        size_t rr = 10;
-        size_t cc = 5;
-        makeTestMatrix(m,rr,cc);
-
-        double value = 3.14;
-
-        yarp::os::PortablePair<yarp::sig::Matrix, yarp::os::Value> msg, msg2;
-        msg.head = m;
-        msg.body = yarp::os::Value(value);
-
-        DummyConnector con;
-        msg.write(con.getWriter());
-        ConnectionReader& reader = con.getReader();
-        msg2.read(reader);
-        CHECK(msg.head.rows() == msg2.head.rows()); // matrix row match
-        CHECK(msg.head.cols() == msg2.head.cols()); // matrix col match
-        CHECK(msg.body.asFloat64()== Catch::Approx(msg2.body.asFloat64())); // "value match"
-
-        Bottle bot;
-        bot.read(msg);
-        Bottle *bot1 = bot.get(0).asList();
-        Bottle *bot2 = bot.get(1).asList();
-        CHECK((bot1!=nullptr&&bot2!=nullptr)); // got head/body
-        if (bot1 == nullptr || bot2 == nullptr) {
-            return;
-        }
-        CHECK((size_t) bot1->get(0).asInt32() == rr); // row count matches
-        CHECK((size_t) bot1->get(1).asInt32() == cc); // column count matches
-        Bottle *lst = bot1->get(2).asList();
-        CHECK(lst!=nullptr); // have data
-        if (!lst) {
-            return;
-        }
-        CHECK(lst->size() == (rr*cc)); // data length matches
-        CHECK(bot2->get(0).asFloat64() == Catch::Approx(value)); // "value match"
     }
 
     SECTION("check data() when matrix is empty...")

@@ -15,7 +15,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp/dev/SensorMeasurements.h>
+#include <yarp/dev/SensorMeasurementsData.h>
 
 namespace yarp::dev {
 
@@ -24,35 +24,35 @@ class YARP_dev_API SensorStreamingData :
 {
 public:
     // Fields
-    SensorMeasurements ThreeAxisGyroscopes{};
-    SensorMeasurements ThreeAxisLinearAccelerometers{};
-    SensorMeasurements ThreeAxisMagnetometers{};
-    SensorMeasurements OrientationSensors{};
-    SensorMeasurements TemperatureSensors{};
-    SensorMeasurements SixAxisForceTorqueSensors{};
-    SensorMeasurements ContactLoadCellArrays{};
-    SensorMeasurements EncoderArrays{};
-    SensorMeasurements SkinPatches{};
-    SensorMeasurements PositionSensors{};
-    SensorMeasurements LinearVelocitySensors{};
-    SensorMeasurements ThreeAxisAngularAccelerometers{};
+    SensorMeasurementsData ThreeAxisGyroscopes{};
+    SensorMeasurementsData ThreeAxisLinearAccelerometers{};
+    SensorMeasurementsData ThreeAxisMagnetometers{};
+    SensorMeasurementsData OrientationSensors{};
+    SensorMeasurementsData TemperatureSensors{};
+    SensorMeasurementsData SixAxisForceTorqueSensors{};
+    SensorMeasurementsData ContactLoadCellArrays{};
+    SensorMeasurementsData EncoderArrays{};
+    SensorMeasurementsData SkinPatches{};
+    SensorMeasurementsData PositionSensors{};
+    SensorMeasurementsData LinearVelocitySensors{};
+    SensorMeasurementsData ThreeAxisAngularAccelerometers{};
 
     // Default constructor
     SensorStreamingData() = default;
 
     // Constructor with field values
-    SensorStreamingData(const SensorMeasurements& ThreeAxisGyroscopes,
-                        const SensorMeasurements& ThreeAxisLinearAccelerometers,
-                        const SensorMeasurements& ThreeAxisMagnetometers,
-                        const SensorMeasurements& OrientationSensors,
-                        const SensorMeasurements& TemperatureSensors,
-                        const SensorMeasurements& SixAxisForceTorqueSensors,
-                        const SensorMeasurements& ContactLoadCellArrays,
-                        const SensorMeasurements& EncoderArrays,
-                        const SensorMeasurements& SkinPatches,
-                        const SensorMeasurements& PositionSensors,
-                        const SensorMeasurements& LinearVelocitySensors,
-                        const SensorMeasurements& ThreeAxisAngularAccelerometers);
+    SensorStreamingData(const SensorMeasurementsData& ThreeAxisGyroscopes,
+                        const SensorMeasurementsData& ThreeAxisLinearAccelerometers,
+                        const SensorMeasurementsData& ThreeAxisMagnetometers,
+                        const SensorMeasurementsData& OrientationSensors,
+                        const SensorMeasurementsData& TemperatureSensors,
+                        const SensorMeasurementsData& SixAxisForceTorqueSensors,
+                        const SensorMeasurementsData& ContactLoadCellArrays,
+                        const SensorMeasurementsData& EncoderArrays,
+                        const SensorMeasurementsData& SkinPatches,
+                        const SensorMeasurementsData& PositionSensors,
+                        const SensorMeasurementsData& LinearVelocitySensors,
+                        const SensorMeasurementsData& ThreeAxisAngularAccelerometers);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;

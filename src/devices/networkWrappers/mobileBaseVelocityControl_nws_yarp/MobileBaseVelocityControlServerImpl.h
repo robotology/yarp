@@ -6,12 +6,12 @@
 #ifndef YARP_DEV_MOBBASEVEL2DSERVERIMPL_H
 #define YARP_DEV_MOBBASEVEL2DSERVERIMPL_H
 
-#include "MobileBaseVelocityControlRPC.h"
+#include "INavigation2DVelocityActionsMsgs.h"
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/ReturnValue.h>
 
-class IMobileBaseVelocityControlRPCd : public MobileBaseVelocityControlRPC
+class IMobileBaseVelocityControlRPCd : public INavigation2DVelocityActionsMsgs
 {
     private:
     yarp::dev::Nav2D::INavigation2DVelocityActions* m_iNavVel = nullptr;

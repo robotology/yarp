@@ -87,7 +87,7 @@ public:
     bool pressed_right = false;
     bool pressed_turn_left = false;
     bool pressed_turn_right = false;
-    yarp::dev::MobileBaseVelocity output_data;
+    yarp::dev::Nav2D::MobileBaseVelocity output_data;
 };
 
 #endif

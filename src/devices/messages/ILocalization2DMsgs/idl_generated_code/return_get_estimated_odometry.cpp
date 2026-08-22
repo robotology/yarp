@@ -12,7 +12,7 @@
 
 // Constructor with field values
 return_get_estimated_odometry::return_get_estimated_odometry(const yarp::dev::ReturnValue& ret,
-                                                             const yarp::dev::OdometryData& odom) :
+                                                             const yarp::dev::Nav2D::Odometry& odom) :
         WirePortable(),
         ret(ret),
         odom(odom)

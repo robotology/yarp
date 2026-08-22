@@ -7,7 +7,6 @@
 #include "ControlBoard_nwc_yarp_LogComponent.h"
 #include <cstring>
 
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
@@ -68,7 +67,7 @@ void StateExtendedInputPort::init(int numberOfJoints)
     last.interactionMode.resize(numberOfJoints);
 }
 
-void StateExtendedInputPort::onRead(yarp::dev::impl::jointData &v)
+void StateExtendedInputPort::onRead(yarp::dev::JointStateData &v)
 {
     now=Time::now();
     mutex.lock();

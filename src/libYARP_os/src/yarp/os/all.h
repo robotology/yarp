@@ -44,7 +44,6 @@
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Portable.h>
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Random.h>

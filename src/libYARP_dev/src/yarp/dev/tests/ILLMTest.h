@@ -7,7 +7,7 @@
 #define ILLMTEST_H
 
 #include <yarp/dev/ILLM.h>
-#include <yarp/dev/LLM_Message.h>
+#include <yarp/dev/LLM_MessageData.h>
 
 #include <catch2/catch_amalgamated.hpp>
 

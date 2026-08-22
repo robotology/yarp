@@ -23,8 +23,8 @@ if(NOT SKIP_mobileBaseVelocityControl_nws_yarp)
       MobileBaseVelocityControlServerImpl.h
   )
 
-  target_sources(yarp_mobileBaseVelocityControl_nws_yarp PRIVATE $<TARGET_OBJECTS:MobileBaseVelocityControlMsgs>)
-  target_include_directories(yarp_mobileBaseVelocityControl_nws_yarp PRIVATE $<TARGET_PROPERTY:MobileBaseVelocityControlMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_sources(yarp_mobileBaseVelocityControl_nws_yarp PRIVATE $<TARGET_OBJECTS:INavigation2DVelocityActionsMsgs>)
+  target_include_directories(yarp_mobileBaseVelocityControl_nws_yarp PRIVATE $<TARGET_PROPERTY:INavigation2DVelocityActionsMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_mobileBaseVelocityControl_nws_yarp
     PRIVATE

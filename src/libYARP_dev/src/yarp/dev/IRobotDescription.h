@@ -15,7 +15,7 @@
 
 namespace yarp::dev {
 
-class YARP_dev_API DeviceDescription final: public DeviceDescriptionData
+class YARP_dev_API DeviceDescription final: public yarp::dev::DeviceDescriptionData
 {
  public:
     bool operator ==(DeviceDescription const& b) const

@@ -152,7 +152,7 @@ return_get_estimated_odometry ILocalization2DRPCd::get_estimated_odometry_RPC()
         return ret;
     }
 
-    yarp::dev::OdometryData odom;
+    yarp::dev::Nav2D::Odometry odom;
     ret.ret = m_iLoc->getEstimatedOdometry(odom);
     if (!ret.ret)
     {
