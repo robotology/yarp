@@ -150,12 +150,12 @@ bool return_get_estimated_poses::read_poses(yarp::os::idl::WireReader& reader)
             }
         }
         poses.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(poses[_i])) {
+            if (!reader.readNested(poses[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -201,12 +201,12 @@ bool return_get_estimated_poses::nested_read_poses(yarp::os::idl::WireReader& re
             }
         }
         poses.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(poses[_i])) {
+            if (!reader.readNested(poses[_i0])) {
                 reader.fail();
                 return false;
             }
