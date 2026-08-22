@@ -5,7 +5,7 @@
 
 namespace yarp yarp.dev
 
-struct PidDataUnits
+struct PidUnitsData
 {  /** proportional gain */
   1: string units_kp;
   /** derivative gain */
@@ -33,7 +33,7 @@ struct PidDataUnits
     yarp.api.keyword = "YARP_dev_API"
 )
 
-struct PidDataDescription
+struct PidDescriptionData
 {
   /** human-readable description of the pid controller. */
   1: string pid_description;
@@ -46,16 +46,16 @@ struct PidDataDescription
     yarp.api.keyword = "YARP_dev_API"
 )
 
-struct PidDataExtraInfo
+struct PidExtraInfoData
 {
-   1:PidDataDescription description;
-   2:PidDataUnits       units;
+   1:PidDescriptionData description;
+   2:PidUnitsData       units;
 } (
     yarp.api.include = "yarp/dev/api.h"
     yarp.api.keyword = "YARP_dev_API"
 )
 
-struct PidDataGains
+struct PidGainsData
 {
   /** proportional gain */
   1: double kp;

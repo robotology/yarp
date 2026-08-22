@@ -7,7 +7,6 @@
 #define YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_STREAMINGMSGPARSER_H
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/sig/Image.h>
 #include <yarp/dev/DeviceDriver.h>

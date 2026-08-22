@@ -34,7 +34,7 @@ class ILocalization2DRPCd : public ILocalization2DMsgs
 
     std::mutex* getMutex() {return &m_mutex;}
 
-    yarp::dev::OdometryData                     m_current_odometry;
+    yarp::dev::Nav2D::Odometry                  m_current_odometry;
     yarp::dev::Nav2D::Map2DLocation             m_current_position;
     yarp::dev::Nav2D::LocalizationStatusEnum    m_current_status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_not_yet_localized;
 

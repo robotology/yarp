@@ -22,15 +22,15 @@
 
 #include "MobileBaseVelocityControl_nws_yarp_ParamsParser.h"
 
-class Velocity_InputPortProcessor : public yarp::os::BufferedPort<yarp::dev::MobileBaseVelocity>
+class Velocity_InputPortProcessor : public yarp::os::BufferedPort<yarp::dev::Nav2D::MobileBaseVelocity>
 {
 public:
     double m_timeout = 0.1;
     yarp::dev::Nav2D::INavigation2DVelocityActions* m_iVel = nullptr;
 
 public:
-    using yarp::os::BufferedPort<yarp::dev::MobileBaseVelocity>::onRead;
-    void onRead(yarp::dev::MobileBaseVelocity& v) override;
+    using yarp::os::BufferedPort<yarp::dev::Nav2D::MobileBaseVelocity>::onRead;
+    void onRead(yarp::dev::Nav2D::MobileBaseVelocity& v) override;
 };
 
 /**

@@ -96,7 +96,7 @@ public:
 
     /* The following methods belong to INavigation2D, inherited from ILocalization2D interface */
     yarp::dev::ReturnValue   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation &loc) override;
-    yarp::dev::ReturnValue   getEstimatedOdometry(yarp::dev::OdometryData& odom) override;
+    yarp::dev::ReturnValue   getEstimatedOdometry(yarp::dev::Nav2D::Odometry& odom) override;
     yarp::dev::ReturnValue   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
     yarp::dev::ReturnValue   getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status) override;
     yarp::dev::ReturnValue   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/SensorMeasurement.h>
 #include <yarp/dev/SensorStreamingData.h>
 #include "MultipleAnalogSensorsMetadata.h"
 

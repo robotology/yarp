@@ -13,7 +13,6 @@ foreach(example_name
   log
   make_count
   playback
-  portable_pair
   periodicthread
   periodicThreadTiming
   rfmodule

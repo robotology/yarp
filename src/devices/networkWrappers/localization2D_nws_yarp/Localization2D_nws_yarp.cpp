@@ -273,7 +273,7 @@ void Localization2D_nws_yarp::publish_odometry_on_yarp_port()
 
     if (m_odometryPort.getOutputCount() > 0)
     {
-        yarp::dev::OdometryData& odom = m_odometryPort.prepare();
+        yarp::dev::Nav2D::Odometry& odom = m_odometryPort.prepare();
         odom = m_RPC->m_current_odometry;
 
         //send data to port

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-namespace yarp yarp.dev.llm
+namespace yarp yarp.dev
 
-struct LLM_Message {
+struct yLLM_Message {
 } (
   yarp.name = "yarp::dev::LLM_Message"
-  yarp.includefile="yarp/dev/ILLM.h"
+  yarp.includefile="yarp/dev/LLM_Message.h"
 )
 
 struct yReturnValue {
@@ -24,12 +24,12 @@ struct return_readPrompt{
 
 struct return_ask{
     1: yReturnValue ret;
-    2: LLM_Message answer;
+    2: yLLM_Message answer;
 }
 
 struct return_getConversation{
     1: yReturnValue ret;
-    2: list<LLM_Message> conversation;
+    2: list<yLLM_Message> conversation;
 }
 
 service ILLMMsgs {

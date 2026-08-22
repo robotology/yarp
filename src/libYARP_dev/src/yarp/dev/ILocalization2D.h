@@ -9,7 +9,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/Map2DLocation.h>
-#include <yarp/dev/OdometryData.h>
+#include <yarp/dev/Odometry.h>
 #include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/Matrix.h>
 #include <vector>
@@ -82,7 +82,7 @@ public:
     * @param loc the estimated odometry.
     * @return a ReturnValue, convertible to true/false
     */
-    virtual yarp::dev::ReturnValue getEstimatedOdometry(yarp::dev::OdometryData& odom) = 0;
+    virtual yarp::dev::ReturnValue getEstimatedOdometry(yarp::dev::Nav2D::Odometry& odom) = 0;
 
 
     /**

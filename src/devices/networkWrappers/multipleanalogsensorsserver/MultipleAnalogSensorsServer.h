@@ -16,7 +16,6 @@
 #include <yarp/dev/ReturnValue.h>
 
 // Thrift-generated classes
-#include <yarp/dev/SensorMeasurement.h>
 #include <yarp/dev/SensorStreamingData.h>
 #include "MultipleAnalogSensorsMetadata.h"
 

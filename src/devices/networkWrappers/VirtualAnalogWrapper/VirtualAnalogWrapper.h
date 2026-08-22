@@ -12,7 +12,6 @@
 // and it is able to attach to a one or more virtual analog sensor through
 // IVirtualAnalogSensor interface.
 
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>

@@ -5,7 +5,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/llm/ILLMMsgs.h>
+#include <yarp/dev/ILLMMsgs.h>
 #include <yarp/dev/ILLM.h>
 #include <yarp/dev/LLM_Message.h>
 #include "LLM_nwc_yarp_ParamsParser.h"
@@ -23,7 +23,7 @@ class LLM_nwc_yarp : public yarp::dev::DeviceDriver,
 {
 protected:
     // thrift interface
-    yarp::dev::llm::ILLMMsgs m_LLM_RPC;
+    yarp::dev::ILLMMsgs m_LLM_RPC;
 
     // rpc port
     yarp::os::Port m_rpc_port_to_LLM_server;

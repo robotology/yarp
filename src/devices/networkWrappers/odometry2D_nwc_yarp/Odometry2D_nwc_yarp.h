@@ -21,11 +21,11 @@
 #include "Odometry2D_nwc_yarp_ParamsParser.h"
 
 class OdometryData2DInputPortProcessor :
-        public yarp::os::BufferedPort<yarp::dev::OdometryData>
+        public yarp::os::BufferedPort<yarp::dev::Nav2D::Odometry>
 {
     const int DATA_TIMEOUT_ms=100; //ms
 
-    yarp::dev::OdometryData lastScan;
+    yarp::dev::Nav2D::Odometry lastScan;
     std::mutex mutex;
     yarp::os::Stamp lastStamp;
     double deltaT;
@@ -38,13 +38,13 @@ class OdometryData2DInputPortProcessor :
 
 public:
     OdometryData2DInputPortProcessor();
-    using yarp::os::BufferedPort<yarp::dev::OdometryData>::onRead;
-    void onRead(yarp::dev::OdometryData& v) override;
+    using yarp::os::BufferedPort<yarp::dev::Nav2D::Odometry>::onRead;
+    void onRead(yarp::dev::Nav2D::Odometry& v) override;
 
 public:
     bool timeout_occurred = false;
     inline void resetStat();
-    inline bool getLast(yarp::dev::OdometryData& data, yarp::os::Stamp& stmp);
+    inline bool getLast(yarp::dev::Nav2D::Odometry& data, yarp::os::Stamp& stmp);
     inline int getIterations();
     // time is in ms
     void getEstFrequency(int &ite, double &av, double &min, double &max);
@@ -76,7 +76,7 @@ public:
     bool close() override;
 
     /* IOdometry2D methods */
-    virtual yarp::dev::ReturnValue   getOdometry(yarp::dev::OdometryData& odom, double* timestamp = nullptr) override;
+    virtual yarp::dev::ReturnValue   getOdometry(yarp::dev::Nav2D::Odometry& odom, double* timestamp = nullptr) override;
     virtual yarp::dev::ReturnValue   resetOdometry() override;
 };
 

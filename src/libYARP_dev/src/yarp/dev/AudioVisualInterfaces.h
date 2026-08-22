@@ -13,13 +13,4 @@
 #include <yarp/dev/IAudioVisualStream.h>
 #include <yarp/dev/IFrameWriterAudioVisual.h>
 
-#include <yarp/os/PortablePair.h>
-
-namespace yarp::dev {
-
-typedef yarp::os::PortablePair<yarp::sig::ImageOf<yarp::sig::PixelRgb>,
-                               yarp::sig::Sound> ImageRgbSound;
-
-} // namespace yarp::dev
-
 #endif // YARP_DEV_AUDIOVISUALINTERFACES_H

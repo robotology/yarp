@@ -6,9 +6,9 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/ILLM.h>
-#include <yarp/dev/llm/ILLMMsgs.h>
+#include <yarp/dev/ILLMMsgs.h>
 
-class ILLMRPCd : public yarp::dev::llm::ILLMMsgs
+class ILLMRPCd : public yarp::dev::ILLMMsgs
 {
 private:
     yarp::dev::ILLM* m_iLlm = nullptr;
@@ -31,9 +31,9 @@ public:
     }
     // From IGPTMsgs
     yarp::dev::ReturnValue setPrompt(const std::string& prompt) override;
-    yarp::dev::llm::return_readPrompt readPrompt() override;
-    yarp::dev::llm::return_ask ask(const std::string& question) override;
-    yarp::dev::llm::return_getConversation getConversation() override;
+    yarp::dev::return_readPrompt readPrompt() override;
+    yarp::dev::return_ask ask(const std::string& question) override;
+    yarp::dev::return_getConversation getConversation() override;
     yarp::dev::ReturnValue deleteConversation() override;
     yarp::dev::ReturnValue refreshConversation() override;
 };

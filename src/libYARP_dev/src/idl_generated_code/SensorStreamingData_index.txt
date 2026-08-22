@@ -1,6 +1,6 @@
-yarp/dev/SensorMeasurement.h
-yarp/dev/SensorMeasurement.cpp
-yarp/dev/SensorMeasurements.h
-yarp/dev/SensorMeasurements.cpp
+yarp/dev/SensorMeasurementData.h
+yarp/dev/SensorMeasurementData.cpp
+yarp/dev/SensorMeasurementsData.h
+yarp/dev/SensorMeasurementsData.cpp
 yarp/dev/SensorStreamingData.h
 yarp/dev/SensorStreamingData.cpp

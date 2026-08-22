@@ -12,7 +12,7 @@ struct YarpVector {
   yarp.includefile="yarp/sig/Vector.h"
 )
 
-struct SensorMeasurement {
+struct SensorMeasurementData {
   1: YarpVector measurement;
   2: double timestamp;
 } (
@@ -20,8 +20,8 @@ struct SensorMeasurement {
     yarp.api.keyword = "YARP_dev_API"
 )
 
-struct SensorMeasurements {
-  1: list<SensorMeasurement> measurements;
+struct SensorMeasurementsData {
+  1: list<SensorMeasurementData> measurements;
 } (
     yarp.api.include = "yarp/dev/api.h"
     yarp.api.keyword = "YARP_dev_API"
@@ -29,18 +29,18 @@ struct SensorMeasurements {
 
 struct SensorStreamingData
 {
-  1: SensorMeasurements ThreeAxisGyroscopes;
-  2: SensorMeasurements ThreeAxisLinearAccelerometers;
-  3: SensorMeasurements ThreeAxisMagnetometers;
-  4: SensorMeasurements OrientationSensors;
-  5: SensorMeasurements TemperatureSensors;
-  6: SensorMeasurements SixAxisForceTorqueSensors;
-  7: SensorMeasurements ContactLoadCellArrays;
-  8: SensorMeasurements EncoderArrays;
-  9: SensorMeasurements SkinPatches;
-  10: SensorMeasurements PositionSensors;
-  11: SensorMeasurements LinearVelocitySensors;
-  12: SensorMeasurements ThreeAxisAngularAccelerometers;
+  1: SensorMeasurementsData ThreeAxisGyroscopes;
+  2: SensorMeasurementsData ThreeAxisLinearAccelerometers;
+  3: SensorMeasurementsData ThreeAxisMagnetometers;
+  4: SensorMeasurementsData OrientationSensors;
+  5: SensorMeasurementsData TemperatureSensors;
+  6: SensorMeasurementsData SixAxisForceTorqueSensors;
+  7: SensorMeasurementsData ContactLoadCellArrays;
+  8: SensorMeasurementsData EncoderArrays;
+  9: SensorMeasurementsData SkinPatches;
+  10: SensorMeasurementsData PositionSensors;
+  11: SensorMeasurementsData LinearVelocitySensors;
+  12: SensorMeasurementsData ThreeAxisAngularAccelerometers;
 } (
     yarp.api.include = "yarp/dev/api.h"
     yarp.api.keyword = "YARP_dev_API"

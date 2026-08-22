@@ -113,7 +113,7 @@ yarp::dev::ReturnValue   FakeLocalizer::setInitialPose(const Map2DLocation& loc,
     return yarp::dev::ReturnValue_ok;
 }
 
-yarp::dev::ReturnValue   FakeLocalizer::getEstimatedOdometry(yarp::dev::OdometryData& odom)
+yarp::dev::ReturnValue   FakeLocalizer::getEstimatedOdometry(yarp::dev::Nav2D::Odometry& odom)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status" ; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;; }

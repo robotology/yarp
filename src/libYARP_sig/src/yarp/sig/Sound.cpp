@@ -6,7 +6,6 @@
 
 #include <yarp/sig/Sound.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
