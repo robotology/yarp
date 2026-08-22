@@ -15,7 +15,6 @@
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 // Thrift-generated classes
-#include <yarp/dev/SensorMeasurement.h>
 #include <yarp/dev/SensorStreamingData.h>
 #include "MultipleAnalogSensorsMetadata.h"
 

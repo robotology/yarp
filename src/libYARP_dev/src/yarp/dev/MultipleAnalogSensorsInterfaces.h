@@ -11,6 +11,8 @@
 
 #include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/SensorMeasurementData.h>
+#include <yarp/dev/SensorMeasurementsData.h>
 
 namespace yarp::dev {
 class IThreeAxisGyroscopes;
@@ -25,6 +27,9 @@ class ISixAxisForceTorqueSensors;
 class IContactLoadCellArrays;
 class IEncoderArrays;
 class ISkinPatches;
+
+typedef yarp::dev::SensorMeasurementData SensorMeasurement;
+typedef yarp::dev::SensorMeasurementsData SensorMeasurements;
 
 /**
  * Status of a given analog sensor exposed by a multiple analog sensors interface.
