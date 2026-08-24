@@ -260,7 +260,7 @@ void Protocol::interrupt()
         sendAck();
     }
     // Break the input stream.
-    shift.getInputStream().interrupt();
+    shift.interruptInputStream();
     active = false;
 }
 
