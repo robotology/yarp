@@ -12,6 +12,7 @@
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
 
+#include <memory>
 #include <mutex>
 
 namespace yarp::os::impl {
@@ -107,7 +108,7 @@ public:
     OutputProtocol* getOutPutProtocol();
 
 private:
-    OutputProtocol *op; ///< protocol object for writing/reading
+    std::shared_ptr<OutputProtocol> op;
     bool closing;       ///< should this connection close
     bool finished;      ///< has this connection finished
     bool running;       ///< is a thread running

@@ -78,6 +78,8 @@ public:
 
     void endPacket() override;
 
+    void interruptInputStream();
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     class Private;
