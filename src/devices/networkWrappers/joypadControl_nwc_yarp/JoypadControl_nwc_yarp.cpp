@@ -173,13 +173,6 @@ ReturnValue JoypadControl_nwc_yarp::getStickCount(size_t& stick_count)
     return ret.ret;
 }
 
-ReturnValue JoypadControl_nwc_yarp::getStickDoF(size_t stick_id, size_t& DoF)
-{
-    auto ret = m_rpcMsgs.getStickDoF(stick_id);
-    DoF = ret.DoF;
-    return ret.ret;
-}
-
 ReturnValue JoypadControl_nwc_yarp::getButton(size_t button_id, double& value)
 {
     if(!m_use_streaming)

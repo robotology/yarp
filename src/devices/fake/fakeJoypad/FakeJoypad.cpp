@@ -76,17 +76,6 @@ ReturnValue FakeJoypad::getStickCount(size_t& stick_count)
     return ReturnValue_ok;
 }
 
-ReturnValue FakeJoypad::getStickDoF(size_t stick_id, size_t& DoF)
-{
-    if(stick_id > m_stickCount)
-    {
-        yCError(FAKEJOYPAD) << "stick_id out of bounds when calling 'getStickDoF' method";
-        return ReturnValue_error_input_out_of_bounds;
-    }
-    DoF = 2;
-    return ReturnValue_ok;
-}
-
 ReturnValue FakeJoypad::getButton(size_t button_id, double& value)
 {
     if (button_id > m_buttonCount)

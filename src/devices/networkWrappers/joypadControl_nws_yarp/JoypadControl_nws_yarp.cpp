@@ -49,7 +49,6 @@ class IJoypadControlRPCd : public yarp::dev::IJoypadControlMsgs
     return_getHatCount getHatCount() override;
     return_getTouchSurfaceCount getTouchSurfaceCount() override;
     return_getStickCount getStickCount() override;
-    return_getStickDoF getStickDoF(const std::int32_t stick_id) override;
     return_getButton getButton(const std::int32_t button_id) override;
     return_getTrackball getTrackball(const std::int32_t trackball_id) override;
     return_getHat getHat(const std::int32_t hat_id) override;
@@ -180,22 +179,6 @@ return_getTrackball IJoypadControlRPCd::getTrackball(const std::int32_t id)
 
     size_t temp=0;
     ret.ret = m_iJoy->getTrackball(id, ret.value);
-    return ret;
-}
-
-return_getStickDoF IJoypadControlRPCd::getStickDoF(const std::int32_t id)
-{
-    return_getStickDoF ret;
-
-    if (!m_iJoy) {
-        yCError(JOYPADCONTROLSERVER, "Invalid interface");
-        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
-        return ret;
-    }
-
-    size_t temp=0;
-    ret.ret = m_iJoy->getStickDoF(id, temp);
-    ret.DoF= temp;
     return ret;
 }
 
