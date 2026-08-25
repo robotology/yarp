@@ -1249,12 +1249,12 @@ jobs:
             build_type: "Release",
             cc: "cl",
             cxx: "cl",
-            cmake_generator: "Visual Studio 17 2022",
-            cmake_toolset: "v143",
+            cmake_generator: "Visual Studio 18 2026",
+            cmake_toolset: "v145",
             cmake_platform: "x64",
             cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
             cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
             id: '303',
@@ -1263,10 +1263,9 @@ jobs:
             cc: "cl",
             cxx: "cl",
             cmake_generator: "Ninja",
-            cmake_toolset: "v143",
             cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
             cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
             id: '305',
@@ -1288,7 +1287,6 @@ jobs:
             cc: "cl",
             cxx: "cl",
             cmake_generator: "Ninja",
-            cmake_toolset: "v143",
             cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
             cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
@@ -1538,7 +1536,7 @@ jobs:
 
         if("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
           execute_process(
-              COMMAND "${{ matrix.config.environment_script }}" && set
+              COMMAND cmd.exe /C "\"${{ matrix.config.environment_script }}\" && set"
               OUTPUT_FILE environment_script_output.txt
           )
           file(STRINGS environment_script_output.txt output_lines)
@@ -1740,7 +1738,7 @@ jobs:
 
         set(_toolset)
         if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
-          list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
+          list(APPEND _toolset -T ${{ matrix.config.cmake_toolset }})
         endif()
 
         set(_platform)
@@ -1907,7 +1905,7 @@ jobs:
 
         set(_toolset)
         if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
-          list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
+          list(APPEND _toolset -T ${{ matrix.config.cmake_toolset }})
         endif()
 
         set(_platform)
@@ -1990,7 +1988,7 @@ jobs:
 
         set(_toolset)
         if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
-          list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
+          list(APPEND _toolset -T ${{ matrix.config.cmake_toolset }})
         endif()
 
         set(_platform)
