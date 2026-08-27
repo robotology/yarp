@@ -12,7 +12,7 @@
 
 // Constructor with field values
 IDepthVisualParamsMsgs_return_getDepthIntrinsicParam::IDepthVisualParamsMsgs_return_getDepthIntrinsicParam(const yarp::dev::ReturnValue& ret,
-                                                                                                           const yarp::os::Property& params) :
+                                                                                                           const yarp::sig::IntrinsicParams& params) :
         WirePortable(),
         ret(ret),
         params(params)

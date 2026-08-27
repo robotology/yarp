@@ -177,10 +177,9 @@ bool LaserFromPointCloud::open(yarp::os::Searchable& config)
     //get parameters data from the camera
     m_depth_width = m_iRGBD->getRgbWidth();  //@@@ this is horrible! See yarp issue: https://github.com/robotology/yarp/issues/2290
     m_depth_height = m_iRGBD->getRgbHeight(); //@@@ this is horrible! See yarp issue: https://github.com/robotology/yarp/issues/2290
-    bool propintr  = m_iRGBD->getDepthIntrinsicParam(m_propIntrinsics);
+    bool propintr  = m_iRGBD->getDepthIntrinsicParam(m_intrinsics);
     YARP_UNUSED(propintr);
-    yCInfo(LASER_FROM_POINTCLOUD) << "Depth Intrinsics:" << m_propIntrinsics.toString();
-    m_intrinsics.fromProperty(m_propIntrinsics);
+    yCInfo(LASER_FROM_POINTCLOUD) << "Depth Intrinsics:" << m_intrinsics.toString();
 
     PeriodicThread::start();
     yCInfo(LASER_FROM_POINTCLOUD) << "Sensor ready";

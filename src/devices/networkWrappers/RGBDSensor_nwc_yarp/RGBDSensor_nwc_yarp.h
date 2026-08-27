@@ -85,7 +85,7 @@ public:
     yarp::dev::ReturnValue setRgbResolution(int width, int height) override;
     yarp::dev::ReturnValue getRgbFOV(double &horizontalFov, double &verticalFov) override;
     yarp::dev::ReturnValue setRgbFOV(double horizontalFov, double verticalFov) override;
-    yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::os::Property &intrinsic) override;
+    yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::sig::IntrinsicParams &intrinsic) override;
     yarp::dev::ReturnValue getRgbMirroring(bool& mirror) override;
     yarp::dev::ReturnValue setRgbMirroring(bool mirror) override;
 
@@ -102,7 +102,7 @@ public:
     yarp::dev::ReturnValue setDepthAccuracy(double accuracy) override;
     yarp::dev::ReturnValue getDepthClipPlanes(double &near, double &far) override;
     yarp::dev::ReturnValue setDepthClipPlanes(double near, double far) override;
-    yarp::dev::ReturnValue getDepthIntrinsicParam(yarp::os::Property &intrinsic) override;
+    yarp::dev::ReturnValue getDepthIntrinsicParam(yarp::sig::IntrinsicParams &intrinsic) override;
     yarp::dev::ReturnValue getDepthMirroring(bool& mirror) override;
     yarp::dev::ReturnValue setDepthMirroring(bool mirror) override;
 

@@ -46,36 +46,24 @@ namespace yarp::dev::tests
 
         // checking intrinsics
         {
-            yarp::os::Property intrinsics;
+            yarp::sig::IntrinsicParams intrinsics;
             CHECK(irgb->getRgbIntrinsicParam(intrinsics));
-            CHECK(intrinsics.find("focalLengthX").asFloat64() == 4.0);         // checking focalLength X
-            CHECK(intrinsics.find("focalLengthY").asFloat64() == 5.0);         // checking focalLength Y
-            CHECK(intrinsics.find("principalPointX").asFloat64() == 6.0);      // checking principalPoint X
-            CHECK(intrinsics.find("principalPointY").asFloat64() == 7.0);      // checking principalPoint Y
-            CHECK(intrinsics.find("k1").asFloat64() == 8.0);                   // checking k1
-            CHECK(intrinsics.find("k2").asFloat64() == 9.0);                   // checking k2
-            CHECK(intrinsics.find("k3").asFloat64() == 10.0);                  // checking k3
-            CHECK(intrinsics.find("t1").asFloat64() == 11.0);                  // checking t1
-            CHECK(intrinsics.find("t2").asFloat64() == 12.0);                  // checking t2
-            CHECK(intrinsics.find("distortionModel").asString() == "FishEye"); // checking distorionModel
+            CHECK(intrinsics.focalLengthX == 4.0);         // checking focalLength X
+            CHECK(intrinsics.focalLengthY == 5.0);         // checking focalLength Y
+            CHECK(intrinsics.principalPointX == 6.0);      // checking principalPoint X
+            CHECK(intrinsics.principalPointY == 7.0);      // checking principalPoint Y
+            CHECK(intrinsics.distortionModel.k1 == 8.0);                   // checking k1
+            CHECK(intrinsics.distortionModel.k2 == 9.0);                   // checking k2
+            CHECK(intrinsics.distortionModel.k3 == 10.0);                  // checking k3
+            CHECK(intrinsics.distortionModel.t1 == 11.0);                  // checking t1
+            CHECK(intrinsics.distortionModel.t2 == 12.0);                  // checking t2
+            CHECK(intrinsics.distortionModel.type == CameraDistortionType::YARP_FISH_EYE); // checking distorionModel
 
-            // checking the rectificationMatrix
-            yarp::os::Bottle* retM = nullptr;
-            retM = intrinsics.find("rectificationMatrix").asList();
             double data[9] = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
-            Vector v(9, data);
-            Vector v2;
-            REQUIRE(retM); // segfault otherwise
-            std::string retM_string = retM->toString();
-            bool cpret = Portable::copyPortable(*retM, v2);
-            REQUIRE((cpret && v2.size() == 9)); // Otherwise the following loop will segfault
-            for (int i = 0; i < 3; i++)
+            REQUIRE(intrinsics.rectificationMatrix3X3.size() == 9);
+            for (int i = 0; i < 9; i++)
             {
-                for (int j = 0; j < 3; j++)
-                {
-                    CHECK(retM->get(i * 3 + j).asFloat64() == v(i * 3 + j));
-                    CHECK(v2(i * 3 + j) == v(i * 3 + j));
-                }
+                CHECK(intrinsics.rectificationMatrix3X3[i] == data[i]);
             }
         }
 

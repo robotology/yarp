@@ -150,12 +150,12 @@ bool IRGBVisualParamsMsgs_return_getRgbSupportedCfg::read_configuration(yarp::os
             }
         }
         configuration.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(configuration[_i])) {
+            if (!reader.readNested(configuration[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -201,12 +201,12 @@ bool IRGBVisualParamsMsgs_return_getRgbSupportedCfg::nested_read_configuration(y
             }
         }
         configuration.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(configuration[_i])) {
+            if (!reader.readNested(configuration[_i0])) {
                 reader.fail();
                 return false;
             }

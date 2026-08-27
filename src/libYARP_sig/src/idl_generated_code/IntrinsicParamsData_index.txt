@@ -1,0 +1,2 @@
+yarp/sig/IntrinsicParamsData.h
+yarp/sig/IntrinsicParamsData.cpp

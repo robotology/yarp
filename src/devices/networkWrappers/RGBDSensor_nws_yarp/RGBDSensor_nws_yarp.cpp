@@ -147,23 +147,9 @@ void RGBDSensor_nws_yarp::threadRelease()
 
 bool RGBDSensor_nws_yarp::setCamInfo(const std::string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
-    double phyF = 0.0;
-    double fx = 0.0;
-    double fy = 0.0;
-    double cx = 0.0;
-    double cy = 0.0;
-    double k1 = 0.0;
-    double k2 = 0.0;
-    double t1 = 0.0;
-    double t2 = 0.0;
-    double k3 = 0.0;
-    double stamp = 0.0;
-
     std::string                  distModel, currentSensor;
-    UInt                    i;
-    Property                camData;
-    std::vector<param<double> >  parVector;
-    param<double>*          par;
+    UInt                         i;
+    yarp::sig::IntrinsicParams   camData;
     bool                    ok;
 
     currentSensor = sensorType == COLOR_SENSOR ? "Rgb" : "Depth";
@@ -175,40 +161,10 @@ bool RGBDSensor_nws_yarp::setCamInfo(const std::string& frame_id, const UInt& se
         return false;
     }
 
-    if(!camData.check("distortionModel"))
-    {
-        yCWarning(RGBDSENSORNWSYARP) << "Missing distortion model";
-        return false;
-    }
-
-    distModel = camData.find("distortionModel").asString();
-    if (distModel != "plumb_bob")
+    if (camData.distortionModel.type != CameraDistortionType::YARP_PLUMB_BOB)
     {
         yCError(RGBDSENSORNWSYARP) << "Distortion model not supported";
         return false;
-    }
-
-    parVector.emplace_back(phyF,"physFocalLength");
-    parVector.emplace_back(fx,"focalLengthX");
-    parVector.emplace_back(fy,"focalLengthY");
-    parVector.emplace_back(cx,"principalPointX");
-    parVector.emplace_back(cy,"principalPointY");
-    parVector.emplace_back(k1,"k1");
-    parVector.emplace_back(k2,"k2");
-    parVector.emplace_back(t1,"t1");
-    parVector.emplace_back(t2,"t2");
-    parVector.emplace_back(k3,"k3");
-    parVector.emplace_back(stamp,"stamp");
-    for(i = 0; i < parVector.size(); i++)
-    {
-        par = &parVector[i];
-
-        if(!camData.check(par->parname))
-        {
-            yCWarning(RGBDSENSORNWSYARP) << "Driver has not the param:" << par->parname;
-            return false;
-        }
-        *par->var = camData.find(par->parname).asFloat64();
     }
 
     return true;

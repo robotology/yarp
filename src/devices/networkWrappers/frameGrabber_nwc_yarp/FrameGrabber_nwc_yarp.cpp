@@ -302,7 +302,7 @@ ReturnValue FrameGrabber_nwc_yarp::setRgbFOV(double horizontalFov, double vertic
     return r;
 }
 
-ReturnValue FrameGrabber_nwc_yarp::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
+ReturnValue FrameGrabber_nwc_yarp::getRgbIntrinsicParam(yarp::sig::IntrinsicParams &intrinsic)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto r =  m_frameGrabber_RPC.getRgbIntrinsicParamRPC();

@@ -231,7 +231,7 @@ ReturnValue RGBDSensor_nwc_yarp::setRgbFOV(double horizontalFov, double vertical
     return r;
 }
 
-ReturnValue RGBDSensor_nwc_yarp::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
+ReturnValue RGBDSensor_nwc_yarp::getRgbIntrinsicParam(yarp::sig::IntrinsicParams &intrinsic)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto r =  m_rgbdsensor_RPC.getRgbIntrinsicParamRPC();
@@ -334,7 +334,7 @@ ReturnValue RGBDSensor_nwc_yarp::setDepthClipPlanes(double nearPlane, double far
     return r;
 }
 
-ReturnValue RGBDSensor_nwc_yarp::getDepthIntrinsicParam(yarp::os::Property &intrinsic)
+ReturnValue RGBDSensor_nwc_yarp::getDepthIntrinsicParam(yarp::sig::IntrinsicParams &intrinsic)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto r = m_rgbdsensor_RPC.getDepthIntrinsicParamRPC();

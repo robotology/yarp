@@ -100,12 +100,12 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         snd1.resize(10, 3);
         generate_test_sound(snd1, 10, 3);
         yarp::os::Bottle output_bot;
-        bool b1 = Property::copyPortable(snd1, output_bot);
+        bool b1 = Portable::copyPortable(snd1, output_bot);
         CHECK(b1);
 
         yarp::os::Bottle input_bot = output_bot;
         Sound snd2;
-        bool b2 = Property::copyPortable(input_bot, snd2);
+        bool b2 = Portable::copyPortable(input_bot, snd2);
         CHECK(b2);
 
         bool b3 = (snd1 == snd2);
@@ -161,7 +161,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
 
         Sound snd2;
         double start = yarp::os::Time::now();
-        bool b1 = Property::copyPortable(snd1, snd2);
+        bool b1 = Portable::copyPortable(snd1, snd2);
         double end = yarp::os::Time::now();
         double elapsed = end - start;
         CHECK(b1);

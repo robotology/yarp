@@ -9,10 +9,10 @@ struct yReturnValue {
   yarp.includefile = "yarp/dev/ReturnValue.h"
 )
 
-struct yProperty {
+struct yIntrinsicParams {
 } (
-  yarp.name = "yarp::os::Property"
-  yarp.includefile = "yarp/os/Property.h"
+  yarp.name = "yarp::sig::IntrinsicParams"
+  yarp.includefile = "yarp/sig/IntrinsicParams.h"
 )
 
 // ---------------------------------------------------------------
@@ -57,7 +57,7 @@ struct return_getDepthMirroring {
 
 struct return_getDepthIntrinsicParam {
   1: yReturnValue ret;
-  2: yProperty params;
+  2: yIntrinsicParams params;
 }
 
 // ---------------------------------------------------------------

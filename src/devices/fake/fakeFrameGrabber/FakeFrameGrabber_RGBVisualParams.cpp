@@ -74,7 +74,7 @@ ReturnValue FakeFrameGrabber::setRgbFOV(double horizontalFov, double verticalFov
     return ReturnValue_ok;
 }
 
-ReturnValue FakeFrameGrabber::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
+ReturnValue FakeFrameGrabber::getRgbIntrinsicParam(yarp::sig::IntrinsicParams &intrinsic)
 {
     std::lock_guard<std::mutex> lock(rpc_methods_mutex);
     intrinsic=this->m_intrinsic;

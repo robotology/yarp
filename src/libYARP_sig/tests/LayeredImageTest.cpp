@@ -66,7 +66,7 @@ void fillTestImage(FlexImage& img)
         LayeredImage multiLayerImageOut;
 
         yarp::os::Bottle output_bot;
-        bool b1 = Property::copyPortable(multiLayerImageIn, output_bot);
+        bool b1 = Portable::copyPortable(multiLayerImageIn, output_bot);
         CHECK(b1);
 
         yarp::os::Bottle input_bot = output_bot;
@@ -78,7 +78,7 @@ void fillTestImage(FlexImage& img)
             CHECK((int)i2 == 23);
             std::cout << "s1: " << s1 << std::endl;
             std::cout << "s2: " << s2 << std::endl;
-        bool b2 = Property::copyPortable(input_bot, multiLayerImageOut);
+        bool b2 = Portable::copyPortable(input_bot, multiLayerImageOut);
         CHECK(b2);
 
         bool b3 = (multiLayerImageIn == multiLayerImageOut);
@@ -98,7 +98,7 @@ void fillTestImage(FlexImage& img)
         LayeredImage multiLayerImageOut;
 
         yarp::os::Bottle output_bot;
-        bool b1 = Property::copyPortable(multiLayerImageIn, output_bot);
+        bool b1 = Portable::copyPortable(multiLayerImageIn, output_bot);
         CHECK(b1);
 
         yarp::os::Bottle input_bot = output_bot;
@@ -108,7 +108,7 @@ void fillTestImage(FlexImage& img)
             std::string s2 = input_bot.toString();
             CHECK((int)i1 == 3);
             CHECK((int)i2 == 3);
-        bool b2 = Property::copyPortable(input_bot, multiLayerImageOut);
+        bool b2 = Portable::copyPortable(input_bot, multiLayerImageOut);
         CHECK(b2);
 
         bool b3 = (multiLayerImageIn == multiLayerImageOut);

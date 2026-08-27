@@ -195,7 +195,7 @@ IRGBVisualParamsMsgs_return_getRgbIntrinsicParam RGBDSensorMsgsImpl::getRgbIntri
         return response;
     }
 
-    yarp::os::Property intrinsic;
+    yarp::sig::IntrinsicParams intrinsic;
     auto ret = m_irgbd->getRgbIntrinsicParam(intrinsic);
 
     if (ret) {
@@ -860,7 +860,7 @@ IDepthVisualParamsMsgs_return_getDepthIntrinsicParam RGBDSensorMsgsImpl::getDept
         return response;
     }
 
-    yarp::os::Property intrinsic;
+    yarp::sig::IntrinsicParams intrinsic;
     auto ret = m_irgbd->getDepthIntrinsicParam(intrinsic);
 
     if (ret) {
