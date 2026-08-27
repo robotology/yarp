@@ -8,7 +8,8 @@
 
 #include <yarp/dev/PolyDriver.h>
 
-#include "ControlBoardRemapper.h"
+#include "ControlBoardRemappingEngine.h"
+#include "RemoteControlBoardRemapper_ParamsParser.h"
 
 /**
  *  @ingroup dev_impl_network_clients
@@ -19,16 +20,18 @@
  *
  * \section RemoteControlBoardRemapper
  *
- *  Parameters required by this device are:
+ * Parameters required by this device are shown in class: RemoteControlBoardRemapper_ParamsParser
+ *
+ * In addition to those parameters, the section REMOTE_CONTROLBOARD_OPTIONS can define specific options
+ * that will be passed to ALL control boards suring their opening phase.
+ *
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | axesNames      |      -         | vector of strings  | -   |   -           | Yes          | Ordered list of the axes that are part of the remapped device.    |       |
- * | remoteControlBoards |     -     | vector of strings  | -   |   -           | Yes          | List of remote prefix used by the remote controlboards.           | The element of this list are then passed as "remote" parameter to the RemoteControlBoard device. |
- * | localPortPrefix |     -         | string             | -   |   -           | Yes          | All ports opened by this device will start with this prefix       |       |
  * | REMOTE_CONTROLBOARD_OPTIONS | - | group              | -   |   -           | No           | Options that will be passed directly to the controlBoard_nwc_yarp devices | |
- * All the passed remote controlboards are opened, and then the axesNames and the opened device are
- * passed to the ControlBoardRemapper device. If different axes
- * in two attached controlboard have the same name, the behaviour of this device is undefined.
+ *
+ * All the passed remote controlboards are opened, and then the axesNames and the opened devices are
+ * passed to the ControlBoardRemapper device.
+ * If different axes in two attached controlboard have the same name, the behaviour of this device is undefined.
  *
  *
  * Configuration file using .ini format.
@@ -40,7 +43,6 @@
  *
  *  [REMOTE_CONTROLBOARD_OPTIONS]
  *  writeStrict on
- *
  *
  * ...
  * \endcode
@@ -91,16 +93,21 @@
  *
  */
 
-class RemoteControlBoardRemapper : public ControlBoardRemapper
+class RemoteControlBoardRemapper : public ControlBoardRemappingEngine,
+                                   public RemoteControlBoardRemapper_ParamsParser,
+                                   public yarp::dev::DeviceDriver
 {
 private:
     /**
      * List of controlBoard_nwc_yarp devices opened by the RemoteControlBoardRemapper device.
      */
-    std::vector<std::unique_ptr<yarp::dev::PolyDriver>> m_remoteControlBoardDevices;
+    yarp::dev::PolyDriverList m_remoteControlBoardDevices;
 
     // Close all opened remote controlboards
     void closeAllRemoteControlBoards();
+
+    // Open all opened remote controlboards
+    bool openAllRemoteControlBoards(const yarp::os::Property& remoteControlBoardsOptions);
 
 public:
     RemoteControlBoardRemapper() = default;

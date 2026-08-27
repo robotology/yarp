@@ -5,6 +5,7 @@ yarp_prepare_plugin(controlboardremapper
   CATEGORY device
   TYPE ControlBoardRemapper
   INCLUDE ControlBoardRemapper.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=controlBoard_nws_yarp
   DEFAULT ON
@@ -14,6 +15,7 @@ yarp_prepare_plugin(remotecontrolboardremapper
   CATEGORY device
   TYPE RemoteControlBoardRemapper
   INCLUDE RemoteControlBoardRemapper.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=controlBoard_nws_yarp
   DEFAULT ON
@@ -24,12 +26,18 @@ if(NOT SKIP_controlboardremapper OR NOT SKIP_remotecontrolboardremapper)
 
   target_sources(yarp_controlboardremapper
     PRIVATE
+      ControlBoardRemappingEngine.cpp
+      ControlBoardRemappingEngine.h
       ControlBoardRemapper.cpp
       ControlBoardRemapper.h
       ControlBoardRemapperHelpers.cpp
       ControlBoardRemapperHelpers.h
+      ControlBoardRemapper_ParamsParser.cpp
+      ControlBoardRemapper_ParamsParser.h
       ControlBoardRemapperLogComponent.cpp
       ControlBoardRemapperLogComponent.h
+      RemoteControlBoardRemapper_ParamsParser.cpp
+      RemoteControlBoardRemapper_ParamsParser.h
       RemoteControlBoardRemapper.cpp
       RemoteControlBoardRemapper.h)
 

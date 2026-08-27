@@ -11,8 +11,8 @@
 
 #include <vector>
 
-#include <yarp/dev/tests/TestUtils.h>
 #include <yarp/dev/tests/ParametersTest.h>
+#include <yarp/dev/tests/TestUtils.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -233,13 +233,12 @@ static void checkRemapperMicro(yarp::dev::PolyDriver & ddRemapper, int rand, siz
 }
 
 
-TEST_CASE("dev::ControlBoardRemapperTest1", "[yarp::dev]")
+TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
     YARP_REQUIRE_PLUGIN("fakeMotionControlMicro", "device");
     YARP_REQUIRE_PLUGIN("controlboardremapper", "device");
     YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
-    YARP_REQUIRE_PLUGIN("remotecontrolboardremapper", "device");
 
     Network::setLocalMode(true);
 
@@ -315,39 +314,62 @@ TEST_CASE("dev::ControlBoardRemapperTest1", "[yarp::dev]")
             fmcList.push(fmcbs[i].get(),fmcbsNames[i].c_str());
         }
 
-        // Open the remotecontrolboardremapper
-        PolyDriver ddRemoteRemapper;
-        Property pRemoteRemapper;
-        pRemoteRemapper.put("device","remotecontrolboardremapper");
-        pRemoteRemapper.addGroup("axesNames");
-        Bottle & remoteAxesList = pRemoteRemapper.findGroup("axesNames").addList();
-        remoteAxesList.addString("axisA1");
-        remoteAxesList.addString("axisB1");
-        remoteAxesList.addString("axisC1");
-        remoteAxesList.addString("axisB3");
-        remoteAxesList.addString("axisC3");
-        remoteAxesList.addString("axisA2");
+        // Open a controlboardremapper with the wrong axisName,
+        // and make sure that if fails during attachAll
+        PolyDriver ddRemapperWN;
+        Property pRemapperWN;
+        pRemapperWN.put("device","controlboardremapper");
+        pRemapperWN.addGroup("axesNames");
+        Bottle & axesListWN = pRemapperWN.findGroup("axesNames").addList();
+        axesListWN.addString("axisA1");
+        axesListWN.addString("axisB1");
+        axesListWN.addString("axisC1");
+        axesListWN.addString("axisB3");
+        axesListWN.addString("axisC3");
+        axesListWN.addString("axisA2");
+        axesListWN.addString("thisIsAnAxisNameThatDoNotExist");
+
+        REQUIRE(ddRemapperWN.open(pRemapperWN)); // controlboardremapper with wrong names open reported successful
+
+        yarp::dev::IMultipleWrapper *imultwrapWN = nullptr;
+        REQUIRE(ddRemapperWN.view(imultwrapWN)); // interface for multiple wrapper with wrong names correctly opened
+        REQUIRE(imultwrapWN);
+
+        REQUIRE_FALSE(imultwrapWN->attachAll(fmcList)); // attachAll for controlboardremapper with wrong names successful
+
+        // Make sure that a controlboard in which attachAll is not successfull
+        // closes correctly
+        CHECK(ddRemapperWN.close()); // controlboardremapper with wrong names close was successful
+
+        // Open the controlboardremapper
+        PolyDriver ddRemapper;
+        Property pRemapper;
+        pRemapper.put("device","controlboardremapper");
+        pRemapper.addGroup("axesNames");
+        Bottle & axesList = pRemapper.findGroup("axesNames").addList();
+        axesList.addString("axisA1");
+        axesList.addString("axisB1");
+        axesList.addString("axisC1");
+        axesList.addString("axisB3");
+        axesList.addString("axisC3");
+        axesList.addString("axisA2");
         size_t nrOfRemappedAxes = 6;
 
-        Bottle remoteControlBoards;
-        Bottle & remoteControlBoardsList = remoteControlBoards.addList();
-        remoteControlBoardsList.addString("/testRemapperRobot/a");
-        remoteControlBoardsList.addString("/testRemapperRobot/b");
-        remoteControlBoardsList.addString("/testRemapperRobot/c");
-        pRemoteRemapper.put("remoteControlBoards",remoteControlBoards.get(0));
+        REQUIRE(ddRemapper.open(pRemapper)); // controlboardremapper open reported successful
 
-        pRemoteRemapper.put("localPortPrefix","/test/remoteControlBoardRemapper");
+        yarp::dev::IMultipleWrapper *imultwrap = nullptr;
+        REQUIRE(ddRemapper.view(imultwrap)); // interface for multiple wrapper correctly opened
+        REQUIRE(imultwrap);
 
-        Property & opts = pRemoteRemapper.addGroup("REMOTE_CONTROLBOARD_OPTIONS");
-        opts.put("writeStrict","on");
+        REQUIRE(imultwrap->attachAll(fmcList)); // attachAll for controlboardremapper successful
 
-        REQUIRE(ddRemoteRemapper.open(pRemoteRemapper)); // remotecontrolboardremapper open reported successful, testing it
 
-        // Test the remotecontrolboardremapper
-        checkRemapper(ddRemoteRemapper,100,nrOfRemappedAxes);
+        // Test the controlboardremapper
+        checkRemapper(ddRemapper,200,nrOfRemappedAxes);
 
         // Close devices
-        ddRemoteRemapper.close();
+        imultwrap->detachAll();
+        ddRemapper.close();
 
         for(int i=0; i < 3; i++)
         {
@@ -435,39 +457,62 @@ TEST_CASE("dev::ControlBoardRemapperTest1", "[yarp::dev]")
             fmcList.push(fmcbs[i].get(),fmcbsNames[i].c_str());
         }
 
-        // Open the remotecontrolboardremapper
-        PolyDriver ddRemoteRemapper;
-        Property pRemoteRemapper;
-        pRemoteRemapper.put("device","remotecontrolboardremapper");
-        pRemoteRemapper.addGroup("axesNames");
-        Bottle & remoteAxesList = pRemoteRemapper.findGroup("axesNames").addList();
-        remoteAxesList.addString("axisA1");
-        remoteAxesList.addString("axisB1");
-        remoteAxesList.addString("axisC1");
-        remoteAxesList.addString("axisB3");
-        remoteAxesList.addString("axisC3");
-        remoteAxesList.addString("axisA2");
+        // Open a controlboardremapper with the wrong axisName,
+        // and make sure that if fails during attachAll
+        PolyDriver ddRemapperWN;
+        Property pRemapperWN;
+        pRemapperWN.put("device","controlboardremapper");
+        pRemapperWN.addGroup("axesNames");
+        Bottle & axesListWN = pRemapperWN.findGroup("axesNames").addList();
+        axesListWN.addString("axisA1");
+        axesListWN.addString("axisB1");
+        axesListWN.addString("axisC1");
+        axesListWN.addString("axisB3");
+        axesListWN.addString("axisC3");
+        axesListWN.addString("axisA2");
+        axesListWN.addString("thisIsAnAxisNameThatDoNotExist");
+
+        REQUIRE(ddRemapperWN.open(pRemapperWN)); // controlboardremapper with wrong names open reported successful
+
+        yarp::dev::IMultipleWrapper *imultwrapWN = nullptr;
+        REQUIRE(ddRemapperWN.view(imultwrapWN)); // interface for multiple wrapper with wrong names correctly opened
+        REQUIRE(imultwrapWN);
+
+        REQUIRE_FALSE(imultwrapWN->attachAll(fmcList)); // attachAll for controlboardremapper with wrong names successful
+
+        // Make sure that a controlboard in which attachAll is not successfull
+        // closes correctly
+        CHECK(ddRemapperWN.close()); // controlboardremapper with wrong names close was successful
+
+        // Open the controlboardremapper
+        PolyDriver ddRemapper;
+        Property pRemapper;
+        pRemapper.put("device","controlboardremapper");
+        pRemapper.addGroup("axesNames");
+        Bottle & axesList = pRemapper.findGroup("axesNames").addList();
+        axesList.addString("axisA1");
+        axesList.addString("axisB1");
+        axesList.addString("axisC1");
+        axesList.addString("axisB3");
+        axesList.addString("axisC3");
+        axesList.addString("axisA2");
         size_t nrOfRemappedAxes = 6;
 
-        Bottle remoteControlBoards;
-        Bottle & remoteControlBoardsList = remoteControlBoards.addList();
-        remoteControlBoardsList.addString("/testRemapperRobot/a");
-        remoteControlBoardsList.addString("/testRemapperRobot/b");
-        remoteControlBoardsList.addString("/testRemapperRobot/c");
-        pRemoteRemapper.put("remoteControlBoards",remoteControlBoards.get(0));
+        REQUIRE(ddRemapper.open(pRemapper)); // controlboardremapper open reported successful
 
-        pRemoteRemapper.put("localPortPrefix","/test/remoteControlBoardRemapper");
+        yarp::dev::IMultipleWrapper *imultwrap = nullptr;
+        REQUIRE(ddRemapper.view(imultwrap)); // interface for multiple wrapper correctly opened
+        REQUIRE(imultwrap);
 
-        Property & opts = pRemoteRemapper.addGroup("REMOTE_CONTROLBOARD_OPTIONS");
-        opts.put("writeStrict","on");
+        REQUIRE(imultwrap->attachAll(fmcList)); // attachAll for controlboardremapper successful
 
-        REQUIRE(ddRemoteRemapper.open(pRemoteRemapper)); // remotecontrolboardremapper open reported successful, testing it
 
-        // Test the remotecontrolboardremapper
-        checkRemapperMicro(ddRemoteRemapper,100,nrOfRemappedAxes);
+        // Test the controlboardremapper
+        checkRemapperMicro(ddRemapper,200,nrOfRemappedAxes);
 
         // Close devices
-        ddRemoteRemapper.close();
+        imultwrap->detachAll();
+        ddRemapper.close();
 
         for(int i=0; i < 3; i++)
         {
