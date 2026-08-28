@@ -12,7 +12,7 @@
 
 // Constructor with field values
 IRGBVisualParamsMsgs_return_getRgbIntrinsicParam::IRGBVisualParamsMsgs_return_getRgbIntrinsicParam(const yarp::dev::ReturnValue& ret,
-                                                                                                   const yarp::os::Property& params) :
+                                                                                                   const yarp::sig::IntrinsicParams& params) :
         WirePortable(),
         ret(ret),
         params(params)

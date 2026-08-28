@@ -3928,12 +3928,12 @@ bool FrameGrabberMsgs_getImageCropRPC_helper::Command::readArgs(yarp::os::idl::W
             }
         }
         vertices.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(vertices[_i])) {
+            if (!reader.readNested(vertices[_i0])) {
                 reader.fail();
                 return false;
             }
