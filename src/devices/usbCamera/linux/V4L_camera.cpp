@@ -20,6 +20,7 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace yarp::sig;
 
 
 static double getEpochTimeShift()
@@ -349,7 +350,7 @@ ReturnValue V4L_camera::setRgbFOV(double horizontalFov, double verticalFov)
     return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
-ReturnValue V4L_camera::getRgbIntrinsicParam(yarp::os::Property& intrinsic)
+ReturnValue V4L_camera::getRgbIntrinsicParam(yarp::sig::IntrinsicParams& intrinsic)
 {
     intrinsic = param.intrinsic;
     return ReturnValue_ok;
@@ -532,26 +533,30 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
         }
     }
 
-    param.intrinsic.put("focalLengthX", config.check("focalLengthX", Value(0.0), "Horizontal component of the focal lenght").asFloat64());
-    param.intrinsic.put("focalLengthY", config.check("focalLengthY", Value(0.0), "Vertical component of the focal lenght").asFloat64());
-    param.intrinsic.put("principalPointX", config.check("principalPointX", Value(0.0), "X coordinate of the principal point").asFloat64());
-    param.intrinsic.put("principalPointY", config.check("principalPointY", Value(0.0), "Y coordinate of the principal point").asFloat64());
-    param.intrinsic.put("rectificationMatrix", config.check("rectificationMatrix", *retM, "Matrix that describes the lens' distortion"));
-    param.intrinsic.put("distortionModel", config.check("distortionModel", Value(""), "Reference to group of parameters describing the distortion model of the camera").asString());
+    param.intrinsic.focalLengthX = config.check("focalLengthX", Value(0.0), "Horizontal component of the focal lenght").asFloat64();
+    param.intrinsic.focalLengthY = config.check("focalLengthY", Value(0.0), "Vertical component of the focal lenght").asFloat64();
+    param.intrinsic.principalPointX = config.check("principalPointX", Value(0.0), "X coordinate of the principal point").asFloat64();
+    param.intrinsic.principalPointY = config.check("principalPointY", Value(0.0), "Y coordinate of the principal point").asFloat64();
+    *retM = config.check("rectificationMatrix", *retM, "Matrix that describes the lens' distortion");
+
+    for (size_t i = 0; i< retM->asList()->size(); i++)
+    {
+        param.intrinsic.rectificationMatrix3X3[i] = retM->asList()->get(i).asFloat64();
+    }
     if (bt.isNull()) {
-        param.intrinsic.put("name", "");
-        param.intrinsic.put("k1", 0.0);
-        param.intrinsic.put("k2", 0.0);
-        param.intrinsic.put("k3", 0.0);
-        param.intrinsic.put("t1", 0.0);
-        param.intrinsic.put("t2", 0.0);
+        param.intrinsic.distortionModel.type = CameraDistortionType::YARP_DISTORTION_NONE;
+        param.intrinsic.distortionModel.k1 = 0.0;
+        param.intrinsic.distortionModel.k2 = 0.0;
+        param.intrinsic.distortionModel.k3 = 0.0;
+        param.intrinsic.distortionModel.t1 = 0.0;
+        param.intrinsic.distortionModel.t2 = 0.0;
     } else {
-        param.intrinsic.put("name", bt.check("name", Value(""), "Name of the distortion model").asString());
-        param.intrinsic.put("k1", bt.check("k1", Value(0.0), "Radial distortion coefficient of the lens").asFloat64());
-        param.intrinsic.put("k2", bt.check("k2", Value(0.0), "Radial distortion coefficient of the lens").asFloat64());
-        param.intrinsic.put("k3", bt.check("k3", Value(0.0), "Radial distortion coefficient of the lens").asFloat64());
-        param.intrinsic.put("t1", bt.check("t1", Value(0.0), "Tangential distortion of the lens").asFloat64());
-        param.intrinsic.put("t2", bt.check("t2", Value(0.0), "Tangential distortion of the lens").asFloat64());
+        param.intrinsic.distortionModel.type = (CameraDistortionType)CameraDistortionTypeConverter::fromString(bt.check("name", Value(""), "Name of the distortion model").asString());
+        param.intrinsic.distortionModel.k1 = bt.check("k1", Value(0.0), "Radial distortion coefficient of the lens").asFloat64();
+        param.intrinsic.distortionModel.k2 = bt.check("k2", Value(0.0), "Radial distortion coefficient of the lens").asFloat64();
+        param.intrinsic.distortionModel.k3 = bt.check("k3", Value(0.0), "Radial distortion coefficient of the lens").asFloat64();
+        param.intrinsic.distortionModel.t1 = bt.check("t1", Value(0.0), "Tangential distortion of the lens").asFloat64();
+        param.intrinsic.distortionModel.t2 = bt.check("t2", Value(0.0), "Tangential distortion of the lens").asFloat64();
     }
     delete retM;
 
