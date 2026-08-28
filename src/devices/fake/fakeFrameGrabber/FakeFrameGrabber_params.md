@@ -10,7 +10,7 @@
   * |      |  focalLengthY     | double  | -             |   5.0         | No    | Vertical component of the focal length             |  |
   * |      |  principalPointX  | double  | -             |   6.0         | No    | X coordinate of the principal point                |  |
   * |      |  principalPointY  | double  | -             |   7.0         | No    | Y coordinate of the principal point                |  |
-  * |      |  distortionModel | string  | -             |   FishEye      | No    | Reference to group of parameters describing the distortion model of the camera     |  |
+  * |      |  distortionModel | string  | -             |  YARP_FISH_EYE | No    | Reference to group of parameters describing the distortion model of the camera     |  |
   * |      |  k1              | double  | -             |   8.0          | No    | Radial distortion coefficient of the lens(fake                              |  |
   * |      |  k2              | double  | -             |   9.0          | No    | Radial distortion coefficient of the lens(fake)                             |  |
   * |      |  k3              | double  | -             |   10.0         | No    | Radial distortion coefficient of the lens(fake)                             |  |
