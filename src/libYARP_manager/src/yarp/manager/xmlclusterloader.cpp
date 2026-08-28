@@ -127,6 +127,21 @@ bool XmlClusterLoader::parseXmlFile(Cluster &_cluster)
             c_node.ssh_options = node->Attribute("ssh-options");
         }
 
+        if (node->Attribute("docker"))
+        {
+            c_node.docker = node->Attribute("docker");
+        }
+
+        if (node->Attribute("conda"))
+        {
+            c_node.conda = node->Attribute("conda");
+        }
+
+        if (node->Attribute("pixi"))
+        {
+            c_node.pixi = node->Attribute("pixi");
+        }
+
         if (node->Attribute("address"))
         {
             c_node.address = node->Attribute("address");
