@@ -9,6 +9,7 @@
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #include <yarp/os/Wire.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/sig/CameraDistortionType.h>
 
@@ -28,6 +29,7 @@ int32_t CameraDistortionTypeConverter::fromString(const std::string& input)
     if (input=="YARP_UNSUPPORTED") {
         return static_cast<int32_t>(YARP_UNSUPPORTED);
     }
+    yError() << "CameraDistortionTypeConverter: invalid fromString() conversion for input:" << input;
     return -1;
 }
 
@@ -43,6 +45,7 @@ std::string CameraDistortionTypeConverter::toString(int32_t input)
     case YARP_UNSUPPORTED:
         return "YARP_UNSUPPORTED";
     }
+    yError() << "CameraDistortionTypeConverter: invalid toString() conversion for input:" << input;
     return "";
 }
 
