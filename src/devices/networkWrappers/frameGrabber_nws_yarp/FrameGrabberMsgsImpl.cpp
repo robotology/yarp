@@ -199,7 +199,7 @@ IRGBVisualParamsMsgs_return_getRgbIntrinsicParam FrameGrabberMsgsImpl::getRgbInt
         return response;
     }
 
-    yarp::os::Property intrinsic;
+    yarp::sig::IntrinsicParams intrinsic;
     auto ret = m_irgbvp->getRgbIntrinsicParam(intrinsic);
 
     if (ret) {

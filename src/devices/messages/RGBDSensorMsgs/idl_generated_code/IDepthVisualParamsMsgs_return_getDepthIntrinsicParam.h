@@ -14,7 +14,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/ReturnValue.h>
-#include <yarp/os/Property.h>
+#include <yarp/sig/IntrinsicParams.h>
 
 class IDepthVisualParamsMsgs_return_getDepthIntrinsicParam :
         public yarp::os::idl::WirePortable
@@ -22,14 +22,14 @@ class IDepthVisualParamsMsgs_return_getDepthIntrinsicParam :
 public:
     // Fields
     yarp::dev::ReturnValue ret{};
-    yarp::os::Property params{};
+    yarp::sig::IntrinsicParams params{};
 
     // Default constructor
     IDepthVisualParamsMsgs_return_getDepthIntrinsicParam() = default;
 
     // Constructor with field values
     IDepthVisualParamsMsgs_return_getDepthIntrinsicParam(const yarp::dev::ReturnValue& ret,
-                                                         const yarp::os::Property& params);
+                                                         const yarp::sig::IntrinsicParams& params);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;

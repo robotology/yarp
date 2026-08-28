@@ -25,10 +25,10 @@ struct yCameraConfig {
   yarp.includefile = "yarp/dev/IRgbVisualParams.h"
 )
 
-struct yProperty {
+struct yIntrinsicParams {
 } (
-  yarp.name = "yarp::os::Property"
-  yarp.includefile = "yarp/os/Property.h"
+  yarp.name = "yarp::sig::IntrinsicParams"
+  yarp.includefile = "yarp/sig/IntrinsicParams.h"
 )
 
 struct yStamp{
@@ -148,7 +148,7 @@ struct IRGBVisualParamsMsgs_return_getRgbFOV {
 
 struct IRGBVisualParamsMsgs_return_getRgbIntrinsicParam {
   1: yReturnValue ret;
-  2: yProperty params;
+  2: yIntrinsicParams params;
 }
 
 struct IRGBVisualParamsMsgs_return_getRgbMirroring {
@@ -200,7 +200,7 @@ struct IDepthVisualParamsMsgs_return_getDepthMirroring {
 
 struct IDepthVisualParamsMsgs_return_getDepthIntrinsicParam {
   1: yReturnValue ret;
-  2: yProperty params;
+  2: yIntrinsicParams params;
 }
 
 // ---------------------------------------------------------------

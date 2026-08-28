@@ -46,7 +46,6 @@ protected:
 
     size_t m_depth_width = 0;
     size_t m_depth_height = 0;
-    yarp::os::Property m_propIntrinsics;
     yarp::sig::IntrinsicParams m_intrinsics;
     yarp::sig::ImageOf<float> m_depth_image;
 

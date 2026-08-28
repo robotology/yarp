@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
         yError("Failed retieving images");
     }
 
-    yarp::os::Property intrinsic;
+    yarp::sig::IntrinsicParams intrinsic;
     RGBDInterface->getRgbIntrinsicParam(intrinsic);
     yInfo("RGB intrinsic parameters: \n%s", intrinsic.toString().c_str());
     clientDriver.close();

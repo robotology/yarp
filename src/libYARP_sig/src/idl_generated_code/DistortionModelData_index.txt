@@ -1,0 +1,4 @@
+yarp/sig/CameraDistortionType.h
+yarp/sig/CameraDistortionType.cpp
+yarp/sig/DistortionModelData.h
+yarp/sig/DistortionModelData.cpp

@@ -120,33 +120,33 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         {
             Nav2D::MapGrid2D input_map;
             yarp::os::Bottle output_bot;
-            bool b1 = Property::copyPortable(input_map, output_bot);
+            bool b1 = Portable::copyPortable(input_map, output_bot);
             CHECK(b1);
             yarp::os::Bottle input_bot= output_bot;
             Nav2D::MapGrid2D output_map;
-            bool b2 = Property::copyPortable(input_bot, output_map);
+            bool b2 = Portable::copyPortable(input_bot, output_map);
             CHECK(b2);
         }
         {
             Nav2D::MapGrid2D input_map;
             input_map.enable_map_compression_over_network(false);
             yarp::os::Bottle output_bot;
-            bool b1 = Property::copyPortable(input_map, output_bot);
+            bool b1 = Portable::copyPortable(input_map, output_bot);
             CHECK(b1);
             yarp::os::Bottle input_bot = output_bot;
             Nav2D::MapGrid2D output_map;
-            bool b2 = Property::copyPortable(input_bot, output_map);
+            bool b2 = Portable::copyPortable(input_bot, output_map);
             CHECK(b2);
         }
         {
             Nav2D::MapGrid2D input_map;
             input_map.setSize_in_cells(100, 100);
             yarp::os::Bottle output_bot;
-            bool b1 = Property::copyPortable(input_map, output_bot);
+            bool b1 = Portable::copyPortable(input_map, output_bot);
             CHECK(b1);
             yarp::os::Bottle input_bot = output_bot;
             Nav2D::MapGrid2D output_map;
-            bool b2 = Property::copyPortable(input_bot, output_map);
+            bool b2 = Portable::copyPortable(input_bot, output_map);
             CHECK(b2);
         }
         {
@@ -154,11 +154,11 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             input_map.setSize_in_cells(100, 100);
             input_map.enable_map_compression_over_network(false);
             yarp::os::Bottle output_bot;
-            bool b1 = Property::copyPortable(input_map, output_bot);
+            bool b1 = Portable::copyPortable(input_map, output_bot);
             CHECK(b1);
             yarp::os::Bottle input_bot = output_bot;
             Nav2D::MapGrid2D output_map;
-            bool b2 = Property::copyPortable(input_bot, output_map);
+            bool b2 = Portable::copyPortable(input_bot, output_map);
             CHECK(b2);
         }
     }

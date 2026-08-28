@@ -15,6 +15,7 @@
 #include <yarp/os/Portable.h>
 
 #include <yarp/sig/Image.h>
+#include <yarp/sig/IntrinsicParams.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/ReturnValue.h>
 
@@ -107,31 +108,11 @@ public:
 
     /**
      * Get the intrinsic parameters of the rgb camera
-     * @param  intrinsic  return a Property containing intrinsic parameters
+     * @param  intrinsic  return a yarp::sig::IntrinsicParams containing intrinsic parameters
      *       of the optical model of the camera.
      * @return true if success
-     *
-     * The yarp::os::Property describing the intrinsic parameters is expected to be
-     * in the form:
-     *
-     * |  Parameter name              | SubParameter        | Type                | Units          | Default Value | Required                         | Description                                                                            | Notes                                                                 |
-     * |:----------------------------:|:-------------------:|:-------------------:|:--------------:|:-------------:|:--------------------------------:|:--------------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-     * |  physFocalLength             |      -              | double              | m              |   -           |   Yes                            |  Physical focal length of the lens in meters                                           |                                                                       |
-     * |  focalLengthX                |      -              | double              | pixel          |   -           |   Yes                            |  Horizontal component of the focal length as a multiple of pixel width                 |                                                                       |
-     * |  focalLengthY                |      -              | double              | pixel          |   -           |   Yes                            |  Vertical component of the focal length as a multiple of pixel height                  |                                                                       |
-     * |  principalPointX             |      -              | double              | pixel          |   -           |   Yes                            |  X coordinate of the principal point                                                   |                                                                       |
-     * |  principalPointY             |      -              | double              | pixel          |   -           |   Yes                            |  Y coordinate of the principal point                                                   |                                                                       |
-     * |  rectificationMatrix         |      -              | 4x4 double matrix   | -              |   -           |   Yes                            |  Matrix that describes the lens' distortion                                            |                                                                       |
-     * |  distortionModel             |      -              | string              | -              |   -           |   Yes                            |  Reference to group of parameters describing the distortion model of the camera, example 'cameraDistortionModelGroup'       | This is another group's name to be searched for in the config file    |
-     * |  cameraDistortionModelGroup  |                     |                     |                |               |                                  |                                                                                        |                                                                       |
-     * |                              |   name              | string              | -              |   -           |   Yes                            |  Name of the distortion model, see notes                                               | right now only 'plumb_bob' is supported                               |
-     * |                              |   k1                | double              | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
-     * |                              |   k2                | double              | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
-     * |                              |   k3                | double              | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
-     * |                              |   t1                | double              | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
-     * |                              |   t2                | double              | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
-     */
-    virtual yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::os::Property& intrinsic) = 0;
+    */
+    virtual yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::sig::IntrinsicParams& intrinsic) = 0;
 
     /**
      * Get the mirroring setting of the sensor

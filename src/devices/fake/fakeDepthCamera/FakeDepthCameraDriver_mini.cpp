@@ -180,22 +180,21 @@ ReturnValue FakeDepthCameraDriver_mini::setRgbMirroring(bool mirror)
     return ReturnValue_ok;
 }
 
-ReturnValue FakeDepthCameraDriver_mini::getRgbIntrinsicParam(Property& intrinsic)
+ReturnValue FakeDepthCameraDriver_mini::getRgbIntrinsicParam(yarp::sig::IntrinsicParams& intrinsic)
 {
     std::lock_guard <std::recursive_mutex> lg(m_mutex);
-    intrinsic.put("physFocalLength", 0.5);
-    intrinsic.put("focalLengthX",    m_dep_w/2);
-    intrinsic.put("focalLengthY",    m_dep_h/2);
-    intrinsic.put("principalPointX", (m_dep_w-1)/2);
-    intrinsic.put("principalPointY", (m_dep_h-1)/2);
-    intrinsic.put("distortionModel", "plumb_bob");
-    intrinsic.put("k1", 0);
-    intrinsic.put("k2", 0);
-    intrinsic.put("t1", 0);
-    intrinsic.put("t2", 0);
-    intrinsic.put("k3", 0);
-
-    intrinsic.put("stamp", yarp::os::Time::now());
+    intrinsic.physFocalLength= 0.5;
+    intrinsic.focalLengthX=  m_dep_w/2;
+    intrinsic.focalLengthY=  m_dep_h/2;
+    intrinsic.principalPointX= (m_dep_w-1)/2;
+    intrinsic.principalPointY= (m_dep_h-1)/2;
+    intrinsic.distortionModel.type = CameraDistortionType::YARP_PLUMB_BOB;
+    intrinsic.distortionModel.k1 = 0;
+    intrinsic.distortionModel.k2 = 0;
+    intrinsic.distortionModel.t1 = 0;
+    intrinsic.distortionModel.t2 = 0;
+    intrinsic.distortionModel.k3 = 0;
+    //intrinsic.stamp = yarp::os::Time::now();
     return ReturnValue_ok;
 }
 
@@ -219,25 +218,25 @@ ReturnValue FakeDepthCameraDriver_mini::getDepthFOV(double& horizontalFov, doubl
     return ReturnValue_ok;
 }
 
-ReturnValue FakeDepthCameraDriver_mini::getDepthIntrinsicParam(Property& intrinsic)
+ReturnValue FakeDepthCameraDriver_mini::getDepthIntrinsicParam(yarp::sig::IntrinsicParams& intrinsic)
 {
     std::lock_guard <std::recursive_mutex> lg(m_mutex);
-    intrinsic.put("physFocalLength", 0.5);
+    intrinsic.physFocalLength = 0.5;
     const double deg2rad = 3.1415926535/180.0;
     double focal_x = m_dep_w / (2*tan(m_dep_Hfov*deg2rad/2));
     double focal_y = m_dep_h / (2*tan(m_dep_Vfov*deg2rad/2));
-    intrinsic.put("focalLengthX",    focal_x);
-    intrinsic.put("focalLengthY",    focal_y);
-    intrinsic.put("principalPointX", (m_dep_w-1)/2);
-    intrinsic.put("principalPointY", (m_dep_h-1)/2);
-    intrinsic.put("distortionModel", "plumb_bob");
-    intrinsic.put("k1", 0);
-    intrinsic.put("k2", 0);
-    intrinsic.put("t1", 0);
-    intrinsic.put("t2", 0);
-    intrinsic.put("k3", 0);
+    intrinsic.focalLengthX=focal_x;
+    intrinsic.focalLengthY=focal_y;
+    intrinsic.principalPointX=(m_dep_w-1)/2;
+    intrinsic.principalPointY=(m_dep_h-1)/2;
+    intrinsic.distortionModel.type = CameraDistortionType::YARP_PLUMB_BOB;
+    intrinsic.distortionModel.k1 = 0;
+    intrinsic.distortionModel.k2 = 0;
+    intrinsic.distortionModel.t1 = 0;
+    intrinsic.distortionModel.t2 = 0;
+    intrinsic.distortionModel.k3 = 0;
+    //intrinsic.stamp = yarp::os::Time::now();
 
-    intrinsic.put("stamp", yarp::os::Time::now());
     return ReturnValue_ok;
 }
 

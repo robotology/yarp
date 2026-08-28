@@ -128,10 +128,9 @@ ReturnValue FrameGrabberCropper::setRgbFOV(double horizontalFov, double vertical
     return iRgbVisualParams->setRgbFOV(horizontalFov, verticalFov);
 }
 
-ReturnValue FrameGrabberCropper::getRgbIntrinsicParam(yarp::os::Property& intrinsic)
+ReturnValue FrameGrabberCropper::getRgbIntrinsicParam(yarp::sig::IntrinsicParams& intrinsic)
 {
     if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
-        intrinsic.clear();
         return ReturnValue::return_code::return_value_error_not_ready;
     }
     return iRgbVisualParams->getRgbIntrinsicParam(intrinsic);

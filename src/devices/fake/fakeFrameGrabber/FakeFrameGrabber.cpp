@@ -112,23 +112,27 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config)
 {
     if (!this->parseParams(config)) {return false;}
 
-    m_intrinsic.put("physFocalLength",m_physFocalLength);
-    m_intrinsic.put("focalLengthX",m_focalLengthX);
-    m_intrinsic.put("focalLengthY",m_focalLengthY);
-    m_intrinsic.put("principalPointX",m_principalPointX);
-    m_intrinsic.put("principalPointY",m_principalPointY);
-
-    Value* val = Value::makeList();
-    auto* bb = val->asList();
-    for (double num : m_rectificationMatrix) { bb->addFloat64(num); }
-    m_intrinsic.put("rectificationMatrix",val);
-
-    m_intrinsic.put("distortionModel", m_distortionModel);
-    m_intrinsic.put("k1",m_k1);
-    m_intrinsic.put("k2",m_k2);
-    m_intrinsic.put("k3",m_k3);
-    m_intrinsic.put("t1",m_t1);
-    m_intrinsic.put("t2",m_t2);
+    m_intrinsic.physFocalLength = m_physFocalLength;
+    m_intrinsic.focalLengthX = m_focalLengthX;
+    m_intrinsic.focalLengthY = m_focalLengthY;
+    m_intrinsic.principalPointX = m_principalPointX;
+    m_intrinsic.principalPointY = m_principalPointY;
+    m_intrinsic.distortionModel.type = (yarp::sig::CameraDistortionType)CameraDistortionTypeConverter::fromString(m_distortionModel);
+    if (m_rectificationMatrix.size() != 9)
+    {
+        yCError(FAKEFRAMEGRABBER, "The size rectificationMatrix parameter must be 9 (3x3");
+        return false;
+    }
+    for (size_t i = 0; i< m_rectificationMatrix.size(); i++)
+    {
+        m_intrinsic.rectificationMatrix3X3[i] = m_rectificationMatrix[i];
+    }
+    m_intrinsic.distortionModel.type, m_distortionModel;
+    m_intrinsic.distortionModel.k1 = m_k1;
+    m_intrinsic.distortionModel.k2 = m_k2;
+    m_intrinsic.distortionModel.k3 = m_k3;
+    m_intrinsic.distortionModel.t1 = m_t1;
+    m_intrinsic.distortionModel.t2 = m_t2;
     //Only for debug
     CameraConfig conf1;
     conf1.height=128;

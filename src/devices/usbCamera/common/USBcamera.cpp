@@ -188,7 +188,7 @@ yarp::dev::ReturnValue USBCameraDriver::setRgbFOV(double horizontalFov, double v
     return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue USBCameraDriver::getRgbIntrinsicParam(yarp::os::Property& intrinsic)
+yarp::dev::ReturnValue USBCameraDriver::getRgbIntrinsicParam(yarp::sig::IntrinsicParams& intrinsic)
 {
     if (deviceRgbVisualParam != nullptr) {
         return deviceRgbVisualParam->getRgbIntrinsicParam(intrinsic);

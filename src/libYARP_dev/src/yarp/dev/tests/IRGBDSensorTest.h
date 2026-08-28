@@ -76,7 +76,7 @@ namespace yarp::dev::tests
             CHECK(pf == 2.0);
         }
         {
-            yarp::os::Property intrinsic;
+            yarp::sig::IntrinsicParams intrinsic;
             ReturnValue r;
             r = irgbd->getDepthIntrinsicParam(intrinsic);
             CHECK(r);
@@ -182,7 +182,7 @@ namespace yarp::dev::tests
         }
         {
             ReturnValue r;
-            yarp::os::Property intrinsic;
+            yarp::sig::IntrinsicParams intrinsic;
             r = irgbd->getRgbIntrinsicParam(intrinsic);
             CHECK(r);
         }

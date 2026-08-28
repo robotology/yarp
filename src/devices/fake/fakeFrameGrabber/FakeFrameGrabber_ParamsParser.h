@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GENERATION is ON.
 
-// Generated on: Tue Jul 28 23:33:13 2026
+// Generated on: Fri Aug 28 15:24:21 2026
 
 
 #ifndef FAKEFRAMEGRABBER_PARAMSPARSER_H
@@ -37,7 +37,7 @@
 * | -          | focalLengthY              | double         | -     | 5.0                                   | 0        | Vertical component of the focal length                                            | -                                                                |
 * | -          | principalPointX           | double         | -     | 6.0                                   | 0        | X coordinate of the principal point                                               | -                                                                |
 * | -          | principalPointY           | double         | -     | 7.0                                   | 0        | Y coordinate of the principal point                                               | -                                                                |
-* | -          | distortionModel           | string         | -     | FishEye                               | 0        | Reference to group of parameters describing the distortion model of the camera    | -                                                                |
+* | -          | distortionModel           | string         | -     | YARP_FISH_EYE                         | 0        | Reference to group of parameters describing the distortion model of the camera    | -                                                                |
 * | -          | k1                        | double         | -     | 8.0                                   | 0        | Radial distortion coefficient of the lens(fake                                    | -                                                                |
 * | -          | k2                        | double         | -     | 9.0                                   | 0        | Radial distortion coefficient of the lens(fake)                                   | -                                                                |
 * | -          | k3                        | double         | -     | 10.0                                  | 0        | Radial distortion coefficient of the lens(fake)                                   | -                                                                |
@@ -56,7 +56,7 @@
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0.033 --mode line --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"
+* yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel YARP_FISH_EYE --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0.033 --mode line --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"
 * \endcode
 *
 * \code{.unparsed}
@@ -96,7 +96,7 @@ public:
     const std::string m_focalLengthY_defaultValue = {"5.0"};
     const std::string m_principalPointX_defaultValue = {"6.0"};
     const std::string m_principalPointY_defaultValue = {"7.0"};
-    const std::string m_distortionModel_defaultValue = {"FishEye"};
+    const std::string m_distortionModel_defaultValue = {"YARP_FISH_EYE"};
     const std::string m_k1_defaultValue = {"8.0"};
     const std::string m_k2_defaultValue = {"9.0"};
     const std::string m_k3_defaultValue = {"10.0"};
@@ -125,7 +125,7 @@ public:
     double m_focalLengthY = {5.0};
     double m_principalPointX = {6.0};
     double m_principalPointY = {7.0};
-    std::string m_distortionModel = {"FishEye"};
+    std::string m_distortionModel = {"YARP_FISH_EYE"};
     double m_k1 = {8.0};
     double m_k2 = {9.0};
     double m_k3 = {10.0};
