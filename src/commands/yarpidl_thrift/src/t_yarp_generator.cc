@@ -2071,6 +2071,20 @@ void t_yarp_generator::generate_enum(t_enum* tenum)
         return;
     }
 
+    // Read annotations for defining the import/export macro (e.g. YARP_os_API)
+    //  * yarp.api.include = the header file that contains the definition of
+    //    the import/export keyword
+    //  * yarp.api.keyword = the name of the keyword
+    std::string yarp_api_include{};
+    if (annotations.find("yarp.api.include") != annotations.end()) {
+        yarp_api_include = annotations.at("yarp.api.include");
+    }
+
+    std::string yarp_api_keyword{};
+    if (annotations.find("yarp.api.keyword") != annotations.end()) {
+        yarp_api_keyword = annotations.at("yarp.api.keyword");
+    }
+
     // Open header files
     std::string f_header_name = get_out_dir() + get_include_prefix(program_) + name + ".h";
     ofstream_with_content_based_conditional_update f_h_;
@@ -2097,6 +2111,11 @@ void t_yarp_generator::generate_enum(t_enum* tenum)
     f_h_ << '\n';
 
     // Add includes to .h file
+    if (!yarp_api_include.empty()) {
+        f_h_ << "#include <" << yarp_api_include << ">\n";
+        f_h_ << '\n';
+    }
+
     f_h_ << "#include <yarp/os/Wire.h>\n";
     f_h_ << "#include <yarp/os/idl/WireTypes.h>\n";
     f_h_ << '\n';
@@ -2128,7 +2147,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum)
     f_h_ << '\n';
 
     // Generate a character array of enum names for debugging purposes.
-    f_h_ << "class " << name << "Converter\n";
+    f_h_ << "class " << yarp_api_keyword << (yarp_api_keyword.empty() ? "" : " ") << name << "Converter\n";
     f_h_ << indent_h() << "{\n";
     indent_up_h();
     {
