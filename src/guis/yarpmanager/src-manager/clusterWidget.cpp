@@ -8,8 +8,14 @@
 #include "iostream"
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QBrush>
+#include <QGroupBox>
+#include <QHeaderView>
 #include <QLabel>
+#include <QPushButton>
 #include <QRadioButton>
+#include <QTreeWidget>
+#include <QVBoxLayout>
 #include <QStringList>
 
 #include <yarp/os/LogStream.h>
@@ -19,15 +25,114 @@
 #include <yarp/profiler/NetworkProfiler.h>
 
 #include <algorithm>
+#include <array>
+#include <cstdio>
+#include <cctype>
+#include <set>
+#include <sstream>
 
 #include <mainwindow.h>
 
 using namespace yarp::os;
 using namespace yarp::manager;
 
+namespace {
+
+std::string shellQuote(const std::string& value)
+{
+    std::string quoted = "'";
+    for (char c : value)
+    {
+        if (c == '\'')
+        {
+            quoted += "'\\''";
+        }
+        else
+        {
+            quoted += c;
+        }
+    }
+    quoted += "'";
+    return quoted;
+}
+
+std::vector<std::string> splitTabs(const std::string& line)
+{
+    std::vector<std::string> fields;
+    std::stringstream stream(line);
+    std::string field;
+    while (std::getline(stream, field, '\t'))
+    {
+        fields.push_back(field);
+    }
+    return fields;
+}
+
+std::string sanitizedFilePart(std::string value)
+{
+    for (char& c : value)
+    {
+        if (!std::isalnum(static_cast<unsigned char>(c)))
+        {
+            c = '_';
+        }
+    }
+    return value;
+}
+
+std::string yarprunLogFile(const std::string& portName)
+{
+    return "/tmp/yarpmanager_yarprun_" + sanitizedFilePart(portName) + ".log";
+}
+
+std::string runtimeName(const yarp::manager::ClusterNode& node)
+{
+    if (!node.docker.empty()) {
+        return "docker";
+    }
+    if (!node.conda.empty()) {
+        return "conda";
+    }
+    if (!node.pixi.empty()) {
+        return "pixi";
+    }
+    return "";
+}
+
+std::string runtimeTarget(const yarp::manager::ClusterNode& node)
+{
+    if (!node.docker.empty()) {
+        return node.docker;
+    }
+    if (!node.conda.empty()) {
+        return node.conda;
+    }
+    if (!node.pixi.empty()) {
+        return node.pixi;
+    }
+    return "";
+}
+
+int runtimeCount(const yarp::manager::ClusterNode& node)
+{
+    return (!node.docker.empty() ? 1 : 0) +
+           (!node.conda.empty() ? 1 : 0) +
+           (!node.pixi.empty() ? 1 : 0);
+}
+
+} // namespace
+
 ClusterWidget::ClusterWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ClusterWidget), confFile(""), clusLoader(nullptr), checkNs(false)
+    ui(new Ui::ClusterWidget),
+    confFile(""),
+    clusLoader(nullptr),
+    checkNs(false),
+    dockerGroupBox(nullptr),
+    dockerTreeWidget(nullptr),
+    dockerRefreshBtn(nullptr),
+    dockerStartBtn(nullptr),
+    dockerStopBtn(nullptr)
 {
 
 #ifdef WIN32
@@ -35,8 +140,11 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     return;
 #endif
     ui->setupUi(this);
+    ui->nodestreeWidget->setColumnCount(8);
+    ui->nodestreeWidget->setHeaderLabels(QStringList() << "Status" << "Name" << "Display" << "User" << "Address" << "Runtime" << "Target" << "Log");
     ui->executeBtn->setDisabled(true);
     ui->labelNs->setPixmap(QPixmap(":/close.svg").scaledToHeight(ui->checkRos->height()));
+    addDockerControls();
 
     //Connections to slots
 
@@ -53,7 +161,13 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     connect(ui->executeBtn, SIGNAL(clicked(bool)), this, SLOT(onExecute()));
 
     connect(ui->nodestreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onNodeSelectionChanged()));
+    connect(ui->nodestreeWidget, &QTreeWidget::itemChanged, this, [this](QTreeWidgetItem*, int column) {
+        if (column == 5) {
+            updateYarprunDockerColors();
+        }
+    });
     connect(ui->lineEditExecute, SIGNAL(textChanged(QString)), SLOT(onExecuteTextChanged()));
+    connect(dockerTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateDockerButtons()));
 
 }
 
@@ -89,7 +203,7 @@ void ClusterWidget::init()
     int i{0};
     for (auto& node:cluster.nodes)
     {
-        addRow(node.name, node.displayValue, node.user, node.address, node.onOff, node.log, i);
+        addRow(node.name, node.displayValue, node.user, node.address, runtimeName(node), runtimeTarget(node), node.onOff, node.log, i);
         i++;
         if (cluster.nsNode == node.name) {
             continue;
@@ -103,6 +217,8 @@ void ClusterWidget::init()
 
     ui->nsNodeComboBox->addItems(l);
     ui->nsNodeComboBox->setEditable(true);
+
+    onRefreshDockerContainers();
 
     //check if all the nodes are up
     if (checkNs)
@@ -121,7 +237,7 @@ void ClusterWidget::onCheckAll()
     for (int i = 0; i<ui->nodestreeWidget->topLevelItemCount(); i++)
     {
         QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
-        int itr = it->text(6).toInt();
+        int itr = getNodeIndex(it);
         ClusterNode node = cluster.nodes[itr];
         if (checkNode(node.name))
         {
@@ -134,6 +250,7 @@ void ClusterWidget::onCheckAll()
             it->setIcon(0, QIcon(":/computer-unavailable22.svg"));
         }
     }
+    updateYarprunDockerColors();
 
 }
 
@@ -258,8 +375,22 @@ void ClusterWidget::onRunSelected()
     QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
     foreach (QTreeWidgetItem *it, selectedItems)
     {
-        int itr = it->text(6).toInt();
+        int itr = getNodeIndex(it);
         ClusterNode node = cluster.nodes[itr];
+        node.docker.clear();
+        node.conda.clear();
+        node.pixi.clear();
+
+        std::string runtime = it->text(5).trimmed().toStdString();
+        std::string target = it->text(6).trimmed().toStdString();
+
+        if (runtime == "docker") {
+            node.docker = target;
+        } else if (runtime == "conda") {
+            node.conda = target;
+        } else if (runtime == "pixi") {
+            node.pixi = target;
+        }
         std::string portName = node.name;
 
         if (portName.find('/') == std::string::npos)
@@ -272,26 +403,36 @@ void ClusterWidget::onRunSelected()
             continue;
         }
 
-        std::string cmdRunYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
-        if (node.display)
-        {
-            cmdRunYarprun.append(" 'export DISPLAY=").append(node.displayValue).append(" && ");
-
-        }
-        if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 5))->isChecked())
-        {
-            cmdRunYarprun.append(" yarprun --server ").append(portName).append(" --log 2>&1 2>/tmp/yarprunserver.log");
-        }
-        else
-        {
-            cmdRunYarprun.append(" yarprun --server ").append(portName).append(" 2>&1 2>/tmp/yarprunserver.log");
-        }
-
-        if (node.display)
-        {
-            cmdRunYarprun.append("'");
-        }
         yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
+
+        if (runtimeCount(node) > 1)
+        {
+            logger->addError("ClusterWidget: only one runtime can be specified among docker, conda and pixi.");
+            reportErrors();
+            continue;
+        }
+
+        if (!node.docker.empty() && !isDockerRunning(node, node.docker))
+        {
+            logger->addError("ClusterWidget: cannot run yarprun inside docker " + node.docker +
+                            " because the container is not running. Please start the docker container first.");
+            reportErrors();
+            continue;
+        }
+
+        if (!node.pixi.empty() && !checkPixiRuntime(node))
+        {
+            reportErrors();
+            continue;
+        }
+
+        std::string cmdRunYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
+        bool log = qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 7))->isChecked();
+        std::string logFile = yarprunLogFile(portName);
+        std::string cleanupOutput;
+        runRemoteCommand(node, "rm -f " + shellQuote(logFile), cleanupOutput);
+
+        cmdRunYarprun.append(" ").append(shellQuote(buildYarprunCommand(node, portName, log, logFile)));
         if (system(cmdRunYarprun.c_str()) != 0)
         {
             std::string err = "ClusterWidget: failed to run yarprun on " + node.name;
@@ -300,7 +441,17 @@ void ClusterWidget::onRunSelected()
         }
         else
         {
-            std::string info = "ClusterWidget: yarprun successfully executed on "+ node.name;
+            yarp::os::Time::delay(1.0);
+            if (!checkNode(node.name))
+            {
+                std::string tailOutput;
+                runRemoteCommand(node, "test -f " + shellQuote(logFile) + " && tail -n 80 " + shellQuote(logFile), tailOutput);
+                logger->addError("ClusterWidget: yarprun did not start on " + node.name + ". Remote log " + logFile + ":\n" + tailOutput);
+                reportErrors();
+                continue;
+            }
+
+            std::string info = "ClusterWidget: yarprun successfully executed on " + node.name + ". Remote log: " + logFile;
             logMessage(QString(info.c_str()));
         }
     }
@@ -315,7 +466,7 @@ void ClusterWidget::onStopSelected()
     QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
     foreach (QTreeWidgetItem *it, selectedItems)
     {
-        int itr = it->text(6).toInt();
+        int itr = getNodeIndex(it);
         ClusterNode node = cluster.nodes[itr];
         if (!node.onOff)
         {
@@ -354,7 +505,7 @@ void ClusterWidget::onKillSelected()
     QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
     foreach (QTreeWidgetItem *it, selectedItems)
     {
-        int itr = it->text(6).toInt();
+        int itr = getNodeIndex(it);
         ClusterNode node = cluster.nodes[itr];
         if (!node.onOff)
         {
@@ -458,16 +609,18 @@ void ClusterWidget::onExecuteTextChanged()
 
 void ClusterWidget::addRow(const std::string& name,const std::string& display,
                            const std::string& user, const std::string& address,
-                           bool onOff, bool log, int id)
+                           const std::string& runtime, const std::string& target, bool onOff, bool log, int id)
 {
     QStringList stringList;
-    stringList <<""<< QString(name.c_str()) << QString(display.c_str()) << QString(user.c_str()) << QString(address.c_str())<< "" <<QString(std::to_string(id).c_str());
+    stringList << "" << QString(name.c_str()) << QString(display.c_str()) << QString(user.c_str()) << QString(address.c_str()) << QString(runtime.c_str()) << QString(target.c_str()) << "";
     auto* it = new QTreeWidgetItem(stringList);
+    it->setData(0, Qt::UserRole, id);
+    it->setFlags(it->flags() | Qt::ItemIsEditable);
     ui->nodestreeWidget->addTopLevelItem(it);
-    ui->nodestreeWidget->setItemWidget((QTreeWidgetItem *) it, 5, new QCheckBox(this));
+    ui->nodestreeWidget->setItemWidget((QTreeWidgetItem *) it, 7, new QCheckBox(this));
 
     //initialize checkboxes
-    qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 5))->setChecked(log);
+    qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 7))->setChecked(log);
 
     //initialize icon
     if (onOff)
@@ -481,10 +634,377 @@ void ClusterWidget::addRow(const std::string& name,const std::string& display,
 
 }
 
-std::string ClusterWidget::getSSHCmd(const std::string &user, const std::string &host, const std::string &ssh_options)
+int ClusterWidget::getNodeIndex(QTreeWidgetItem* item) const
+{
+    return item->data(0, Qt::UserRole).toInt();
+}
+
+std::string ClusterWidget::buildYarprunCommand(const yarp::manager::ClusterNode& node, const std::string& portName, bool log, const std::string& logFile)
+{
+    std::string yarprunCommand;
+    if (node.display)
+    {
+        yarprunCommand.append("export DISPLAY=").append(node.displayValue).append(" && ");
+    }
+
+    yarprunCommand.append("yarprun --server ").append(portName);
+    if (log)
+    {
+        yarprunCommand.append(" --log");
+    }
+
+    if (!node.docker.empty())
+    {
+        return "docker exec " + shellQuote(node.docker) +
+               " sh -lc " + shellQuote(yarprunCommand) +
+               " > " + shellQuote(logFile) + " 2>&1";
+    }
+
+    if (!node.conda.empty())
+    {
+        return "bash -lc " + shellQuote(
+            "for conda_sh in "
+            "\"$HOME/miniforge3/etc/profile.d/conda.sh\" "
+            "\"$HOME/miniconda3/etc/profile.d/conda.sh\" "
+            "\"$HOME/anaconda3/etc/profile.d/conda.sh\" "
+            "\"/opt/conda/etc/profile.d/conda.sh\"; do "
+            "[ -f \"$conda_sh\" ] && source \"$conda_sh\" && break; "
+            "done; "
+            "if ! command -v conda >/dev/null 2>&1; then "
+            "echo \"conda command not found. Please install conda or add conda.sh to one of the standard locations.\" >&2; "
+            "exit 1; "
+            "fi; "
+            "conda activate " + shellQuote(node.conda) + " && " +
+            yarprunCommand) +
+            " > " + shellQuote(logFile) + " 2>&1";
+    }
+
+    if (!node.pixi.empty())
+    {
+        return "bash -lc " + shellQuote(
+            "export PATH=\"$HOME/.pixi/bin:$HOME/.cargo/bin:$PATH\" && "
+            "cd " + shellQuote(node.pixi) + " && "
+            "pixi run " + yarprunCommand) +
+            " > " + shellQuote(logFile) + " 2>&1";
+    }
+
+    return yarprunCommand + " > " + shellQuote(logFile) + " 2>&1";
+}
+
+bool ClusterWidget::runRemoteCommand(const yarp::manager::ClusterNode& node, const std::string& command, std::string& output)
+{
+    output.clear();
+    std::string cmd = getSSHCmd(node.user, node.address, node.ssh_options, false);
+    cmd += " ";
+    cmd += shellQuote(command);
+    cmd += " 2>&1";
+
+    std::array<char, 512> buffer{};
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if (!pipe)
+    {
+        output = "unable to execute ssh command";
+        return false;
+    }
+
+    while (fgets(buffer.data(), buffer.size(), pipe) != nullptr)
+    {
+        output += buffer.data();
+    }
+
+    return pclose(pipe) == 0;
+}
+
+bool ClusterWidget::checkPixiRuntime(const yarp::manager::ClusterNode& node)
+{
+    std::string output;
+    std::string script =
+        "bash -lc " + shellQuote(
+            "export PATH=\"$HOME/.pixi/bin:$HOME/.cargo/bin:$PATH\"; "
+            "if [ ! -d " + shellQuote(node.pixi) + " ]; then "
+            "echo \"pixi project directory not found: " + node.pixi + "\"; exit 1; "
+            "fi; "
+            "if [ ! -f " + shellQuote(node.pixi + "/pixi.toml") + " ]; then "
+            "echo \"pixi.toml not found in: " + node.pixi + "\"; exit 1; "
+            "fi; "
+            "if ! command -v pixi >/dev/null 2>&1; then "
+            "echo \"pixi command not found. Install pixi or add it to PATH on host " + node.address + ".\"; exit 1; "
+            "fi; "
+            "cd " + shellQuote(node.pixi) + " && pixi info >/dev/null");
+
+    if (!runRemoteCommand(node, script, output))
+    {
+        yarp::manager::ErrorLogger::Instance()->addError("Pixi: cannot run yarprun on " + node.name + ": " + output);
+        return false;
+    }
+
+    return true;
+}
+
+bool ClusterWidget::isDockerRunning(const yarp::manager::ClusterNode& node, const std::string& dockerName)
+{
+    if (dockerName.empty())
+    {
+        return false;
+    }
+
+    std::string cmd = getSSHCmd(node.user, node.address, node.ssh_options, false);
+    cmd += " ";
+    cmd += shellQuote("docker ps --format '{{.Names}}'");
+    cmd += " 2>&1";
+
+    std::array<char, 512> buffer{};
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if (!pipe)
+    {
+        yarp::manager::ErrorLogger::Instance()->addError("Docker: unable to execute docker ps on " + node.name);
+        return false;
+    }
+
+    std::string output;
+    while (fgets(buffer.data(), buffer.size(), pipe) != nullptr)
+    {
+        output += buffer.data();
+    }
+
+    int ret = pclose(pipe);
+    if (ret != 0)
+    {
+        yarp::manager::ErrorLogger::Instance()->addError("Docker: docker ps failed on " + node.name + ": " + output);
+        return false;
+    }
+
+    std::stringstream lines(output);
+    std::string line;
+    while (std::getline(lines, line))
+    {
+        if (line == dockerName)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void ClusterWidget::updateYarprunDockerColors()
+{
+    for (int i = 0; i < ui->nodestreeWidget->topLevelItemCount(); i++)
+    {
+        auto* item = ui->nodestreeWidget->topLevelItem(i);
+        int nodeIndex = getNodeIndex(item);
+        if (nodeIndex < 0 || static_cast<size_t>(nodeIndex) >= cluster.nodes.size())
+        {
+            continue;
+        }
+
+        std::string runtime = item->text(5).trimmed().toStdString();
+        std::string target = item->text(6).trimmed().toStdString();
+
+        bool green = false;
+        if (runtime == "docker" && !target.empty())
+        {
+            green = isDockerRunning(cluster.nodes[nodeIndex], target);
+        }
+
+        item->setForeground(6, green ? QBrush(Qt::darkGreen) : QBrush(Qt::black));
+    }
+}
+
+void ClusterWidget::addDockerControls()
+{
+    dockerGroupBox = new QGroupBox("Docker containers", this);
+    auto* dockerLayout = new QVBoxLayout(dockerGroupBox);
+    auto* buttonsLayout = new QHBoxLayout();
+
+    dockerRefreshBtn = new QPushButton("Refresh", dockerGroupBox);
+    dockerStartBtn = new QPushButton("Start", dockerGroupBox);
+    dockerStopBtn = new QPushButton("Stop", dockerGroupBox);
+    dockerStartBtn->setDisabled(true);
+    dockerStopBtn->setDisabled(true);
+
+    buttonsLayout->addWidget(dockerRefreshBtn);
+    buttonsLayout->addWidget(dockerStartBtn);
+    buttonsLayout->addWidget(dockerStopBtn);
+
+    dockerTreeWidget = new QTreeWidget(dockerGroupBox);
+    dockerTreeWidget->setColumnCount(7);
+    dockerTreeWidget->setHeaderLabels(QStringList() << "Host" << "Container" << "Status" << "ID" << "Address" << "User" << "SSH options");
+    dockerTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    dockerTreeWidget->setRootIsDecorated(false);
+    dockerTreeWidget->setAlternatingRowColors(true);
+    dockerTreeWidget->setColumnHidden(4, true);
+    dockerTreeWidget->setColumnHidden(5, true);
+    dockerTreeWidget->setColumnHidden(6, true);
+    dockerTreeWidget->header()->setStretchLastSection(false);
+    dockerTreeWidget->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    dockerTreeWidget->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    dockerTreeWidget->header()->setSectionResizeMode(2, QHeaderView::Stretch);
+    dockerTreeWidget->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+
+    dockerLayout->addLayout(buttonsLayout);
+    dockerLayout->addWidget(dockerTreeWidget);
+    ui->verticalLayout_5->addWidget(dockerGroupBox);
+
+    connect(dockerRefreshBtn, SIGNAL(clicked(bool)), this, SLOT(onRefreshDockerContainers()));
+    connect(dockerStartBtn, SIGNAL(clicked(bool)), this, SLOT(onStartSelectedDockerContainers()));
+    connect(dockerStopBtn, SIGNAL(clicked(bool)), this, SLOT(onStopSelectedDockerContainers()));
+}
+
+void ClusterWidget::updateDockerButtons()
+{
+    const bool hasSelection = dockerTreeWidget && !dockerTreeWidget->selectedItems().isEmpty();
+    dockerStartBtn->setDisabled(!hasSelection);
+    dockerStopBtn->setDisabled(!hasSelection);
+}
+
+std::vector<yarp::manager::DockerContainer> ClusterWidget::getDockerContainers(const yarp::manager::ClusterNode& node)
+{
+    std::vector<yarp::manager::DockerContainer> containers;
+    std::string cmd = getSSHCmd(node.user, node.address, node.ssh_options, false);
+    cmd += " ";
+    cmd += shellQuote("docker ps -a --format '{{.ID}}\t{{.Names}}\t{{.Status}}'");
+    cmd += " 2>&1";
+
+    std::array<char, 512> buffer{};
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if (!pipe)
+    {
+        yarp::manager::ErrorLogger::Instance()->addError("Docker: unable to execute docker ps on " + node.name);
+        return containers;
+    }
+
+    std::string output;
+    while (fgets(buffer.data(), buffer.size(), pipe) != nullptr)
+    {
+        output += buffer.data();
+    }
+
+    int ret = pclose(pipe);
+    if (ret != 0)
+    {
+        yarp::manager::ErrorLogger::Instance()->addError("Docker: docker ps failed on " + node.name + ": " + output);
+        return containers;
+    }
+
+    std::stringstream lines(output);
+    std::string line;
+    while (std::getline(lines, line))
+    {
+        if (line.empty())
+        {
+            continue;
+        }
+
+        auto fields = splitTabs(line);
+        if (fields.size() < 3)
+        {
+            continue;
+        }
+
+        yarp::manager::DockerContainer container;
+        container.id = fields[0];
+        container.name = fields[1];
+        container.status = fields[2];
+        container.host = node.address;
+        container.user = node.user;
+        container.ssh_options = node.ssh_options;
+        containers.push_back(container);
+    }
+
+    return containers;
+}
+
+bool ClusterWidget::runDockerCommand(const yarp::manager::DockerContainer& container, const std::string& command)
+{
+    std::string cmd = getSSHCmd(container.user, container.host, container.ssh_options);
+    cmd += " ";
+    cmd += shellQuote(command + " " + shellQuote(container.name));
+    return system(cmd.c_str()) == 0;
+}
+
+void ClusterWidget::onRefreshDockerContainers()
+{
+    if (!dockerTreeWidget)
+    {
+        return;
+    }
+
+    dockerTreeWidget->clear();
+    std::set<std::string> visitedHosts;
+    for (const auto& node : cluster.nodes)
+    {
+        std::string key = node.user + "@" + node.address + " " + node.ssh_options;
+        if (!visitedHosts.insert(key).second)
+        {
+            continue;
+        }
+
+        auto containers = getDockerContainers(node);
+        for (const auto& container : containers)
+        {
+            QStringList row;
+            row << QString(container.host.c_str())
+                << QString(container.name.c_str())
+                << QString(container.status.c_str())
+                << QString(container.id.c_str())
+                << QString(container.host.c_str())
+                << QString(container.user.c_str())
+                << QString(container.ssh_options.c_str());
+            dockerTreeWidget->addTopLevelItem(new QTreeWidgetItem(row));
+        }
+    }
+
+    dockerTreeWidget->resizeColumnToContents(0);
+    dockerTreeWidget->resizeColumnToContents(1);
+    dockerTreeWidget->resizeColumnToContents(3);
+    updateDockerButtons();
+    updateYarprunDockerColors();
+    reportErrors();
+}
+
+void ClusterWidget::onStartSelectedDockerContainers()
+{
+    for (auto* item : dockerTreeWidget->selectedItems())
+    {
+        yarp::manager::DockerContainer container;
+        container.name = item->text(1).toStdString();
+        container.host = item->text(4).toStdString();
+        container.user = item->text(5).toStdString();
+        container.ssh_options = item->text(6).toStdString();
+
+        if (!runDockerCommand(container, "docker start"))
+        {
+            yarp::manager::ErrorLogger::Instance()->addError("Docker: failed to start " + container.name + " on " + container.host);
+        }
+    }
+    reportErrors();
+    onRefreshDockerContainers();
+}
+
+void ClusterWidget::onStopSelectedDockerContainers()
+{
+    for (auto* item : dockerTreeWidget->selectedItems())
+    {
+        yarp::manager::DockerContainer container;
+        container.name = item->text(1).toStdString();
+        container.host = item->text(4).toStdString();
+        container.user = item->text(5).toStdString();
+        container.ssh_options = item->text(6).toStdString();
+
+        if (!runDockerCommand(container, "docker stop"))
+        {
+            yarp::manager::ErrorLogger::Instance()->addError("Docker: failed to stop " + container.name + " on " + container.host);
+        }
+    }
+    reportErrors();
+    onRefreshDockerContainers();
+}
+
+std::string ClusterWidget::getSSHCmd(const std::string &user, const std::string &host, const std::string &ssh_options, bool background)
 {
     std::string cmd;
-    cmd = "ssh -f";
+    cmd = background ? "ssh -f" : "ssh";
     if (!ssh_options.empty())
     {
         cmd = cmd + " " + ssh_options;

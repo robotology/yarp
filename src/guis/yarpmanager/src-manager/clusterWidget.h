@@ -12,6 +12,10 @@
 #include <yarp/manager/xmlclusterloader.h>
 #include <customtreewidget.h>
 
+class QGroupBox;
+class QPushButton;
+class QTreeWidget;
+
 namespace Ui {
 class ClusterWidget;
 }
@@ -31,6 +35,10 @@ private slots:
     void onExecute();
     void onNodeSelectionChanged();
     void onExecuteTextChanged();
+    void onRefreshDockerContainers();
+    void onStartSelectedDockerContainers();
+    void onStopSelectedDockerContainers();
+    void updateDockerButtons();
 signals:
     void logError(QString);
     void logMessage(QString);
@@ -42,8 +50,18 @@ public:
 
 private:
     void addRow(const std::string& name="", const std::string& display="none",
-                const std::string& user="", const std::string& address="", bool onOff=false, bool log=true, int id=0);
-    std::string getSSHCmd(const std::string& user, const std::string& host, const std::string& ssh_options);
+                const std::string& user="", const std::string& address="", const std::string& runtime="",
+                const std::string& target="", bool onOff=false, bool log=true, int id=0);
+    void addDockerControls();
+    std::string getSSHCmd(const std::string& user, const std::string& host, const std::string& ssh_options, bool background = true);
+    std::string buildYarprunCommand(const yarp::manager::ClusterNode& node, const std::string& portName, bool log, const std::string& logFile);
+    bool runRemoteCommand(const yarp::manager::ClusterNode& node, const std::string& command, std::string& output);
+    bool checkPixiRuntime(const yarp::manager::ClusterNode& node);
+    std::vector<yarp::manager::DockerContainer> getDockerContainers(const yarp::manager::ClusterNode& node);
+    bool runDockerCommand(const yarp::manager::DockerContainer& container, const std::string& command);
+    int getNodeIndex(QTreeWidgetItem* item) const;
+    bool isDockerRunning(const yarp::manager::ClusterNode& node, const std::string& dockerName);
+    void updateYarprunDockerColors();
     bool checkNameserver();
     bool checkNode(const std::string& name);
     void updateServerEntries();
@@ -55,6 +73,11 @@ private:
     yarp::manager::Cluster cluster;
     yarp::manager::XmlClusterLoader* clusLoader;
     bool checkNs;
+    QGroupBox* dockerGroupBox;
+    QTreeWidget* dockerTreeWidget;
+    QPushButton* dockerRefreshBtn;
+    QPushButton* dockerStartBtn;
+    QPushButton* dockerStopBtn;
 };
 
 #endif // CLUSTERWIDGET_H
