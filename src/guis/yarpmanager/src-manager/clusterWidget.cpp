@@ -858,12 +858,17 @@ void ClusterWidget::updateDockerButtons()
     dockerStopBtn->setDisabled(!hasSelection);
 }
 
-std::vector<yarp::manager::DockerContainer> ClusterWidget::getDockerContainers(const yarp::manager::ClusterNode& node)
+std::vector<yarp::manager::DockerContainer> ClusterWidget::getDockerContainers(const yarp::manager::ClusterNode& node, const std::string& dockerName)
 {
     std::vector<yarp::manager::DockerContainer> containers;
+    if (dockerName.empty())
+    {
+        return containers;
+    }
+
     std::string cmd = getSSHCmd(node.user, node.address, node.ssh_options, false);
     cmd += " ";
-    cmd += shellQuote("docker ps -a --format '{{.ID}}\t{{.Names}}\t{{.Status}}'");
+    cmd += shellQuote("docker ps -a --filter " + shellQuote("name=^/" + dockerName + "$") + " --format '{{.ID}}\t{{.Names}}\t{{.Status}}'");
     cmd += " 2>&1";
 
     std::array<char, 512> buffer{};
@@ -931,16 +936,21 @@ void ClusterWidget::onRefreshDockerContainers()
     }
 
     dockerTreeWidget->clear();
-    std::set<std::string> visitedHosts;
+    std::set<std::string> visitedContainers;
     for (const auto& node : cluster.nodes)
     {
-        std::string key = node.user + "@" + node.address + " " + node.ssh_options;
-        if (!visitedHosts.insert(key).second)
+        if (node.docker.empty())
         {
             continue;
         }
 
-        auto containers = getDockerContainers(node);
+        std::string key = node.user + "@" + node.address + " " + node.ssh_options + " " + node.docker;
+        if (!visitedContainers.insert(key).second)
+        {
+            continue;
+        }
+
+        auto containers = getDockerContainers(node, node.docker);
         for (const auto& container : containers)
         {
             QStringList row;

@@ -57,7 +57,7 @@ private:
     std::string buildYarprunCommand(const yarp::manager::ClusterNode& node, const std::string& portName, bool log, const std::string& logFile);
     bool runRemoteCommand(const yarp::manager::ClusterNode& node, const std::string& command, std::string& output);
     bool checkPixiRuntime(const yarp::manager::ClusterNode& node);
-    std::vector<yarp::manager::DockerContainer> getDockerContainers(const yarp::manager::ClusterNode& node);
+    std::vector<yarp::manager::DockerContainer> getDockerContainers(const yarp::manager::ClusterNode& node, const std::string& dockerName);
     bool runDockerCommand(const yarp::manager::DockerContainer& container, const std::string& command);
     int getNodeIndex(QTreeWidgetItem* item) const;
     bool isDockerRunning(const yarp::manager::ClusterNode& node, const std::string& dockerName);
