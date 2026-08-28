@@ -20,8 +20,21 @@ struct ClusterNode
     std::string displayValue = "none";
     std::string user = "";
     std::string ssh_options = "";
+    std::string docker = "";
+    std::string conda = "";
+    std::string pixi = "";
     bool onOff = false;
     bool log = true;
+};
+
+struct DockerContainer
+{
+    std::string id = "";
+    std::string name = "";
+    std::string status = "";
+    std::string host = "";
+    std::string user = "";
+    std::string ssh_options = "";
 };
 
 struct Cluster
