@@ -37,7 +37,7 @@ using namespace yarp::os;
 using namespace yarp::manager;
 
 namespace {
-
+// To create a shell-quoted string
 std::string shellQuote(const std::string& value)
 {
     std::string quoted = "'";
@@ -55,7 +55,7 @@ std::string shellQuote(const std::string& value)
     quoted += "'";
     return quoted;
 }
-
+// To divide rows separated by Tabs
 std::vector<std::string> splitTabs(const std::string& line)
 {
     std::vector<std::string> fields;
@@ -811,6 +811,7 @@ void ClusterWidget::updateYarprunDockerColors()
     }
 }
 
+// Create the docker box
 void ClusterWidget::addDockerControls()
 {
     dockerGroupBox = new QGroupBox("Docker containers", this);
