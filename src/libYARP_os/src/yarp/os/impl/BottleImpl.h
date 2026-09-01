@@ -102,8 +102,6 @@ public:
 
     yarp::os::Bottle& addList();
 
-    yarp::os::Property& addDict();
-
     void clear();
 
     void fromString(const std::string& line);

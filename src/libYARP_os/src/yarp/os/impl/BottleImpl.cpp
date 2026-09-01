@@ -651,13 +651,6 @@ yarp::os::Bottle& BottleImpl::addList()
     return lst->internal();
 }
 
-yarp::os::Property& BottleImpl::addDict()
-{
-    auto* lst = new StoreDict();
-    add(lst);
-    return lst->internal();
-}
-
 void BottleImpl::copyRange(const BottleImpl* alt, size_type first, size_type len)
 {
 
