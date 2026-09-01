@@ -191,11 +191,6 @@ Bottle& Bottle::addList()
     return implementation->addList();
 }
 
-Property& Bottle::addDict()
-{
-    implementation->edit();
-    return implementation->addDict();
-}
 
 Value Bottle::pop()
 {
@@ -381,7 +376,9 @@ std::string Bottle::toString(int x)
 
 std::string Bottle::describeBottleCode(int code)
 {
-    int unit = code & ~(BOTTLE_TAG_LIST | BOTTLE_TAG_DICT);
+    //unit is the code with the flag LIST removed
+    int unit = code & ~(BOTTLE_TAG_LIST);
+
     std::string unitName = "mixed";
     switch (unit) {
     case 0:
@@ -412,8 +409,6 @@ std::string Bottle::describeBottleCode(int code)
     std::string result = unitName;
     if ((code & BOTTLE_TAG_LIST) != 0) {
         result = "list of " + unitName;
-    } else if ((code & BOTTLE_TAG_DICT) != 0) {
-        result = "dict of " + unitName;
     }
     return result;
 }

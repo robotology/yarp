@@ -376,6 +376,11 @@ include(YarpChooseIDL)
 
 set(YARP_os_IDL
   idl/OSTestMsg.thrift
+  idl/ConnectionQosData.thrift
+  idl/PortInfoData.thrift
+  idl/ProcessInfoData.thrift
+  idl/PlatformInfoData.thrift
+  idl/ThreadInfoData.thrift
 )
 
 yarp_choose_idl(YARP_os_idl ${YARP_os_IDL})

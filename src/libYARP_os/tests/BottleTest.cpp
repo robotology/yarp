@@ -514,22 +514,15 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
         CHECK(bot.get(3).asString() == "false"); // false can spell
     }
 
-    SECTION("test dictionary values")
+    SECTION("test nested lists values")
     {
         Bottle bot("1");
-        Property& p = bot.addDict();
-        p.put("test", "me");
-        p.put("hi", "there");
+        Bottle& innerlist = bot.addList();
+        innerlist.addInt32(42);
         Bottle bot2;
         bot2 = bot;
-        CHECK(bot2.get(1).isDict()); // "dict copies ok"
-        CHECK(bot2.get(1).asDict()->find("test").asString() == "me"); // "dict content copies ok"
-
-        Bottle bot3;
-        bot3.fromString(bot.toString());
-        CHECK(bot2.get(1).asSearchable()->find("test").asString() == "me"); // "dict content serializes ok"
-        // serialization currently will convert dicts to lists,
-        // for backwards compatibility
+        CHECK(bot2.get(1).isList()); // "list copies ok"
+        CHECK(bot2.get(1).asList()->find("test").asString() == "me"); // "dict content copies ok"
     }
 
     SECTION("test infinite loop tickled by yarpmanager + string type change")

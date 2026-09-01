@@ -24,6 +24,10 @@
 #include <yarp/os/impl/PortCoreInputUnit.h>
 #include <yarp/os/impl/PortCoreOutputUnit.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/PortInfoData.h>
+#include <yarp/os/ProcessInfoData.h>
+#include <yarp/os/PlatformInfoData.h>
+#include <yarp/os/ThreadInfoData.h>
 
 #include <cstdio>
 #include <functional>
@@ -1208,9 +1212,9 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
     // constant over the lifetime of the input threads.
 
     if (m_reader != nullptr && !m_interrupted) {
-        m_interruptable = false; // No mutexing; user of interrupt() has to be careful.
+        m_interruptable = false; // No mutex; user of interrupt() has to be careful.
 
-        bool haveOutputs = (m_outputCount != 0); // No mutexing, but failure modes are benign.
+        bool haveOutputs = (m_outputCount != 0); // No mutex, but failure modes are benign.
 
         if (m_logNeeded && haveOutputs) {
             // Normally, yarp doesn't pay attention to the content of
@@ -1679,7 +1683,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addVocab32("ver");
         result.addInt32(1);
         result.addInt32(2);
-        result.addInt32(3);
+        result.addInt32(4);
         return result;
     };
 
@@ -2075,7 +2079,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
-                result.addDict() = property;
+                result.addString(property.toString()); //PROPERTY2STRING
             }
         } else {
             for (auto* unit : m_units) {
@@ -2084,7 +2088,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     if (route.getFromName() == target) {
                         yarp::os::Property property;
                         unit->getCarrierParams(property);
-                        result.addDict() = property;
+                        result.addString(property.toString()); //PROPERTY2STRING
                         break;
                     }
                 }
@@ -2114,7 +2118,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
-                result.addDict() = property;
+                result.addString(property.toString()); //PROPERTY2STRING
             }
         } else {
             for (auto* unit : m_units) {
@@ -2123,7 +2127,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     if (route.getToName() == target) {
                         yarp::os::Property property;
                         unit->getCarrierParams(property);
-                        result.addDict() = property;
+                        result.addString(property.toString()); //PROPERTY2STRING
                         break;
                     }
                 }
@@ -2152,41 +2156,50 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     // check for their own name
                     if (key == getName()) {
                         bFound = true;
-                        Bottle& sched = result.addList();
-                        sched.addString("sched");
-                        Property& sched_prop = sched.addDict();
-                        sched_prop.put("tid", static_cast<int>(this->getTid()));
-                        sched_prop.put("priority", this->getPriority());
-                        sched_prop.put("policy", this->getPolicy());
+                        Bottle& thread_bot = result.addList();
+                        //thread_bot.addString("sched");
+                        yarp::os::ThreadInfoData threadinfodata;
+                        threadinfodata.tid = static_cast<int>(this->getTid());
+                        threadinfodata.priority = this->getPriority();
+                        threadinfodata.policy = this->getPolicy();
+                        Portable::copyPortable(threadinfodata, thread_bot);
+                        //Property& sched_prop = sched.addDict(); //COPYPORTABLE
 
                         SystemInfo::ProcessInfo info = SystemInfo::getProcessInfo();
-                        Bottle& proc = result.addList();
-                        proc.addString("process");
-                        Property& proc_prop = proc.addDict();
-                        proc_prop.put("pid", info.pid);
-                        proc_prop.put("name", (info.pid != -1) ? info.name : "unknown");
-                        proc_prop.put("arguments", (info.pid != -1) ? info.arguments : "unknown");
-                        proc_prop.put("priority", info.schedPriority);
-                        proc_prop.put("policy", info.schedPolicy);
+                        Bottle& proc_bottle = result.addList();
+                        //proc.addString("process");
+                        yarp::os::ProcessInfoData procinfodata;
+                        procinfodata.pid  = info.pid;
+                        procinfodata.name = (info.pid != -1) ? info.name : "unknown";
+                        procinfodata.arguments = (info.pid != -1) ? info.arguments : "unknown";
+                        procinfodata.priority = info.schedPriority;
+                        procinfodata.policy = info.schedPolicy;
+                        //Property& proc_prop = proc.addDict(); //COPYPORTABLE
+                        Portable::copyPortable(procinfodata, proc_bottle);
 
                         SystemInfo::PlatformInfo pinfo = SystemInfo::getPlatformInfo();
-                        Bottle& platform = result.addList();
-                        platform.addString("platform");
-                        Property& platform_prop = platform.addDict();
-                        platform_prop.put("os", pinfo.name);
-                        platform_prop.put("hostname", m_address.getHost());
+                        Bottle& platform_bottle = result.addList();
+                        //platform.addString("platform");
+                        yarp::os::PlatformInfoData platforminfodata;
+                        platforminfodata.os = pinfo.name;
+                        platforminfodata.hostname = m_address.getHost(); 
+                        //Property& platform_prop = platform.addDict(); //COPYPORTABLE
+                        Portable::copyPortable(platforminfodata,platform_bottle);
 
                         unsigned int f = getFlags();
                         bool is_input = (f & PORTCORE_IS_INPUT) != 0;
                         bool is_output = (f & PORTCORE_IS_OUTPUT) != 0;
                         bool is_rpc = (f & PORTCORE_IS_RPC) != 0;
-                        Bottle& port = result.addList();
-                        port.addString("port");
-                        Property& port_prop = port.addDict();
-                        port_prop.put("is_input", is_input);
-                        port_prop.put("is_output", is_output);
-                        port_prop.put("is_rpc", is_rpc);
-                        port_prop.put("type", getType().getName());
+                        Bottle& portinfo_bottle = result.addList();
+                        //port.addString("port");
+                        yarp::os::PortInfoData portinfodata;
+                        portinfodata.is_input = is_input;
+                        portinfodata.is_output = is_output;
+                        portinfodata.is_rpc = is_rpc;
+                        portinfodata.type = getType().getName();
+                        //Property& port_prop = port.addDict();//COPYPORTABLE
+                        Portable::copyPortable(portinfodata, portinfo_bottle);
+
                     } else {
                         for (auto* unit : m_units) {
                             if ((unit != nullptr) && !unit->isFinished()) {
@@ -2194,20 +2207,24 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                 std::string coreName = (unit->isOutput()) ? route.getToName() : route.getFromName();
                                 if (key == coreName) {
                                     bFound = true;
-                                    int priority = unit->getPriority();
-                                    int policy = unit->getPolicy();
                                     int tos = getTypeOfService(unit);
-                                    int tid = static_cast<int>(unit->getTid());
-                                    Bottle& sched = result.addList();
-                                    sched.addString("sched");
-                                    Property& sched_prop = sched.addDict();
-                                    sched_prop.put("tid", tid);
-                                    sched_prop.put("priority", priority);
-                                    sched_prop.put("policy", policy);
+
+                                    Bottle& thread_bot = result.addList();
+                                    //sched.addString("sched");
+                                    yarp::os::ThreadInfoData threadinfodata;
+                                    //Property& sched_prop = sched.addDict();
+                                    threadinfodata.tid = static_cast<int>(unit->getTid());
+                                    threadinfodata.priority = unit->getPriority();
+                                    threadinfodata.policy = unit->getPolicy();
+                                    Portable::copyPortable(threadinfodata, thread_bot);
+
+/*************************************************************************************
                                     Bottle& qos = result.addList();
                                     qos.addString("qos");
+
                                     Property& qos_prop = qos.addDict();
                                     qos_prop.put("tos", tos);
+****************************************************************************/
                                 }
                             } // end isFinished()
                         }     // end for loop
