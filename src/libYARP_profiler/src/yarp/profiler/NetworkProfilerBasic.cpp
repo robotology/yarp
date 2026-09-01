@@ -19,7 +19,8 @@ using namespace yarp::profiler;
 
 bool NetworkProfilerBasic::getMachinesList(const ports_detail_set& ports, machines_list& l)
 {
-    l.clear();
+    l.clear(); //clear the output
+
     for (auto it = ports.begin(); it != ports.end(); it++)
     {
         std::string ip = it->owner_process.owner_machine.ip;
@@ -33,7 +34,8 @@ bool NetworkProfilerBasic::getMachinesList(const ports_detail_set& ports, machin
 
 bool NetworkProfilerBasic::getProcessesList(const ports_detail_set& ports, processes_list& l)
 {
-    l.clear();
+    l.clear(); //clear the output
+
     for (auto it = ports.begin(); it != ports.end(); it++)
     {
         //int pid = it->owner.pid;
@@ -48,6 +50,8 @@ bool NetworkProfilerBasic::getProcessesList(const ports_detail_set& ports, proce
 
 bool NetworkProfilerBasic::getPortsDetailedList(ports_detail_set& ports, bool complete)
 {
+    ports.clear(); //clear the output
+
     ports_name_set port_names;
     bool r = getPortsList(port_names, complete);
     if (!r) return false;
@@ -65,7 +69,8 @@ bool NetworkProfilerBasic::getPortsDetailedList(ports_detail_set& ports, bool co
 
 void NetworkProfilerBasic::filterPortsListByIp(const ports_detail_set& in, ports_detail_set& filtered_out, std::string ip)
 {
-    filtered_out.clear();
+    filtered_out.clear(); //clear the output
+
     for (auto it = in.begin(); it != in.end(); it++)
     {
         if (ip != "*") {
@@ -76,7 +81,8 @@ void NetworkProfilerBasic::filterPortsListByIp(const ports_detail_set& in, ports
 
 void NetworkProfilerBasic::filterPortsListByProcess(const ports_detail_set& in, ports_detail_set& filtered_out, std::string process_fullname)
 {
-    filtered_out.clear();
+    filtered_out.clear(); //clear the output
+
     for (auto it = in.begin(); it != in.end(); it++)
     {
         if (process_fullname != "*") {
@@ -87,7 +93,8 @@ void NetworkProfilerBasic::filterPortsListByProcess(const ports_detail_set& in, 
 
 void NetworkProfilerBasic::filterConnectionListByName(const connections_set& in, connections_set& filtered_out, std::string src_name, std::string dst_name)
 {
-    filtered_out.clear();
+    filtered_out.clear(); //clear the output
+
     for (auto it = in.begin(); it != in.end(); it++)
     {
         if (src_name!="*" && dst_name != "*") {
@@ -104,7 +111,8 @@ void NetworkProfilerBasic::filterConnectionListByName(const connections_set& in,
 
 void NetworkProfilerBasic::filterConnectionListByIp(const connections_set& in, connections_set& filtered_out, std::string src_portnumber, std::string dst_portnumber)
 {
-    filtered_out.clear();
+    filtered_out.clear(); //clear the output
+
     for (auto it = in.begin(); it != in.end(); it++)
     {
         if (src_portnumber != "*" && dst_portnumber != "*") {
@@ -121,7 +129,8 @@ void NetworkProfilerBasic::filterConnectionListByIp(const connections_set& in, c
 
 void NetworkProfilerBasic::filterConnectionListByPortNumber(const connections_set& in, connections_set& filtered_out, std::string src_ip, std::string dst_ip)
 {
-    filtered_out.clear();
+    filtered_out.clear(); //clear the output
+
     for (auto it = in.begin(); it != in.end(); it++)
     {
         if (src_ip != "*" && dst_ip != "*") {
@@ -138,6 +147,8 @@ void NetworkProfilerBasic::filterConnectionListByPortNumber(const connections_se
 
 bool NetworkProfilerBasic::getPortInfo (const std::string& name, const ports_name_set& ports, PortInfo& p)
 {
+    p = PortInfo(); // clear the output
+
     for (auto it = ports.begin(); it != ports.end(); it++)
     {
         if (name == it->name)
@@ -153,6 +164,8 @@ bool NetworkProfilerBasic::getPortInfo (const std::string& name, const ports_nam
 
 bool NetworkProfilerBasic::getConnectionsList(connections_set& connections)
 {
+    connections.clear(); // clear the output
+
     //get the list of all the ports
     ports_name_set ports;
     getPortsList(ports);
@@ -201,8 +214,9 @@ bool NetworkProfilerBasic::getConnectionsList(connections_set& connections)
     return true;
 }
 
-bool NetworkProfilerBasic::getPortsList(ports_name_set &ports, bool complete) {
-    ports.clear();
+bool NetworkProfilerBasic::getPortsList(ports_name_set &ports, bool complete)
+{
+    ports.clear(); //clear the output
 
     ContactStyle style;
     style.quiet = true;
@@ -251,7 +265,9 @@ bool NetworkProfilerBasic::getPortsList(ports_name_set &ports, bool complete) {
     return true;
 }
 
-bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetails& details) {
+bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetails& details)
+ {
+    details = PortDetails(); //clear the output
 
     details.info.name = portName;
     Port ping;
