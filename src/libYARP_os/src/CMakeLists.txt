@@ -377,6 +377,11 @@ set(YARP_os_IDL
   idl/SystemInfoData.thrift
   idl/StampData.thrift
   idl/StampWithFrameData.thrift
+  idl/ConnectionQosData.thrift
+  idl/PortInfoData.thrift
+  idl/ProcessInfoData.thrift
+  idl/PlatformInfoData.thrift
+  idl/ThreadInfoData.thrift
 )
 
 yarp_choose_idl(YARP_os_idl ${YARP_os_IDL})

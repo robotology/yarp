@@ -29,8 +29,7 @@
      BOTTLE_TAG_BLOB)
 
 #define GROUP_MASK     \
-    (BOTTLE_TAG_LIST | \
-     BOTTLE_TAG_DICT)
+    (BOTTLE_TAG_LIST)
 
 YARP_DECLARE_LOG_COMPONENT(STORABLE)
 
@@ -180,16 +179,6 @@ public:
         return nullptr;
     }
 
-    bool isDict() const override
-    {
-        return false;
-    }
-
-    yarp::os::Property* asDict() const override
-    {
-        return nullptr;
-    }
-
     bool isVocab32() const override
     {
         return false;
@@ -230,14 +219,6 @@ public:
         return false;
     }
 
-
-    Searchable* asSearchable() const override
-    {
-        if (isDict()) {
-            return asDict();
-        }
-        return asList();
-    }
     using yarp::os::Searchable::check;
     bool check(const std::string& key) const override;
 
@@ -1191,70 +1172,6 @@ public:
         return content.findGroup(key);
     }
 };
-
-
-/**
- * Key/value pairs
- */
-class YARP_os_impl_API StoreDict :
-        public Storable
-{
-private:
-    yarp::os::Property content{};
-
-public:
-    StoreDict() = default;
-
-    Storable* createStorable() const override
-    {
-        return new StoreDict();
-    }
-
-    void copy(const Storable& alt) override
-    {
-        content = *(alt.asDict());
-    }
-
-    yarp::os::Property& internal()
-    {
-        return content;
-    }
-
-    std::string toString() const override;
-    void fromString(const std::string& src) override;
-    std::string toStringNested() const override;
-    void fromStringNested(const std::string& src) override;
-
-    static const std::int32_t code;
-    std::int32_t getCode() const override
-    {
-        return code;
-    }
-
-    bool readRaw(ConnectionReader& reader) override;
-    bool writeRaw(ConnectionWriter& writer) const override;
-
-    bool isDict() const override
-    {
-        return true;
-    }
-
-    yarp::os::Property* asDict() const override
-    {
-        return const_cast<yarp::os::Property*>(&content);
-    }
-
-    yarp::os::Value& find(const std::string& key) const override
-    {
-        return content.find(key);
-    }
-
-    yarp::os::Bottle& findGroup(const std::string& key) const override
-    {
-        return content.findGroup(key);
-    }
-};
-
 
 template <typename T>
 inline std::int32_t subCoder(T& content)

@@ -159,13 +159,6 @@ public:
     virtual bool isList() const;
 
     /**
-     * Checks if value is a dictionary. If so, asDict() will return that
-     * dictionary.
-     * @return true iff value is a dictionary
-     */
-    virtual bool isDict() const;
-
-    /**
      * Checks if value is a 32bit vocabulary identifier. If so, asVocab32()
      * will return it.
      * @return true iff value is a vocabulary identifier
@@ -285,20 +278,6 @@ public:
      * Otherwise returns nullptr
      */
     virtual Bottle* asList() const;
-
-    /**
-     * Get dictionary (hash table) value.
-     * @return pointer to dictionary if value is indeed of the right type.
-     * Otherwise returns nullptr
-     */
-    virtual Property* asDict() const;
-
-    /**
-     * Get dictionary or list value
-     * @return pointer to dictionary or list value if present.
-     * Otherwise returns nullptr
-     */
-    virtual Searchable* asSearchable() const;
 
     /**
      * Get binary data value.
