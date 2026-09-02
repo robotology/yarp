@@ -340,17 +340,7 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
 
 bool NetworkProfilerBasic::yarpClean(float timeout) {
 
-    if (timeout <= 0) {
-        timeout = -1;
-    }
-
-    std::stringstream sstream;
-    sstream<<timeout;
-    char* argv[2];
-    argv[0] = (char*) "--timeout";
-    argv[1] = (char*) sstream.str().c_str();
-    yarp::companion::impl::Companion::getInstance().cmdClean(2,argv);
-    return true;
+    return yarp::os::Network::cleanUnresponsivePorts(timeout);
 }
 
 std::string NetworkProfilerBasic::PortDetails::toString() const
