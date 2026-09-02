@@ -677,7 +677,11 @@ void DgramTwoWayStream::closeMain()
         if (dgram != nullptr) {
 #if defined(YARP_HAS_ACE)
             dgram->close();
-            delete dgram;
+            if (mgram != nullptr) {
+                delete mgram;   // delete via the correct dynamic type
+            } else {
+                delete dgram;
+            }
 #else
             if (dgram_sockfd >= 0) {
                 ::close(dgram_sockfd);
