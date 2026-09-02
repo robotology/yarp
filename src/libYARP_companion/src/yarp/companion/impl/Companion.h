@@ -67,7 +67,6 @@ public:
     int cmdDisconnect(int argc, char *argv[]);
 
     // Defined in Companion.cmdDetect.cpp
-    int detectRos(bool write);
     int cmdDetect(int argc, char *argv[]);
 
     // Defined in Companion.cmdEnv.cpp

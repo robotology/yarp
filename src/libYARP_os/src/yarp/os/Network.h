@@ -320,6 +320,18 @@ public:
      */
     static Contact unregisterContact(const Contact& contact);
 
+    /**
+    * Clean up unresponsive ports from the name server.
+    * This method will query the name server for all registered ports,
+    * and check if they are responsive. If a port is unresponsive (in the given
+    * timeout), it will be removed from the name server.
+    * Be careful when using this method, as it may remove working ports that are
+    * temporarily unresponsive due to network issues (delays) or other reasons.
+    * @param timeout the time in seconds to wait for a response from a port.
+    * If negative, a default timeout will be used.
+    */
+    static bool cleanUnresponsivePorts(double timeout=-1);
+
 
     /**
      * Names registered with the nameserver can have arbitrary
