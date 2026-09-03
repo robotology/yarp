@@ -109,11 +109,11 @@ public:
     yarp::dev::ReturnValue getHatCount(size_t& Hat_count) override;
     yarp::dev::ReturnValue getTouchSurfaceCount(size_t& touch_count) override;
     yarp::dev::ReturnValue getStickCount(size_t& stick_count) override;
-    yarp::dev::ReturnValue getStickDoF(size_t stick_id, size_t& DoF) override;
     yarp::dev::ReturnValue getButton(size_t button_id, double& value) override;
     yarp::dev::ReturnValue getTrackball(size_t trackball_id, yarp::dev::TrackballData& value) override;
     yarp::dev::ReturnValue getHat(size_t hat_id, unsigned char& value) override;
     yarp::dev::ReturnValue getAxis(size_t axis_id, double& value) override;
+    yarp::dev::ReturnValue getAllAxes(std::vector<double>& values) override;
     yarp::dev::ReturnValue getStick(size_t stick_id, yarp::dev::StickData& value, JoypadCtrl_coordinateMode coordinate_mode) override;
     yarp::dev::ReturnValue getTouch(size_t touch_id, std::vector<yarp::dev::TouchData>& value) override;
 };

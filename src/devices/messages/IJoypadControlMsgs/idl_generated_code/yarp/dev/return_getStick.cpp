@@ -14,7 +14,7 @@ namespace yarp::dev {
 
 // Constructor with field values
 return_getStick::return_getStick(const yarp::dev::ReturnValue& ret,
-                                 const StickData& value,
+                                 const yarp::dev::StickData& value,
                                  const std::int16_t coordinate_mode_enum) :
         WirePortable(),
         ret(ret),
@@ -29,7 +29,7 @@ bool return_getStick::read(yarp::os::idl::WireReader& reader)
     if (!nested_read_ret(reader)) {
         return false;
     }
-    if (!read_value(reader)) {
+    if (!nested_read_value(reader)) {
         return false;
     }
     if (!read_coordinate_mode_enum(reader)) {
@@ -45,7 +45,7 @@ bool return_getStick::read(yarp::os::idl::WireReader& reader)
 bool return_getStick::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(4)) {
+    if (!reader.readListHeader(3)) {
         return false;
     }
     if (!read(reader)) {
@@ -60,7 +60,7 @@ bool return_getStick::write(const yarp::os::idl::WireWriter& writer) const
     if (!nested_write_ret(writer)) {
         return false;
     }
-    if (!write_value(writer)) {
+    if (!nested_write_value(writer)) {
         return false;
     }
     if (!write_coordinate_mode_enum(writer)) {
@@ -76,7 +76,7 @@ bool return_getStick::write(const yarp::os::idl::WireWriter& writer) const
 bool return_getStick::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(4)) {
+    if (!writer.writeListHeader(3)) {
         return false;
     }
     if (!write(writer)) {

@@ -24,7 +24,7 @@ class return_getStick :
 public:
     // Fields
     yarp::dev::ReturnValue ret{};
-    StickData value{};
+    yarp::dev::StickData value{};
     std::int16_t coordinate_mode_enum{0};
 
     // Default constructor
@@ -32,7 +32,7 @@ public:
 
     // Constructor with field values
     return_getStick(const yarp::dev::ReturnValue& ret,
-                    const StickData& value,
+                    const yarp::dev::StickData& value,
                     const std::int16_t coordinate_mode_enum);
 
     // Read structure on a Wire

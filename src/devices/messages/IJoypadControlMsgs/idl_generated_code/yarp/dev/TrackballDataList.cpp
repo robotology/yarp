@@ -13,7 +13,7 @@
 namespace yarp::dev {
 
 // Constructor with field values
-TrackballDataList::TrackballDataList(const std::vector<TrackballData>& value) :
+TrackballDataList::TrackballDataList(const std::vector<yarp::dev::TrackballData>& value) :
         WirePortable(),
         value(value)
 {
@@ -98,12 +98,12 @@ bool TrackballDataList::read_value(yarp::os::idl::WireReader& reader)
             }
         }
         value.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(value[_i])) {
+            if (!reader.readNested(value[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -149,12 +149,12 @@ bool TrackballDataList::nested_read_value(yarp::os::idl::WireReader& reader)
             }
         }
         value.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(value[_i])) {
+            if (!reader.readNested(value[_i0])) {
                 reader.fail();
                 return false;
             }

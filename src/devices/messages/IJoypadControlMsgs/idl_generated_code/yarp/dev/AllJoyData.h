@@ -28,8 +28,8 @@ public:
     std::vector<double> AxisDataVal{};
     std::vector<std::int8_t> HatsDataVal{};
     std::vector<MultipleTouches> TouchDataVal{};
-    std::vector<StickData> StickDataVal{};
-    std::vector<TrackballData> TrackballDataVal{};
+    std::vector<yarp::dev::StickData> StickDataVal{};
+    std::vector<yarp::dev::TrackballData> TrackballDataVal{};
 
     // Default constructor
     AllJoyData() = default;
@@ -39,8 +39,8 @@ public:
                const std::vector<double>& AxisDataVal,
                const std::vector<std::int8_t>& HatsDataVal,
                const std::vector<MultipleTouches>& TouchDataVal,
-               const std::vector<StickData>& StickDataVal,
-               const std::vector<TrackballData>& TrackballDataVal);
+               const std::vector<yarp::dev::StickData>& StickDataVal,
+               const std::vector<yarp::dev::TrackballData>& TrackballDataVal);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;

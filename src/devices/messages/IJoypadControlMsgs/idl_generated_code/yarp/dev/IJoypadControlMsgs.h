@@ -15,6 +15,7 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <yarp/dev/IJoypadController.h>
+#include <yarp/dev/return_getAllAxes.h>
 #include <yarp/dev/return_getAxis.h>
 #include <yarp/dev/return_getAxisCount.h>
 #include <yarp/dev/return_getButton.h>
@@ -23,7 +24,6 @@
 #include <yarp/dev/return_getHatCount.h>
 #include <yarp/dev/return_getStick.h>
 #include <yarp/dev/return_getStickCount.h>
-#include <yarp/dev/return_getStickDoF.h>
 #include <yarp/dev/return_getTouch.h>
 #include <yarp/dev/return_getTouchSurfaceCount.h>
 #include <yarp/dev/return_getTrackball.h>
@@ -56,8 +56,6 @@ public:
 
     virtual return_getStickCount getStickCount();
 
-    virtual return_getStickDoF getStickDoF(const std::int32_t stick_id);
-
     virtual return_getButton getButton(const std::int32_t button_id);
 
     virtual return_getTrackball getTrackball(const std::int32_t trackball_id);
@@ -65,6 +63,8 @@ public:
     virtual return_getHat getHat(const std::int32_t hat_id);
 
     virtual return_getAxis getAxis(const std::int32_t axis_id);
+
+    virtual return_getAllAxes getAllAxes();
 
     virtual return_getStick getStick(const std::int32_t stick_id, const yarp::dev::IJoypadController::JoypadCtrl_coordinateMode mode);
 

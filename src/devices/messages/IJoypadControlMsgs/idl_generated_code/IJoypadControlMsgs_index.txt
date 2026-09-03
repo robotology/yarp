@@ -1,9 +1,3 @@
-yarp/dev/TrackballData.h
-yarp/dev/TrackballData.cpp
-yarp/dev/TouchData.h
-yarp/dev/TouchData.cpp
-yarp/dev/StickData.h
-yarp/dev/StickData.cpp
 yarp/dev/ButtonDataList.h
 yarp/dev/ButtonDataList.cpp
 yarp/dev/AxisDataList.h
@@ -32,8 +26,6 @@ yarp/dev/return_getStickCount.h
 yarp/dev/return_getStickCount.cpp
 yarp/dev/return_getButtonCount.h
 yarp/dev/return_getButtonCount.cpp
-yarp/dev/return_getStickDoF.h
-yarp/dev/return_getStickDoF.cpp
 yarp/dev/return_getButton.h
 yarp/dev/return_getButton.cpp
 yarp/dev/return_getTrackball.h
@@ -46,5 +38,7 @@ yarp/dev/return_getStick.h
 yarp/dev/return_getStick.cpp
 yarp/dev/return_getTouch.h
 yarp/dev/return_getTouch.cpp
+yarp/dev/return_getAllAxes.h
+yarp/dev/return_getAllAxes.cpp
 yarp/dev/IJoypadControlMsgs.h
 yarp/dev/IJoypadControlMsgs.cpp

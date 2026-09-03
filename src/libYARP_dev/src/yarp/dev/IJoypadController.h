@@ -85,15 +85,6 @@ public:
     virtual yarp::dev::ReturnValue getStickCount(size_t& stick_count) = 0;
 
     /**
-     * @brief Get the Degree Of Freedom count for desired stick.
-     *
-     * @param stick_id Id of the stick. must be > -1 && < getStickCount(), return false otherwise.
-     * @param DoF an unsigned int reference that will contain the value.
-     * @return true if succeeded, false otherwise
-     */
-    virtual yarp::dev::ReturnValue getStickDoF(size_t stick_id, size_t& DoF) = 0;
-
-    /**
      * @brief Get the value of a button.
      *
      * From 0-unpressed to 1-fullpressed and values in the middle in the
@@ -133,6 +124,14 @@ public:
      * @return true if succeeded, false otherwise.
      */
     virtual yarp::dev::ReturnValue getAxis(size_t axis_id, double& value) = 0;
+
+    /**
+     * @brief Get the values of all available joystick axes.
+     *
+     * @param values the vector containing the axes values.
+     * @return true if succeeded, false otherwise.
+     */
+    virtual yarp::dev::ReturnValue getAllAxes(std::vector<double>& values);
 
     /**
      * @brief Get the value of a stick if present, return false otherwise.

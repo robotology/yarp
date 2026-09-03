@@ -17,8 +17,8 @@ AllJoyData::AllJoyData(const std::vector<double>& ButtonDataVal,
                        const std::vector<double>& AxisDataVal,
                        const std::vector<std::int8_t>& HatsDataVal,
                        const std::vector<MultipleTouches>& TouchDataVal,
-                       const std::vector<StickData>& StickDataVal,
-                       const std::vector<TrackballData>& TrackballDataVal) :
+                       const std::vector<yarp::dev::StickData>& StickDataVal,
+                       const std::vector<yarp::dev::TrackballData>& TrackballDataVal) :
         WirePortable(),
         ButtonDataVal(ButtonDataVal),
         AxisDataVal(AxisDataVal),
@@ -390,12 +390,12 @@ bool AllJoyData::read_TouchDataVal(yarp::os::idl::WireReader& reader)
             }
         }
         TouchDataVal.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(TouchDataVal[_i])) {
+            if (!reader.readNested(TouchDataVal[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -441,12 +441,12 @@ bool AllJoyData::nested_read_TouchDataVal(yarp::os::idl::WireReader& reader)
             }
         }
         TouchDataVal.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(TouchDataVal[_i])) {
+            if (!reader.readNested(TouchDataVal[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -492,12 +492,12 @@ bool AllJoyData::read_StickDataVal(yarp::os::idl::WireReader& reader)
             }
         }
         StickDataVal.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(StickDataVal[_i])) {
+            if (!reader.readNested(StickDataVal[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -543,12 +543,12 @@ bool AllJoyData::nested_read_StickDataVal(yarp::os::idl::WireReader& reader)
             }
         }
         StickDataVal.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(StickDataVal[_i])) {
+            if (!reader.readNested(StickDataVal[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -594,12 +594,12 @@ bool AllJoyData::read_TrackballDataVal(yarp::os::idl::WireReader& reader)
             }
         }
         TrackballDataVal.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(TrackballDataVal[_i])) {
+            if (!reader.readNested(TrackballDataVal[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -645,12 +645,12 @@ bool AllJoyData::nested_read_TrackballDataVal(yarp::os::idl::WireReader& reader)
             }
         }
         TrackballDataVal.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(TrackballDataVal[_i])) {
+            if (!reader.readNested(TrackballDataVal[_i0])) {
                 reader.fail();
                 return false;
             }
