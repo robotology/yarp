@@ -285,6 +285,31 @@ ReturnValue JoypadControl_nwc_yarp::getHat(size_t hat_id, unsigned char& value)
     }
 }
 
+ReturnValue JoypadControl_nwc_yarp::getAllAxes(std::vector<double>& value)
+{
+    if(!m_use_streaming)
+    {
+        auto ret = m_rpcMsgs.getAllAxes();
+        value = ret.value;
+        return ret.ret;
+    }
+    else
+    {
+        if (m_use_all_port)
+        {
+            auto tmp = m_allJoyDataPort.getData();
+            value = tmp.AxisDataVal;
+            return ReturnValue_ok;
+        }
+        else
+        {
+            auto tmp = m_axisPort.getData();
+            value = tmp.value;
+            return ReturnValue_ok;
+        }
+    }
+}
+
 ReturnValue JoypadControl_nwc_yarp::getAxis(size_t axis_id, double& value)
 {
     if(!m_use_streaming)

@@ -24,5 +24,5 @@ ReturnValue IJoypadController::getAllAxes(std::vector<double>& values)
         values.push_back(value);
     }
 
-    return ReturnValue::ReturnValue_ok;
+    return ReturnValue_ok;
 }

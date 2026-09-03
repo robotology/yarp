@@ -14,7 +14,7 @@ namespace yarp::dev {
 
 // Constructor with field values
 return_getTrackball::return_getTrackball(const yarp::dev::ReturnValue& ret,
-                                         const TrackballData& value) :
+                                         const yarp::dev::TrackballData& value) :
         WirePortable(),
         ret(ret),
         value(value)
@@ -27,7 +27,7 @@ bool return_getTrackball::read(yarp::os::idl::WireReader& reader)
     if (!nested_read_ret(reader)) {
         return false;
     }
-    if (!read_value(reader)) {
+    if (!nested_read_value(reader)) {
         return false;
     }
     if (reader.isError()) {
@@ -40,7 +40,7 @@ bool return_getTrackball::read(yarp::os::idl::WireReader& reader)
 bool return_getTrackball::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(3)) {
+    if (!reader.readListHeader(2)) {
         return false;
     }
     if (!read(reader)) {
@@ -55,7 +55,7 @@ bool return_getTrackball::write(const yarp::os::idl::WireWriter& writer) const
     if (!nested_write_ret(writer)) {
         return false;
     }
-    if (!write_value(writer)) {
+    if (!nested_write_value(writer)) {
         return false;
     }
     if (writer.isError()) {
@@ -68,7 +68,7 @@ bool return_getTrackball::write(const yarp::os::idl::WireWriter& writer) const
 bool return_getTrackball::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(3)) {
+    if (!writer.writeListHeader(2)) {
         return false;
     }
     if (!write(writer)) {

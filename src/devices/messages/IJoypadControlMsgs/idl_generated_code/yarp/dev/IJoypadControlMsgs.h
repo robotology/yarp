@@ -15,6 +15,7 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <yarp/dev/IJoypadController.h>
+#include <yarp/dev/return_getAllAxes.h>
 #include <yarp/dev/return_getAxis.h>
 #include <yarp/dev/return_getAxisCount.h>
 #include <yarp/dev/return_getButton.h>
@@ -62,6 +63,8 @@ public:
     virtual return_getHat getHat(const std::int32_t hat_id);
 
     virtual return_getAxis getAxis(const std::int32_t axis_id);
+
+    virtual return_getAllAxes getAllAxes();
 
     virtual return_getStick getStick(const std::int32_t stick_id, const yarp::dev::IJoypadController::JoypadCtrl_coordinateMode mode);
 

@@ -22,13 +22,13 @@ class TrackballDataList :
 {
 public:
     // Fields
-    std::vector<TrackballData> value{};
+    std::vector<yarp::dev::TrackballData> value{};
 
     // Default constructor
     TrackballDataList() = default;
 
     // Constructor with field values
-    TrackballDataList(const std::vector<TrackballData>& value);
+    TrackballDataList(const std::vector<yarp::dev::TrackballData>& value);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;

@@ -707,6 +707,64 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// getAllAxes helper class declaration
+class IJoypadControlMsgs_getAllAxes_helper :
+        public yarp::os::Portable
+{
+public:
+    IJoypadControlMsgs_getAllAxes_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_getAllAxes return_helper{};
+    };
+
+    using funcptr_t = return_getAllAxes (*)();
+    void call(IJoypadControlMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getAllAxes"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_getAllAxes IJoypadControlMsgs::getAllAxes()"};
+    static constexpr const char* s_help{""};
+};
+
 // getStick helper class declaration
 class IJoypadControlMsgs_getStick_helper :
         public yarp::os::Portable
@@ -2248,6 +2306,139 @@ void IJoypadControlMsgs_getAxis_helper::call(IJoypadControlMsgs* ptr)
     reply.return_helper = ptr->getAxis(cmd.axis_id);
 }
 
+// getAllAxes helper class implementation
+bool IJoypadControlMsgs_getAllAxes_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IJoypadControlMsgs_getAllAxes_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void IJoypadControlMsgs_getAllAxes_helper::call(IJoypadControlMsgs* ptr)
+{
+    reply.return_helper = ptr->getAllAxes();
+}
+
 // getStick helper class implementation
 IJoypadControlMsgs_getStick_helper::IJoypadControlMsgs_getStick_helper(const std::int32_t stick_id, const yarp::dev::IJoypadController::JoypadCtrl_coordinateMode mode) :
         cmd{stick_id, mode}
@@ -2676,6 +2867,16 @@ return_getAxis IJoypadControlMsgs::getAxis(const std::int32_t axis_id)
     return ok ? helper.reply.return_helper : return_getAxis{};
 }
 
+return_getAllAxes IJoypadControlMsgs::getAllAxes()
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", IJoypadControlMsgs_getAllAxes_helper::s_prototype);
+    }
+    IJoypadControlMsgs_getAllAxes_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_getAllAxes{};
+}
+
 return_getStick IJoypadControlMsgs::getStick(const std::int32_t stick_id, const yarp::dev::IJoypadController::JoypadCtrl_coordinateMode mode)
 {
     if (!yarp().canWrite()) {
@@ -2713,6 +2914,7 @@ std::vector<std::string> IJoypadControlMsgs::help(const std::string& functionNam
         helpString.emplace_back(IJoypadControlMsgs_getTrackball_helper::s_tag);
         helpString.emplace_back(IJoypadControlMsgs_getHat_helper::s_tag);
         helpString.emplace_back(IJoypadControlMsgs_getAxis_helper::s_tag);
+        helpString.emplace_back(IJoypadControlMsgs_getAllAxes_helper::s_tag);
         helpString.emplace_back(IJoypadControlMsgs_getStick_helper::s_tag);
         helpString.emplace_back(IJoypadControlMsgs_getTouch_helper::s_tag);
         helpString.emplace_back("help");
@@ -2746,6 +2948,9 @@ std::vector<std::string> IJoypadControlMsgs::help(const std::string& functionNam
         }
         if (functionName == IJoypadControlMsgs_getAxis_helper::s_tag) {
             helpString.emplace_back(IJoypadControlMsgs_getAxis_helper::s_prototype);
+        }
+        if (functionName == IJoypadControlMsgs_getAllAxes_helper::s_tag) {
+            helpString.emplace_back(IJoypadControlMsgs_getAllAxes_helper::s_prototype);
         }
         if (functionName == IJoypadControlMsgs_getStick_helper::s_tag) {
             helpString.emplace_back(IJoypadControlMsgs_getStick_helper::s_prototype);
@@ -2942,6 +3147,21 @@ bool IJoypadControlMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == IJoypadControlMsgs_getAxis_helper::s_tag) {
             IJoypadControlMsgs_getAxis_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == IJoypadControlMsgs_getAllAxes_helper::s_tag) {
+            IJoypadControlMsgs_getAllAxes_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }

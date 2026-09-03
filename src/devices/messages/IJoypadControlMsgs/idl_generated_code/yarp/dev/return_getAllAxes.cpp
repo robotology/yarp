@@ -8,13 +8,13 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/return_getTouch.h>
+#include <yarp/dev/return_getAllAxes.h>
 
 namespace yarp::dev {
 
 // Constructor with field values
-return_getTouch::return_getTouch(const yarp::dev::ReturnValue& ret,
-                                 const std::vector<yarp::dev::TouchData>& value) :
+return_getAllAxes::return_getAllAxes(const yarp::dev::ReturnValue& ret,
+                                     const std::vector<double>& value) :
         WirePortable(),
         ret(ret),
         value(value)
@@ -22,7 +22,7 @@ return_getTouch::return_getTouch(const yarp::dev::ReturnValue& ret,
 }
 
 // Read structure on a Wire
-bool return_getTouch::read(yarp::os::idl::WireReader& reader)
+bool return_getAllAxes::read(yarp::os::idl::WireReader& reader)
 {
     if (!nested_read_ret(reader)) {
         return false;
@@ -37,7 +37,7 @@ bool return_getTouch::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool return_getTouch::read(yarp::os::ConnectionReader& connection)
+bool return_getAllAxes::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -50,7 +50,7 @@ bool return_getTouch::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getTouch::write(const yarp::os::idl::WireWriter& writer) const
+bool return_getAllAxes::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!nested_write_ret(writer)) {
         return false;
@@ -65,7 +65,7 @@ bool return_getTouch::write(const yarp::os::idl::WireWriter& writer) const
 }
 
 // Write structure on a Connection
-bool return_getTouch::write(yarp::os::ConnectionWriter& connection) const
+bool return_getAllAxes::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -78,7 +78,7 @@ bool return_getTouch::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string return_getTouch::toString() const
+std::string return_getAllAxes::toString() const
 {
     yarp::os::Bottle b;
     if (!yarp::os::Portable::copyPortable(*this, b)) {
@@ -88,7 +88,7 @@ std::string return_getTouch::toString() const
 }
 
 // read ret field
-bool return_getTouch::read_ret(yarp::os::idl::WireReader& reader)
+bool return_getAllAxes::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -102,7 +102,7 @@ bool return_getTouch::read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write ret field
-bool return_getTouch::write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_getAllAxes::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.write(ret)) {
         return false;
@@ -111,7 +111,7 @@ bool return_getTouch::write_ret(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) ret field
-bool return_getTouch::nested_read_ret(yarp::os::idl::WireReader& reader)
+bool return_getAllAxes::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -125,7 +125,7 @@ bool return_getTouch::nested_read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) ret field
-bool return_getTouch::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_getAllAxes::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeNested(ret)) {
         return false;
@@ -134,7 +134,7 @@ bool return_getTouch::nested_write_ret(const yarp::os::idl::WireWriter& writer) 
 }
 
 // read value field
-bool return_getTouch::read_value(yarp::os::idl::WireReader& reader)
+bool return_getAllAxes::read_value(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -145,22 +145,15 @@ bool return_getTouch::read_value(yarp::os::idl::WireReader& reader)
         yarp::os::idl::WireState _etype;
         reader.readListBegin(_etype, _csize);
         // WireReader removes BOTTLE_TAG_LIST from the tag
-        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        constexpr int expected_tag = ((BOTTLE_TAG_FLOAT64) & (~BOTTLE_TAG_LIST));
         if constexpr (expected_tag != 0) {
             if (_csize != 0 && _etype.code != expected_tag) {
                 return false;
             }
         }
         value.resize(_csize);
-        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
-            if (reader.noMore()) {
-                reader.fail();
-                return false;
-            }
-            if (!reader.readNested(value[_i0])) {
-                reader.fail();
-                return false;
-            }
+        if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(value.data()), value.size() * sizeof(double))) {
+            return false;
         }
         reader.readListEnd();
     }
@@ -168,15 +161,13 @@ bool return_getTouch::read_value(yarp::os::idl::WireReader& reader)
 }
 
 // write value field
-bool return_getTouch::write_value(const yarp::os::idl::WireWriter& writer) const
+bool return_getAllAxes::write_value(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, value.size())) {
+    if (!writer.writeListBegin(BOTTLE_TAG_FLOAT64, value.size())) {
         return false;
     }
-    for (const auto& _item : value) {
-        if (!writer.writeNested(_item)) {
-            return false;
-        }
+    if (!writer.writeBlock(reinterpret_cast<const char*>(value.data()), value.size() * sizeof(double))) {
+        return false;
     }
     if (!writer.writeListEnd()) {
         return false;
@@ -185,7 +176,7 @@ bool return_getTouch::write_value(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) value field
-bool return_getTouch::nested_read_value(yarp::os::idl::WireReader& reader)
+bool return_getAllAxes::nested_read_value(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -196,22 +187,15 @@ bool return_getTouch::nested_read_value(yarp::os::idl::WireReader& reader)
         yarp::os::idl::WireState _etype;
         reader.readListBegin(_etype, _csize);
         // WireReader removes BOTTLE_TAG_LIST from the tag
-        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        constexpr int expected_tag = ((BOTTLE_TAG_FLOAT64) & (~BOTTLE_TAG_LIST));
         if constexpr (expected_tag != 0) {
             if (_csize != 0 && _etype.code != expected_tag) {
                 return false;
             }
         }
         value.resize(_csize);
-        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
-            if (reader.noMore()) {
-                reader.fail();
-                return false;
-            }
-            if (!reader.readNested(value[_i0])) {
-                reader.fail();
-                return false;
-            }
+        if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(value.data()), value.size() * sizeof(double))) {
+            return false;
         }
         reader.readListEnd();
     }
@@ -219,15 +203,13 @@ bool return_getTouch::nested_read_value(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) value field
-bool return_getTouch::nested_write_value(const yarp::os::idl::WireWriter& writer) const
+bool return_getAllAxes::nested_write_value(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, value.size())) {
+    if (!writer.writeListBegin(BOTTLE_TAG_FLOAT64, value.size())) {
         return false;
     }
-    for (const auto& _item : value) {
-        if (!writer.writeNested(_item)) {
-            return false;
-        }
+    if (!writer.writeBlock(reinterpret_cast<const char*>(value.data()), value.size() * sizeof(double))) {
+        return false;
     }
     if (!writer.writeListEnd()) {
         return false;
