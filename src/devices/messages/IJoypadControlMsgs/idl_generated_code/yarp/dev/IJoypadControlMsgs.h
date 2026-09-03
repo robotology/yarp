@@ -23,7 +23,6 @@
 #include <yarp/dev/return_getHatCount.h>
 #include <yarp/dev/return_getStick.h>
 #include <yarp/dev/return_getStickCount.h>
-#include <yarp/dev/return_getStickDoF.h>
 #include <yarp/dev/return_getTouch.h>
 #include <yarp/dev/return_getTouchSurfaceCount.h>
 #include <yarp/dev/return_getTrackball.h>
@@ -55,8 +54,6 @@ public:
     virtual return_getTouchSurfaceCount getTouchSurfaceCount();
 
     virtual return_getStickCount getStickCount();
-
-    virtual return_getStickDoF getStickDoF(const std::int32_t stick_id);
 
     virtual return_getButton getButton(const std::int32_t button_id);
 

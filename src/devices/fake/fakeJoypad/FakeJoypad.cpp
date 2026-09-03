@@ -102,7 +102,7 @@ ReturnValue FakeJoypad::getStick(size_t stick_id, yarp::dev::StickData& value, J
 {
     if (stick_id > m_stickCount)
     {
-        yCError(FAKEJOYPAD) << "stick_id out of bounds when calling 'getStickDoF' method";
+        yCError(FAKEJOYPAD) << "stick_id out of bounds when calling 'getStick' method";
         return ReturnValue_error_input_out_of_bounds;
     }
     if (coordinate_mode == yarp::dev::IJoypadController::JoypadCtrl_coordinateMode::JypCtrlcoord_CARTESIAN)

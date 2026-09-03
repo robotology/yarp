@@ -126,6 +126,14 @@ public:
     virtual yarp::dev::ReturnValue getAxis(size_t axis_id, double& value) = 0;
 
     /**
+     * @brief Get the values of all available joystick axes.
+     *
+     * @param values the vector containing the axes values.
+     * @return true if succeeded, false otherwise.
+     */
+    virtual yarp::dev::ReturnValue getAllAxes(std::vector<double>& values);
+
+    /**
      * @brief Get the value of a stick if present, return false otherwise.
      *
      * @param stick_id Id of the stick to get. must be > -1 && < getStickCount(), return false otherwise.
