@@ -41,8 +41,11 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
-
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+        
     - name: Print options
       run: |
         echo "branch: ${{ github.event.inputs.branch }}"
@@ -76,7 +79,7 @@ jobs:
         echo "YARP_COLORED_OUTPUT=1" >> $GITHUB_ENV
 
         # Prepare the repository
-        git fetch origin --prune
+        git fetch origin --prune --tags --force
         git checkout -f ${YARP_MAIN_BRANCH}
         git reset --hard origin/${YARP_MAIN_BRANCH}
         if [ ${YARP_TAG_BRANCH} != ${YARP_MAIN_BRANCH} ]; then
@@ -85,19 +88,37 @@ jobs:
         fi
 
         # Prepare the environment variables
-        export YARP_PREV_VERSION=$(git describe --abbrev=0 | sed 's/v//')
+        # Extract major.minor from the branch name (e.g. yarp-4.0 -> 4.0)
+        # so that the previous version is looked up only within the same
+        # series.
+        export YARP_BRANCH_SERIES=$(echo ${YARP_TAG_BRANCH} | sed -E 's/^yarp-([0-9]+\.[0-9]+)$/\1/')
 
         if [ -z ${{ github.event.inputs.version }} ]; then
+          if [ ${YARP_TAG_BRANCH} != ${YARP_MAIN_BRANCH} ] && [ "${YARP_BRANCH_SERIES}" != "${YARP_TAG_BRANCH}" ]; then
+            # Stable branch (e.g. yarp-4.0): only consider tags belonging
+            # to the same major.minor series
+            if git describe --abbrev=0 --match "v${YARP_BRANCH_SERIES}.*" >/dev/null 2>&1; then
+              export YARP_PREV_VERSION=$(git describe --abbrev=0 --match "v${YARP_BRANCH_SERIES}.*" | sed 's/v//')
+            else
+              # No tag yet for this series: this is the first release
+              export YARP_PREV_VERSION="${YARP_BRANCH_SERIES}.-1"
+            fi
+          else
+            export YARP_PREV_VERSION=$(git describe --abbrev=0 | sed 's/v//')
+          fi
+
           export YARP_VERSION_MAJOR=$(echo ${YARP_PREV_VERSION} | cut -d '.' -f 1)
           export YARP_VERSION_MINOR=$(echo ${YARP_PREV_VERSION} | cut -d '.' -f 2)
           export YARP_VERSION_PATCH=$(echo ${YARP_PREV_VERSION} | cut -d '.' -f 3)
 
           if [ ${YARP_TAG_BRANCH} != ${YARP_MAIN_BRANCH} ]; then
-            let YARP_VERSION_PATCH+=1
-            export YARP_PREV_VERSION_CONTRIB=${YARP_PREV_VERSION}
+            YARP_VERSION_PATCH=$((YARP_VERSION_PATCH + 1))
+            export YARP_VERSION_PATCH
+            export YARP_PREV_VERSION_CONTRIB=${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.0
           else
             export YARP_PREV_VERSION_CONTRIB=${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.0
-            let YARP_VERSION_MINOR+=1
+            YARP_VERSION_MINOR=$((YARP_VERSION_MINOR + 1))
+            export YARP_VERSION_MINOR
             export YARP_VERSION_PATCH=0
           fi
           export YARP_VERSION=${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.${YARP_VERSION_PATCH}
@@ -124,7 +145,8 @@ jobs:
         # Variables for next stable release
         export YARP_NEXT_STABLE_VERSION_MAJOR=${YARP_VERSION_MAJOR}
         export YARP_NEXT_STABLE_VERSION_MINOR=${YARP_VERSION_MINOR}
-        let YARP_NEXT_STABLE_VERSION_PATCH=${YARP_VERSION_PATCH}+1
+        YARP_NEXT_STABLE_VERSION_PATCH=$((YARP_VERSION_PATCH + 1))
+        export YARP_NEXT_STABLE_VERSION_PATCH
         export YARP_NEXT_STABLE_BRANCH=yarp-${YARP_NEXT_STABLE_VERSION_MAJOR}.${YARP_NEXT_STABLE_VERSION_MINOR}
         export YARP_NEXT_STABLE_VERSION=${YARP_NEXT_STABLE_VERSION_MAJOR}.${YARP_NEXT_STABLE_VERSION_MINOR}.${YARP_NEXT_STABLE_VERSION_PATCH}
         export YARP_NEXT_STABLE_VERSION_C=$(echo ${YARP_NEXT_STABLE_VERSION} | sed 's/\./_/g')
@@ -135,11 +157,13 @@ jobs:
         if [ ${{ github.event.inputs.next_feature_is_major }} == 'false' ]; then
           export YARP_NEXT_FEATURE_TYPE=feature
           export YARP_NEXT_FEATURE_VERSION_MAJOR=${YARP_VERSION_MAJOR}
-          let YARP_NEXT_FEATURE_VERSION_MINOR=${YARP_VERSION_MINOR}+1
+          YARP_NEXT_FEATURE_VERSION_MINOR=$((YARP_VERSION_MINOR + 1))
+          export YARP_NEXT_FEATURE_VERSION_MINOR
           export YARP_NEXT_FEATURE_VERSION_PATCH=0
         else
           export YARP_NEXT_FEATURE_TYPE=major
-          let YARP_NEXT_FEATURE_VERSION_MAJOR=${YARP_VERSION_MAJOR}+1
+          YARP_NEXT_FEATURE_VERSION_MAJOR=$((YARP_VERSION_MAJOR + 1))
+          export YARP_NEXT_FEATURE_VERSION_MAJOR
           export YARP_NEXT_FEATURE_VERSION_MINOR=0
           export YARP_NEXT_FEATURE_VERSION_PATCH=0
         fi
