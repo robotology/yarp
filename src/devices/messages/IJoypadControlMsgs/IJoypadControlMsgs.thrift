@@ -115,11 +115,6 @@ struct return_getButtonCount{
     2: i32 button_count;
 }
 
-struct return_getStickDoF{
-    1: yReturnValue ret;
-    2: i32 DoF;
-}
-
 struct return_getButton{
     1: yReturnValue ret;
     2: double value;
@@ -151,7 +146,10 @@ struct return_getTouch{
     2: list<yTouchData> value;
 }
 
-
+struct return_getAllAxes{
+    1: yReturnValue ret;
+    2: list<double> value;
+}
 
 service IJoypadControlMsgs {
     return_getAxisCount         getAxisCount();
@@ -161,11 +159,11 @@ service IJoypadControlMsgs {
     return_getTouchSurfaceCount getTouchSurfaceCount();
     return_getStickCount        getStickCount();
 
-    return_getStickDoF          getStickDoF(1: i32 stick_id);
     return_getButton            getButton(1: i32 button_id);
     return_getTrackball         getTrackball(1: i32 trackball_id);
     return_getHat               getHat(1: i32 hat_id);
     return_getAxis              getAxis(1: i32 axis_id);
+    return_getAllAxes           getAllAxes();
     return_getStick             getStick(1: i32 stick_id, 2: yJoyStickMode mode);
     return_getTouch             getTouch(1: i32 touch_id);
 }

@@ -173,13 +173,6 @@ ReturnValue JoypadControl_nwc_yarp::getStickCount(size_t& stick_count)
     return ret.ret;
 }
 
-ReturnValue JoypadControl_nwc_yarp::getStickDoF(size_t stick_id, size_t& DoF)
-{
-    auto ret = m_rpcMsgs.getStickDoF(stick_id);
-    DoF = ret.DoF;
-    return ret.ret;
-}
-
 ReturnValue JoypadControl_nwc_yarp::getButton(size_t button_id, double& value)
 {
     if(!m_use_streaming)
@@ -288,6 +281,31 @@ ReturnValue JoypadControl_nwc_yarp::getHat(size_t hat_id, unsigned char& value)
         else
         {
             return ReturnValue_error_method_failed;
+        }
+    }
+}
+
+ReturnValue JoypadControl_nwc_yarp::getAllAxes(std::vector<double>& value)
+{
+    if(!m_use_streaming)
+    {
+        auto ret = m_rpcMsgs.getAllAxes();
+        value = ret.value;
+        return ret.ret;
+    }
+    else
+    {
+        if (m_use_all_port)
+        {
+            auto tmp = m_allJoyDataPort.getData();
+            value = tmp.AxisDataVal;
+            return ReturnValue_ok;
+        }
+        else
+        {
+            auto tmp = m_axisPort.getData();
+            value = tmp.value;
+            return ReturnValue_ok;
         }
     }
 }

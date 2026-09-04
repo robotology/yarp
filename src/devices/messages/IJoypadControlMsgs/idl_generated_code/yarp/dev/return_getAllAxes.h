@@ -8,30 +8,29 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETTRACKBALL_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETTRACKBALL_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETALLAXES_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETALLAXES_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/ReturnValue.h>
-#include <yarp/dev/TrackballData.h>
 
 namespace yarp::dev {
 
-class return_getTrackball :
+class return_getAllAxes :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     yarp::dev::ReturnValue ret{};
-    yarp::dev::TrackballData value{};
+    std::vector<double> value{};
 
     // Default constructor
-    return_getTrackball() = default;
+    return_getAllAxes() = default;
 
     // Constructor with field values
-    return_getTrackball(const yarp::dev::ReturnValue& ret,
-                        const yarp::dev::TrackballData& value);
+    return_getAllAxes(const yarp::dev::ReturnValue& ret,
+                      const std::vector<double>& value);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -49,7 +48,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_getTrackball> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_getAllAxes> unwrapped;
 
 private:
     // read/write ret field
@@ -67,4 +66,4 @@ private:
 
 } // namespace yarp::dev
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETTRACKBALL_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETALLAXES_H

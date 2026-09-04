@@ -22,13 +22,13 @@ class StickDataList :
 {
 public:
     // Fields
-    std::vector<StickData> value{};
+    std::vector<yarp::dev::StickData> value{};
 
     // Default constructor
     StickDataList() = default;
 
     // Constructor with field values
-    StickDataList(const std::vector<StickData>& value);
+    StickDataList(const std::vector<yarp::dev::StickData>& value);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;

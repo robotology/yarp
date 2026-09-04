@@ -48,6 +48,17 @@ namespace yarp::dev::tests
 
         //-----
 
+        std::vector<double> axesvals;
+        b = iJoy->getAllAxes(axesvals);
+        CHECK(b);
+        REQUIRE(axesvals.size() == 4);
+        for (size_t i=0; i<4; i++)
+        {
+            CHECK (axesvals[i] == i*10);
+        }
+
+        //-----
+
         for (size_t i=0; i<4; i++)
         {
            b = iJoy->getAxis(i, value);

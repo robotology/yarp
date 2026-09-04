@@ -22,13 +22,13 @@ class MultipleTouches :
 {
 public:
     // Fields
-    std::vector<TouchData> touches{};
+    std::vector<yarp::dev::TouchData> touches{};
 
     // Default constructor
     MultipleTouches() = default;
 
     // Constructor with field values
-    MultipleTouches(const std::vector<TouchData>& touches);
+    MultipleTouches(const std::vector<yarp::dev::TouchData>& touches);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;

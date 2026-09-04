@@ -13,7 +13,7 @@
 namespace yarp::dev {
 
 // Constructor with field values
-MultipleTouches::MultipleTouches(const std::vector<TouchData>& touches) :
+MultipleTouches::MultipleTouches(const std::vector<yarp::dev::TouchData>& touches) :
         WirePortable(),
         touches(touches)
 {
@@ -98,12 +98,12 @@ bool MultipleTouches::read_touches(yarp::os::idl::WireReader& reader)
             }
         }
         touches.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(touches[_i])) {
+            if (!reader.readNested(touches[_i0])) {
                 reader.fail();
                 return false;
             }
@@ -149,12 +149,12 @@ bool MultipleTouches::nested_read_touches(yarp::os::idl::WireReader& reader)
             }
         }
         touches.resize(_csize);
-        for (size_t _i = 0; _i < _csize; ++_i) {
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
             if (reader.noMore()) {
                 reader.fail();
                 return false;
             }
-            if (!reader.readNested(touches[_i])) {
+            if (!reader.readNested(touches[_i0])) {
                 reader.fail();
                 return false;
             }

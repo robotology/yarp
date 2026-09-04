@@ -24,14 +24,14 @@ class return_getTouch :
 public:
     // Fields
     yarp::dev::ReturnValue ret{};
-    std::vector<TouchData> value{};
+    std::vector<yarp::dev::TouchData> value{};
 
     // Default constructor
     return_getTouch() = default;
 
     // Constructor with field values
     return_getTouch(const yarp::dev::ReturnValue& ret,
-                    const std::vector<TouchData>& value);
+                    const std::vector<yarp::dev::TouchData>& value);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
