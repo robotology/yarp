@@ -45,6 +45,7 @@ jobs:
       with:
         fetch-depth: 0
         fetch-tags: true
+        persist-credentials: false
         
     - name: Print options
       run: |
