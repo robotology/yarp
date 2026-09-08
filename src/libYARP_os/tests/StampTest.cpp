@@ -134,6 +134,23 @@ TEST_CASE("os::StampTest", "[yarp::os]")
         checkEnvelope("tcp");
     }
 
+    SECTION("sequence number wraps with an explicit timestamp")
+    {
+        Stamp stamp(Stamp().getMaxCount(), 1.0);
+        stamp.update(2.0);
+        CHECK(stamp.getCount() == 0);
+        CHECK(stamp.getTime() == 2.0);
+        CHECK(stamp.isValid());
+    }
+
+    SECTION("sequence number wraps with the current time")
+    {
+        Stamp stamp(Stamp().getMaxCount(), 1.0);
+        stamp.update();
+        CHECK(stamp.getCount() == 0);
+        CHECK(stamp.isValid());
+    }
+
     SECTION("checking envelopes work (text mode)")
     {
         checkEnvelope("text");
