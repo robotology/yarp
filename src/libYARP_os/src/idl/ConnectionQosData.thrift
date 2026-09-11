@@ -8,7 +8,7 @@ namespace yarp yarp.os
 struct ConnectionQosData
 {
     1: string      portname;
-    2: i32         scheduler_priority   
+    2: i32         scheduler_priority
     3: i32         scheduler_policy
     4: i32         qos_tos
 }

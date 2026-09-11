@@ -276,7 +276,7 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
     Port ping;
     ping.open("...");
     ping.setAdminMode(true);
-    ping.setTimeout(1.0);
+    ping.setTimeout(2.0);
     if(!NetworkBase::connect(ping.getName(), portName)) {
         yWarning()<<"Cannot connect to"<<portName;
         ping.close();
@@ -323,16 +323,18 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
 
     // Getting owner info
     cmd.clear(); reply.clear();
-    cmd.addString("prop"); cmd.addString("get"); cmd.addString(portName);
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (prop get"<<portName<<") to"<<portName;
+    cmd.addString("info"); cmd.addString(portName);
+    bool bwrite = ping.write(cmd, reply);
+    if(!bwrite) {
+        yError()<<"Cannot write (info "<<portName<<") to"<<portName;
         ping.close();
         return false;
     }
 
-    yarp::os::Bottle* info = reply.get(0).asList();
+    std::string reps = reply.toString();
+    yarp::os::Bottle info = *reply.get(0).asList();
     yarp::os::ProcessInfoData processinfodata;
-    if (info && Portable::copyPortable(*info, processinfodata))
+    if (Portable::copyPortable(info, processinfodata))
     {
         details.owner_process.process_name = processinfodata.name;
         details.owner_process.arguments = processinfodata.arguments;
@@ -344,9 +346,9 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
         yWarning()<<"Cannot find 'ProcessInfoData' of port "<<portName;
     }
 
-    yarp::os::Bottle* platform = reply.get(1).asList();
+    yarp::os::Bottle platform = *reply.get(1).asList();
     yarp::os::PlatformInfoData platforminfodata;
-    if (platform && Portable::copyPortable(*platform, platforminfodata))
+    if (Portable::copyPortable(platform, platforminfodata))
     {
         details.owner_process.owner_machine.os = platforminfodata.os;
         details.owner_process.owner_machine.hostname = platforminfodata.hostname;
