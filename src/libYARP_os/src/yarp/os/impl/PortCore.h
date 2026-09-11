@@ -471,16 +471,6 @@ public:
 
     void setTimeout(float timeout);
 
-    /**
-     * @warning Must be called in the same thread as releaseProperties
-     */
-    Property* acquireProperties(bool readOnly);
-
-    /**
-     * @warning Must be called in the same thread as acquireProperties
-     */
-    void releaseProperties(Property* prop);
-
     bool setCallbackLock(std::mutex* mutex = nullptr);
 
     bool removeCallbackLock();
