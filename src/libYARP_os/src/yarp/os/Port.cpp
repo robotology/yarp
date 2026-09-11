@@ -606,16 +606,6 @@ void Port::promiseType(const Type& typ)
     IMPL().promiseType(typ);
 }
 
-Property* Port::acquireProperties(bool readOnly)
-{
-    return IMPL().acquireProperties(readOnly);
-}
-
-void Port::releaseProperties(Property* prop)
-{
-    IMPL().releaseProperties(prop);
-}
-
 bool Port::isOpen() const
 {
     if (implementation == nullptr) {

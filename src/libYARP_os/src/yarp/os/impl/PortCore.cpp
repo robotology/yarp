@@ -29,6 +29,8 @@
 #include <yarp/os/PlatformInfoData.h>
 #include <yarp/os/ThreadInfoData.h>
 
+#include <yarp/os/ConnectionQosData.h>
+
 #include <cstdio>
 #include <functional>
 #include <random>
@@ -1541,7 +1543,8 @@ enum class PortCoreCommand : yarp::conf::vocab32_t
     List = yarp::os::createVocab32('l', 'i', 's', 't'),
     Set = yarp::os::createVocab32('s', 'e', 't'),
     Get = yarp::os::createVocab32('g', 'e', 't'),
-    Prop = yarp::os::createVocab32('p', 'r', 'o', 'p'),
+    Qos = yarp::os::createVocab32('q', 'o', 's'),
+    GetInfo = yarp::os::createVocab32('i', 'n', 'f','o'),
 };
 
 enum class PortCoreConnectionDirection : yarp::conf::vocab32_t
@@ -1572,7 +1575,8 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
     case PortCoreCommand::List:
     case PortCoreCommand::Set:
     case PortCoreCommand::Get:
-    case PortCoreCommand::Prop:
+    case PortCoreCommand::Qos:
+    case PortCoreCommand::GetInfo:
         return cmd;
     default:
         return PortCoreCommand::Unknown;
@@ -1588,18 +1592,6 @@ PortCoreConnectionDirection parseConnectionDirection(yarp::conf::vocab32_t v, bo
         return dir;
     default:
         return errorIsOut ? PortCoreConnectionDirection::Out : PortCoreConnectionDirection::Error;
-    }
-}
-
-PortCorePropertyAction parsePropertyAction(yarp::conf::vocab32_t v)
-{
-    auto action = static_cast<PortCorePropertyAction>(v);
-    switch (action) {
-    case PortCorePropertyAction::Get:
-    case PortCorePropertyAction::Set:
-        return action;
-    default:
-        return PortCorePropertyAction::Error;
     }
 }
 
@@ -1667,8 +1659,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addString("[prop] [set] $portname  # set Qos properties of a connection to/from a port");
         result.addString("[prop] [get] $cur_port  # get information about current process (e.g., scheduling priority, pid)");
         result.addString("[prop] [set] $cur_port  # set properties of the current process (e.g., scheduling priority, pid)");
-        result.addString("[atch] [out] $prop      # attach a portmonitor plug-in to the port's output");
-        result.addString("[atch] [in]  $prop      # attach a portmonitor plug-in to the port's input");
+        result.addString("[atch] [out] $portmonitor # attach a portmonitor plug-in to the port's output");
+        result.addString("[atch] [in]  $portmonitor # attach a portmonitor plug-in to the port's input");
         result.addString("[dtch] [out]            # detach portmonitor plug-in from the port's output");
         result.addString("[dtch] [in]             # detach portmonitor plug-in from the port's input");
         //result.addString("[atch] $portname $prop  # attach a portmonitor plug-in to the connection to/from $portname");
@@ -2143,255 +2135,275 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
-    auto handleAdminPropGetCmd = [this](const std::string& key) {
+    auto handleAdminGetInfoCmd = [this](const std::string& portname) {
         Bottle result;
-        Property* p = acquireProperties(false);
-        if (p != nullptr) {
-            if (key.empty()) {
-                result.fromString(p->toString());
-            } else {
-                // request: "prop get /portname"
-                if (key[0] == '/') {
-                    bool bFound = false;
-                    // check for their own name
-                    if (key == getName()) {
+
+        // request: "prop get /portname"
+        if ((portname.empty()) || (portname[0] != '/'))
+        {
+            result.addVocab32("fail");
+            std::string msg = "invalid portname, missing `/` prefix";
+            result.addString(msg);
+            return result;
+        }
+
+        bool bFound = false;
+
+        // check for their own name
+        if (portname == getName())
+        {
+            bFound = true;
+
+            SystemInfo::ProcessInfo info = SystemInfo::getProcessInfo();
+            Bottle& proc_bottle = result.addList();
+            //proc.addString("process");
+            yarp::os::ProcessInfoData procinfodata;
+            procinfodata.pid  = info.pid;
+            procinfodata.name = (info.pid != -1) ? info.name : "unknown";
+            procinfodata.arguments = (info.pid != -1) ? info.arguments : "unknown";
+            procinfodata.priority = info.schedPriority;
+            procinfodata.policy = info.schedPolicy;
+            //Property& proc_prop = proc.addDict(); //COPYPORTABLE
+            Portable::copyPortable(procinfodata, proc_bottle);
+
+            SystemInfo::PlatformInfo pinfo = SystemInfo::getPlatformInfo();
+            Bottle& platform_bottle = result.addList();
+            //platform.addString("platform");
+            yarp::os::PlatformInfoData platforminfodata;
+            platforminfodata.os = pinfo.name;
+            platforminfodata.hostname = m_address.getHost();
+            //Property& platform_prop = platform.addDict(); //COPYPORTABLE
+            Portable::copyPortable(platforminfodata,platform_bottle);
+
+            Bottle& thread_bot = result.addList();
+            //thread_bot.addString("sched");
+            yarp::os::ThreadInfoData threadinfodata;
+            threadinfodata.tid = static_cast<int>(this->getTid());
+            threadinfodata.priority = this->getPriority();
+            threadinfodata.policy = this->getPolicy();
+            Portable::copyPortable(threadinfodata, thread_bot);
+            //Property& sched_prop = sched.addDict(); //COPYPORTABLE
+
+            unsigned int f = getFlags();
+            bool is_input = (f & PORTCORE_IS_INPUT) != 0;
+            bool is_output = (f & PORTCORE_IS_OUTPUT) != 0;
+            bool is_rpc = (f & PORTCORE_IS_RPC) != 0;
+            Bottle& portinfo_bottle = result.addList();
+            //port.addString("port");
+            yarp::os::PortInfoData portinfodata;
+            portinfodata.is_input = is_input;
+            portinfodata.is_output = is_output;
+            portinfodata.is_rpc = is_rpc;
+            portinfodata.type = getType().getName();
+            //Property& port_prop = port.addDict();//COPYPORTABLE
+            Portable::copyPortable(portinfodata, portinfo_bottle);
+
+        }
+        else
+        {
+            for (auto* unit : m_units)
+            {
+                if ((unit != nullptr) && !unit->isFinished())
+                {
+                    Route route = unit->getRoute();
+                    std::string coreName = (unit->isOutput()) ? route.getToName() : route.getFromName();
+                    if (portname == coreName)
+                    {
                         bFound = true;
+                        int tos = getTypeOfService(unit);
+
                         Bottle& thread_bot = result.addList();
-                        //thread_bot.addString("sched");
+                        //sched.addString("sched");
                         yarp::os::ThreadInfoData threadinfodata;
-                        threadinfodata.tid = static_cast<int>(this->getTid());
-                        threadinfodata.priority = this->getPriority();
-                        threadinfodata.policy = this->getPolicy();
+                        //Property& sched_prop = sched.addDict();
+                        threadinfodata.tid = static_cast<int>(unit->getTid());
+                        threadinfodata.priority = unit->getPriority();
+                        threadinfodata.policy = unit->getPolicy();
                         Portable::copyPortable(threadinfodata, thread_bot);
-                        //Property& sched_prop = sched.addDict(); //COPYPORTABLE
-
-                        SystemInfo::ProcessInfo info = SystemInfo::getProcessInfo();
-                        Bottle& proc_bottle = result.addList();
-                        //proc.addString("process");
-                        yarp::os::ProcessInfoData procinfodata;
-                        procinfodata.pid  = info.pid;
-                        procinfodata.name = (info.pid != -1) ? info.name : "unknown";
-                        procinfodata.arguments = (info.pid != -1) ? info.arguments : "unknown";
-                        procinfodata.priority = info.schedPriority;
-                        procinfodata.policy = info.schedPolicy;
-                        //Property& proc_prop = proc.addDict(); //COPYPORTABLE
-                        Portable::copyPortable(procinfodata, proc_bottle);
-
-                        SystemInfo::PlatformInfo pinfo = SystemInfo::getPlatformInfo();
-                        Bottle& platform_bottle = result.addList();
-                        //platform.addString("platform");
-                        yarp::os::PlatformInfoData platforminfodata;
-                        platforminfodata.os = pinfo.name;
-                        platforminfodata.hostname = m_address.getHost(); 
-                        //Property& platform_prop = platform.addDict(); //COPYPORTABLE
-                        Portable::copyPortable(platforminfodata,platform_bottle);
-
-                        unsigned int f = getFlags();
-                        bool is_input = (f & PORTCORE_IS_INPUT) != 0;
-                        bool is_output = (f & PORTCORE_IS_OUTPUT) != 0;
-                        bool is_rpc = (f & PORTCORE_IS_RPC) != 0;
-                        Bottle& portinfo_bottle = result.addList();
-                        //port.addString("port");
-                        yarp::os::PortInfoData portinfodata;
-                        portinfodata.is_input = is_input;
-                        portinfodata.is_output = is_output;
-                        portinfodata.is_rpc = is_rpc;
-                        portinfodata.type = getType().getName();
-                        //Property& port_prop = port.addDict();//COPYPORTABLE
-                        Portable::copyPortable(portinfodata, portinfo_bottle);
-
-                    } else {
-                        for (auto* unit : m_units) {
-                            if ((unit != nullptr) && !unit->isFinished()) {
-                                Route route = unit->getRoute();
-                                std::string coreName = (unit->isOutput()) ? route.getToName() : route.getFromName();
-                                if (key == coreName) {
-                                    bFound = true;
-                                    int tos = getTypeOfService(unit);
-
-                                    Bottle& thread_bot = result.addList();
-                                    //sched.addString("sched");
-                                    yarp::os::ThreadInfoData threadinfodata;
-                                    //Property& sched_prop = sched.addDict();
-                                    threadinfodata.tid = static_cast<int>(unit->getTid());
-                                    threadinfodata.priority = unit->getPriority();
-                                    threadinfodata.policy = unit->getPolicy();
-                                    Portable::copyPortable(threadinfodata, thread_bot);
 
 /*************************************************************************************
-                                    Bottle& qos = result.addList();
-                                    qos.addString("qos");
+                        Bottle& qos = result.addList();
+                        qos.addString("qos");
 
-                                    Property& qos_prop = qos.addDict();
-                                    qos_prop.put("tos", tos);
+                        Property& qos_prop = qos.addDict();
+                        qos_prop.put("tos", tos);
 ****************************************************************************/
-                                }
-                            } // end isFinished()
-                        }     // end for loop
-                    }         // end portName == getname()
-
-                    if (!bFound) { // cannot find any port matches the requested one
-                        result.addVocab32("fail");
-                        std::string msg = "cannot find any connection to/from ";
-                        msg = msg + key;
-                        result.addString(msg);
                     }
-                    // end of (portName[0] == '/')
-                } else {
-                    result.add(p->find(key));
-                }
-            }
+                } // end isFinished()
+            }     // end for loop
+        }         // end portName == getname()
+
+        // cannot find any port matches the requested one, neither the current port,
+        // nor any other port
+        if (!bFound)
+        {
+            result.addVocab32("fail");
+            std::string msg = "cannot find any connection to/from ";
+            msg = msg + portname;
+            result.addString(msg);
+            return result;
         }
-        releaseProperties(p);
+
+        //result.addVocab32((bOk) ? "ok" : "fail");////
+        std::string rs = result.toString();
+
         return result;
     };
 
-    auto handleAdminPropSetCmd = [this](const std::string& key,
-                                        const Value& value,
-                                        const Bottle& process,
-                                        const Bottle& sched,
-                                        const Bottle& qos) {
+    auto handleAdminPropSetCmdProcess = [this](const std::string& portName,
+                                        int prio =-1,
+                                        int policy = -1)
+    {
         Bottle result;
-        Property* p = acquireProperties(false);
         bool bOk = true;
-        if (p != nullptr) {
-            p->put(key, value);
-            // setting scheduling properties of all threads within the process
-            // scope through the admin port
-            // e.g. prop set /current_port (process ((priority 30) (policy 1)))
-            if (!process.isNull()) {
-                std::string portName = key;
-                if ((!portName.empty()) && (portName[0] == '/')) {
-                    // check for their own name
-                    if (portName == getName()) {
-                        bOk = false;
-                        Bottle* process_prop = process.find("process").asList();
-                        if (process_prop != nullptr) {
-                            int prio = -1;
-                            int policy = -1;
-                            if (process_prop->check("priority")) {
-                                prio = process_prop->find("priority").asInt32();
-                            }
-                            if (process_prop->check("policy")) {
-                                policy = process_prop->find("policy").asInt32();
-                            }
-                            bOk = setProcessSchedulingParam(prio, policy);
-                        }
-                    }
-                }
-            }
-            // check if we need to set the PortCoreUnit scheduling policy
-            // e.g., "prop set /portname (sched ((priority 30) (policy 1)))"
-            // The priority and policy values on Linux are:
-            // SCHED_OTHER : policy=0, priority=[0 ..  0]
-            // SCHED_FIFO  : policy=1, priority=[1 .. 99]
-            // SCHED_RR    : policy=2, priority=[1 .. 99]
-            if (!sched.isNull()) {
-                if ((!key.empty()) && (key[0] == '/')) {
-                    bOk = false;
-                    for (auto* unit : m_units) {
-                        if ((unit != nullptr) && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            std::string portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
 
-                            if (portName == key) {
-                                Bottle* sched_prop = sched.find("sched").asList();
-                                if (sched_prop != nullptr) {
-                                    int prio = -1;
-                                    int policy = -1;
-                                    if (sched_prop->check("priority")) {
-                                        prio = sched_prop->find("priority").asInt32();
-                                    }
-                                    if (sched_prop->check("policy")) {
-                                        policy = sched_prop->find("policy").asInt32();
-                                    }
-                                    bOk = (unit->setPriority(prio, policy) != -1);
-                                } else {
-                                    bOk = false;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            // check if we need to set the packet QOS policy
-            // e.g., "prop set /portname (qos ((priority HIGH)))"
-            // e.g., "prop set /portname (qos ((dscp AF12)))"
-            // e.g., "prop set /portname (qos ((tos 12)))"
-            if (!qos.isNull()) {
-                if ((!key.empty()) && (key[0] == '/')) {
-                    bOk = false;
-                    for (auto* unit : m_units) {
-                        if ((unit != nullptr) && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            std::string portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
-                            if (portName == key) {
-                                Bottle* qos_prop = qos.find("qos").asList();
-                                if (qos_prop != nullptr) {
-                                    int tos = -1;
-                                    if (qos_prop->check("priority")) {
-                                        // set the packet TOS value on the socket based on some predefined
-                                        // priority levels.
-                                        // the expected levels are: LOW, NORM, HIGH, CRIT
-                                        NetInt32 priority = qos_prop->find("priority").asVocab32();
-                                        int dscp;
-                                        switch (priority) {
-                                        case yarp::os::createVocab32('L', 'O', 'W'):
-                                            dscp = 10;
-                                            break;
-                                        case yarp::os::createVocab32('N', 'O', 'R', 'M'):
-                                            dscp = 0;
-                                            break;
-                                        case yarp::os::createVocab32('H', 'I', 'G', 'H'):
-                                            dscp = 36;
-                                            break;
-                                        case yarp::os::createVocab32('C', 'R', 'I', 'T'):
-                                            dscp = 44;
-                                            break;
-                                        default:
-                                            dscp = -1;
-                                        }
-                                        if (dscp >= 0) {
-                                            tos = (dscp << 2);
-                                        }
-                                    } else if (qos_prop->check("dscp")) {
-                                        // Set the packet TOS value on the socket based on the DSCP level
-                                        QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab32());
-                                        int dscp = -1;
-                                        if (dscp_class == QosStyle::DSCP_Invalid) {
-                                            auto dscp_val = qos_prop->find("dscp");
-                                            if (dscp_val.isInt32()) {
-                                                dscp = dscp_val.asInt32();
-                                            }
-                                        } else {
-                                            dscp = static_cast<int>(dscp_class);
-                                        }
-                                        if ((dscp >= 0) && (dscp < 64)) {
-                                            tos = (dscp << 2);
-                                        }
-                                    } else if (qos_prop->check("tos")) {
-                                        // Set the TOS value directly
-                                        auto tos_val = qos_prop->find("tos");
-                                        if (tos_val.isInt32()) {
-                                            tos = tos_val.asInt32();
-                                        }
-                                    }
-                                    if (tos >= 0) {
-                                        bOk = setTypeOfService(unit, tos);
-                                    }
-                                } else {
-                                    bOk = false;
-                                }
-                                break;
-                            }
-                        }
-                    }
+        if ((portName.empty()) || (portName[0] != '/'))
+        {
+            result.addVocab32("fail");
+            std::string msg = "invalid portname, missing `/` prefix";
+            result.addString(msg);
+            return result;
+        }
+
+        // setting scheduling properties of all threads within the process
+        // scope through the admin port
+        // e.g. prop set /current_port (process ((priority 30) (policy 1)))
+
+        // check for their own name
+        if (portName == getName())
+        {
+            bOk = setProcessSchedulingParam(prio, policy);
+        }
+
+        result.addVocab32((bOk) ? "ok" : "fail");
+        return result;
+    };
+
+    auto handleAdminPropSetCmdSched = [this](const std::string& portName,
+                                        int prio =-1,
+                                        int policy = -1)
+    {
+        Bottle result;
+        bool bOk = true;
+
+        if ((portName.empty()) || (portName[0] != '/'))
+        {
+            result.addVocab32("fail");
+            std::string msg = "invalid portname, missing `/` prefix";
+            result.addString(msg);
+            return result;
+        }
+
+        // check if we need to set the PortCoreUnit scheduling policy
+        // e.g., "prop set /portname (sched ((priority 30) (policy 1)))"
+        // The priority and policy values on Linux are:
+        // SCHED_OTHER : policy=0, priority=[0 ..  0]
+        // SCHED_FIFO  : policy=1, priority=[1 .. 99]
+        // SCHED_RR    : policy=2, priority=[1 .. 99]
+        bOk = false;
+        for (auto* unit : m_units)
+        {
+            if ((unit != nullptr) && !unit->isFinished())
+            {
+                Route route = unit->getRoute();
+                std::string name_to_be_found = (unit->isOutput()) ? route.getToName() : route.getFromName();
+
+                if (portName == name_to_be_found)
+                {
+                    bOk = (unit->setPriority(prio, policy) != -1);
+                    break;
                 }
             }
         }
-        releaseProperties(p);
+
         result.addVocab32((bOk) ? "ok" : "fail");
+        return result;
+    };
+
+    auto handleAdminPropSetCmdQos = [this](const std::string& portName,
+                                            std::optional<NetInt32> qos_priority = std::nullopt,
+                                            std::optional<NetInt32> qos_dscp = std::nullopt,
+                                            std::optional<int> qos_tos = std::nullopt) -> Bottle
+    {
+        Bottle result;
+
+        if (portName.empty() || portName[0] != '/')
+        {
+            result.addVocab32("fail");
+            result.addString("invalid portname, missing `/` prefix");
+            return result;
+        }
+
+        bool bOk = true;
+
+        if (qos_priority || qos_dscp || qos_tos)
+        {
+            bOk = false;
+            for (auto* unit : m_units)
+            {
+                if (unit == nullptr || unit->isFinished()) continue;
+
+                Route route = unit->getRoute();
+                std::string name_to_be_found = unit->isOutput() ? route.getToName() : route.getFromName();
+                if (portName != name_to_be_found) continue;
+
+                int tos = -1;
+
+                if (qos_priority)
+                {
+                    // set the packet TOS value on the socket based on some predefined
+                    // priority levels.
+                    // the expected levels are: LOW, NORM, HIGH, CRIT
+                    int dscp;
+                    switch (*qos_priority) {
+                    case yarp::os::createVocab32('L', 'O', 'W'):
+                        dscp = 10;
+                        break;
+                    case yarp::os::createVocab32('N', 'O', 'R', 'M'):
+                        dscp = 0;
+                        break;
+                    case yarp::os::createVocab32('H', 'I', 'G', 'H'):
+                        dscp = 36;
+                        break;
+                    case yarp::os::createVocab32('C', 'R', 'I', 'T'):
+                        dscp = 44;
+                        break;
+                    default:
+                        dscp = -1;
+                    }
+                    if (dscp >= 0) {
+                        tos = (dscp << 2);
+                    }
+                }
+                else if (qos_dscp)
+                {
+                    // Set the packet TOS value on the socket based on the DSCP level
+                    QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(*qos_dscp);
+                    int dscp = -1;
+                    if (dscp_class == QosStyle::DSCP_Invalid) {
+                        // qos_dscp potrebbe essere un intero diretto e non un vocab valido;
+                        // in questo caso lo trattiamo come valore DSCP numerico
+                        dscp = *qos_dscp;
+                    } else {
+                        dscp = static_cast<int>(dscp_class);
+                    }
+                    if ((dscp >= 0) && (dscp < 64)) {
+                        tos = (dscp << 2);
+                    }
+                }
+                else if (qos_tos)
+                {
+                    tos = *qos_tos;
+                }
+
+                if (tos >= 0) {
+                    bOk = setTypeOfService(unit, tos);
+                }
+                break;
+            }
+        }
+
+        result.addVocab32(bOk ? "ok" : "fail");
         return result;
     };
 
@@ -2481,26 +2493,53 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             break;
         }
     } break;
-    case PortCoreCommand::Prop: {
-        PortCorePropertyAction action = parsePropertyAction(cmd.get(1).asVocab32());
-        const std::string key = cmd.get(2).asString();
-        // Set/get arbitrary properties on a port.
-        switch (action) {
-        case PortCorePropertyAction::Get:
-            result = handleAdminPropGetCmd(key);
-            break;
+    case PortCoreCommand::GetInfo: {
+        const std::string portname = cmd.get(1).asString();
+        result = handleAdminGetInfoCmd(portname);
+    } break;
+    case PortCoreCommand::Qos: {
+/*
+        result.addString("[prop] [get]            # get all user-defined port properties");
+        result.addString("[prop] [get] $prop      # get a user-defined port property (prop, val)");
+        result.addString("[prop] [get] $portname  # get Qos properties of a connection to/from a port");
+        result.addString("[prop] [get] $cur_port  # get information about current process (e.g., scheduling priority, pid)");
+
+        result.addString("[qos] set_process $cur_port $props # set properties of the current process (e.g., scheduling priority, pid)");
+        result.addString("[qos] set_sched   $cur_port $props # set properties of the current process (e.g., scheduling priority, pid)");
+        result.addString("[qos] set_qos     $cur_port $props # set properties of the current process (e.g., scheduling priority, pid)");
+        result.addString("[qos] set_all     $cur_port $props # set properties of the current process (e.g., scheduling priority, pid)");
+*/
+        const std::string action = cmd.get(1).asString();
+        if (action == "set_all")
+        {
+            std::string ssscmd = cmd.toString();
+
+            Bottle* bot = cmd.get(2).asList();
+            if (bot)
+            {
+                yarp::os::ConnectionQosData data;
+                std::string debugs = bot->toString();
+                bool bcp = yarp::os::Portable::copyPortable(*bot, data);
+                result = handleAdminPropSetCmdSched(data.portname, data.scheduler_priority, data.scheduler_policy);
+                result = handleAdminPropSetCmdQos(data.portname, std::nullopt, std::nullopt, data.qos_tos);
+            }
+        }
+        else
+        {
+            result.addVocab32("fail");
+            result.addString("property action not known");
+        }
+    /*
         case PortCorePropertyAction::Set: {
-            const Value& value = cmd.get(3);
             const Bottle& process = cmd.findGroup("process");
             const Bottle& sched = cmd.findGroup("sched");
             const Bottle& qos = cmd.findGroup("qos");
-            result = handleAdminPropSetCmd(key, value, process, sched, qos);
+            std::string portname;//////////////////////
+            result = handleAdminPropSetCmdProcess(portname, process);//////////////////////
+            result = handleAdminPropSetCmdSched(portname, sched);//////////////////////
+            result = handleAdminPropSetCmdQos(portname, qos);//////////////////////
         } break;
-        case PortCorePropertyAction::Error:
-            result.addVocab32("fail");
-            result.addString("property action not known");
-            break;
-        }
+        }*/
     } break;
     case PortCoreCommand::Unknown:
         result = handleAdminUnknownCmd(cmd);
@@ -2761,23 +2800,6 @@ bool PortCore::setProcessSchedulingParam(int priority, int policy)
 #else
     return false;
 #endif
-}
-
-Property* PortCore::acquireProperties(bool readOnly)
-{
-    m_stateMutex.lock();
-    if (!readOnly) {
-        if (m_prop == nullptr) {
-            m_prop = new Property();
-        }
-    }
-    return m_prop;
-}
-
-void PortCore::releaseProperties(Property* prop)
-{
-    YARP_UNUSED(prop);
-    m_stateMutex.unlock();
 }
 
 bool PortCore::removeIO(const Route& route, bool synch)
