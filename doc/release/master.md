@@ -32,3 +32,8 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 
 * `ControlBoardRemapper` and `RemoteControlBoardRemapper` refactored to support ParamParser.
 * `MultipleAnalogSensorClient` and `MultipleAnalogSensorServer` now use the new `IMultipleAnalogSensor` interfaces returning `yarp::dev::ReturnValue`
+
+### bindings
+
+* `LogComponent` added to bindings to improve yarp logging system integration
+
