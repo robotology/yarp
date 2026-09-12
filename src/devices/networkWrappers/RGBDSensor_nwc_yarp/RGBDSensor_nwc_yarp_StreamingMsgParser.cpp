@@ -109,11 +109,11 @@ bool RGBDSensor_StreamingMsgParser::read(yarp::sig::FlexImage &rgbImage, yarp::s
     rgbImage = std::get<1>(resultRgb);
     depthImage = std::get<1>(resultDepth);
     if(rgbStamp) {
-        port_rgb->getEnvelope(*rgbStamp);
+        *rgbStamp = std::get<2>(resultRgb);
     }
 
     if(depthStamp) {
-        port_depth->getEnvelope(*depthStamp);
+        *depthStamp = std::get<2>(resultDepth);
     }
     return true;
 }
