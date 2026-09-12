@@ -14,6 +14,9 @@
 #include <yarp/companion/impl/Companion.h>
 #include <algorithm>
 
+#include <yarp/os/ProcessInfoData.h>
+#include <yarp/os/PlatformInfoData.h>
+
 using namespace yarp::os;
 using namespace yarp::profiler;
 
@@ -273,7 +276,7 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
     Port ping;
     ping.open("...");
     ping.setAdminMode(true);
-    ping.setTimeout(1.0);
+    ping.setTimeout(2.0);
     if(!NetworkBase::connect(ping.getName(), portName)) {
         yWarning()<<"Cannot connect to"<<portName;
         ping.close();
@@ -320,34 +323,38 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
 
     // Getting owner info
     cmd.clear(); reply.clear();
-    cmd.addString("prop"); cmd.addString("get"); cmd.addString(portName);
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (prop get"<<portName<<") to"<<portName;
+    cmd.addString("info"); cmd.addString(portName);
+    bool bwrite = ping.write(cmd, reply);
+    if(!bwrite) {
+        yError()<<"Cannot write (info "<<portName<<") to"<<portName;
         ping.close();
         return false;
     }
 
-    Property* process = reply.find("process").asDict();
-    if (!process) {
-        yWarning()<<"Cannot find 'process' property of port "<<portName;
-    } else {
-        std::string process_str = process->toString();
-        details.owner_process.process_name = process->find("name").asString();
-        details.owner_process.arguments = process->find("arguments").asString();
-        details.owner_process.pid = process->find("pid").asInt32();
-        details.owner_process.priority = process->find("priority").asInt32();
-        details.owner_process.policy = process->find("policy").asInt32();
+    std::string reps = reply.toString();
+    yarp::os::Bottle info = *reply.get(0).asList();
+    yarp::os::ProcessInfoData processinfodata;
+    if (Portable::copyPortable(info, processinfodata))
+    {
+        details.owner_process.process_name = processinfodata.name;
+        details.owner_process.arguments = processinfodata.arguments;
+        details.owner_process.pid = processinfodata.pid;
+        details.owner_process.priority = processinfodata.priority;
+        details.owner_process.policy = processinfodata.policy;
         details.owner_process.process_fullname = details.owner_process.process_name + "(" + std::to_string(details.owner_process.pid) + ")";
+    } else {
+        yWarning()<<"Cannot find 'ProcessInfoData' of port "<<portName;
     }
 
-    Property* platform = reply.find("platform").asDict();
-    if (!platform) {
-        yWarning()<<"Cannot find 'platform' property of port "<<portName;
+    yarp::os::Bottle platform = *reply.get(1).asList();
+    yarp::os::PlatformInfoData platforminfodata;
+    if (Portable::copyPortable(platform, platforminfodata))
+    {
+        details.owner_process.owner_machine.os = platforminfodata.os;
+        details.owner_process.owner_machine.hostname = platforminfodata.hostname;
+        details.owner_process.owner_machine.ip = platforminfodata.hostname;
     } else {
-        std::string platform_str = platform->toString();
-        details.owner_process.owner_machine.os = platform->find("os").asString();
-        details.owner_process.owner_machine.hostname = platform->find("hostname").asString();
-        details.owner_process.owner_machine.ip = platform->find("hostname").asString();
+        yWarning()<<"Cannot find 'PlatformInfoData' of port "<<portName;
     }
 
     ping.close();

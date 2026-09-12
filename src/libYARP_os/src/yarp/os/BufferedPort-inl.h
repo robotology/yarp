@@ -325,18 +325,6 @@ void yarp::os::BufferedPort<T>::setRpcMode(bool expectRpc)
 }
 
 template <typename T>
-yarp::os::Property* yarp::os::BufferedPort<T>::acquireProperties(bool readOnly)
-{
-    return port.acquireProperties(readOnly);
-}
-
-template <typename T>
-void yarp::os::BufferedPort<T>::releaseProperties(Property* prop)
-{
-    port.releaseProperties(prop);
-}
-
-template <typename T>
 bool yarp::os::BufferedPort<T>::setCallbackLock(std::mutex* mutex)
 {
     return port.setCallbackLock(mutex);

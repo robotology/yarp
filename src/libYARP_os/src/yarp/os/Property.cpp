@@ -917,14 +917,12 @@ public:
 
 Property::Property() :
         Searchable(),
-        Portable(),
         mPriv(new Private(this))
 {
 }
 
 Property::Property(const char* str) :
         Searchable(),
-        Portable(),
         mPriv(new Private(this))
 {
     fromString(str);
@@ -932,7 +930,6 @@ Property::Property(const char* str) :
 
 Property::Property(const Property& prop) :
         Searchable(static_cast<const Searchable&>(prop)),
-        Portable(static_cast<const Portable&>(prop)),
         mPriv(new Private(this))
 {
     fromString(prop.toString());
@@ -940,7 +937,6 @@ Property::Property(const Property& prop) :
 
 Property::Property(Property&& prop) noexcept :
         Searchable(std::move(static_cast<Searchable&>(prop))),
-        Portable(std::move(static_cast<Portable&>(prop))),
         mPriv(prop.mPriv)
 {
     mPriv->owner = this;
@@ -950,7 +946,6 @@ Property::Property(Property&& prop) noexcept :
 
 Property::Property(std::initializer_list<std::pair<std::string, yarp::os::Value>> values) :
         Searchable(),
-        Portable(),
         mPriv(new Private(this))
 {
     for (const auto& val : values) {
@@ -967,7 +962,6 @@ Property& Property::operator=(const Property& rhs)
 {
     if (&rhs != this) {
         Searchable::operator=(static_cast<const Searchable&>(rhs));
-        Portable::operator=(static_cast<const Portable&>(rhs));
         mPriv->data = rhs.mPriv->data;
         mPriv->owner = this;
     }
@@ -977,7 +971,6 @@ Property& Property::operator=(const Property& rhs)
 Property& Property::operator=(Property&& rhs) noexcept
 {
     Searchable::operator=(std::move(static_cast<Searchable&>(rhs)));
-    Portable::operator=(std::move(static_cast<Portable&>(rhs)));
     std::swap(mPriv, rhs.mPriv);
     mPriv->owner = this;
     rhs.mPriv->owner = &rhs;
@@ -1088,26 +1081,6 @@ void Property::fromConfig(const char* txt, bool wipe)
 void Property::fromConfig(const char* txt, Searchable& env, bool wipe)
 {
     mPriv->fromConfig(txt, env, wipe);
-}
-
-
-bool Property::read(ConnectionReader& reader)
-{
-    // for now just delegate to Bottle
-    Bottle b;
-    bool ok = b.read(reader);
-    if (ok) {
-        fromString(b.toString());
-    }
-    return ok;
-}
-
-
-bool Property::write(ConnectionWriter& writer) const
-{
-    // for now just delegate to Bottle
-    Bottle b(toString());
-    return b.write(writer);
 }
 
 

@@ -27,7 +27,6 @@ using yarp::os::Value;
 using yarp::os::impl::BottleImpl;
 using yarp::os::impl::Storable;
 using yarp::os::impl::StoreBlob;
-using yarp::os::impl::StoreDict;
 using yarp::os::impl::StoreFloat32;
 using yarp::os::impl::StoreFloat64;
 using yarp::os::impl::StoreInt16;
@@ -54,7 +53,6 @@ const int StoreVocab64::code = BOTTLE_TAG_VOCAB64;
 const int StoreString::code = BOTTLE_TAG_STRING;
 const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
-const int StoreDict::code = BOTTLE_TAG_LIST | BOTTLE_TAG_DICT;
 
 
 
@@ -107,15 +105,10 @@ Storable* Storable::createByCode(std::int32_t id)
         if ((id & GROUP_MASK) != 0) {
             // typed list
             subCode = (id & UNIT_MASK);
-            if ((id & BOTTLE_TAG_DICT) != 0) {
-                storable = new StoreDict();
-                yCAssert(STORABLE, storable != nullptr);
-            } else {
-                storable = new StoreList();
-                yCAssert(STORABLE, storable != nullptr);
-                storable->asList()->implementation->specialize(subCode);
-                storable->asList()->implementation->setNested(true);
-            }
+            storable = new StoreList();
+            yCAssert(STORABLE, storable != nullptr);
+            storable->asList()->implementation->specialize(subCode);
+            storable->asList()->implementation->setNested(true);
         }
         break;
     }
@@ -674,48 +667,4 @@ bool StoreList::writeRaw(ConnectionWriter& writer) const
 std::int32_t StoreList::subCode() const
 {
     return subCoder(*(content.implementation));
-}
-
-
-////////////////////////////////////////////////////////////////////////////
-// StoreDict
-
-std::string StoreDict::toString() const
-{
-    return std::string(content.toString());
-}
-
-std::string StoreDict::toStringNested() const
-{
-    return std::string("(") + content.toString() + ")";
-}
-
-void StoreDict::fromString(const std::string& src)
-{
-    content.fromString(src);
-}
-
-void StoreDict::fromStringNested(const std::string& src)
-{
-    if (src.length() > 0) {
-        if (src[0] == '(') {
-            // ignore first ( and last )
-            std::string buf = src.substr(1, src.length() - 2);
-            content.fromString(buf);
-        }
-    }
-}
-
-bool StoreDict::readRaw(ConnectionReader& reader)
-{
-    // not using the most efficient representation
-    content.read(reader);
-    return true;
-}
-
-bool StoreDict::writeRaw(ConnectionWriter& writer) const
-{
-    // not using the most efficient representation
-    content.write(writer);
-    return true;
 }
