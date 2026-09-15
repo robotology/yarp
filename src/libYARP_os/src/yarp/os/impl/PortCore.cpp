@@ -36,6 +36,7 @@
 #include <random>
 #include <regex>
 #include <vector>
+#include <optional>
 
 #ifdef YARP_HAS_ACE
 #    include <ace/INET_Addr.h>

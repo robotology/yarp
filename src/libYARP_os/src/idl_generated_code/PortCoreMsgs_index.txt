@@ -1,0 +1,8 @@
+yarp/os/return_addConnection.h
+yarp/os/return_addConnection.cpp
+yarp/os/return_delConnection.h
+yarp/os/return_delConnection.cpp
+yarp/os/return_pingTest.h
+yarp/os/return_pingTest.cpp
+yarp/os/PortCoreMsgs.h
+yarp/os/PortCoreMsgs.cpp
