@@ -577,7 +577,6 @@ typedef yarp::dev::Nav2D::XYWorld XYWorld;
 %rename(VectorConstIterator) yarp::sig::VectorOf<double>::const_iterator;
 #endif
 
-MAKE_COMMS  (Property, Property)
 MAKE_COMMS  (Bottle, yarp::os::Bottle)
 MAKE_COMMS2 (ImageRgb, yarp::sig::ImageOf<yarp::sig::PixelRgb>)
 MAKE_COMMS2 (ImageRgba, yarp::sig::ImageOf<yarp::sig::PixelRgba>)
@@ -695,10 +694,6 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 
 %extend yarp::os::Port {
     bool write(Bottle& data) {
-        return self->write(*((PortWriter*)(&data)));
-    }
-
-    bool write(Property& data) {
         return self->write(*((PortWriter*)(&data)));
     }
 
@@ -1975,10 +1970,6 @@ public:
 
     yarp::os::Bottle* asBottle() {
         return self->cast_as<yarp::os::Bottle>();
-    }
-
-    yarp::os::Property* asProperty() {
-        return self->cast_as<yarp::os::Property>();
     }
 
     yarp::sig::VectorOf<double>* asVector() {
