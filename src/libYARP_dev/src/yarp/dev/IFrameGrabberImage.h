@@ -7,15 +7,13 @@
 #ifndef YARP_DEV_IFRAMEGRABBERIMAGE_H
 #define YARP_DEV_IFRAMEGRABBERIMAGE_H
 
-#include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/ConnectionReader.h>
-#include <yarp/os/Portable.h>
-
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 
 #include <yarp/dev/api.h>
 #include <yarp/dev/ReturnValue.h>
+
+#include <yarp/dev/VertexData.h>
 
 namespace yarp::dev
 {
@@ -27,20 +25,6 @@ namespace yarp::dev
                             // pixel color.
     } cropType_id_t;
 
-    class YARP_dev_API vertex_t : public yarp::os::Portable
-    {
-        public:
-        virtual ~vertex_t();
-        vertex_t() = default;
-        vertex_t(int x, int y);
-
-        int x=0;
-        int y=0;
-
-        bool read(yarp::os::ConnectionReader& connection) override;
-        bool write(yarp::os::ConnectionWriter& connection) const override;
-
-    };
 } // namespace yarp::dev
 
 namespace yarp::dev {
@@ -104,7 +88,7 @@ public:
      * @return true/false upon success/failure
      */
     virtual yarp::dev::ReturnValue getImageCrop(yarp::dev::cropType_id_t cropType,
-                              std::vector<vertex_t> vertices,
+                              std::vector<yarp::dev::VertexData> vertices,
                               ImageType& image);
 };
 

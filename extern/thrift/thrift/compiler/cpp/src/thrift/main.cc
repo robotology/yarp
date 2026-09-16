@@ -784,16 +784,22 @@ void validate_const_rec(std::string name, t_type* type, t_const_value* value) {
     vector<t_enum_value*>::const_iterator c_iter;
     bool found = false;
 
+    std::string debug_valid_values;
     for (c_iter = enum_values.begin(); c_iter != enum_values.end(); ++c_iter) {
-      if ((*c_iter)->get_name() == name_portion) {
+      if ((*c_iter)->get_name() == name_portion)
+      {
         found = true;
         break;
+      }
+      else
+      {
+        debug_valid_values += (*c_iter)->get_name() + " ";
       }
     }
     if (!found) {
       throw "type error: const " + name + " was declared as type " + type->get_name()
           + " which is an enum, but " + value->get_identifier()
-          + " is not a valid value for that enum";
+          + " is not a valid value for that enum. Valid names are: (" + debug_valid_values +" )";
     }
   } else if (type->is_struct() || type->is_xception()) {
     if (value->get_type() != t_const_value::CV_MAP) {

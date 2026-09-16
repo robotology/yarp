@@ -1,0 +1,2 @@
+yarp/dev/CameraConfigData.h
+yarp/dev/CameraConfigData.cpp

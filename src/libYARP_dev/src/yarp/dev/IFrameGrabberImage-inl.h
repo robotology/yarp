@@ -16,7 +16,7 @@ namespace yarp::dev {
 
 template <typename ImageType>
 yarp::dev::ReturnValue IFrameGrabberOf<ImageType>::getImageCrop(yarp::dev::cropType_id_t cropType,
-                                              std::vector<yarp::dev::vertex_t> vertices,
+                                              std::vector<yarp::dev::VertexData> vertices,
                                               ImageType& image)
 {
     if (cropType == YARP_CROP_RECT) {

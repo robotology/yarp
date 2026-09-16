@@ -260,6 +260,7 @@ include(YarpChooseIDL)
 
 set(YARP_dev_IDL
   idl/BatteryData.thrift
+  idl/CameraConfigData.thrift
   idl/CommandMessageData.thrift
   idl/JointStateData.thrift
   idl/DeviceDescriptionData.thrift
@@ -273,6 +274,7 @@ set(YARP_dev_IDL
   idl/SensorStreamingData.thrift
 
   idl/JoypadData.thrift
+  idl/VertexData.thrift
 )
 
 if(TARGET YARP::YARP_math)

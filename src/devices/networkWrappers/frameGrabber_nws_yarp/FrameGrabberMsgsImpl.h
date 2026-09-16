@@ -84,7 +84,7 @@ class FrameGrabberMsgsImpl : public FrameGrabberMsgs
     virtual IFrameGrabberImageOf_return_getHeight getHeightRPC() override;
     virtual IFrameGrabberImageOf_return_getWidth getWidthRPC() override;
     virtual IFrameGrabberImageOf_return_getImage getImageRPC() override;
-    virtual IFrameGrabberImageOf_return_getImageCrop getImageCropRPC(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::vertex_t>& vertices) override;
+    virtual IFrameGrabberImageOf_return_getImageCrop getImageCropRPC(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::VertexData>& vertices) override;
 
     std::mutex* getMutex() {return &m_mutex;}
 };

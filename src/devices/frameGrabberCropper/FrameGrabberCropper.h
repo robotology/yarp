@@ -25,7 +25,7 @@ class FrameGrabberCropperOf :
 protected:
     yarp::dev::IFrameGrabberOf<ImageType>* iFrameGrabberOf {nullptr};
     static constexpr yarp::dev::cropType_id_t cropType {yarp::dev::cropType_id_t::YARP_CROP_RECT};
-    std::vector<yarp::dev::vertex_t> vertices;
+    std::vector<yarp::dev::VertexData> vertices;
 
 public:
     ~FrameGrabberCropperOf() override = default;

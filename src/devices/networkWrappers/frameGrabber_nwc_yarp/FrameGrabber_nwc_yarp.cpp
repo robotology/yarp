@@ -103,7 +103,7 @@ yarp::dev::ReturnValue FrameGrabberOf_ForwarderWithStream<ImageType>::getImage(I
 
 template <typename ImageType>
 yarp::dev::ReturnValue FrameGrabberOf_ForwarderWithStream<ImageType>::getImageCrop(cropType_id_t cropType,
-                                                                                   std::vector<yarp::dev::vertex_t> vertices,
+                                                                                   std::vector<yarp::dev::VertexData> vertices,
                                                                                    ImageType& image)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -113,7 +113,7 @@ yarp::dev::ReturnValue FrameGrabberOf_ForwarderWithStream<ImageType>::getImageCr
         if (!m_thriftClient) {
             return ReturnValue::return_code::return_value_error_generic;
         }
-        std::vector<yarp::dev::vertex_t> vv;
+        std::vector<yarp::dev::VertexData> vv;
         vv.resize(vertices.size());
         for (size_t i = 0; i < vertices.size(); i++)
         {
