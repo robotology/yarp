@@ -59,7 +59,7 @@ enum yCropType {
 
 struct yVertex {
 } (
-  yarp.name = "yarp::dev::vertex_t"
+  yarp.name = "yarp::dev::VertexData"
   yarp.includefile = "yarp/dev/IFrameGrabberImage.h"
 )
 

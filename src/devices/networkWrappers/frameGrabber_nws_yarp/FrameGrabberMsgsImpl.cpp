@@ -1206,12 +1206,12 @@ IFrameGrabberImageOf_return_getImage FrameGrabberMsgsImpl::getImageRPC()
     return response;
 }
 
-IFrameGrabberImageOf_return_getImageCrop FrameGrabberMsgsImpl::getImageCropRPC(const cropType_id_t type, const std::vector<yarp::dev::vertex_t>& vs)
+IFrameGrabberImageOf_return_getImageCrop FrameGrabberMsgsImpl::getImageCropRPC(const cropType_id_t type, const std::vector<yarp::dev::VertexData>& vs)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     IFrameGrabberImageOf_return_getImageCrop response;
 
-    std::vector<yarp::dev::vertex_t> vv;
+    std::vector<yarp::dev::VertexData> vv;
     vv.resize(vs.size());
     for (size_t i = 0; i < vs.size(); i++) {
         vv[i] = vs[i];

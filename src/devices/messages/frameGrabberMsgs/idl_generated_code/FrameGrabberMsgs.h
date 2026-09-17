@@ -70,7 +70,7 @@ public:
 
     virtual IFrameGrabberImageOf_return_getImage getImageRPC();
 
-    virtual IFrameGrabberImageOf_return_getImageCrop getImageCropRPC(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::vertex_t>& vertices);
+    virtual IFrameGrabberImageOf_return_getImageCrop getImageCropRPC(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::VertexData>& vertices);
 
     virtual IRGBVisualParamsMsgs_return_getRgbWidth getRgbWidthRPC();
 

@@ -92,10 +92,10 @@ public:
     yarp::dev::ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
     yarp::dev::ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
     yarp::dev::ReturnValue getImageCrop(yarp::dev::cropType_id_t cropType,
-                      std::vector<yarp::dev::vertex_t> vertices,
+                      std::vector<yarp::dev::VertexData> vertices,
                       yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
     yarp::dev::ReturnValue getImageCrop(yarp::dev::cropType_id_t cropType,
-                      std::vector<yarp::dev::vertex_t> vertices,
+                      std::vector<yarp::dev::VertexData> vertices,
                       yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
 
     //IPreciselyTimed

@@ -285,7 +285,7 @@ class FrameGrabberMsgs_getImageCropRPC_helper :
 {
 public:
     FrameGrabberMsgs_getImageCropRPC_helper() = default;
-    FrameGrabberMsgs_getImageCropRPC_helper(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::vertex_t>& vertices);
+    FrameGrabberMsgs_getImageCropRPC_helper(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::VertexData>& vertices);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -294,7 +294,7 @@ public:
     {
     public:
         Command() = default;
-        Command(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::vertex_t>& vertices);
+        Command(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::VertexData>& vertices);
 
         ~Command() override = default;
 
@@ -310,7 +310,7 @@ public:
         bool readArgs(yarp::os::idl::WireReader& reader);
 
         yarp::dev::cropType_id_t type{};
-        std::vector<yarp::dev::vertex_t> vertices{};
+        std::vector<yarp::dev::VertexData> vertices{};
     };
 
     class Reply :
@@ -329,7 +329,7 @@ public:
         IFrameGrabberImageOf_return_getImageCrop return_helper{};
     };
 
-    using funcptr_t = IFrameGrabberImageOf_return_getImageCrop (*)(const yarp::dev::cropType_id_t, const std::vector<yarp::dev::vertex_t>&);
+    using funcptr_t = IFrameGrabberImageOf_return_getImageCrop (*)(const yarp::dev::cropType_id_t, const std::vector<yarp::dev::VertexData>&);
     void call(FrameGrabberMsgs* ptr);
 
     Command cmd;
@@ -339,7 +339,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{2};
-    static constexpr const char* s_prototype{"IFrameGrabberImageOf_return_getImageCrop FrameGrabberMsgs::getImageCropRPC(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::vertex_t>& vertices)"};
+    static constexpr const char* s_prototype{"IFrameGrabberImageOf_return_getImageCrop FrameGrabberMsgs::getImageCropRPC(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::VertexData>& vertices)"};
     static constexpr const char* s_help{""};
 };
 
@@ -3798,7 +3798,7 @@ void FrameGrabberMsgs_getImageRPC_helper::call(FrameGrabberMsgs* ptr)
 }
 
 // getImageCropRPC helper class implementation
-FrameGrabberMsgs_getImageCropRPC_helper::FrameGrabberMsgs_getImageCropRPC_helper(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::vertex_t>& vertices) :
+FrameGrabberMsgs_getImageCropRPC_helper::FrameGrabberMsgs_getImageCropRPC_helper(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::VertexData>& vertices) :
         cmd{type, vertices}
 {
 }
@@ -3813,7 +3813,7 @@ bool FrameGrabberMsgs_getImageCropRPC_helper::read(yarp::os::ConnectionReader& c
     return reply.read(connection);
 }
 
-FrameGrabberMsgs_getImageCropRPC_helper::Command::Command(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::vertex_t>& vertices) :
+FrameGrabberMsgs_getImageCropRPC_helper::Command::Command(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::VertexData>& vertices) :
         type{type},
         vertices{vertices}
 {
@@ -11284,7 +11284,7 @@ IFrameGrabberImageOf_return_getImage FrameGrabberMsgs::getImageRPC()
     return ok ? helper.reply.return_helper : IFrameGrabberImageOf_return_getImage{};
 }
 
-IFrameGrabberImageOf_return_getImageCrop FrameGrabberMsgs::getImageCropRPC(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::vertex_t>& vertices)
+IFrameGrabberImageOf_return_getImageCrop FrameGrabberMsgs::getImageCropRPC(const yarp::dev::cropType_id_t type, const std::vector<yarp::dev::VertexData>& vertices)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", FrameGrabberMsgs_getImageCropRPC_helper::s_prototype);

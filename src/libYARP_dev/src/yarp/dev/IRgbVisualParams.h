@@ -19,29 +19,11 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/ReturnValue.h>
 
+#include <yarp/dev/CameraConfigData.h>
+
 namespace yarp::dev {
 
-/**
- * Struct describing a possible camera configuration
- * @param width image width
- * @param height image height
- * @param framerate camera framerate
- * @param pixelCoding camera pixel coding
- */
-class YARP_dev_API CameraConfig: public yarp::os::Portable
-{
-public:
-    CameraConfig() = default;
-    CameraConfig(int w, int h, double rate, YarpVocabPixelTypesEnum enc);
-
-    int width {0};
-    int height {0};
-    double framerate {0.0};
-    YarpVocabPixelTypesEnum pixelCoding {VOCAB_PIXEL_INVALID};
-
-    bool read(yarp::os::ConnectionReader& connection) override;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-};
+typedef CameraConfigData CameraConfig;
 
 /**
  * @ingroup dev_iface_other
@@ -70,7 +52,7 @@ public:
      * @param configurations  list of camera supported configurations as CameraConfig type
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& configurations) = 0;
+    virtual yarp::dev::ReturnValue getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfigData>& configurations) = 0;
 
     /**
      * Get the resolution of the rgb image from the camera
