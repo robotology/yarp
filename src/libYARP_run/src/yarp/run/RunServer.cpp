@@ -545,7 +545,8 @@ int yarp::run::Run::server()
 
             if (msg.check("sysinfo"))
             {
-                yarp::os::SystemInfoSerializer sysinfo;
+                yarp::os::SystemInfo sysinfo;
+                sysinfo.updateSystemInfo();
                 port.reply(sysinfo);
                 continue;
             }
