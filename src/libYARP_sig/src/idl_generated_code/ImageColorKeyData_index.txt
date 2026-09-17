@@ -1,0 +1,2 @@
+yarp/sig/ImageColorKeyData.h
+yarp/sig/ImageColorKeyData.cpp
