@@ -17,9 +17,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/PeriodicThread.h>
 
-// FIXME Do not use yarp/os/impl in .h files
 #include <yarp/os/SystemInfo.h>
-#include <yarp/os/SystemInfoSerializer.h>
 
 #include <yarp/manager/broker.h>
 #include <yarp/manager/primresource.h>
@@ -56,7 +54,7 @@ public:
      void detachStdout() override;
 
      bool getSystemInfo(const std::string& server,
-                        yarp::os::SystemInfoSerializer& info);
+                        yarp::os::SystemInfo& info);
      bool getAllProcesses(const std::string& server,
                         ProcessContainer &processes);
      bool getAllPorts(std::vector<std::string> &stingList);

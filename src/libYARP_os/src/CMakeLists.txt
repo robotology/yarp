@@ -134,7 +134,6 @@ set(YARP_os_HDRS
   yarp/os/YarpPluginSelector.h
   yarp/os/YarpPluginSettings.h
   yarp/os/SystemInfo.h
-  yarp/os/SystemInfoSerializer.h
   yarp/os/QosStyle.h
 )
 
@@ -217,7 +216,6 @@ set(YARP_os_SRCS
   yarp/os/Stamp.cpp
   yarp/os/SystemClock.cpp
   yarp/os/SystemInfo.cpp
-  yarp/os/SystemInfoSerializer.cpp
   yarp/os/Terminator.cpp
   yarp/os/Things.cpp
   yarp/os/Thread.cpp
@@ -376,6 +374,7 @@ include(YarpChooseIDL)
 
 set(YARP_os_IDL
   idl/OSTestMsg.thrift
+  idl/SystemInfoData.thrift
 )
 
 yarp_choose_idl(YARP_os_idl ${YARP_os_IDL})

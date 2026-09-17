@@ -587,7 +587,7 @@ bool YarpBroker::connected(const std::string& from, const std::string& to, const
     return NetworkBase::isConnected(from, to, style);
 }
 
-bool YarpBroker::getSystemInfo(const std::string& server, SystemInfoSerializer& info)
+bool YarpBroker::getSystemInfo(const std::string& server, SystemInfo& info)
 {
     if (server.empty()) {
         return false;

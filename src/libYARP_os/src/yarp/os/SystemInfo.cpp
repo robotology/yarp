@@ -593,6 +593,28 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     return processor;
 }
 
+void SystemInfo::updateSystemInfo()
+{
+    // updating system info
+    memory = SystemInfo::getMemoryInfo();
+    storage = SystemInfo::getStorageInfo();
+    //network = SystemInfo::getNetworkInfo();
+    processor = SystemInfo::getProcessorInfo();
+    platform = SystemInfo::getPlatformInfo();
+    load = SystemInfo::getLoadInfo();
+    user = SystemInfo::getUserInfo();
+}
+
+bool SystemInfo::read(yarp::os::ConnectionReader& connection)
+{
+    return SystemInfoData::read(connection);
+}
+
+bool SystemInfo::write(yarp::os::ConnectionWriter& connection) const
+{
+    //this->updateSystemInfo();
+    return SystemInfoData::write(connection);
+}
 
 SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 {
@@ -643,6 +665,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     }
 
     const char* a = GetEnvironmentStrings();
+    yarp::os::Property tempProperty;
     size_t prev = 0;
     for (size_t i = 0;; i++) {
         if (a[i] == '\0') {
@@ -650,7 +673,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
             size_t equalsSign = tmpVariable.find("=");
             if (equalsSign != std::string::npos && equalsSign != 0) // among environment variables there are DOS-related ones that start with a =
             {
-                platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign + 1));
+                tempProperty.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign + 1));
             }
             prev = i + 1;
             if (a[i + 1] == '\0') {
@@ -658,6 +681,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
             }
         }
     }
+    platform.environmentVars = tempProperty.toString();
 
 #endif
 
@@ -689,15 +713,17 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     }
 
     char* varChar = *environ;
-
+    yarp::os::Property tempProperty;
     for (int i = 0; varChar != nullptr; i++) {
         std::string tmpVariable(varChar);
         size_t equalsSign = tmpVariable.find('=');
         if (equalsSign != std::string::npos) {
-            platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign + 1));
+        tempProperty.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign + 1));
         }
         varChar = *(environ + i);
     }
+    platform.environmentVars = tempProperty.toString();
+
 #endif
 
 #if defined(__APPLE__)

@@ -13,7 +13,7 @@
 #include <yarp/run/api.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/SystemInfoSerializer.h>
+#include <yarp/os/SystemInfo.h>
 
 
 class YarpRunInfoVector;
@@ -143,7 +143,7 @@ public:
      * @param info is the system information of the remote yarprun server.
      * @return true=success false=failed.
      */
-    static bool sysinfo(const std::string& node, yarp::os::SystemInfoSerializer& info);
+    static bool sysinfo(const std::string& node, yarp::os::SystemInfo& info);
 
 
     /**

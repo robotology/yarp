@@ -22,7 +22,6 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/SystemInfo.h>
-#include <yarp/os/SystemInfoSerializer.h>
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/NameClient.h>
@@ -281,7 +280,7 @@ int yarp::run::Run::client(yarp::os::Property& config)
             return YARPRUN_ERROR;
         }
 
-        yarp::os::SystemInfoSerializer info;
+        yarp::os::SystemInfo info;
         bool ret = sysinfo(config.find("on").asString(),info);
         if (!ret)
         {
@@ -320,7 +319,7 @@ int yarp::run::Run::client(yarp::os::Property& config)
         fprintf(stdout, "Processor siblings  : %d\n", info.processor.siblings);
         fprintf(stdout, "Processor Mhz       : %.2lf\n\n", info.processor.frequency);
 
-        fprintf(stdout, "Environment variables  :\n%s\n", info.platform.environmentVars.toString().c_str());
+        fprintf(stdout, "Environment variables  :\n%s\n", info.platform.environmentVars.c_str());
         //fprintf(stdout, "Network IP4 : %s\n", info.network.ip4.c_str());
         //fprintf(stdout, "Network IP6 : %s\n", info.network.ip6.c_str());
         //fprintf(stdout, "Network mac : %s\n\n", info.network.mac.c_str());
@@ -409,7 +408,7 @@ bool yarp::run::Run::isRunning(const std::string &node, const std::string &keyv)
 }
 
 
-bool yarp::run::Run::sysinfo(const std::string &node, yarp::os::SystemInfoSerializer& info)
+bool yarp::run::Run::sysinfo(const std::string &node, yarp::os::SystemInfo& info)
 {
     yarp::os::Bottle msg, grp, response;
 
