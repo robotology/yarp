@@ -11,8 +11,10 @@ set(YARP_sig_HDRS
   yarp/sig/api.h
   yarp/sig/AudioBufferSize.h
   yarp/sig/Image.h
+  yarp/sig/ImageColorKey.h
   yarp/sig/ImageDraw.h
   yarp/sig/ImageFile.h
+  yarp/sig/ImageLayer.h
   yarp/sig/ImageNetworkHeader.h
   yarp/sig/ImageUtils.h
   yarp/sig/IntrinsicParams.h
@@ -73,11 +75,15 @@ set(YARP_sig_IDL
   idl/audioBufferSizeData.thrift
   idl/AudioPlayerStatus.thrift
   idl/AudioRecorderStatus.thrift
-  idl/LaserScan2D.thrift
-  idl/Pose6D.thrift
   idl/ColorRGB.thrift
   idl/DistortionModelData.thrift
+  idl/ImageColorKeyData.thrift
+  idl/ImageAlphaData.thrift
+  idl/ImageLayerData.thrift
   idl/IntrinsicParamsData.thrift
+  idl/LayeredImageData.thrift
+  idl/LaserScan2D.thrift
+  idl/Pose6D.thrift
 )
 
 yarp_choose_idl(YARP_sig_idl ${YARP_sig_IDL})

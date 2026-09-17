@@ -1,0 +1,2 @@
+yarp/sig/LayeredImageData.h
+yarp/sig/LayeredImageData.cpp

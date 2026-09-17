@@ -1,0 +1,2 @@
+yarp/sig/ImageAlphaData.h
+yarp/sig/ImageAlphaData.cpp

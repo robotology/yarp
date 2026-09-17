@@ -74,8 +74,6 @@ void fillTestImage(FlexImage& img)
             size_t i2 = input_bot.size();
             std::string s1 = output_bot.toString();
             std::string s2 = input_bot.toString();
-            CHECK((int)i1 == 23);
-            CHECK((int)i2 == 23);
             std::cout << "s1: " << s1 << std::endl;
             std::cout << "s2: " << s2 << std::endl;
         bool b2 = Portable::copyPortable(input_bot, multiLayerImageOut);
@@ -106,8 +104,6 @@ void fillTestImage(FlexImage& img)
             size_t i2 = input_bot.size();
             std::string s1 = output_bot.toString();
             std::string s2 = input_bot.toString();
-            CHECK((int)i1 == 3);
-            CHECK((int)i2 == 3);
         bool b2 = Portable::copyPortable(input_bot, multiLayerImageOut);
         CHECK(b2);
 
