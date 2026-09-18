@@ -232,7 +232,7 @@ set(YARP_os_SRCS
   yarp/os/QosStyle.cpp
 )
 
-set(YARP_os_IDL_HDRS
+set(YARP_os_WIREIDL_HDRS
   yarp/os/idl/BareStyle.h
   yarp/os/idl/BottleStyle.h
   yarp/os/idl/Unwrapped.h
@@ -244,12 +244,12 @@ set(YARP_os_IDL_HDRS
 )
 
 if(NOT YARP_NO_DEPRECATED)
-  list(APPEND YARP_os_IDL_HDRS
+  list(APPEND YARP_os_WIREIDL_HDRS
     yarp/os/idl/WireVocab.h    # DEPRECATED since YARP 3.6.0
   )
 endif()
 
-set(YARP_os_IDL_SRCS
+set(YARP_os_WIREIDL_SRCS
   yarp/os/idl/WirePortable.cpp
   yarp/os/idl/WireReader.cpp
   yarp/os/idl/WireState.cpp
@@ -391,14 +391,14 @@ foreach(_f IN LISTS YARP_os_idl_GEN_FILES)
   endif()
 endforeach()
 
-#message ("YARP_os_idl_HDRS: ${YARP_dev_i_HDRS}")
+#message ("YARP_os_idl_HDRS: ${YARP_os_idl_HDRS}")
 #message ("YARP_os_idl_GEN_FILES: ${YARP_os_idl_GEN_FILES}")
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
   PREFIX "Source Files"
   FILES
     ${YARP_os_SRCS}
-    ${YARP_os_IDL_SRCS}
+    ${YARP_os_WIREIDL_SRCS}
     ${YARP_os_IMPL_SRCS}
     ${YARP_os_IMPL_POSIX_SRCS}
     ${YARP_os_IMPL_MACOS_SRCS}
@@ -409,7 +409,7 @@ source_group(
   PREFIX "Header Files"
   FILES
     ${YARP_os_HDRS}
-    ${YARP_os_IDL_HDRS}
+    ${YARP_os_WIREIDL_HDRS}
     ${YARP_os_IMPL_HDRS}
     ${YARP_os_IMPL_POSIX_HDRS}
     ${YARP_os_IMPL_MACOS_HDRS}
@@ -425,8 +425,8 @@ target_sources(YARP_os
   PRIVATE
     ${YARP_os_SRCS}
     ${YARP_os_HDRS}
-    ${YARP_os_IDL_SRCS}
-    ${YARP_os_IDL_HDRS}
+    ${YARP_os_WIREIDL_SRCS}
+    ${YARP_os_WIREIDL_HDRS}
     ${YARP_os_IMPL_SRCS}
     ${YARP_os_IMPL_HDRS}
     ${YARP_os_idl_GEN_FILES}
@@ -501,7 +501,7 @@ if(YARP_HAS_Libedit)
   list(APPEND YARP_os_PRIVATE_DEPS Libedit)
 endif()
 
-set_property(TARGET YARP_os PROPERTY PUBLIC_HEADER ${YARP_os_HDRS})
+set_property(TARGET YARP_os PROPERTY PUBLIC_HEADER ${YARP_os_HDRS} ${YARP_os_idl_HDRS})
 set_property(TARGET YARP_os PROPERTY PRIVATE_HEADER ${YARP_os_IMPL_HDRS})
 set_property(TARGET YARP_os PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_os PROPERTY SOVERSION ${YARP_SOVERSION})
@@ -531,7 +531,7 @@ install(
 # PUBLIC_HEADER and PRIVATE_HEADER do not support sub-directories
 # See https://gitlab.kitware.com/cmake/cmake/issues/7941
 install(
-  FILES ${YARP_os_IDL_HDRS}
+  FILES ${YARP_os_WIREIDL_HDRS}
   COMPONENT YARP_os-dev
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/idl
 )

@@ -603,6 +603,7 @@ void SystemInfo::updateSystemInfo()
     platform = SystemInfo::getPlatformInfo();
     load = SystemInfo::getLoadInfo();
     user = SystemInfo::getUserInfo();
+    process = SystemInfo::getProcessInfo();
 }
 
 bool SystemInfo::read(yarp::os::ConnectionReader& connection)
