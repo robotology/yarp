@@ -44,7 +44,7 @@ TEST_CASE("os::SystemInfoTest", "[yarp::os]")
             << ", kernel: " << pltinfo.kernel
             << ", name: " << pltinfo.name
             << ", release: " << pltinfo.release
-            << ", environment variables: "<< pltinfo.environmentVars.toString()
+            << ", environment variables: "<< pltinfo.environmentVars
             << ".\n";
         INFO(str.str());
     }

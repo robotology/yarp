@@ -1,0 +1,16 @@
+yarp/os/MemoryInfoData.h
+yarp/os/MemoryInfoData.cpp
+yarp/os/StorageInfoData.h
+yarp/os/StorageInfoData.cpp
+yarp/os/ProcessorInfoData.h
+yarp/os/ProcessorInfoData.cpp
+yarp/os/LoadInfoData.h
+yarp/os/LoadInfoData.cpp
+yarp/os/PlatformInfoData.h
+yarp/os/PlatformInfoData.cpp
+yarp/os/UserInfoData.h
+yarp/os/UserInfoData.cpp
+yarp/os/ProcessInfoData.h
+yarp/os/ProcessInfoData.cpp
+yarp/os/SystemInfoData.h
+yarp/os/SystemInfoData.cpp
