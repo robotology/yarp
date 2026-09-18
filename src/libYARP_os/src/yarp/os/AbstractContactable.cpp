@@ -133,16 +133,6 @@ void yarp::os::AbstractContactable::promiseType(const Type& typ)
     asPort().promiseType(typ);
 }
 
-yarp::os::Property* yarp::os::AbstractContactable::acquireProperties(bool readOnly)
-{
-    return asPort().acquireProperties(readOnly);
-}
-
-void yarp::os::AbstractContactable::releaseProperties(Property* prop)
-{
-    asPort().releaseProperties(prop);
-}
-
 bool yarp::os::AbstractContactable::write(const PortWriter& writer,
                                           const PortWriter* callback) const
 {

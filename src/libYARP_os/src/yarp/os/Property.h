@@ -28,8 +28,7 @@ namespace yarp::os {
  * Property objects can be searched efficiently.
  */
 class YARP_os_API Property :
-        public Searchable,
-        public Portable
+        public Searchable
 {
 public:
     using Searchable::check;
@@ -428,11 +427,6 @@ public:
     // documented in Searchable
     std::string toString() const override;
 
-    // documented in Portable
-    bool read(ConnectionReader& reader) override;
-
-    // documented in Portable
-    bool write(ConnectionWriter& writer) const override;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:

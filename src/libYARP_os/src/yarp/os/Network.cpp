@@ -20,6 +20,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/YarpPlugin.h>
+#include <yarp/os/ConnectionQosData.h>
+
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/LogForwarder.h>
@@ -1140,26 +1142,23 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
 
 bool NetworkBase::setConnectionQos(const std::string& src, const std::string& dest, const QosStyle& srcStyle, const QosStyle& destStyle, bool quiet)
 {
-
     //e.g.,  prop set /portname (sched ((priority 30) (policy 1))) (qos ((tos 0)))
-    yarp::os::Bottle cmd;
-    yarp::os::Bottle reply;
 
-    // ignore if everything left as default
-    if (srcStyle.getPacketPriorityAsTOS() != -1 || srcStyle.getThreadPolicy() != -1) {
+    // source side: ignore if everything left as default
+    if (srcStyle.getPacketPriorityAsTOS() != -1 || srcStyle.getThreadPolicy() != -1)
+    {
         // set the source Qos
-        cmd.addString("prop");
-        cmd.addString("set");
-        cmd.addString(dest.c_str());
-        Bottle& sched = cmd.addList();
-        sched.addString("sched");
-        Property& sched_prop = sched.addDict();
-        sched_prop.put("priority", srcStyle.getThreadPriority());
-        sched_prop.put("policy", srcStyle.getThreadPolicy());
-        Bottle& qos = cmd.addList();
-        qos.addString("qos");
-        Property& qos_prop = qos.addDict();
-        qos_prop.put("tos", srcStyle.getPacketPriorityAsTOS());
+        yarp::os::Bottle cmd;
+        yarp::os::Bottle reply;
+        cmd.addVocab32("qos");
+        cmd.addString("set_all");
+        yarp::os::Bottle& botcmd = cmd.addList();
+        yarp::os::ConnectionQosData qoscmd;
+        qoscmd.portname = dest.c_str();
+        qoscmd.scheduler_policy = srcStyle.getThreadPolicy();
+        qoscmd.scheduler_priority = srcStyle.getThreadPriority();
+        qoscmd.qos_tos = srcStyle.getPacketPriorityAsTOS();
+        bool bcp = yarp::os::Portable::copyPortable(qoscmd, botcmd);
         Contact srcCon = Contact::fromString(src);
         bool ret = write(srcCon, cmd, reply, true, true, 2.0);
         if (!ret) {
@@ -1168,6 +1167,7 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
             }
             return false;
         }
+        std::string sssreply = reply.toString();
         if (reply.get(0).asString() != "ok") {
             if (!quiet) {
                 yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", src.c_str(), reply.toString().c_str());
@@ -1176,23 +1176,21 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
         }
     }
 
-    // ignore if everything left as default
-    if (destStyle.getPacketPriorityAsTOS() != -1 || destStyle.getThreadPolicy() != -1) {
+    // destination side: ignore if everything left as default
+    if (destStyle.getPacketPriorityAsTOS() != -1 || destStyle.getThreadPolicy() != -1)
+    {
         // set the destination Qos
-        cmd.clear();
-        reply.clear();
-        cmd.addString("prop");
-        cmd.addString("set");
-        cmd.addString(src.c_str());
-        Bottle& sched2 = cmd.addList();
-        sched2.addString("sched");
-        Property& sched_prop2 = sched2.addDict();
-        sched_prop2.put("priority", destStyle.getThreadPriority());
-        sched_prop2.put("policy", destStyle.getThreadPolicy());
-        Bottle& qos2 = cmd.addList();
-        qos2.addString("qos");
-        Property& qos_prop2 = qos2.addDict();
-        qos_prop2.put("tos", destStyle.getPacketPriorityAsTOS());
+        yarp::os::Bottle cmd;
+        yarp::os::Bottle reply;
+        cmd.addVocab32("qos");
+        cmd.addString("set_all");
+        yarp::os::Bottle& botcmd = cmd.addList();
+        yarp::os::ConnectionQosData qoscmd;
+        qoscmd.portname = src.c_str();
+        qoscmd.scheduler_policy = destStyle.getThreadPolicy();
+        qoscmd.scheduler_priority = destStyle.getThreadPriority();
+        qoscmd.qos_tos = destStyle.getPacketPriorityAsTOS();
+        bool bcp = yarp::os::Portable::copyPortable(qoscmd, botcmd);
         Contact destCon = Contact::fromString(dest);
         bool ret = write(destCon, cmd, reply, true, true, 2.0);
         if (!ret) {
@@ -1272,34 +1270,33 @@ static bool getPortQos(const std::string& port, const std::string& unit, QosStyl
     // request: "prop get /portname"
     // reply  : "(sched ((priority 30) (policy 1))) (qos ((priority HIGH)))"
     yarp::os::Bottle cmd;
-    yarp::os::Bottle reply;
+    yarp::os::ConnectionQosData qosreply;
 
     // set the source Qos
     cmd.addString("prop");
     cmd.addString("get");
     cmd.addString(unit.c_str());
     Contact portCon = Contact::fromString(port);
-    bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
+    bool ret = NetworkBase::write(portCon, cmd, qosreply, true, true, 2.0);
     if (!ret) {
         if (!quiet) {
             yCError(NETWORK, "Cannot write to '%s'", port.c_str());
         }
         return false;
     }
+
+    //Failure detection mechanism needed
+    /*
     if (reply.size() == 0 || reply.get(0).asString() == "fail") {
         if (!quiet) {
             yCError(NETWORK, "Cannot get qos properties of '%s'. (%s)", port.c_str(), reply.toString().c_str());
         }
         return false;
     }
-
-    Bottle& sched = reply.findGroup("sched");
-    Bottle* sched_prop = sched.find("sched").asList();
-    style.setThreadPriority(sched_prop->find("priority").asInt32());
-    style.setThreadPolicy(sched_prop->find("policy").asInt32());
-    Bottle& qos = reply.findGroup("qos");
-    Bottle* qos_prop = qos.find("qos").asList();
-    style.setPacketPrioritybyTOS(qos_prop->find("tos").asInt32());
+    */
+    style.setThreadPriority(qosreply.scheduler_priority);
+    style.setThreadPolicy(qosreply.scheduler_policy);
+    style.setPacketPrioritybyTOS(qosreply.qos_tos);
 
     return true;
 }

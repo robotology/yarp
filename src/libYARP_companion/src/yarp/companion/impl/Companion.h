@@ -97,9 +97,6 @@ public:
     // Defined in Companion.cmdPlugin.cpp
     int cmdPlugin(int argc, char *argv[]);
 
-    // Defined in Companion.cmdPray.cpp
-    int cmdPray(int argc, char *argv[]);
-
     // Defined in Companion.cmdPriorityQos.cpp
     int cmdPriorityQos(int argc, char *argv[]);
 

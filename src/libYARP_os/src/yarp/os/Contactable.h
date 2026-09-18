@@ -265,24 +265,6 @@ public:
     virtual void promiseType(const Type& typ) = 0;
 
     /**
-     * Access unstructured port properties.
-     *
-     * @param readOnly set this if you won't be modifying the properties.
-     * @return the port properties (or nullptr if readOnly and none have
-     *         been set)
-     * @warning Must be called in the same thread as releaseProperties
-     */
-    virtual Property* acquireProperties(bool readOnly) = 0;
-
-    /**
-     * End access unstructured port properties.
-     *
-     * @param prop the port property object provided by acquireProperties()
-     * @warning Must be called in the same thread as acquireProperties
-     */
-    virtual void releaseProperties(Property* prop) = 0;
-
-    /**
      * Shorthand for setInputMode(true), setOutputMode(false), setRpcMode(false)
      */
     void setReadOnly();

@@ -208,12 +208,6 @@ public:
     // Documented in Contactable
     void promiseType(const Type& typ) override;
 
-    // Documented in Contactable
-    Property* acquireProperties(bool readOnly) override;
-
-    // Documented in Contactable
-    void releaseProperties(Property* prop) override;
-
     /**
      * Check if the port has been opened.
      */

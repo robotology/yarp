@@ -165,12 +165,6 @@ bool Value::isList() const
     return proxy->isList();
 }
 
-bool Value::isDict() const
-{
-    ok();
-    return proxy->isDict();
-}
-
 bool Value::isVocab32() const
 {
     ok();
@@ -252,21 +246,6 @@ std::string Value::asString() const
 Bottle* Value::asList() const
 {
     ok();
-    return proxy->asList();
-}
-
-Property* Value::asDict() const
-{
-    ok();
-    return proxy->asDict();
-}
-
-Searchable* Value::asSearchable() const
-{
-    ok();
-    if (proxy->isDict()) {
-        return proxy->asDict();
-    }
     return proxy->asList();
 }
 

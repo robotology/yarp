@@ -27,7 +27,6 @@
 #define BOTTLE_TAG_STRING (4)      // 0000 0000 0000 0100
 #define BOTTLE_TAG_BLOB (4 + 8)    // 0000 0000 0000 1100
 #define BOTTLE_TAG_LIST 256        // 0000 0001 0000 0000
-#define BOTTLE_TAG_DICT 512        // 0000 0010 0000 0000
 
 namespace yarp::os {
 
@@ -260,14 +259,6 @@ public:
      * @return a reference to the newly added list.
      */
     Bottle& addList();
-
-    /**
-     * Places an empty key/value object in the bottle, at the end of the
-     * list.
-     *
-     * @return a reference to the newly added property.
-     */
-    Property& addDict();
 
     /**
      * Removes a Value v from the end of the list and returns this
