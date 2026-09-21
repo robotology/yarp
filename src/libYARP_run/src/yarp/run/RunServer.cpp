@@ -22,7 +22,6 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/SystemInfo.h>
-#include <yarp/os/SystemInfoSerializer.h>
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/NameClient.h>
@@ -306,7 +305,8 @@ int yarp::run::Run::server()
 
         if (msg.check("sysinfo"))
         {
-            yarp::os::SystemInfoSerializer sysinfo;
+            yarp::os::SystemInfo sysinfo;
+            sysinfo.updateSystemInfo();
             port.reply(sysinfo);
             continue;
         }
@@ -545,7 +545,8 @@ int yarp::run::Run::server()
 
             if (msg.check("sysinfo"))
             {
-                yarp::os::SystemInfoSerializer sysinfo;
+                yarp::os::SystemInfo sysinfo;
+                sysinfo.updateSystemInfo();
                 port.reply(sysinfo);
                 continue;
             }

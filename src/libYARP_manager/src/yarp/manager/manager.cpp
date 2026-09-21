@@ -627,7 +627,7 @@ bool Manager::updateResource(GenericResource* resource)
         return false;
     }
 
-    yarp::os::SystemInfoSerializer info;
+    yarp::os::SystemInfo info;
     std::string strServer = comp->getName();
     if (strServer[0] != '/') {
         strServer = std::string("/") + strServer;

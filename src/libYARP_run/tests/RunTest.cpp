@@ -150,7 +150,7 @@ TEST_CASE("run::RunTest", "[yarp::run]")
         CHECK(ret);
 
         // check system info
-        yarp::os::SystemInfoSerializer info;
+        yarp::os::SystemInfo info;
         ret = yarp::run::Run::sysinfo("/run", info);
         CHECK(info.memory.totalSpace!=0);
         CHECK(ret);
