@@ -230,9 +230,9 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         FrameTransform t;
         t.src_frame_id = in.get(1).asString();
         t.dst_frame_id = in.get(2).asString();
-        t.translation.tX = in.get(3).asFloat64();
-        t.translation.tY = in.get(4).asFloat64();
-        t.translation.tZ = in.get(5).asFloat64();
+        t.translation.t_x = in.get(3).asFloat64();
+        t.translation.t_y = in.get(4).asFloat64();
+        t.translation.t_z = in.get(5).asFloat64();
         if (request == "set_static_transform_rad")
         {
             t.rotFromRPY(in.get(6).asFloat64(),
@@ -894,9 +894,9 @@ yarp::dev::ReturnValue FrameTransformClient::transformPose(const std::string &ta
     t.transFromVec(input_pose[0], input_pose[1], input_pose[2]);
     t.rotFromRPY(input_pose[3], input_pose[4], input_pose[5]);
     t.fromMatrix(m * t.toMatrix());
-    transformed_pose[0] = t.translation.tX;
-    transformed_pose[1] = t.translation.tY;
-    transformed_pose[2] = t.translation.tZ;
+    transformed_pose[0] = t.translation.t_x;
+    transformed_pose[1] = t.translation.t_y;
+    transformed_pose[2] = t.translation.t_z;
 
     yarp::sig::Vector rot;
     rot = t.getRPYRot();

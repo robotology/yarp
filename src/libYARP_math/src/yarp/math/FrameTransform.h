@@ -8,35 +8,25 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
+
 #include <yarp/math/api.h>
-#include <yarp/math/Quaternion.h>
+#include <yarp/math/FrameTransformData.h>
 
 namespace yarp::math {
 
-class YARP_math_API FrameTransform : public yarp::os::Portable
+class YARP_math_API FrameTransform : public yarp::math::FrameTransformData
 {
+/*
 public:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) src_frame_id;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) dst_frame_id;
     double timestamp = 0;
     bool   isStatic  = false;
+    yarp::math::Translation translation;
+    yarp::math::Quaternion rotation;
+*/
 
-    struct Translation_t
-    {
-        double tX;
-        double tY;
-        double tZ;
-
-        void set(double x, double y, double z)
-        {
-            tX = x;
-            tY = y;
-            tZ = z;
-        }
-    } translation;
-
-    Quaternion rotation;
-
+public:
     bool isValid() const;
 
     FrameTransform();
@@ -68,24 +58,6 @@ public:
     };
 
     std::string toString(display_transform_mode_t format= rotation_as_quaternion) const;
-
-    ///////// Serialization methods
-    /*
-    * Read data from a connection.
-    * return true iff data was read correctly
-    */
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    /**
-    * Write data to a connection.
-    * return true iff data was written correctly
-    */
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-
-    yarp::os::Type getType() const override
-    {
-        return yarp::os::Type::byName("yarp/frameTransform");
-    }
 };
 
 } // namespace yarp::math

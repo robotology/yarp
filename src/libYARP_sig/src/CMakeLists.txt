@@ -84,6 +84,9 @@ set(YARP_sig_IDL
   idl/LayeredImageData.thrift
   idl/LaserScan2D.thrift
   idl/Pose6D.thrift
+  idl/QuaternionData.thrift
+  idl/SoundMarkerData.thrift
+  idl/TranslationData.thrift
 )
 
 yarp_choose_idl(YARP_sig_idl ${YARP_sig_IDL})
