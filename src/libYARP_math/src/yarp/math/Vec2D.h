@@ -26,6 +26,9 @@ class YARP_math_API vec2D_selector
 
 namespace yarp::math
 {
+    template <typename Derived>
+    Derived operator*(const yarp::sig::Matrix& lhs, const Derived& rhs);
+
     template <typename Derived, typename Scalar>
     class YARP_math_API Vec2DCommon
     {
@@ -43,7 +46,7 @@ namespace yarp::math
         std::string PrintToString(int precision = -1, int width = -1) const;
 
         Vec2DCommon() = default;
-        Vec2DCommon<Derived, Scalar>(const yarp::sig::Vector& v);
+        Vec2DCommon(const yarp::sig::Vector& v);
         explicit operator yarp::sig::Vector() const;
 
         bool operator==(const Derived& other) const;
@@ -53,31 +56,29 @@ namespace yarp::math
         Derived operator*(const Derived& other) const;
         Derived operator+=(const Derived& rhs);
         Derived operator-=(const Derived& rhs);
-
-        friend YARP_math_API Derived operator*(const yarp::sig::Matrix& lhs, const Derived& rhs);
     };
 }
 
-namespace yarp::sig
+namespace yarp::math
 {
-    class Vec2DOfDouble : public Vec2DOfDoubleData, public yarp::math::Vec2DCommon<Vec2DOfDouble, double>
+    class YARP_math_API Vec2DOfDouble : public yarp::sig::Vec2DOfDoubleData, public yarp::math::Vec2DCommon<Vec2DOfDouble, double>
     {
         public:
-        using Vec2DOfDoubleData::Vec2DOfDoubleData;
+        using yarp::sig::Vec2DOfDoubleData::Vec2DOfDoubleData;
         using yarp::math::Vec2DCommon<Vec2DOfDouble, double>::Vec2DCommon;
     };
 
-    class Vec2DOfInt : public Vec2DOfIntData, public yarp::math::Vec2DCommon<Vec2DOfInt, int>
+    class YARP_math_API Vec2DOfInt : public yarp::sig::Vec2DOfIntData, public yarp::math::Vec2DCommon<Vec2DOfInt, int>
     {
         public:
-        using Vec2DOfIntData::Vec2DOfIntData;
+        using yarp::sig::Vec2DOfIntData::Vec2DOfIntData;
         using yarp::math::Vec2DCommon<Vec2DOfInt, int>::Vec2DCommon;
     };
 
-    class Vec2DOfSizet : public Vec2DOfSizetData, public yarp::math::Vec2DCommon<Vec2DOfSizet, size_t>
+    class YARP_math_API Vec2DOfSizet : public yarp::sig::Vec2DOfSizetData, public yarp::math::Vec2DCommon<Vec2DOfSizet, size_t>
     {
         public:
-        using Vec2DOfSizetData::Vec2DOfSizetData;
+        using yarp::sig::Vec2DOfSizetData::Vec2DOfSizetData;
         using yarp::math::Vec2DCommon<Vec2DOfSizet, size_t>::Vec2DCommon;
     };
 }
@@ -85,17 +86,17 @@ namespace yarp::sig
 
 template <>
 struct YARP_math_API  vec2D_selector<int> {
-    using type = yarp::sig::Vec2DOfInt;
+    using type = yarp::math::Vec2DOfInt;
 };
 
 template <>
 struct YARP_math_API  vec2D_selector<size_t> {
-    using type = yarp::sig::Vec2DOfSizet;
+    using type = yarp::math::Vec2DOfSizet;
 };
 
 template <>
 struct YARP_math_API  vec2D_selector<double> {
-    using type = yarp::sig::Vec2DOfDouble;
+    using type = yarp::math::Vec2DOfDouble;
 };
 
 namespace yarp::math {

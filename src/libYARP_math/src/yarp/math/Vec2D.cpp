@@ -19,7 +19,7 @@ YARP_LOG_COMPONENT(VEC2D, "yarp.math.Vec2D")
 }
 
 template <typename Derived, typename Scalar>
-bool Vec2DCommon<Derived, typename Scalar>::operator==(const Derived& other) const
+bool Vec2DCommon<Derived, Scalar>::operator==(const Derived& other) const
 {
     const auto& v = static_cast<const Derived&>(*this);
 
@@ -28,7 +28,7 @@ bool Vec2DCommon<Derived, typename Scalar>::operator==(const Derived& other) con
 }
 
 template <typename Derived, typename Scalar>
-bool  Vec2DCommon<Derived, typename Scalar>::operator!=(const Derived& other) const
+bool  Vec2DCommon<Derived, Scalar>::operator!=(const Derived& other) const
 {
     const auto& v = static_cast<const Derived&>(*this);
 
@@ -37,7 +37,7 @@ bool  Vec2DCommon<Derived, typename Scalar>::operator!=(const Derived& other) co
 }
 
 template <typename Derived, typename Scalar>
-Derived Vec2DCommon<Derived, typename Scalar>::operator+(const Derived& other) const
+Derived Vec2DCommon<Derived, Scalar>::operator+(const Derived& other) const
 {
     const auto& v = static_cast<const Derived&>(*this);
 
@@ -49,7 +49,7 @@ Derived Vec2DCommon<Derived, typename Scalar>::operator+(const Derived& other) c
 }
 
 template <typename Derived, typename Scalar>
-Derived Vec2DCommon<Derived, typename Scalar>::operator-(const Derived& other) const
+Derived Vec2DCommon<Derived, Scalar>::operator-(const Derived& other) const
 {
     const auto& v = static_cast<const Derived&>(*this);
 
@@ -61,7 +61,7 @@ Derived Vec2DCommon<Derived, typename Scalar>::operator-(const Derived& other) c
 }
 
 template <typename Derived, typename Scalar>
-Derived Vec2DCommon<Derived, typename Scalar>::operator*(const Derived& other) const
+Derived Vec2DCommon<Derived, Scalar>::operator*(const Derived& other) const
 {
     const auto& v = static_cast<const Derived&>(*this);
 
@@ -73,7 +73,7 @@ Derived Vec2DCommon<Derived, typename Scalar>::operator*(const Derived& other) c
 }
 
 template <typename Derived, typename Scalar>
-Derived Vec2DCommon<Derived, typename Scalar>::operator+=(const Derived& other)
+Derived Vec2DCommon<Derived, Scalar>::operator+=(const Derived& other)
 {
     auto& v = static_cast<Derived&>(*this);
     Derived result;
@@ -83,7 +83,7 @@ Derived Vec2DCommon<Derived, typename Scalar>::operator+=(const Derived& other)
 }
 
 template <typename Derived, typename Scalar>
-Derived Vec2DCommon<Derived, typename Scalar>::operator-=(const Derived& other)
+Derived Vec2DCommon<Derived, Scalar>::operator-=(const Derived& other)
 {
     auto& v = static_cast<Derived&>(*this);
     Derived result;
@@ -93,7 +93,7 @@ Derived Vec2DCommon<Derived, typename Scalar>::operator-=(const Derived& other)
 }
 
 template <typename Derived, typename Scalar>
-Vec2DCommon<Derived, typename Scalar>::Vec2DCommon(const yarp::sig::Vector& v)
+Vec2DCommon<Derived, Scalar>::Vec2DCommon(const yarp::sig::Vector& v)
 {
     yCAssert(VEC2D, v.size() == 2);
 
@@ -105,23 +105,21 @@ Vec2DCommon<Derived, typename Scalar>::Vec2DCommon(const yarp::sig::Vector& v)
 
 namespace yarp::math
 {
-    Vec2DOfInt operator*(const yarp::sig::Matrix& lhs, const Vec2DOfInt& rhs)
+    template <typename Derived>
+    Derived operator*(const yarp::sig::Matrix& lhs, const Derived& rhs)
     {
         yCAssert(VEC2D, lhs.rows() == 2 && lhs.cols() == 2);
-        Vec2DOfInt result;
-        result.x = (lhs[0][0] * rhs.x + lhs[0][1] * rhs.y);
-        result.y = (lhs[1][0] * rhs.x + lhs[1][1] * rhs.y);
+        Derived result;
+        result.x = static_cast<decltype(result.x)>(lhs[0][0] * rhs.x + lhs[0][1] * rhs.y);
+        result.y = static_cast<decltype(result.y)>(lhs[1][0] * rhs.x + lhs[1][1] * rhs.y);
         return result;
     }
 
-    Vec2DOfDouble operator*(const yarp::sig::Matrix& lhs, const Vec2DOfDouble& rhs)
-    {
-        yCAssert(VEC2D, lhs.rows() == 2 && lhs.cols() == 2);
-        Vec2DOfDouble result;
-        result.x = (lhs[0][0] * rhs.x + lhs[0][1] * rhs.y);
-        result.y = (lhs[1][0] * rhs.x + lhs[1][1] * rhs.y);
-        return result;
-    }
+    // Explicit instantiations: these are what actually define, and export, the
+    // three concrete overloads that the friend declarations in Vec2DCommon bind to.
+    template YARP_math_API Vec2DOfInt    operator*(const yarp::sig::Matrix& lhs, const Vec2DOfInt& rhs);
+    template YARP_math_API Vec2DOfDouble operator*(const yarp::sig::Matrix& lhs, const Vec2DOfDouble& rhs);
+    template YARP_math_API Vec2DOfSizet  operator*(const yarp::sig::Matrix& lhs, const Vec2DOfSizet& rhs);
 } // namespace yarp::math
 
 
@@ -146,7 +144,7 @@ Scalar yarp::math::Vec2DCommon<Derived, Scalar>::norm() const
 }
 
 template <typename Derived, typename Scalar>
-yarp::math::Vec2DCommon<Derived, typename Scalar>::operator yarp::sig::Vector() const
+yarp::math::Vec2DCommon<Derived, Scalar>::operator yarp::sig::Vector() const
 {
     const auto& ccv = static_cast<const Derived&>(*this);
 
@@ -157,6 +155,6 @@ yarp::math::Vec2DCommon<Derived, typename Scalar>::operator yarp::sig::Vector() 
 }
 
 // Explicit instances
-template class Vec2DCommon<Vec2DOfInt, int>;
-template class Vec2DCommon<Vec2DOfDouble, double>;
-template class Vec2DCommon<Vec2DOfSizet, size_t>;
+template class YARP_math_API yarp::math::Vec2DCommon<Vec2DOfInt, int>;
+template class YARP_math_API yarp::math::Vec2DCommon<Vec2DOfDouble, double>;
+template class YARP_math_API yarp::math::Vec2DCommon<Vec2DOfSizet, size_t>;
