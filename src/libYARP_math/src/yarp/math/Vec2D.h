@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -8,107 +8,99 @@
 
 #include <yarp/math/api.h>
 
-#include <yarp/os/Portable.h>
-
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>
 
-#include <type_traits>
-
-namespace yarp::math {
+#include <yarp/sig/Vec2DOfDoubleData.h>
+#include <yarp/sig/Vec2DOfIntData.h>
+#include <yarp/sig/Vec2DOfSizetData.h>
 
 template <typename T>
-class YARP_math_API Vec2D :
-        public yarp::os::Portable
+class YARP_math_API vec2D_selector
 {
-    static_assert(std::is_same<size_t, T>::value || std::is_same<int, T>::value || std::is_same<double, T>::value, "Vec2D can be specialized only as size_t, int, double");
-
-public:
-    T x;
-    T y;
-
-    Vec2D();
-    Vec2D(const T& x_value, const T& y_value);
-    Vec2D(const yarp::sig::Vector& v);
-    explicit operator yarp::sig::Vector() const
-    {
-        yarp::sig::Vector v(2);
-        v[0] = double(x);
-        v[1] = double(y);
-        return v;
-    }
-
-    /**
-    * Returns the Euclidean norm of the Vec2D, i.e. sqrt(x^2+y^2)
-    * @return the computed Euclidean norm.
-    */
-    T norm() const;
-
-    /**
-    * Creates a string object containing a text representation of the object. Useful for printing.
-    * @return the generated string
-    */
-    std::string toString(int precision = -1, int width = -1) const;
-
-    ///////// Serialization methods
-    /*
-    * Read vector from a connection.
-    * return true if a Vec2D was read correctly
-    */
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    /**
-    * Write vector to a connection.
-    * return true if a Vec2D was written correctly
-    */
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-
-    yarp::os::Type getType() const override
-    {
-        return yarp::os::Type::byName("yarp/vec2D");
-    }
-
-    //operators
-    yarp::math::Vec2D<T>& operator+=(const yarp::math::Vec2D<T>& rhs);
-    yarp::math::Vec2D<T>& operator-=(const yarp::math::Vec2D<T>& rhs);
-    bool operator==(const yarp::math::Vec2D<T>& rhs) const;
-    bool operator!=(const yarp::math::Vec2D<T>& rhs) const;
+    static_assert(
+        std::is_same_v<T, int> || std::is_same_v<T, size_t> || std::is_same_v<T, double>,
+        "vec2D<T>: T must be int, size_t or double"
+    );
 };
 
-} // namespace yarp::math
+namespace yarp::math
+{
+    template <typename Derived, typename Scalar>
+    class YARP_math_API Vec2DCommon
+    {
+    public:
+        /**
+        * Returns the Euclidean norm of the Vec2D, i.e. sqrt(x^2+y^2)
+        * @return the computed Euclidean norm.
+        */
+        Scalar norm() const;
 
-// Forward declarations of specialized methods
-template<> bool YARP_math_API yarp::math::Vec2D<double>::read(yarp::os::ConnectionReader& connection);
-template<> bool YARP_math_API yarp::math::Vec2D<int>::read(yarp::os::ConnectionReader& connection);
-template<> bool YARP_math_API yarp::math::Vec2D<size_t>::read(yarp::os::ConnectionReader& connection);
-template<> bool YARP_math_API yarp::math::Vec2D<double>::write(yarp::os::ConnectionWriter& connection) const;
-template<> bool YARP_math_API yarp::math::Vec2D<int>::write(yarp::os::ConnectionWriter& connection) const;
-template<> bool YARP_math_API yarp::math::Vec2D<size_t>::write(yarp::os::ConnectionWriter& connection) const;
+        /**
+        * Creates a string object containing a text representation of the object. Useful for printing.
+        * @return the generated string
+        */
+        std::string PrintToString(int precision = -1, int width = -1) const;
 
-// Forward declaration of explicit instantiated template classes
-YARP_math_EXTERN template class /*YARP_math_API*/ yarp::math::Vec2D<double>;
-YARP_math_EXTERN template class /*YARP_math_API*/ yarp::math::Vec2D<int>;
-YARP_math_EXTERN template class /*YARP_math_API*/ yarp::math::Vec2D<size_t>;
+        Vec2DCommon() = default;
+        Vec2DCommon<Derived, Scalar>(const yarp::sig::Vector& v);
+        explicit operator yarp::sig::Vector() const;
+
+        bool operator==(const Derived& other) const;
+        bool operator!=(const Derived& other) const;
+        Derived operator+(const Derived& other) const;
+        Derived operator-(const Derived& other) const;
+        Derived operator*(const Derived& other) const;
+        Derived operator+=(const Derived& rhs);
+        Derived operator-=(const Derived& rhs);
+
+        friend YARP_math_API Derived operator*(const yarp::sig::Matrix& lhs, const Derived& rhs);
+    };
+}
+
+namespace yarp::sig
+{
+    class Vec2DOfDouble : public Vec2DOfDoubleData, public yarp::math::Vec2DCommon<Vec2DOfDouble, double>
+    {
+        public:
+        using Vec2DOfDoubleData::Vec2DOfDoubleData;
+        using yarp::math::Vec2DCommon<Vec2DOfDouble, double>::Vec2DCommon;
+    };
+
+    class Vec2DOfInt : public Vec2DOfIntData, public yarp::math::Vec2DCommon<Vec2DOfInt, int>
+    {
+        public:
+        using Vec2DOfIntData::Vec2DOfIntData;
+        using yarp::math::Vec2DCommon<Vec2DOfInt, int>::Vec2DCommon;
+    };
+
+    class Vec2DOfSizet : public Vec2DOfSizetData, public yarp::math::Vec2DCommon<Vec2DOfSizet, size_t>
+    {
+        public:
+        using Vec2DOfSizetData::Vec2DOfSizetData;
+        using yarp::math::Vec2DCommon<Vec2DOfSizet, size_t>::Vec2DCommon;
+    };
+}
 
 
+template <>
+struct YARP_math_API  vec2D_selector<int> {
+    using type = yarp::sig::Vec2DOfInt;
+};
 
-//operators
+template <>
+struct YARP_math_API  vec2D_selector<size_t> {
+    using type = yarp::sig::Vec2DOfSizet;
+};
+
+template <>
+struct YARP_math_API  vec2D_selector<double> {
+    using type = yarp::sig::Vec2DOfDouble;
+};
+
+namespace yarp::math {
 template <typename T>
-yarp::math::Vec2D<T> operator+(yarp::math::Vec2D<T> lhs, const yarp::math::Vec2D<T>& rhs);
-
-template <typename T>
-yarp::math::Vec2D<T> operator-(yarp::math::Vec2D<T> lhs, const yarp::math::Vec2D<T>& rhs);
-
-template <typename T>
-yarp::math::Vec2D<T> operator*(const yarp::sig::Matrix& lhs, yarp::math::Vec2D<T> rhs);
-
-// Forward declaration of explicit instantiated template functions
-YARP_math_EXTERN template yarp::math::Vec2D<double> YARP_math_API operator + (yarp::math::Vec2D<double> lhs, const yarp::math::Vec2D<double>& rhs);
-YARP_math_EXTERN template yarp::math::Vec2D<int>    YARP_math_API operator + (yarp::math::Vec2D<int> lhs, const yarp::math::Vec2D<int>& rhs);
-YARP_math_EXTERN template yarp::math::Vec2D<double> YARP_math_API operator - (yarp::math::Vec2D<double> lhs, const yarp::math::Vec2D<double>& rhs);
-YARP_math_EXTERN template yarp::math::Vec2D<int>    YARP_math_API operator - (yarp::math::Vec2D<int> lhs, const yarp::math::Vec2D<int>& rhs);
-YARP_math_EXTERN template yarp::math::Vec2D<double> YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<double> rhs);
-YARP_math_EXTERN template yarp::math::Vec2D<int>    YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<int> rhs);
-
+using Vec2D = typename vec2D_selector<T>::type;
+}
 
 #endif // YARP_MATH_VEC2D_H

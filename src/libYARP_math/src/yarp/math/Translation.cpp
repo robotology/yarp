@@ -8,7 +8,7 @@
 #include <yarp/os/LogComponent.h>
 
 namespace {
-YARP_LOG_COMPONENT(QUATERNION, "yarp.math.Translation")
+YARP_LOG_COMPONENT(TRANSLATION, "yarp.math.Translation")
 }
 
 void yarp::math::Translation::set(double x, double y, double z)

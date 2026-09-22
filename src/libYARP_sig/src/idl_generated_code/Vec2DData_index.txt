@@ -1,0 +1,7 @@
+yarp/sig/Vec2DData_common.h
+yarp/sig/Vec2DOfDoubleData.h
+yarp/sig/Vec2DOfDoubleData.cpp
+yarp/sig/Vec2DOfIntData.h
+yarp/sig/Vec2DOfIntData.cpp
+yarp/sig/Vec2DOfSizetData.h
+yarp/sig/Vec2DOfSizetData.cpp
