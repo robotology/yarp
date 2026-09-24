@@ -1,272 +1,160 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <yarp/math/Vec2D.h>
 
-#include <yarp/os/ConnectionReader.h>
-#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/math/Math.h>
 #include <sstream>
 #include <cmath>
 #include <cstdio>
 
-// network stuff
-#include <yarp/os/NetInt32.h>
-
 using namespace yarp::math;
+using namespace yarp::sig;
 
 namespace {
 YARP_LOG_COMPONENT(VEC2D, "yarp.math.Vec2D")
 }
 
-
-YARP_BEGIN_PACK
-class Vec2DPortContentHeader
+template <typename Derived, typename Scalar>
+bool Vec2DCommon<Derived, Scalar>::operator==(const Derived& other) const
 {
-public:
-    yarp::os::NetInt32 listTag{0};
-    yarp::os::NetInt32 listLen{0};
-    Vec2DPortContentHeader() = default;
-};
-YARP_END_PACK
+    const auto& v = static_cast<const Derived&>(*this);
 
-namespace yarp::math {
-template<>
-bool Vec2D<double>::read(yarp::os::ConnectionReader& connection)
-{
-    // auto-convert text mode interaction
-    connection.convertTextMode();
-    Vec2DPortContentHeader header;
-    bool ok = connection.expectBlock(reinterpret_cast<char*>(&header), sizeof(header));
-    if (!ok) {
-        return false;
-    }
-
-    if (header.listLen == 2 && header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64))
-    {
-        this->x = connection.expectFloat64();
-        this->y = connection.expectFloat64();
-    }
-    else
-    {
-        return false;
-    }
-
-    return !connection.isError();
+    return v.x == other.x &&
+            v.y == other.y;
 }
 
-template<>
-bool Vec2D<int>::read(yarp::os::ConnectionReader& connection)
+template <typename Derived, typename Scalar>
+bool  Vec2DCommon<Derived, Scalar>::operator!=(const Derived& other) const
 {
-    // auto-convert text mode interaction
-    connection.convertTextMode();
-    Vec2DPortContentHeader header;
-    bool ok = connection.expectBlock(reinterpret_cast<char*>(&header), sizeof(header));
-    if (!ok) {
-        return false;
-    }
+    const auto& v = static_cast<const Derived&>(*this);
 
-    if (header.listLen == 2 && header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_INT32))
+    return v.x != other.x ||
+            v.y != other.y;
+}
+
+template <typename Derived, typename Scalar>
+Derived Vec2DCommon<Derived, Scalar>::operator+(const Derived& other) const
+{
+    const auto& v = static_cast<const Derived&>(*this);
+
+    Derived result;
+    result.x = v.x + other.x;
+    result.y = v.y + other.y;
+
+    return result;
+}
+
+template <typename Derived, typename Scalar>
+Derived Vec2DCommon<Derived, Scalar>::operator-(const Derived& other) const
+{
+    const auto& v = static_cast<const Derived&>(*this);
+
+    Derived result;
+    result.x = v.x - other.x;
+    result.y = v.y - other.y;
+
+    return result;
+}
+
+template <typename Derived, typename Scalar>
+Derived Vec2DCommon<Derived, Scalar>::operator*(const Derived& other) const
+{
+    const auto& v = static_cast<const Derived&>(*this);
+
+    Derived result;
+    result.x = v.x * other.x;
+    result.y = v.y * other.y;
+
+    return result;
+}
+
+template <typename Derived, typename Scalar>
+Derived Vec2DCommon<Derived, Scalar>::operator+=(const Derived& other)
+{
+    auto& v = static_cast<Derived&>(*this);
+    Derived result;
+    result.x = v.x += other.x;
+    result.y = v.y += other.y;
+    return result;
+}
+
+template <typename Derived, typename Scalar>
+Derived Vec2DCommon<Derived, Scalar>::operator-=(const Derived& other)
+{
+    auto& v = static_cast<Derived&>(*this);
+    Derived result;
+    result.x = v.x -= other.x;
+    result.y = v.y -= other.y;
+    return result;
+}
+
+template <typename Derived, typename Scalar>
+Vec2DCommon<Derived, Scalar>::Vec2DCommon(const yarp::sig::Vector& v)
+{
+    yCAssert(VEC2D, v.size() == 2);
+
+    auto& ccv = static_cast<Derived&>(*this);
+    ccv.x = decltype(ccv.x)(v[0]);
+    ccv.y = decltype(ccv.y)(v[1]);
+}
+
+
+namespace yarp::math
+{
+    template <typename Derived>
+    Derived operator*(const yarp::sig::Matrix& lhs, const Derived& rhs)
     {
-        this->x = connection.expectInt32();
-        this->y = connection.expectInt32();
-    }
-    else
-    {
-        return false;
-    }
-
-    return !connection.isError();
-}
-
-template<>
-bool Vec2D<size_t>::read(yarp::os::ConnectionReader& connection)
-{
-    // auto-convert text mode interaction
-    connection.convertTextMode();
-    Vec2DPortContentHeader header;
-    bool ok = connection.expectBlock(reinterpret_cast<char*>(&header), sizeof(header));
-    if (!ok) {
-        return false;
+        yCAssert(VEC2D, lhs.rows() == 2 && lhs.cols() == 2);
+        Derived result;
+        result.x = static_cast<decltype(result.x)>(lhs[0][0] * rhs.x + lhs[0][1] * rhs.y);
+        result.y = static_cast<decltype(result.y)>(lhs[1][0] * rhs.x + lhs[1][1] * rhs.y);
+        return result;
     }
 
-    if (header.listLen == 2 && header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_INT64))
-    {
-        this->x = connection.expectInt64();
-        this->y = connection.expectInt64();
-    }
-    else
-    {
-        return false;
-    }
-
-    return !connection.isError();
-}
-
-template<>
-bool Vec2D<double>::write(yarp::os::ConnectionWriter& connection) const
-{
-    Vec2DPortContentHeader header;
-
-    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64);
-    header.listLen = 2;
-
-    connection.appendBlock(reinterpret_cast<char*>(&header), sizeof(header));
-
-    connection.appendFloat64(this->x);
-    connection.appendFloat64(this->y);
-
-    connection.convertTextMode();
-
-    return !connection.isError();
-}
-
-template<>
-bool Vec2D<int>::write(yarp::os::ConnectionWriter& connection) const
-{
-    Vec2DPortContentHeader header;
-
-    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_INT32);
-    header.listLen = 2;
-
-    connection.appendBlock(reinterpret_cast<char*>(&header), sizeof(header));
-
-    connection.appendInt32(this->x);
-    connection.appendInt32(this->y);
-
-    connection.convertTextMode();
-
-    return !connection.isError();
-}
-
-template<>
-bool Vec2D<size_t>::write(yarp::os::ConnectionWriter& connection) const
-{
-    Vec2DPortContentHeader header;
-
-    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_INT64);
-    header.listLen = 2;
-
-    connection.appendBlock(reinterpret_cast<char*>(&header), sizeof(header));
-
-    connection.appendInt64(this->x);
-    connection.appendInt64(this->y);
-
-    connection.convertTextMode();
-
-    return !connection.isError();
-}
-
+    // Explicit instantiations: these are what actually define, and export, the
+    // three concrete overloads that the friend declarations in Vec2DCommon bind to.
+    template YARP_math_API Vec2DOfInt    operator*(const yarp::sig::Matrix& lhs, const Vec2DOfInt& rhs);
+    template YARP_math_API Vec2DOfDouble operator*(const yarp::sig::Matrix& lhs, const Vec2DOfDouble& rhs);
+    template YARP_math_API Vec2DOfSizet  operator*(const yarp::sig::Matrix& lhs, const Vec2DOfSizet& rhs);
 } // namespace yarp::math
 
 
-template <typename T>
-std::string yarp::math::Vec2D<T>::toString(int precision, int width) const
+template <typename Derived, typename Scalar>
+std::string yarp::math::Vec2DCommon<Derived, Scalar>::PrintToString(int precision, int width) const
 {
+    const auto& ccv = static_cast<const Derived&>(*this);
+
     std::ostringstream stringStream;
     stringStream.precision(precision);
     stringStream.width(width);
-    stringStream << std::string("x:") << x << std::string(" y:") << y;
+    stringStream << std::string("x:") << ccv.x << std::string(" y:") << ccv.y;
     return stringStream.str();
 }
 
-template <typename T>
-T yarp::math::Vec2D<T>::norm() const
+
+template <typename Derived, typename Scalar>
+Scalar yarp::math::Vec2DCommon<Derived, Scalar>::norm() const
 {
-    return T(sqrt(x*x + y*y));
+    const auto& v = static_cast<const Derived&>(*this);
+    return static_cast<Scalar>(std::sqrt(static_cast<double>(v.x * v.x + v.y * v.y)));
 }
 
-//constructors
-template <typename T>
-yarp::math::Vec2D<T>::Vec2D() : x(0), y(0)
+template <typename Derived, typename Scalar>
+yarp::math::Vec2DCommon<Derived, Scalar>::operator yarp::sig::Vector() const
 {
+    const auto& ccv = static_cast<const Derived&>(*this);
+
+    yarp::sig::Vector v(2);
+    v[0] = double(ccv.x);
+    v[1] = double(ccv.y);
+    return v;
 }
 
-template <typename T>
-yarp::math::Vec2D<T>::Vec2D(const yarp::sig::Vector& v)
-{
-    yCAssert(VEC2D, v.size() == 2);
-    x = T(v[0]);
-    y = T(v[1]);
-}
-
-template <typename T>
-yarp::math::Vec2D<T>::Vec2D(const T& x_value, const T& y_value)
-{
-    x = x_value;
-    y = y_value;
-}
-
-template <typename T>
- yarp::math::Vec2D<T>  operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<T> rhs)
-{
-    yCAssert(VEC2D, lhs.rows() == 2 && lhs.cols() == 2);
-    T x = rhs.x; T y = rhs.y;
-    rhs.x = T(lhs[0][0] * x + lhs[0][1] * y);
-    rhs.y = T(lhs[1][0] * x + lhs[1][1] * y);
-    return rhs;
-}
-
-template <typename T>
-yarp::math::Vec2D<T> operator + (yarp::math::Vec2D<T> lhs, const yarp::math::Vec2D<T>& rhs)
-{
-    lhs += rhs;
-    return lhs;
-}
-
-template <typename T>
-yarp::math::Vec2D<T> operator - (yarp::math::Vec2D<T> lhs, const yarp::math::Vec2D<T>& rhs)
-{
-    lhs -= rhs;
-    return lhs;
-}
-
-template <typename T>
-yarp::math::Vec2D<T>& yarp::math::Vec2D<T>::operator+=(const yarp::math::Vec2D<T>& rhs)
-{
-    this->x += rhs.x;
-    this->y += rhs.y;
-    return *this;
-}
-
-template <typename T>
-yarp::math::Vec2D<T>& yarp::math::Vec2D<T>::operator-=(const yarp::math::Vec2D<T>& rhs)
-{
-    this->x -= rhs.x;
-    this->y -= rhs.y;
-    return *this;
-}
-
-template <typename T>
-bool yarp::math::Vec2D<T>::operator ==(const yarp::math::Vec2D<T>& rhs) const
-{
-    if (this->x == rhs.x &&
-        this->y == rhs.y) {
-        return true;
-    }
-    return false;
-}
-
-template <typename T>
-bool yarp::math::Vec2D<T>::operator !=(const yarp::math::Vec2D<T>& rhs) const
-{
-    if (this->x == rhs.x &&
-        this->y == rhs.y) {
-        return false;
-    }
-    return true;
-}
-
-template yarp::math::Vec2D<double> YARP_math_API operator + (yarp::math::Vec2D<double> lhs, const yarp::math::Vec2D<double>& rhs);
-template yarp::math::Vec2D<int>    YARP_math_API operator + (yarp::math::Vec2D<int> lhs, const yarp::math::Vec2D<int>& rhs);
-template yarp::math::Vec2D<double> YARP_math_API operator - (yarp::math::Vec2D<double> lhs, const yarp::math::Vec2D<double>& rhs);
-template yarp::math::Vec2D<int>    YARP_math_API operator - (yarp::math::Vec2D<int> lhs, const yarp::math::Vec2D<int>& rhs);
-template yarp::math::Vec2D<double> YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<double> rhs);
-template yarp::math::Vec2D<int>    YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<int> rhs);
-
-template class yarp::math::Vec2D<double>;
-template class yarp::math::Vec2D<int>;
-template class yarp::math::Vec2D<size_t>;
+// Explicit instances
+template class YARP_math_API yarp::math::Vec2DCommon<Vec2DOfInt, int>;
+template class YARP_math_API yarp::math::Vec2DCommon<Vec2DOfDouble, double>;
+template class YARP_math_API yarp::math::Vec2DCommon<Vec2DOfSizet, size_t>;

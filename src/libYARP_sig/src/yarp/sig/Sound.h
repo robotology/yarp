@@ -10,6 +10,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/conf/numeric.h>
 #include <yarp/sig/api.h>
+#include <yarp/sig/SoundMarkerData.h>
 #include <vector>
 #include <string>
 
@@ -17,13 +18,9 @@
 
 namespace yarp::sig {
 
-struct YARP_sig_API SoundMarker
+struct YARP_sig_API SoundMarker : public SoundMarkerData
 {
 public:
-    std::string label;
-    int channel=-1;
-    size_t sample_id=0;
-
     bool operator==(const SoundMarker& other) const
     {
         return label == other.label &&

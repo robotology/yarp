@@ -16,6 +16,7 @@ set(YARP_math_HDRS
   yarp/math/RandVector.h
   yarp/math/SVD.h
   yarp/math/Quaternion.h
+  yarp/math/Translation.h
   yarp/math/Vec2D.h
   yarp/math/FrameTransform.h
 )
@@ -34,7 +35,29 @@ set(YARP_math_SRCS
   yarp/math/FrameTransform.cpp
   yarp/math/RandScalar.cpp
   yarp/math/RandnScalar.cpp
+  yarp/math/Translation.cpp
 )
+
+# Handle the YARP thrift messages
+include(YarpChooseIDL)
+
+set(YARP_math_IDL
+  idl/FrameTransformData.thrift
+)
+
+yarp_choose_idl(YARP_math_idl ${YARP_math_IDL})
+
+unset(YARP_math_idl_HDRS)
+unset(YARP_math_idl_IMPL_HDRS)
+foreach(_f IN LISTS YARP_math_idl_GEN_FILES)
+  if("${_f}" MATCHES "\\.h$")
+    if ("${_f}" MATCHES "yarp/math" AND NOT "${_f}" MATCHES "yarp/math/impl")
+      list(APPEND YARP_math_idl_HDRS "${_f}")
+    else()
+      list(APPEND YARP_math_idl_IMPL_HDRS ${_f})
+    endif()
+  endif()
+endforeach()
 
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -48,17 +71,24 @@ source_group(
     ${YARP_math_HDRS}
     ${YARP_math_IMPL_HDRS}
 )
+source_group(
+  TREE "${YARP_math_idl_BUILD_INTERFACE_INCLUDE_DIRS}"
+  PREFIX "Generated Files"
+  FILES ${YARP_math_idl_GEN_FILES}
+)
 
 target_sources(YARP_math
   PRIVATE
     ${YARP_math_SRCS}
     ${YARP_math_HDRS}
     ${YARP_math_IMPL_HDRS}
+    ${YARP_math_idl_GEN_FILES}
 )
 
 target_include_directories(YARP_math
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${YARP_math_idl_BUILD_INTERFACE_INCLUDE_DIRS}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_compile_features(YARP_math PUBLIC cxx_std_17)
@@ -86,8 +116,8 @@ list(APPEND YARP_math_PRIVATE_DEPS
 target_link_libraries(YARP_math PRIVATE Eigen3::Eigen)
 list(APPEND YARP_math_PRIVATE_DEPS Eigen3)
 
-set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
-set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})
+set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS} ${YARP_math_idl_HDRS})
+set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS} ${YARP_math_idl_IMPL_HDRS})
 set_property(TARGET YARP_math PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_math PROPERTY SOVERSION ${YARP_SOVERSION})
 set_property(TARGET YARP_math PROPERTY FOLDER "Libraries")

@@ -26,48 +26,6 @@
 using namespace yarp::sig;
 using namespace yarp::os;
 
-inline void writeToConnection(const Image& img, ConnectionWriter& connection)
-{
-    ImageNetworkHeader imghdr;
-
-    imghdr.setFromImage(img);
-    size_t hdrsize = sizeof(imghdr);
-    connection.appendInt32(BOTTLE_TAG_BLOB);
-    connection.appendInt32(hdrsize);
-    connection.appendBlock((char*)(&imghdr), hdrsize);
-
-    size_t imgsize = img.getRawImageSize();
-    connection.appendInt32(BOTTLE_TAG_BLOB);
-    connection.appendInt32(imgsize);
-    connection.appendBlock((char*)(img.getRawImage()), imgsize);
-
-    return;
-}
-
-inline bool readFromConnection(FlexImage& dest, ConnectionReader& connection)
-{
-    bool ok = true;
-    ImageNetworkHeader imghdr;
-
-    connection.expectInt32();
-    size_t sizeData = connection.expectInt32();
-    ok &= connection.expectBlock((char*)(&imghdr), sizeData);
-    if (!ok) { return false; }
-    imghdr.setToImage(dest);
-
-    connection.expectInt32();
-    size_t sizeImg = connection.expectInt32();
-    size_t psizeImg = dest.getRawImageSize();
-    if (sizeImg != psizeImg)
-    {
-        return false;
-    }
-    unsigned char* pImg = dest.getRawImage();
-    ok &= connection.expectBlock((char*)pImg, sizeImg);
-
-    return ok;
-}
-
 LayeredImage::LayeredImage()
 {
 }

@@ -606,10 +606,9 @@ namespace yarp::dev::tests
         transform.rotFromRPY(startingPose[3], startingPose[4], startingPose[5]);
         transform.fromMatrix(result * transform.toMatrix());
         CHECK(itf->transformPose("/finger", "/arm", startingPose, endPose));
-        CHECK((transform.translation.tX - endPose[0]) <= pow(10, -14));
-        CHECK((transform.translation.tY - endPose[1]) <= pow(10, -14));
-        CHECK((transform.translation.tZ - endPose[2]) <= pow(10, -14));
-        CHECK((transform.translation.tZ - endPose[2]) <= pow(10, -14));
+        CHECK((transform.translation.t_x - endPose[0]) <= pow(10, -14));
+        CHECK((transform.translation.t_y - endPose[1]) <= pow(10, -14));
+        CHECK((transform.translation.t_z - endPose[2]) <= pow(10, -14));
         CHECK((transform.getRPYRot()[0] - endPose[3]) <= pow(10, -14));
         CHECK((transform.getRPYRot()[1] - endPose[4]) <= pow(10, -14));
         CHECK((transform.getRPYRot()[2] - endPose[5]) <= pow(10, -14));

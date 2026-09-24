@@ -6,6 +6,7 @@ include(YarpCatchUtils)
 add_executable(harness_dev)
 target_sources(harness_dev
   PRIVATE
+    DeviceWithPortTest.cpp
     MapGrid2DTest.cpp
     PolyDriverTest.cpp
     ReturnValueTest.cpp

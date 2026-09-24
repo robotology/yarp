@@ -48,8 +48,6 @@ target_link_libraries(harness_os
   PRIVATE
     YARP_harness
     YARP::YARP_os
-    YARP::YARP_sig
-    YARP::YARP_dev
     YARP::YARP_companion
 )
 
