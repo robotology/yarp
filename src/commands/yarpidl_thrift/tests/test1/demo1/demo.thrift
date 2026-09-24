@@ -44,6 +44,24 @@ struct DemoStructMap {
   1: map<string, DemoStruct> mapValues;
 }
 
+/**
+ * This structure will have private data members.
+ */
+struct DemoStructPrivate {
+  1: i32 privData = 0,
+} (
+  yarp.data_visibility = "private"
+)
+
+/**
+ * This structure will have protected data members.
+ */
+struct DemoStructPrrotected {
+  1: i32 protectedData = 0,
+} (
+  yarp.data_visibility = "protected"
+)
+
 struct DemoStructExt {
   /** this is the "x" part */
   1: i32 x = 0,

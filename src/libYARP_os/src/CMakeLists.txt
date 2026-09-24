@@ -38,7 +38,6 @@ set(YARP_os_HDRS
   yarp/os/Election.h
   yarp/os/Event.h
   yarp/os/Face.h
-  yarp/os/Header.h
   yarp/os/InputProtocol.h
   yarp/os/InputStream.h
   yarp/os/LocalReader.h
@@ -107,6 +106,7 @@ set(YARP_os_HDRS
   yarp/os/ShiftStream.h
   yarp/os/SizedWriter.h
   yarp/os/Stamp.h
+  yarp/os/StampWithFrame.h
   yarp/os/StringInputStream.h
   yarp/os/StringOutputStream.h
   yarp/os/SystemClock.h
@@ -157,7 +157,6 @@ set(YARP_os_SRCS
   yarp/os/ContactStyle.cpp
   yarp/os/DummyConnector.cpp
   yarp/os/Event.cpp
-  yarp/os/Header.cpp
   yarp/os/InputStream.cpp
   yarp/os/Log.cpp
   yarp/os/LogComponent.cpp
@@ -214,6 +213,7 @@ set(YARP_os_SRCS
   yarp/os/ShiftStream.cpp
   yarp/os/SizedWriter.cpp
   yarp/os/Stamp.cpp
+  yarp/os/StampWithFrame.cpp
   yarp/os/SystemClock.cpp
   yarp/os/SystemInfo.cpp
   yarp/os/Terminator.cpp
@@ -375,6 +375,8 @@ include(YarpChooseIDL)
 set(YARP_os_IDL
   idl/OSTestMsg.thrift
   idl/SystemInfoData.thrift
+  idl/StampData.thrift
+  idl/StampWithFrameData.thrift
 )
 
 yarp_choose_idl(YARP_os_idl ${YARP_os_IDL})

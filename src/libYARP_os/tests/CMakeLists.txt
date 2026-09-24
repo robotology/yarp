@@ -14,7 +14,6 @@ target_sources(harness_os PRIVATE
   ContactTest.cpp
   ElectionTest.cpp
   EventTest.cpp
-  HeaderTest.cpp
   LogStreamTest.cpp
   LogTest.cpp
   MessageStackTest.cpp
@@ -31,6 +30,7 @@ target_sources(harness_os PRIVATE
   SemaphoreTest.cpp
   StampTest.cpp
   RandomTest.cpp
+  StampWithFrameTest.cpp
   StringInputStreamTest.cpp
   StringOutputStreamTest.cpp
   SystemInfoTest.cpp

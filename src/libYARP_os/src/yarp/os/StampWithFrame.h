@@ -1,11 +1,10 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_OS_HEADER_H
-#define YARP_OS_HEADER_H
+#ifndef YARP_OS_STAMPWITHFRAME_H
+#define YARP_OS_STAMPWITHFRAME_H
 
 #include <yarp/os/Portable.h>
 #include <yarp/conf/numeric.h>
@@ -19,7 +18,7 @@ namespace yarp::os {
  *
  * This class is compatible with the Stamp class
  */
-class YARP_os_API Header :
+class YARP_os_API StampWithFrame :
         public Portable
 {
 public:
@@ -32,53 +31,53 @@ public:
     static constexpr count_t npos = static_cast<count_t>(-1);
 
     /**
-     * Construct an invalid Header.
+     * Construct an invalid StampWithFrame.
      */
-    explicit Header();
+    explicit StampWithFrame();
 
     /**
-     * Construct a Header with a given sequence number and time.
+     * Construct a StampWithFrame with a given sequence number and time.
      *
      * @param count the sequence number.
      * @param time the time stamp (in seconds, relative to an arbitrary zero time).
      * @param frameId the frame id.
      */
-    Header(count_t count, yarp::conf::float64_t time, std::string frameId = {});
+    StampWithFrame(count_t count, yarp::conf::float64_t time, std::string frameId = {});
 
     /**
      * @brief Copy constructor.
      *
-     * @param rhs the Header to copy
+     * @param rhs the StampWithFrame to copy
      */
-    Header(const Header& rhs);
+    StampWithFrame(const StampWithFrame& rhs);
 
     /**
      * @brief Move constructor.
      *
-     * @param rhs the Header to be moved
+     * @param rhs the StampWithFrame to be moved
      */
-    Header(Header&& rhs) noexcept;
+    StampWithFrame(StampWithFrame&& rhs) noexcept;
 
     /**
      * @brief Destructor.
      */
-    ~Header() override;
+    ~StampWithFrame() override;
 
     /**
      * Copy assignment operator.
      *
-     * @param rhs the Header to copy
+     * @param rhs the StampWithFrame to copy
      * @return this object
      */
-    Header& operator=(const Header& rhs);
+    StampWithFrame& operator=(const StampWithFrame& rhs);
 
     /**
      * @brief Move assignment operator.
      *
-     * @param rhs the Header to be moved
+     * @param rhs the StampWithFrame to be moved
      * @return this object
      */
-    Header& operator=(Header&& rhs) noexcept;
+    StampWithFrame& operator=(StampWithFrame&& rhs) noexcept;
 
     /**
      * Get the sequence number.
@@ -102,9 +101,9 @@ public:
     std::string frameId() const;
 
     /**
-     * Check if this Header is valid.
+     * Check if this StampWithFrame is valid.
      *
-     * @return true if this is a valid Header
+     * @return true if this is a valid StampWithFrame
      */
     bool isValid() const;
 
@@ -121,9 +120,9 @@ public:
     void update(yarp::conf::float64_t time);
 
     /**
-     * Set the frame id for this header
+     * Set the frame id for this StampWithFrame
      *
-     * @param frameId the new frame id for this header
+     * @param frameId the new frame id for this StampWithFrame
      */
     void setFrameId(std::string frameId);
 
@@ -144,4 +143,4 @@ private:
 
 } // namespace yarp::os
 
-#endif // YARP_OS_HEADER_H
+#endif // YARP_OS_STAMPWITHFRAME_H

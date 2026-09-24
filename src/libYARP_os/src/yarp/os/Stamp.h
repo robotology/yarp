@@ -7,22 +7,15 @@
 #ifndef YARP_OS_STAMP_H
 #define YARP_OS_STAMP_H
 
-#include <yarp/os/NetFloat64.h>
-#include <yarp/os/NetInt32.h>
-#include <yarp/os/Portable.h>
-
+#include <yarp/os/StampData.h>
 
 namespace yarp::os {
 
 /**
  * An abstraction for a time stamp and/or sequence number.
  */
-class YARP_os_API Stamp : public Portable
+class YARP_os_API Stamp : public yarp::os::StampData
 {
-private:
-    NetInt32 sequenceNumber;
-    NetFloat64 timeStamp;
-
 public:
     /**
      * Construct an invalid Stamp.
@@ -79,11 +72,6 @@ public:
      */
     void update(double time);
 
-    // Documented in Portable
-    bool read(ConnectionReader& connection) override;
-
-    // Documented in Portable
-    bool write(ConnectionWriter& connection) const override;
 };
 
 } // namespace yarp::os

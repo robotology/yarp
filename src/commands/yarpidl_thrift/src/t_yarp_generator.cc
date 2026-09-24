@@ -2390,9 +2390,25 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     f_h_ << indent_initializer_h() << "public yarp::os::idl::WirePortable\n";
     f_h_ << indent_h() << "{\n";
     indent_up_h();
-    f_h_ << indent_access_specifier_h() << "public:\n";
+
+    //Set data visibility
+    if (annotations.find("yarp.data_visibility") != annotations.end()) {
+        if (annotations.at("yarp.data_visibility") == "public") {
+            f_h_ << indent_access_specifier_h() << "public:\n";
+        } else if (annotations.at("yarp.data_visibility") == "protected") {
+            f_h_ << indent_access_specifier_h() << "protected:\n";
+        } else if (annotations.at("yarp.data_visibility") == "private") {
+            f_h_ << indent_access_specifier_h() << "private:\n";
+        } else
+        {
+            throw "Invalid value for yarp.data_visibility annotation: " + annotations.at("yarp.data_visibility");
+        }
+    } else {
+        f_h_ << indent_access_specifier_h() << "public:\n";
+    }
 
     generate_struct_fields(tstruct, f_h_, f_cpp_);
+    f_h_ << indent_access_specifier_h() << "public:\n";
     generate_struct_default_constructor(tstruct, f_h_, f_cpp_);
     generate_struct_constructor(tstruct, f_h_, f_cpp_);
     generate_struct_read_wirereader(tstruct, f_h_, f_cpp_);
