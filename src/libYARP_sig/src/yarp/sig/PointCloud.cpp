@@ -63,44 +63,29 @@ template <class T>
 bool PointCloud<T>::read(yarp::os::ConnectionReader& connection)
 {
     connection.convertTextMode();
-    yarp::sig::PointCloudNetworkHeader _header;
-    bool ok = connection.expectBlock((char*)&_header, sizeof(_header));
+    yarp::sig::PointCloudNetworkHeader rcvHeader;
+    bool ok = connection.expectBlock((char*)&rcvHeader, sizeof(rcvHeader));
     if (!ok) {
         return false;
     }
 
-    m_storage.resize(_header.height * _header.width);
+    m_storage.resize(rcvHeader.height * rcvHeader.width);
     std::memset((void*)m_storage.data(), 0, m_storage.size() * sizeof(T));
 
-    header.height = _header.height;
-    header.width = _header.width;
-    header.isDense = _header.isDense;
-
-    if (header.pointType == _header.pointType) {
-        return m_storage.read(connection);
-    }
+    header.height = rcvHeader.height;
+    header.width = rcvHeader.width;
+    header.isDense = rcvHeader.isDense;
+    header.pointType = rcvHeader.pointType;
 
     T* tmp = m_storage.data();
-
     yAssert(tmp != nullptr);
 
-    // Skip the vector header....
-    connection.expectInt32();
-    connection.expectInt32();
-
-    std::vector<int> recipe = getComposition(_header.pointType);
-
-    yarp::os::ManagedBytes dummy;
-    for (size_t i = 0; i < m_storage.size(); i++) {
-        for (size_t j = 0; j < recipe.size(); j++) {
-            size_t sizeToRead = pointType2Size(recipe[j]);
-            if ((header.pointType & recipe[j])) {
-                size_t offset = getOffset(header.pointType, recipe[j]);
-                connection.expectBlock((char*)&tmp[i] + offset, sizeToRead);
-            } else {
-                dummy.allocateOnNeed(sizeToRead, sizeToRead);
-                connection.expectBlock(dummy.bytes().get(), sizeToRead);
-            }
+    // Writer always sends a contiguous block containing the raw array of T,
+    // so read it in one go.
+    size_t bytes = m_storage.size() * sizeof(T);
+    if (bytes > 0) {
+        if (!connection.expectBlock((char*)tmp, bytes)) {
+            return false;
         }
     }
 
@@ -112,7 +97,9 @@ template <class T>
 bool PointCloud<T>::write(yarp::os::ConnectionWriter& writer) const
 {
     writer.appendBlock((char*)&header, sizeof(PointCloudNetworkHeader));
-    return m_storage.write(writer);
+    auto storagepointer = m_storage.data();
+    writer.appendBlock((char*)storagepointer, m_storage.size() * sizeof(T));
+    return true;
 }
 
 template <class T>

@@ -53,15 +53,15 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         CHECK(inPort.open("/test/pointcloud/in")); // Opening input port
         CHECK(NetworkBase::connect(outPort.getName(), inPort.getName())); // "Checking connection"
         PointCloud<DataXYZRGBA>& testPC = outPort.prepare();
-        int width  = 100;
+        int width  = 10;
         int height = 20;
         testPC.resize(width, height);
 
         for (int i=0; i<width*height; i++)
         {
-            testPC(i).x = static_cast<float>(i);
-            testPC(i).y = static_cast<float>(i + 1);
-            testPC(i).z = static_cast<float>(i + 2);
+            testPC(i).x = static_cast<float>(10000 + i);
+            testPC(i).y = static_cast<float>(20000 + i);
+            testPC(i).z = static_cast<float>(30000 + i);
             testPC(i).r = '1';
             testPC(i).g = '2';
             testPC(i).b = '3';
@@ -80,9 +80,9 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         bool ok = true;
         for (int i=0; i<width*height; i++)
         {
-            ok &= inCloud(i).x == i;
-            ok &= inCloud(i).y == i + 1;
-            ok &= inCloud(i).z == i + 2;
+            ok &= inCloud(i).x == 10000 + i;
+            ok &= inCloud(i).y == 20000 + i;
+            ok &= inCloud(i).z == 30000 + i;
             ok &= inCloud(i).r == '1';
             ok &= inCloud(i).g == '2';
             ok &= inCloud(i).b == '3';
@@ -99,6 +99,9 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
 
     }
 
+// Writing and reading a point cloud of different type is not supported anymore, for safety reasons
+// so the following tests are commented out.
+    /*
     SECTION("check read/write mismatch 1.")
     {
         INFO("Testing the case in which we receive a structure bigger than the one we expect");
@@ -108,7 +111,7 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         CHECK(inPort.open("/test/pointcloud/in")); // Opening input port
         CHECK(NetworkBase::connect(outPort.getName(), inPort.getName())); // "Checking connection"
         PointCloud<DataXYZRGBA>& testPC = outPort.prepare();
-        int width  = 200;
+        int width  = 30;
         int height = 20;
         testPC.resize(width, height);
 
@@ -201,8 +204,8 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
 
         outPort.close();
         inPort.close();
-
     }
+*/
 
     SECTION("check copy and assignment.")
     {

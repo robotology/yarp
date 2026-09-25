@@ -73,7 +73,7 @@ public:
 
     const char* getRawData() const override
     {
-        return m_storage.getMemoryBlock();
+        return (const char*)(m_storage.data());
     }
 
     /**
@@ -244,7 +244,7 @@ public:
     bool filterDataZ(double minZ=0, double maxZ=std::numeric_limits<double>::infinity());
 
 private:
-    yarp::sig::VectorOf<T> m_storage;
+    std::vector<T> m_storage;
 
     void setPointType();
 };
