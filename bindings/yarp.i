@@ -84,7 +84,6 @@
 
 // Try to translate std::string and std::pair to native equivalents
 %include "std_string.i"
-%include "std_string_view.i"
 %include "std_pair.i"
 
 #if defined(SWIGCSHARP)
