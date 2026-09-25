@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2006-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -108,7 +108,7 @@ bool yarp::sig::submatrix(const Matrix &in, Matrix &out, size_t r1, size_t r2, s
     return true;
 }
 
-
+/*
 bool Matrix::read(yarp::os::ConnectionReader& connection) {
     // auto-convert text mode interaction
     connection.convertTextMode();
@@ -166,7 +166,7 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) const {
 
     return true;
 }
-
+*/
 
 std::string Matrix::toString(int precision, int width, const char* endRowStr) const {
 
@@ -203,7 +203,7 @@ void Matrix::updatePointers()
     size_t r=0;
     matrix=new double* [nrows];
     if (nrows > 0) {
-        matrix[0] = storage;
+        matrix[0] = storage.data();
     }
     for(r=1;r<nrows; r++)
     {
@@ -217,26 +217,11 @@ const Matrix &Matrix::operator=(const Matrix &r)
         return *this;
     }
 
-    if(nrows!=r.nrows || ncols!=r.ncols)
-    {
-        if (storage) {
-            delete[] storage;
-        }
-
-        nrows=r.nrows;
-        ncols=r.ncols;
-
-        storage=new double[ncols*nrows];
-        memcpy(storage, r.storage, ncols*nrows*sizeof(double));
-        updatePointers();
-    }
-    else
-    {
-        if (!storage) {
-            storage = new double[ncols * nrows];
-        }
-        memcpy(storage, r.storage, ncols*nrows*sizeof(double));
-    }
+    matrix = nullptr;
+    nrows=r.nrows;
+    ncols=r.ncols;
+    storage=r.storage;
+    updatePointers();
 
     return *this;
 }
@@ -256,73 +241,63 @@ Matrix::~Matrix()
     if (matrix != nullptr) {
         delete[] matrix;
     }
-
-    if (storage != nullptr) {
-        delete[] storage;
-    }
 }
 
 void Matrix::resize(size_t new_r, size_t new_c)
 {
+    // if the size is the same, do nothing
     if (new_r == nrows && new_c == ncols) {
         return;
     }
 
-    auto* new_storage=new double[new_r*new_c];
-
-    const size_t copy_r=(new_r<nrows) ? new_r:nrows;
-    const size_t copy_c=(new_c<ncols) ? new_c:ncols;
-    //copy_r = (new_r<nrows) ? new_r:nrows;
-
-    if (storage!=nullptr)
+    // if the storage is not empty, we need to copy the old data to the new storage
+    if (storage.size() != 0)
     {
-        double *tmp_new=new_storage;
-        double *tmp_current=storage;
-        // copy content
+        std::vector<double> tmp_storage(new_r * new_c);
+        double *tmp_new = tmp_storage.data();
 
-        // favor performance for small matrices
-#if 0
-        const int stepN=(new_c-copy_c);
-        const int stepC=(ncols-copy_c);
+        const size_t copy_r = (new_r < nrows) ? new_r : nrows;
+        const size_t copy_c = (new_c < ncols) ? new_c : ncols;
 
-        for(int r=0; r<copy_r;r++)
+        // Copy rows that exist in both old and new matrix
+        for (size_t r = 0; r < copy_r; r++)
         {
-            for(int c=0;c<copy_c;c++)
-                *tmp_new++=*tmp_current++;
-            tmp_new+=stepN;
-            tmp_current=matrix[r];
-        }
-#endif
-
-        // favor performance with large matrices
-        for(size_t r=0; r<copy_r;r++)
-        {
-            tmp_current=matrix[r];
-            memcpy(tmp_new, tmp_current, sizeof(double)*copy_c);
-            tmp_new+=new_c;
+            const double* src_row = matrix[r];
+            if (copy_c > 0) {
+                memcpy(tmp_new, src_row, sizeof(double) * copy_c);
+            }
+            // Zero-fill any additional columns in the new row (if new_c > copy_c)
+            if (new_c > copy_c) {
+                memset(tmp_new + copy_c, 0, sizeof(double) * (new_c - copy_c));
+            }
+            tmp_new += new_c;
         }
 
+        // If new_r > copy_r, zero remaining new rows
+        for (size_t r = copy_r; r < new_r; r++)
+        {
+            if (new_c > 0) {
+                memset(tmp_new, 0, sizeof(double) * new_c);
+            }
+            tmp_new += new_c;
+        }
 
-        delete [] storage;
+        // Replace storage with the newly built buffer
+        storage = std::move(tmp_storage);
     }
     else
     {
-        //zero memory
-        memset(new_storage, 0, sizeof(double)*new_r*new_c);
+        storage.resize(new_r * new_c);
+        memset(storage.data(), 0, new_r*new_c*sizeof(double));
     }
-
-    storage=new_storage;
-
     nrows=new_r;
     ncols=new_c;
-
-    // storage.resize(r*c);
     updatePointers();
 }
 
 void Matrix::zero()
 {
-    memset(storage, 0, sizeof(double)*ncols*nrows);
+    memset(storage.data(), 0, sizeof(double)*ncols*nrows);
 }
 
 Matrix Matrix::removeCols(size_t first_col, size_t how_many)
@@ -343,14 +318,10 @@ Matrix Matrix::removeCols(size_t first_col, size_t how_many)
         }
     }
 
-    if (storage) {
-        delete[] storage;
-    }
-
     nrows=ret.nrows;
     ncols=ret.ncols;
-    storage=new double[ncols*nrows];
-    memcpy(storage, ret.storage, ncols*nrows*sizeof(double));
+    storage.resize(ncols*nrows);
+    memcpy(storage.data(), ret.storage.data(), ncols*nrows*sizeof(double));
     updatePointers();
     return ret;
 }
@@ -373,14 +344,10 @@ Matrix Matrix::removeRows(size_t first_row, size_t how_many)
         }
     }
 
-    if (storage) {
-        delete[] storage;
-    }
-
     nrows=ret.nrows;
     ncols=ret.ncols;
-    storage=new double[ncols*nrows];
-    memcpy(storage, ret.storage, ncols*nrows*sizeof(double));
+    storage.resize(ncols*nrows);
+    memcpy(storage.data(), ret.storage.data(), ncols*nrows*sizeof(double));
     updatePointers();
     return ret;
 }
@@ -576,29 +543,21 @@ bool Matrix::setSubcol(const Vector &v, size_t r, size_t c)
     return true;
 }
 
-Matrix::Matrix(size_t r, size_t c):
-    storage(nullptr),
-    matrix(nullptr),
-    nrows(r),
-    ncols(c)
+Matrix::Matrix(size_t r, size_t c)
 {
-    storage=new double [r*c];
-    memset(storage, 0, r*c*sizeof(double));
+    nrows = r;
+    ncols = c;
+    matrix = nullptr;
+    storage.resize(r*c);
+    memset(storage.data(), 0, r*c*sizeof(double));
     updatePointers();
 }
 
-Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
-    storage(nullptr),
-    matrix(nullptr)
+Matrix::Matrix(const Matrix &m)
 {
+    matrix = nullptr;
     nrows=m.nrows;
     ncols=m.ncols;
-
-    if (m.storage!=nullptr)
-    {
-        storage=new double [nrows*ncols];
-        memcpy(storage, m.storage, nrows*ncols*sizeof(double));
-
-        updatePointers();
-    }
+    storage=m.storage;
+    updatePointers();
 }

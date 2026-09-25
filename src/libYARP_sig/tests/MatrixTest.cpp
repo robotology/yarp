@@ -271,17 +271,60 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         CHECK(ok); // elements match
     }
 
+    SECTION("check copyPortable.")
+    {
+        Matrix m1(2, 3);
+        m1[0][0] = 0.0;
+        m1[1][0] = 1.0;
+        m1[0][1] = 2.0;
+        m1[1][1] = 3.0;
+        m1[0][2] = 4.0;
+        m1[1][2] = 5.0;
+        CHECK (m1.rows() == 2);
+        CHECK (m1.cols() == 3);
+        Bottle b;
+        Matrix m2;
+        bool result =yarp::os::Portable::copyPortable (m1,b);
+        REQUIRE(result);
+        std::string s = b.toString();
+        result = yarp::os::Portable::copyPortable (b,m2);
+        REQUIRE(result);
+        REQUIRE (m2.rows() == 2);
+        REQUIRE (m2.cols() == 3);
+        CHECK(m2[0][0] == 0.0);
+        CHECK(m2[1][0] == 1.0);
+        CHECK(m2[0][1] == 2.0);
+        CHECK(m2[1][1] == 3.0);
+        CHECK(m2[0][2] == 4.0);
+        CHECK(m2[1][2] == 5.0);
+    }
+
     SECTION("check bottle.")
     {
         INFO("check bottle compatibility...");
-        Bottle b("2 3 (0.0 1.1 2.2 3.3 4.4 5.5)");
+        //             (00   01   02) (10   11   12)
+        Bottle b("2 3 (0.0  1.1  2.2  3.3  4.4  5.5)");
         Matrix m(6,1);
         DummyConnector con;
-        b.write(con.getWriter());
-        m.read(con.getReader());
+        bool ret = b.write(con.getWriter());
+        CHECK(ret);
+        ret = m.read(con.getReader());
+        CHECK(ret);
         CHECK(m.rows() == (size_t) 2); // row size correct
         CHECK(m.cols() == (size_t) 3); // col size correct
-        CHECK((m[1][2]>5 && m[1][2]<6)); // content is sane
+        std::string ss = m.toString();
+        double testval00=m[0][0];
+        double testval01=m[0][1];
+        double testval02=m[0][2];
+        double testval10=m[1][0];
+        double testval11=m[1][1];
+        double testval12=m[1][2];
+        CHECK((testval00>=0.0 && testval00<=0.5));
+        CHECK((testval01>=1.0 && testval01<=1.5));
+        CHECK((testval02>=2.0 && testval02<=2.5));
+        CHECK((testval10>=3.0 && testval10<=3.5));
+        CHECK((testval11>=4.0 && testval11<=4.5));
+        CHECK((testval12>=5.0 && testval12<=5.6));
     }
 
     SECTION("check submatrix.")

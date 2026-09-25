@@ -83,6 +83,7 @@ set(YARP_sig_IDL
   idl/IntrinsicParamsData.thrift
   idl/LayeredImageData.thrift
   idl/LaserScan2D.thrift
+  idl/MatrixData.thrift
   idl/Pose6D.thrift
   idl/QuaternionData.thrift
   idl/SoundMarkerData.thrift
