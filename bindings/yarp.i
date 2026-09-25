@@ -364,6 +364,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/os/DummyConnector.h>
 %include <yarp/os/Things.h>
 %include <yarp/os/QosStyle.h>
+%include <yarp/os/LogComponent.h>
 %include <yarp/os/Log.h>
 %include <yarp/os/LogStream.h>
 %include <yarp/os/Wire.h>
