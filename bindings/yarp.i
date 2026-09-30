@@ -71,7 +71,7 @@
 
 %feature("autodoc", "1");
 
-#if defined (SWIGPYTHON) || defined (SWIGRUBY)
+#if defined (SWIGPYTHON)
   %include <argcargv.i>
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #elif defined (SWIGLUA)

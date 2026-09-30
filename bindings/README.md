@@ -8,7 +8,7 @@ SPDX-License-Identifier: BSD-3-Clause
 
 This directory is for producing SWIG interfaces to YARP.
 
-This lets you run YARP from Java, Python, Perl, Tcl, C#, Ruby, Matlab.
+This lets you run YARP from Java, Python, Perl, Tcl, C#, Matlab.
 
 Note that while we try to preserve YARP as close to its original form
 as possible, some classes and methods had to be changed because
@@ -119,7 +119,7 @@ See [MATLAB documentation](https://it.mathworks.com/help/matlab/matlab_external/
 The JAVA package for the MATLAB utility classes is `yarp.matlab`.
 
 
-## PYTHON, PERL, TCL, RUBY INTERFACES
+## PYTHON, PERL, TCL INTERFACES
 
 Run:
 
@@ -143,7 +143,7 @@ You should now have libraries called
 
 Or on windows, the equivalent DLLs.
 
-Now try to run `perl/examples/example.pl` (Perl) and/or `python/examples/example.py` (Python) and/or `tcl/examples/example.tcl` (TCL) and/or `ruby/examples/example.rb` (Ruby).
+Now try to run `perl/examples/example.pl` (Perl) and/or `python/examples/example.py` (Python) and/or `tcl/examples/example.tcl` (TCL)).
 
 For TCL, on windows, look at `example.tcl` and uncomment the line referring
 to a .dll, and comment the line referring to a .so

@@ -82,7 +82,7 @@ yarp_print_feature(YARP_COMPILE_BINDINGS 0 "Bindings")
 #############################################################################
 ## Options for compiling supported languages.  There's nothing magical
 ## about this list, any SWIG-supported language should work - take a
-## look at e.g. ruby code below for how to do it.
+## look at e.g. Python code below for how to do it.
 
 set(SUPPORTED_LANGUAGES
   "Java"
@@ -90,7 +90,6 @@ set(SUPPORTED_LANGUAGES
   "Perl"
   "CSharp"
   "TCL"
-  "Ruby"
   "Lua"
   "Octave"
 )

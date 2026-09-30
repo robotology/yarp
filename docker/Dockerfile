@@ -104,8 +104,6 @@ RUN apt-get install -qq -y mono-mcs \
                            tk-dev \
                            python3-dev \
                            octave-dev \
-                           ruby-dev \
-                           ruby \
                            perl
 
 # Create user: user1

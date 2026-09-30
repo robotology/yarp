@@ -17,7 +17,7 @@ The port '/write' from 'yarp write' module is connected to the '/read' port of '
 \section type_modification_req Requirements
 \li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
 
-\li Compile YARP with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+\li Compile YARP with Lua binding support (see \ref yarp_swig "Using YARP from python, java, C#, and other languages").
 
 \li Set LUA_CPATH to include YARP-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
 
