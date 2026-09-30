@@ -194,11 +194,12 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(), s.length());
-        CHECK(bot.size() ==  v.size()); // size matches
+        Bottle* botlist = bot.get(0).asList();
+        REQUIRE(botlist->size() ==  v.size()); // size matches
         {
             for (size_t i=0; i<bot.size(); i++) {
-                CHECK(bot.get(i).asFloat64()>i-0.25); // bounded below
-                CHECK(bot.get(i).asFloat64()<i+0.25); // bounded above
+                CHECK(botlist->get(i).asFloat64()>i-0.25); // bounded below
+                CHECK(botlist->get(i).asFloat64()<i+0.25); // bounded above
             }
         }
     }
@@ -426,7 +427,7 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
             bool bret = yarp::os::Portable::copyPortable(in_v, out_b);
             CHECK(bret);
             std::string sout_b = out_b.toString();
-            CHECK(sout_b == "1.0 2.0 3.0");
+            CHECK(sout_b == "(1.0 2.0 3.0)");
         }
         {
             Bottle  in_b;
@@ -439,14 +440,14 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
             in_b.fromString ("(1.0 2.0 3.0)");
             Vector  out_v;
             bool bret = yarp::os::Portable::copyPortable(in_b, out_v);
-            CHECK(bret==false);
+            CHECK(bret==true);
         }
         {
             Bottle  in_b;
-            in_b.fromString ("1.0 2.0 3.0");
+            in_b.fromString("1.0 2.0 3.0"); // invalid syntax for a vector
             Vector  out_v;
             bool bret = yarp::os::Portable::copyPortable(in_b, out_v);
-            CHECK(bret);
+            CHECK(bret==false);
         }
     }
 

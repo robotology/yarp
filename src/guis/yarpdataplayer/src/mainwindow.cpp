@@ -1216,7 +1216,7 @@ void InitThread::run()
         qutilities->initialFrame.push_back( qutilities->partDetails[x].currFrame);
 
         double totalTime = 0.0;
-        double finalval = qutilities->partDetails[x].timestamp[qutilities->partDetails[x].timestamp.length()-1];
+        double finalval = qutilities->partDetails[x].timestamp[qutilities->partDetails[x].timestamp.size()-1];
         double initialval = qutilities->partDetails[x].timestamp[qutilities->partDetails[x].currFrame];
 
         totalTime = finalval - initialval;

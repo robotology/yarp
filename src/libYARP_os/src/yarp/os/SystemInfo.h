@@ -23,6 +23,9 @@ namespace yarp::os {
 
 class YARP_os_API SystemInfo : public yarp::os::SystemInfoData
 {
+private:
+    using SystemInfoData::read;
+    using SystemInfoData::write;
 public:
     typedef int capacity_t;
     typedef yarp::os::ProcessInfoData    ProcessInfo;

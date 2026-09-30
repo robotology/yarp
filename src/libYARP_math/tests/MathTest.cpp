@@ -126,6 +126,7 @@ TEST_CASE("math::MathTest", "[yarp::math]")
 
         //test
         c = a+b;
+        REQUIRE(c.size() == 3);
 
         double acc = c[0]+c[1]+c[2];
         CHECK(acc == 6); // operator+ on vectors

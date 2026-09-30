@@ -26,9 +26,9 @@ template <typename T>
 class YARP_sig_API vector_selector
 {
     static_assert(
-        std::is_same_v<T, int> || std::is_same_v<T, size_t> |
+        std::is_same_v<T, int> || std::is_same_v<T, size_t> ||
         std::is_same_v<T, double> || std::is_same_v<T, std::string> || std::is_same_v<T, float>,
-        "VectorOf<T>: T must be int, size_t or double"
+        "VectorOf<T>: T must be int, size_t, float, string or double"
     );
 };
 
@@ -111,7 +111,7 @@ class yarp::sig::VectorBase
     inline size_t capacity() const
     {
         const auto& v = static_cast<const Derived&>(*this);
-        return v.privdata.capacity();
+        return v.privVec().capacity();
     }
 
     /**
@@ -121,7 +121,7 @@ class yarp::sig::VectorBase
     void reserve(size_t size)
     {
         auto& v = static_cast<Derived&>(*this);
-        return v.privdata.reserve(size);
+        return v.privVec().reserve(size);
     }
 
     /**
@@ -130,7 +130,7 @@ class yarp::sig::VectorBase
      */
     void resize(size_t size) {
          auto& v = static_cast<Derived&>(*this);
-         v.privdata.resize(size);
+         v.privVec().resize(size);
     }
 
     /**
@@ -201,6 +201,17 @@ class yarp::sig::VectorBase
         if (!v.privVec().empty()) {
             std::fill(v.privVec().begin(), v.privVec().end(), val);
         }
+        return v;
+    }
+
+    /**
+     * @brief Initializer list assignment.
+     * @param[in] values, list of values with which to assign the Vector.
+     */
+    Derived& operator=(std::initializer_list<Scalar> values)
+    {
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().assign(values.begin(), values.end());
         return v;
     }
 
@@ -381,9 +392,12 @@ class YARP_sig_API yarp::sig::VectorOfDouble : public yarp::sig::VectorOfDoubleD
     public:
     using yarp::sig::VectorOfDoubleData::VectorOfDoubleData;
     using yarp::sig::VectorBase<VectorOfDouble, double>::VectorBase;
+    using yarp::sig::VectorBase<VectorOfDouble, double>::operator=;
     protected:
+#ifndef SWIG
     auto& privVec() { return privdata; }
     const auto& privVec() const { return privdata; }
+#endif
 };
 
 class YARP_sig_API yarp::sig::VectorOfInt : public yarp::sig::VectorOfInt32Data, public yarp::sig::VectorBase<VectorOfInt, int>
@@ -393,9 +407,12 @@ class YARP_sig_API yarp::sig::VectorOfInt : public yarp::sig::VectorOfInt32Data,
     public:
     using yarp::sig::VectorOfInt32Data::VectorOfInt32Data;
     using yarp::sig::VectorBase<VectorOfInt, int>::VectorBase;
+    using yarp::sig::VectorBase<VectorOfInt, int>::operator=;
     protected:
+#ifndef SWIG
     auto& privVec() { return privdata; }
     const auto& privVec() const { return privdata; }
+#endif
 };
 
 class YARP_sig_API yarp::sig::VectorOfFloat : public yarp::sig::VectorOfFloatData, public yarp::sig::VectorBase<VectorOfFloat, float>
@@ -405,9 +422,12 @@ class YARP_sig_API yarp::sig::VectorOfFloat : public yarp::sig::VectorOfFloatDat
     public:
     using yarp::sig::VectorOfFloatData::VectorOfFloatData;
     using yarp::sig::VectorBase<VectorOfFloat, float>::VectorBase;
+    using yarp::sig::VectorBase<VectorOfFloat, float>::operator=;
     protected:
+#ifndef SWIG
     auto& privVec() { return privdata; }
     const auto& privVec() const { return privdata; }
+#endif
 };
 
 class YARP_sig_API yarp::sig::VectorOfString : public yarp::sig::VectorOfStringData, public yarp::sig::VectorBase<VectorOfString, std::string>
@@ -417,9 +437,12 @@ class YARP_sig_API yarp::sig::VectorOfString : public yarp::sig::VectorOfStringD
     public:
     using yarp::sig::VectorOfStringData::VectorOfStringData;
     using yarp::sig::VectorBase<VectorOfString, std::string>::VectorBase;
+    using yarp::sig::VectorBase<VectorOfString, std::string>::operator=;
     protected:
+#ifndef SWIG
     auto& privVec() { return privdata; }
     const auto& privVec() const { return privdata; }
+#endif
 };
 
 class YARP_sig_API yarp::sig::VectorOfSizet : public yarp::sig::VectorOfSizetData, public yarp::sig::VectorBase<VectorOfSizet, size_t>
@@ -429,9 +452,12 @@ class YARP_sig_API yarp::sig::VectorOfSizet : public yarp::sig::VectorOfSizetDat
     public:
     using yarp::sig::VectorOfSizetData::VectorOfSizetData;
     using yarp::sig::VectorBase<VectorOfSizet, size_t>::VectorBase;
+    using yarp::sig::VectorBase<VectorOfSizet, size_t>::operator=;
     protected:
+#ifndef SWIG
     auto& privVec() { return privdata; }
     const auto& privVec() const { return privdata; }
+#endif
 };
 
 template <>

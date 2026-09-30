@@ -38,6 +38,9 @@ YARP_sig_API bool removeRows(const Matrix& in, Matrix& out, size_t first_row, si
 class YARP_sig_API yarp::sig::Matrix: public yarp::sig::MatrixData
 {
 private:
+    using MatrixData::read;
+    using MatrixData::write;
+
     double **matrix; //double pointer access to elements
 
     /**
