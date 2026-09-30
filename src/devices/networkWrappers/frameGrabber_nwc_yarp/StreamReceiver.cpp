@@ -5,6 +5,7 @@
 
 #include "StreamReceiver.h"
 
+#include <yarp/os/Network.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 

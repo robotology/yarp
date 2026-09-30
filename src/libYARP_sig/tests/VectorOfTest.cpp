@@ -6,6 +6,7 @@
 #include <yarp/sig/Vector.h>
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/LogStream.h>
@@ -200,6 +201,7 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
     SECTION("Checking the functionalities of the initializer list constructor")
     {
         VectorOf<int> v{1, 2, 3};
+
         CHECK(v.size() == (size_t) 3); // Checking size
 
         CHECK(v[0] == 1); // Checking data consistency

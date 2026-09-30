@@ -479,7 +479,7 @@ bool Matrix::operator==(const yarp::sig::Matrix &r) const
 
 bool Matrix::setRow(size_t row, const Vector &r)
 {
-    if ((row >= nrows) || (r.length() != ncols)) {
+    if ((row >= nrows) || (r.size() != ncols)) {
         return false;
     }
 
@@ -492,7 +492,7 @@ bool Matrix::setRow(size_t row, const Vector &r)
 
 bool Matrix::setCol(size_t col, const Vector &c)
 {
-    if ((col >= ncols) || (c.length() != nrows)) {
+    if ((col >= ncols) || (c.size() != nrows)) {
         return false;
     }
 

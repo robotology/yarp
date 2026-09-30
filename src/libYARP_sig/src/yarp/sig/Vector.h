@@ -1,303 +1,136 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #ifndef YARP_SIG_VECTOR_H
 #define YARP_SIG_VECTOR_H
 
-#include <cstring>
 #include <cstddef> //defines size_t
 #include <memory>
 #include <string>
-#include <vector>
-
-#include <yarp/os/Portable.h>
-#include <yarp/os/ManagedBytes.h>
-#include <yarp/os/Type.h>
+#include <algorithm>
 
 #include <yarp/sig/api.h>
-#include <yarp/os/Log.h>
+#include <yarp/sig/VectorOfDoubleData.h>
+#include <yarp/sig/VectorOfInt32Data.h>
+#include <yarp/sig/VectorOfSizetData.h>
+#include <yarp/sig/VectorOfFloatData.h>
+#include <yarp/sig/VectorOfStringData.h>
 
 /**
 * \file Vector.h contains the definition of a Vector type
 */
-namespace yarp::sig {
 
-class VectorBase;
-template<class T> class VectorOf;
-// Swig(3.0.12) crashes when generating
-// ruby bindings without these guards.
-// Bindings for Vector are generated
-// anyways throught the %template directive
-// in the interface file.
-#ifndef SWIG
-typedef VectorOf<double> Vector;
-#endif
-
-} // namespace yarp::sig
-
-
-/**
-* \ingroup sig_class
-*
-* A Base class for a VectorOf<T>, provide default implementation for
-* read/write methods. Warning: the current implementation assumes the same
-* representation for data type (endianness).
-*/
-class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
+template <typename T>
+class YARP_sig_API vector_selector
 {
-public:
-    virtual size_t getElementSize() const = 0;
-    virtual int getBottleTag() const = 0;
-
-    virtual size_t getListSize() const = 0;
-    virtual const char *getMemoryBlock() const = 0;
-    virtual char *getMemoryBlock() = 0;
-    virtual void resize(size_t size) = 0;
-
-    /*
-    * Read vector from a connection.
-    * return true iff a vector was read correctly
-    */
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    /**
-    * Write vector to a connection.
-    * return true iff a vector was written correctly
-    */
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-
-protected:
-    virtual std::string getFormatStr(int tag) const;
-
+    static_assert(
+        std::is_same_v<T, int> || std::is_same_v<T, size_t> |
+        std::is_same_v<T, double> || std::is_same_v<T, std::string> || std::is_same_v<T, float>,
+        "VectorOf<T>: T must be int, size_t or double"
+    );
 };
 
-/*
-* This is a simple function that maps a type into its corresponding BOTTLE tag.
-* Used for bottle compatible serialization, called inside getBottleTag().
-* Needs to be instantiated for each type T used in VectorOf<T>.
-*/
-template<class T>
-inline int BottleTagMap () {
-    /* make sure this is never called unspecified */
-    yAssert(0);
-    return 0;
-  }
-
-template<>
-inline int BottleTagMap <double> () {
-    return BOTTLE_TAG_FLOAT64;
-  }
-
-template<>
-inline int BottleTagMap <float> () {
-    return BOTTLE_TAG_FLOAT32;
-  }
-
-template<>
-inline int BottleTagMap <int> () {
-    return BOTTLE_TAG_INT32;
-  }
-
-template<>
-inline int BottleTagMap <short int> () {
-    return BOTTLE_TAG_INT16;
-  }
-
-template<>
-inline int BottleTagMap <unsigned short int> () {
-    return BOTTLE_TAG_INT16;
-  }
-
-template<>
-inline int BottleTagMap <char> () {
-    return BOTTLE_TAG_INT8;
-  }
-
-template<>
-inline int BottleTagMap <unsigned char> () {
-    return BOTTLE_TAG_INT8;
-  }
-
-/**
-* \ingroup sig_class
-*
-* Provides:
-* - push_back(), pop_back() to add/remove an element at the end of the vector
-* - resize(), to create an array of elements
-* - clear(), to clean the array (remove all elements)
-* - use [] to access single elements without range checking
-* - use size() to get the current size of the Vector
-* - use operator= to copy Vectors
-* - read/write network methods
-* Warning: the class is designed to work with simple types (i.e. types
-* that do not allocate internal memory). Template instantiation needs to
-* be checked to avoid unresolved externals. Network communication assumes
-* same data representation (endianness) between machines.
-*/
-template<class T>
-class yarp::sig::VectorOf : public VectorBase
+namespace yarp::sig
 {
-private:
-    std::vector<T> bytes;
+    template <typename Derived, typename Scalar>
+    class VectorBase;
+    class VectorOfDouble;
+    class VectorOfInt;
+    class VectorOfSizet;
+    class VectorOfString;
+    class VectorOfFloat;
+    class VectorOfSizetData;
 
-public:
-    using value_type     =  T;
-    using iterator       =  typename std::vector<T>::iterator;
-    using const_iterator =  typename std::vector<T>::const_iterator;
+    typedef VectorOfDouble Vector;
+} // namespace yarp::sig
 
-    VectorOf() = default;
+template <typename Derived, typename Scalar>
+class yarp::sig::VectorBase
+{
+    public:
 
-    VectorOf(size_t size) : bytes(size) {
+    using value_type     =  Scalar;
+    using iterator       =  typename std::vector<Scalar>::iterator;
+    using const_iterator =  typename std::vector<Scalar>::const_iterator;
+
+    VectorBase() = default;
+
+    VectorBase(size_t size)
+    {
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().resize(size);
     }
 
     /**
      * @brief Initializer list constructor.
      * @param[in] values, list of values with which initialize the Vector.
      */
-    VectorOf(std::initializer_list<T> values) : bytes(values) {
+    VectorBase(std::initializer_list<Scalar> values)
+    {
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().assign(values.begin(), values.end());
     }
+
 
     /**
     * Build a vector and initialize it with def.
     * @param s the size
     * @param def a default value used to fill the vector
     */
-    VectorOf(size_t s, const T& def) : bytes(s, def) {
+    VectorBase(size_t s, const Scalar& def)
+    {
+      auto& v = static_cast<Derived&>(*this);
+        v.privVec().assign(s, def);
     }
 
     /**
-    * Builds a vector and initialize it with
-    * values from 'p'. Copies memory.
+    * Builds a vector and initialize it with values from 'p'. Copies memory.
     * @param s the size of the data to be copied
     * @param T* the pointer to the data
     */
-    VectorOf(size_t s, const T *p)
+    VectorBase(size_t s, const Scalar *p)
     {
-        this->resize(s);
-        memcpy(this->data(), p, sizeof(T)*s);
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().assign(p, p + s);
     }
 
-    VectorOf(const VectorOf& r) = default;
-    VectorOf<T> &operator=(const VectorOf<T>& r) = default;
-    VectorOf(VectorOf<T>&& other) noexcept = default;
-    VectorOf& operator=(VectorOf<T>&& other) noexcept = default;
-    ~VectorOf() override = default;
+    VectorBase(const VectorBase& r) = default;
+    VectorBase<Derived, Scalar> &operator=(const VectorBase<Derived,Scalar>& r) = default;
+    VectorBase(VectorBase<Derived, Scalar>&& other) noexcept = default;
+    VectorBase& operator=(VectorBase<Derived, Scalar>&& other) noexcept = default;
+    ~VectorBase() = default;
 
-    size_t getElementSize() const override {
-        return sizeof(T);
-    }
 
-    int getBottleTag() const override {
-        return BottleTagMap <T>();
-    }
-
-    size_t getListSize() const override
-    {
-        return bytes.size();
-    }
-
-    const char* getMemoryBlock() const override
-    {
-        return reinterpret_cast<const char*>(this->data());
-    }
-
-    char* getMemoryBlock() override
-    {
-        return reinterpret_cast<char*>(this->data());
-    }
-
+    public:
     /**
-    * Return a pointer to the first element of the vector.
-    * @return a pointer to double (or nullptr if the vector is of zero length)
-    */
-    inline T *data()
-    { return bytes.empty() ? nullptr : &(bytes.at(0)); }
-
-    /**
-    * Return a pointer to the first element of the vector,
-    * const version
-    * @return a (const) pointer to double (or nullptr if the vector is of zero length)
-    */
-    inline const T *data() const
-    { return bytes.empty() ? nullptr : &(bytes.at(0)); }
-
-    /**
-    * Resize the vector.
-    * @param s the new size
-    */
-    void resize(size_t size) override
-    {
-        bytes.resize(size);
-    }
-
-    /**
-    * Remove an element from the vector.
-    * @param pos iterator pointing at the element to remove
-    */
-    void erase(iterator pos)
-    {
-        bytes.erase(pos);
-    }
-
-    /**
-    * Remove one or more elements from the vector.
-    * @param first iterator pointing at the first element to remove
-    * @param last iterator pointing at the last element to remove
-    */
-    void erase(iterator first, iterator last)
-    {
-        bytes.erase(first, last);
-    }
-
-    /**
-    * Resize the vector and initialize the element to a default value.
-    * @param s the new size
-    * @param def the default value
-    */
-    void resize(size_t size, const T&def)
-    {
-        this->resize(size);
-        std::fill(bytes.begin(), bytes.end(), def);
-    }
-
-    /**
-     * @brief reserve, increase the capacity of the vector to a value that's greater or equal to size.
-     * If size is greater than the current capacity(), new storage is allocated, otherwise the method does nothing.
-     * @param size, new size of the vector.
+     * @brief Returns the capacity of the vector.
+     * @return the capacity of the vector.
      */
-    void reserve(size_t size) {
-        bytes.reserve(size);
-    }
-
-    /**
-    * Push a new element in the vector: size is changed
-    */
-    inline void push_back (const T &elem)
+    inline size_t capacity() const
     {
-        bytes.push_back(elem);
+        const auto& v = static_cast<const Derived&>(*this);
+        return v.privdata.capacity();
     }
 
     /**
-     * @brief Move a new element in the vector: size is changed
-     * @param elem, element to be moved.
+     * @brief Reserve space in the vector.
+     * @param size the new capacity of the vector.
      */
-    inline void push_back (T&& elem)
+    void reserve(size_t size)
     {
-        bytes.push_back(std::move(elem));
+        auto& v = static_cast<Derived&>(*this);
+        return v.privdata.reserve(size);
     }
 
     /**
-     * @brief Construct a new element in the vector: size is changed
-     * @param args, arguments to be forwarded for constructing the new element.
-     * @return the reference to the new element constructed.
+     * @brief Resize the vector.
+     * @param size the new size of the vector.
      */
-    template<typename... _Args>
-    inline T& emplace_back(_Args&&... args)
-    {
-        return bytes.emplace_back(std::forward<_Args>(args)...);
+    void resize(size_t size) {
+         auto& v = static_cast<Derived&>(*this);
+         v.privdata.resize(size);
     }
 
     /**
@@ -305,7 +138,8 @@ public:
     */
     inline void pop_back()
     {
-        bytes.pop_back();
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().pop_back();
     }
 
     /**
@@ -313,9 +147,10 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline T &operator[](size_t i)
+    inline Scalar &operator[](size_t i)
     {
-        return bytes[i];
+        auto& v = static_cast<Derived&>(*this);
+        return v.privVec()[i];
     }
 
     /**
@@ -323,9 +158,10 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline const T &operator[](size_t i) const
+    inline const Scalar  &operator[](size_t i) const
     {
-        return bytes[i];
+        const auto& v = static_cast<const Derived&>(*this);
+        return v.privVec()[i];
     }
 
     /**
@@ -333,9 +169,10 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline T &operator()(size_t i)
+    inline Scalar &operator()(size_t i)
     {
-        return this->data()[i];
+        auto& v = static_cast<Derived&>(*this);
+        return v.privVec()[i];
     }
 
     /**
@@ -343,82 +180,97 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline const T &operator()(size_t i) const
+    inline const Scalar &operator()(size_t i) const
     {
-        return this->data()[i];
-    }
-
-    inline size_t size() const {
-        return bytes.size();
+        const auto& v = static_cast<const Derived&>(*this);
+        return v.privVec()[i];
     }
 
     /**
-    * Get the length of the vector.
-    * @return the length of the vector.
+     * Returns the number of elements in the vector.
     */
-    inline size_t length() const
-    { return this->size();}
+    inline size_t size() const
+    {
+        const auto& v = static_cast<const Derived&>(*this);
+        return v.privVec().size();
+    }
+
+    Derived& operator=(const Scalar& val)
+    {
+        auto& v = static_cast<Derived&>(*this);
+        if (!v.privVec().empty()) {
+            std::fill(v.privVec().begin(), v.privVec().end(), val);
+        }
+        return v;
+    }
+
+    // Compare element-wise equality with another Derived
+    /* bool operator==(const Derived& r) const
+    {
+        const auto& self = static_cast<const Derived&>(*this);
+        if (self.size() != r.size()) return false;
+        for (size_t i = 0; i < self.size(); ++i) {
+            if (self[i] != r[i]) return false;
+        }
+        return true;
+    }*/
+
+    friend bool operator==(const Derived& l, const Derived& r)
+    {
+        if (l.size() != r.size()) return false;
+        for (size_t i = 0; i < l.size(); ++i) {
+            if (l[i] != r[i]) return false;
+        }
+        return true;
+    }
 
     /**
-     * @brief capacity
-     * @return the number of elements that the container has currently allocated space for.
+    * Clear (removes all elements) the vector.
+    */
+    void clear()
+    {
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().clear();
+    }
+
+    /**
+    * Push a new element in the vector: size is changed
+    */
+    inline void push_back (const Scalar &elem)
+    {
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().push_back(elem);
+    }
+
+    /**
+     * @brief Move a new element in the vector: size is changed
+     * @param elem, element to be moved.
      */
-    inline size_t capacity() const {
-        return bytes.capacity();
+    inline void push_back (Scalar&& elem)
+    {
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().push_back(std::move(elem));
     }
 
     /**
-    * Zero the elements of the vector.
+    * Return a pointer to the first element of the vector.
+    * @return a pointer to double (or nullptr if the vector is of zero length)
     */
-    void zero()
+    inline Scalar* data()
     {
-        std::fill(bytes.begin(), bytes.end(), 0);
+        auto& v = static_cast<Derived&>(*this);
+        return v.privVec().empty() ? nullptr : &(v.privVec().at(0));
     }
 
     /**
-    * Creates a string object containing a text representation of the object. Useful for printing.
-    * To get a nice format the optional parameters precision and width may be used (same meaning as in printf and cout).
-    * @param precision the number of digits to be printed after the decimal point.
-    * @param width minimum number of characters to be printed. If the value to be printed is shorter than this number, the result is padded with blank spaces. The value is never truncated.
-    * If width is specified the inter-value separator is a blank space, otherwise it is a tab.
-    * Warning: the string format might change in the future. This method
-    * is here to ease debugging.
+    * Return a pointer to the first element of the vector,
+    * const version
+    * @return a (const) pointer to double (or nullptr if the vector is of zero length)
     */
-    std::string toString(int precision=-1, int width=-1) const
+    inline const Scalar* data() const
     {
-        std::string ret = "";
-        size_t c = 0;
-        const size_t buffSize = 256;
-        char tmp[buffSize];
-        std::string formatStr;
-        if (getBottleTag() == BOTTLE_TAG_FLOAT64) {
-            if (width<0) {
-                formatStr = "% .*lf\t";
-                for (c=0;c<length();c++) {
-                    snprintf(tmp, buffSize, formatStr.c_str(), precision, (*this)[c]);
-                    ret+=tmp;
-                }
-            }
-            else{
-                formatStr = "% *.*lf ";
-                for (c=0;c<length();c++){
-                    snprintf(tmp, buffSize, formatStr.c_str(), width, precision, (*this)[c]);
-                    ret+=tmp;
-                }
-            }
-        }
-        else {
-            formatStr = "%" + getFormatStr(getBottleTag()) + " ";
-            for (c=0;c<length();c++) {
-                snprintf(tmp, buffSize, formatStr.c_str(), (*this)[c]);
-                ret+=tmp;
-            }
-        }
-
-        if (length() >= 1) {
-            return ret.substr(0, ret.length() - 1);
-        }
-        return ret;
+        auto& v = static_cast<const Derived&>(*this);
+        return v.privVec().empty() ? nullptr : &(v.privVec().at(0));
     }
 
     /**
@@ -427,9 +279,9 @@ public:
     * in the subvector. The indexes are checked: if wrong, a null vector is
     * returned.
     */
-    VectorOf<T> subVector(unsigned int first, unsigned int last) const
+    Derived subVector(unsigned int first, unsigned int last) const
     {
-        VectorOf<T> ret;
+        Derived ret;
         if ((first<=last)&&((int)last<(int)this->size()))
         {
             ret.resize(last-first+1);
@@ -441,95 +293,175 @@ public:
     }
 
     /**
-     * Set a portion of this vector with the values of the specified vector.
-     * If the specified vector v is to big the method does not resize the vector,
-     * but return false.
-     *
-     * @param position index of the first value to set
-     * @param v vector containing the values to set
-     * @return true if the operation succeeded, false otherwise
-     */
-    bool setSubvector(int position, const VectorOf<T> &v)
-    {
-        if (position + v.size() > this->size()) {
-            return false;
-        }
-        for (size_t i = 0; i < v.size(); i++) {
-            (*this)[position + i] = v(i);
-        }
-        return true;
-    }
-
-    /**
-    * Set all elements of the vector to a scalar.
+    * Resize the vector and initialize the element to a default value.
+    * @param s the new size
+    * @param def the default value
     */
-    const VectorOf<T> &operator=(T v)
+    void resize(size_t size, const Scalar&def)
     {
-        std::fill(bytes.begin(), bytes.end(), v);
-        return *this;
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().resize(size);
+        std::fill(v.privVec().begin(), v.privVec().end(), def);
     }
 
     /**
-    * True iff all elements of 'a' match all element of 'b'.
+    * Set to zero the elements of the vector.
     */
-    bool operator==(const VectorOf<T> &r) const
+    void zero()
     {
-        return bytes == r.bytes;
+        auto& v = static_cast<Derived&>(*this);
+        std::fill(v.privVec().begin(), v.privVec().end(), Scalar(0));
     }
 
     /**
-     * @brief Returns an iterator to the beginning of the VectorOf
+     * @brief Returns an iterator to the beginning of the Vector
      */
-    iterator begin() noexcept {
-        return bytes.begin();
+    iterator begin() noexcept
+    {
+        auto& v = static_cast<Derived&>(*this);
+        return v.privVec().begin();
+    }
+
+    iterator end() noexcept
+    {
+        auto& v = static_cast<Derived&>(*this);
+        return v.privVec().end();
+    }
+
+    const_iterator begin() const noexcept
+    {
+        auto& v = static_cast<const Derived&>(*this);
+        return v.privVec().begin();
+    }
+
+    const_iterator end() const noexcept
+    {
+        auto& v = static_cast<const Derived&>(*this);
+        return v.privVec().end();
+    }
+
+    const_iterator cbegin() const noexcept
+    {
+        auto& v = static_cast<const Derived&>(*this);
+        return v.privVec().cbegin();
     }
 
     /**
-     * @brief Returns an iterator to the end of the VectorOf
-     */
-    iterator end() noexcept {
-        return bytes.end();
+    * Remove an element from the vector.
+    * @param pos iterator pointing at the element to remove
+    */
+    void erase(iterator pos)
+    {
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().erase(pos);
     }
 
     /**
-     * @brief Returns a const iterator to the beginning of the VectorOf
-     */
-    const_iterator begin() const noexcept {
-        return bytes.begin();
+    * Remove one or more elements from the vector.
+    * @param first iterator pointing at the first element to remove
+    * @param last iterator pointing at the last element to remove
+    */
+    void erase(iterator first, iterator last)
+    {
+        auto& v = static_cast<Derived&>(*this);
+        v.privVec().erase(first, last);
     }
 
-    /**
-     * @brief Returns a const iterator to the end of the VectorOf.
-     */
-    const_iterator end() const noexcept {
-        return bytes.end();
-    }
-
-    /**
-     * @brief Returns a const iterator to the beginning of the VectorOf
-     */
-    const_iterator cbegin() const noexcept {
-        return bytes.cbegin();
-    }
-
-    /**
-     * @brief Returns a const iterator to the end of the VectorOf.
-     */
-    const_iterator cend() const noexcept {
-        return bytes.cend();
-    }
-    void clear() {
-        bytes.clear();
-    }
-
-    yarp::os::Type getType() const override {
-        return yarp::os::Type::byName("yarp/vector");
+    size_t getElementSize() const
+    {
+        return sizeof(Scalar);
     }
 };
 
 
-#ifdef _MSC_VER
-/*YARP_sig_EXTERN*/ template class YARP_sig_API yarp::sig::VectorOf<double>;
-#endif
+class YARP_sig_API yarp::sig::VectorOfDouble : public yarp::sig::VectorOfDoubleData, public yarp::sig::VectorBase<VectorOfDouble, double>
+{
+    friend class VectorBase<VectorOfDouble, double>;
+
+    public:
+    using yarp::sig::VectorOfDoubleData::VectorOfDoubleData;
+    using yarp::sig::VectorBase<VectorOfDouble, double>::VectorBase;
+    protected:
+    auto& privVec() { return privdata; }
+    const auto& privVec() const { return privdata; }
+};
+
+class YARP_sig_API yarp::sig::VectorOfInt : public yarp::sig::VectorOfInt32Data, public yarp::sig::VectorBase<VectorOfInt, int>
+{
+    friend class VectorBase<VectorOfInt, int>;
+
+    public:
+    using yarp::sig::VectorOfInt32Data::VectorOfInt32Data;
+    using yarp::sig::VectorBase<VectorOfInt, int>::VectorBase;
+    protected:
+    auto& privVec() { return privdata; }
+    const auto& privVec() const { return privdata; }
+};
+
+class YARP_sig_API yarp::sig::VectorOfFloat : public yarp::sig::VectorOfFloatData, public yarp::sig::VectorBase<VectorOfFloat, float>
+{
+    friend class VectorBase<VectorOfFloat, float>;
+
+    public:
+    using yarp::sig::VectorOfFloatData::VectorOfFloatData;
+    using yarp::sig::VectorBase<VectorOfFloat, float>::VectorBase;
+    protected:
+    auto& privVec() { return privdata; }
+    const auto& privVec() const { return privdata; }
+};
+
+class YARP_sig_API yarp::sig::VectorOfString : public yarp::sig::VectorOfStringData, public yarp::sig::VectorBase<VectorOfString, std::string>
+{
+    friend class VectorBase<VectorOfString, std::string>;
+
+    public:
+    using yarp::sig::VectorOfStringData::VectorOfStringData;
+    using yarp::sig::VectorBase<VectorOfString, std::string>::VectorBase;
+    protected:
+    auto& privVec() { return privdata; }
+    const auto& privVec() const { return privdata; }
+};
+
+class YARP_sig_API yarp::sig::VectorOfSizet : public yarp::sig::VectorOfSizetData, public yarp::sig::VectorBase<VectorOfSizet, size_t>
+{
+    friend class VectorBase<VectorOfSizet, size_t>;
+
+    public:
+    using yarp::sig::VectorOfSizetData::VectorOfSizetData;
+    using yarp::sig::VectorBase<VectorOfSizet, size_t>::VectorBase;
+    protected:
+    auto& privVec() { return privdata; }
+    const auto& privVec() const { return privdata; }
+};
+
+template <>
+struct YARP_sig_API  vector_selector<int> {
+    using type = yarp::sig::VectorOfInt;
+};
+
+template <>
+struct YARP_sig_API  vector_selector<double> {
+    using type = yarp::sig::VectorOfDouble;
+};
+
+template <>
+struct YARP_sig_API  vector_selector<float> {
+    using type = yarp::sig::VectorOfFloat;
+};
+
+template <>
+struct YARP_sig_API  vector_selector<std::string> {
+    using type = yarp::sig::VectorOfString;
+};
+
+template <>
+struct YARP_sig_API  vector_selector<size_t> {
+    using type = yarp::sig::VectorOfSizet;
+};
+
+namespace yarp::sig {
+template <typename T>
+using VectorOf = typename vector_selector<T>::type;
+}
 
 #endif // YARP_SIG_VECTOR_H

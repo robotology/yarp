@@ -6,6 +6,7 @@
 #include "JoypadControl_nwc_yarp.h"
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Network.h>
 #include <tuple>
 
 using namespace yarp::dev;

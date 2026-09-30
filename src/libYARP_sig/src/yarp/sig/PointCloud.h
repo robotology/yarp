@@ -266,6 +266,13 @@ struct has_member_z<T, std::void_t<decltype(std::declval<T>().z)>> : std::true_t
 
 } // namespace yarp::sig
 
+template<class T>
+inline int BottleTagMap () {
+    // make sure this is never called unspecified
+    yAssert(0);
+    return 0;
+}
+
 template <>
 inline int BottleTagMap<yarp::sig::DataXY>()
 {

@@ -1,0 +1,11 @@
+yarp/sig/VectorOfData_common.h
+yarp/sig/VectorOfDoubleData.h
+yarp/sig/VectorOfDoubleData.cpp
+yarp/sig/VectorOfInt32Data.h
+yarp/sig/VectorOfInt32Data.cpp
+yarp/sig/VectorOfSizetData.h
+yarp/sig/VectorOfSizetData.cpp
+yarp/sig/VectorOfFloatData.h
+yarp/sig/VectorOfFloatData.cpp
+yarp/sig/VectorOfStringData.h
+yarp/sig/VectorOfStringData.cpp
