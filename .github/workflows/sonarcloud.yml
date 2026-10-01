@@ -169,8 +169,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       octave-dev \
-                                      ruby-dev \
-                                      ruby \
                                       libcrypt-dev \
                                       perl
 
@@ -396,8 +394,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       octave-dev \
-                                      ruby-dev \
-                                      ruby \
                                       libcrypt-dev \
                                       perl
 
@@ -648,8 +644,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       octave-dev \
-                                      ruby-dev \
-                                      ruby \
                                       libcrypt-dev \
                                       perl
 

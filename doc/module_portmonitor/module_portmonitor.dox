@@ -23,9 +23,9 @@ In short, it is an extended functionality of a port implemented as a new carrier
 
 \li Enable portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON) in CMake and compile YARP.
 
-\li To be able to use plug-ins written in LUA with the portmonitor carrier you need to compile yarp-lua bindings and set the 'LUA_CPATH' to find yarp-lua binding library (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+\li To be able to use plug-ins written in LUA with the portmonitor carrier you need to compile yarp-lua bindings and set the 'LUA_CPATH' to find yarp-lua binding library (see \ref yarp_swig "Using YARP from python, java, C#, and other languages").
 
-\li To be able to use plug-ins written in Python with the portmonitor carrier you need to compile yarp-python bindings. (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+\li To be able to use plug-ins written in Python with the portmonitor carrier you need to compile yarp-python bindings. (see \ref yarp_swig "Using YARP from python, java, C#, and other languages").
 
 \li For using compiled plug-ins (.dll/.so) with the portmonitor carrier you only need to put them in system path where commonly DLLs can be found. For example in the Linux machines you can set the `LD_LIBRARY_PATH' to point the folder where you compiled the DLL.
 

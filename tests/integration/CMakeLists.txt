@@ -18,7 +18,7 @@ if(NOT YARP_ENABLE_INTEGRATION_TESTS)
 endif()
 
 # Generate a matrix of SWIG tests
-foreach(lang PYTHON JAVA LUA RUBY CSHARP TCL PERL)
+foreach(lang PYTHON JAVA LUA CSHARP TCL PERL)
   foreach(swig
     1.3.40
     2.0.12
@@ -26,7 +26,7 @@ foreach(lang PYTHON JAVA LUA RUBY CSHARP TCL PERL)
   )
     set(test_name "integration::swig::${lang}::${swig}")
     if("${test_name}" MATCHES "^integration::swig::PYTHON::1.3.37" OR
-       "${test_name}" MATCHES "^integration::swig::(RUBY|LUA)::1.3.(37|38|39|40)$" OR
+       "${test_name}" MATCHES "^integration::swig::(LUA)::1.3.(37|38|39|40)$" OR
        "${test_name}" MATCHES "^integration::swig::(LUA)::2.0.(1|2|3|4|5|6)$")
       # Skip tests that are known to be broken due to swig
     else()
