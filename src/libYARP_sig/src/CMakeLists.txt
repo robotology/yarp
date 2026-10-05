@@ -34,6 +34,7 @@ set(YARP_sig_HDRS
   yarp/sig/SoundFileWav.h
   yarp/sig/SoundUtils.h
   yarp/sig/Vector.h
+  yarp/sig/VectorBase.h
 )
 
 set(YARP_sig_SRCS
