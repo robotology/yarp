@@ -217,7 +217,6 @@ const Matrix &Matrix::operator=(const Matrix &r)
         return *this;
     }
 
-    matrix = nullptr;
     nrows=r.nrows;
     ncols=r.ncols;
     storage=r.storage;
