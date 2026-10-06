@@ -2087,6 +2087,11 @@ public:
         return ok;
     }
 
+    yarp::dev::ReturnValue getLastErrorMsg(std::vector<std::string>& message, yarp::os::Stamp* timeStamp = nullptr) {
+        message.resize(1);
+        return self->getLastErrorMsg(message[0], timeStamp);
+    }
+
     yarp::dev::IRGBDSensor::RGBDSensor_status getSensorStatus() {
         yarp::dev::IRGBDSensor::RGBDSensor_status status;
         self->getSensorStatus(status);
