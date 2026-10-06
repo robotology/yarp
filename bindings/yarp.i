@@ -419,6 +419,10 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/sig/Vector.h>
 %include <yarp/sig/Pose6D.h>
 %include <yarp/sig/ColorRGB.h>
+%include <yarp/sig/CameraDistortionType.h>
+%include <yarp/sig/DistortionModelData.h>
+%include <yarp/sig/IntrinsicParamsData.h>
+%include <yarp/sig/IntrinsicParams.h>
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/Drivers.h>
@@ -461,6 +465,9 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/LLM_Message.h>
 %include <yarp/dev/ILLM.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+%include <yarp/dev/CameraConfigData.h>
+%include <yarp/dev/IRgbVisualParams.h>
+%include <yarp/dev/IDepthVisualParams.h>
 %include <yarp/dev/IRGBDSensor.h>
 %include <yarp/dev/IBattery.h>
 %include <yarp/dev/ISimulatedWorld.h>
@@ -490,6 +497,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %template() std::pair<std::string, std::string>;
 %template(SPairVector) std::vector<std::pair<std::string, std::string>>;
 %template(LLMVector) std::vector<yarp::dev::LLM_Message>;
+%template(CameraConfigVector) std::vector<yarp::dev::CameraConfigData>;
 
 #if !defined(YARP_NO_MATH)
 %template(Map2DLocationVector) std::vector<yarp::dev::Nav2D::Map2DLocation>;
@@ -2077,6 +2085,74 @@ public:
         yarp::os::Stamp timeStamp;
         bool ok = self->getRgbImage(rgbImage, &timeStamp);
         return ok;
+    }
+
+    yarp::dev::ReturnValue getLastErrorMsg(std::vector<std::string>& message, yarp::os::Stamp* timeStamp = nullptr) {
+        message.resize(1);
+        return self->getLastErrorMsg(message[0], timeStamp);
+    }
+
+    yarp::dev::IRGBDSensor::RGBDSensor_status getSensorStatus() {
+        yarp::dev::IRGBDSensor::RGBDSensor_status status;
+        self->getSensorStatus(status);
+        return status;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Adding IRgbVisualParams (one-element vectors as output holders)
+%extend yarp::dev::IRgbVisualParams {
+    yarp::dev::ReturnValue getRgbResolution(std::vector<int>& width, std::vector<int>& height) {
+        width.resize(1);
+        height.resize(1);
+        return self->getRgbResolution(width[0], height[0]);
+    }
+
+    yarp::dev::ReturnValue getRgbFOV(std::vector<double>& horizontalFov, std::vector<double>& verticalFov) {
+        horizontalFov.resize(1);
+        verticalFov.resize(1);
+        return self->getRgbFOV(horizontalFov[0], verticalFov[0]);
+    }
+
+    yarp::dev::ReturnValue getRgbMirroring(std::vector<bool>& mirror) {
+        bool value = false;
+        yarp::dev::ReturnValue ret = self->getRgbMirroring(value);
+        mirror.assign(1, value);
+        return ret;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Adding IDepthVisualParams (one-element vectors as output holders)
+%extend yarp::dev::IDepthVisualParams {
+    yarp::dev::ReturnValue getDepthResolution(std::vector<int>& width, std::vector<int>& height) {
+        width.resize(1);
+        height.resize(1);
+        return self->getDepthResolution(width[0], height[0]);
+    }
+
+    yarp::dev::ReturnValue getDepthFOV(std::vector<double>& horizontalFov, std::vector<double>& verticalFov) {
+        horizontalFov.resize(1);
+        verticalFov.resize(1);
+        return self->getDepthFOV(horizontalFov[0], verticalFov[0]);
+    }
+
+    yarp::dev::ReturnValue getDepthAccuracy(std::vector<double>& accuracy) {
+        accuracy.resize(1);
+        return self->getDepthAccuracy(accuracy[0]);
+    }
+
+    yarp::dev::ReturnValue getDepthClipPlanes(std::vector<double>& nearPlane, std::vector<double>& farPlane) {
+        nearPlane.resize(1);
+        farPlane.resize(1);
+        return self->getDepthClipPlanes(nearPlane[0], farPlane[0]);
+    }
+
+    yarp::dev::ReturnValue getDepthMirroring(std::vector<bool>& mirror) {
+        bool value = false;
+        yarp::dev::ReturnValue ret = self->getDepthMirroring(value);
+        mirror.assign(1, value);
+        return ret;
     }
 }
 

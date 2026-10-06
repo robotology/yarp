@@ -36,4 +36,4 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 ### bindings
 
 * `LogComponent` added to bindings to improve yarp logging system integration
-
+* `IRGBDSensor` Added missing include and extensions to fully use the IRGBDSensor interface with the bindings.
