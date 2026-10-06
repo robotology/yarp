@@ -15,11 +15,6 @@
 
 %import <yarp/dev/api.h>
 
-%{
-#include <yarp/dev/all.h>
-using namespace yarp::dev;
-%}
-
 %feature("notabstract") ReturnValue;
 
 // Deal with overridden method clashes, simply by ignoring them.
