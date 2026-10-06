@@ -168,7 +168,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
             utilities->initialFrame.push_back(utilities->partDetails[x].currFrame);
 
             double totalTime = 0.0;
-            double finalval = utilities->partDetails[x].timestamp[utilities->partDetails[x].timestamp.length()-1];
+            double finalval = utilities->partDetails[x].timestamp[utilities->partDetails[x].timestamp.size()-1];
             double initialval = utilities->partDetails[x].timestamp[utilities->partDetails[x].currFrame];
 
             totalTime = finalval - initialval;

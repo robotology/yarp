@@ -210,10 +210,17 @@
 %ignore yarp::sig::Image::pixel(int,int) const;
 %ignore yarp::sig::Image::getRow(int) const;
 %ignore yarp::sig::Image::getReadType() const;
-%ignore yarp::sig::VectorOf<double>::getType() const;
-%ignore yarp::sig::VectorOf<double>::VectorOf(std::initializer_list<double>);
-%ignore yarp::sig::VectorOf<int>::getType() const;
-%ignore yarp::sig::VectorOf<int>::VectorOf(std::initializer_list<int>);
+// yarp::sig::VectorOf<T> is an alias template (not supported by SWIG) which selects
+// one of the concrete classes yarp::sig::VectorOfDouble, yarp::sig::VectorOfInt, etc.
+// Only the double and int versions are wrapped, with the names Vector and VectorInt.
+// Their methods come from the CRTP base class yarp::sig::VectorBase, which is
+// instantiated with %template before including Vector.h (see below).
+%ignore vector_selector;
+%ignore yarp::sig::VectorOfFloat;
+%ignore yarp::sig::VectorOfString;
+%ignore yarp::sig::VectorOfSizet;
+%rename(Vector) yarp::sig::VectorOfDouble;
+%rename(VectorInt) yarp::sig::VectorOfInt;
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
 %rename(toString) std::string::operator const char *() const;
@@ -416,7 +423,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/sig/SoundFile.h>
 %include <yarp/sig/SoundUtils.h>
 %include <yarp/sig/Matrix.h>
-%include <yarp/sig/Vector.h>
 %include <yarp/sig/Pose6D.h>
 %include <yarp/sig/ColorRGB.h>
 %include <yarp/sig/CameraDistortionType.h>
@@ -515,6 +521,16 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 #endif
 %template(PidVector) std::vector<yarp::dev::Pid>;
 
+// Vector.h must be included after the std::vector<double> and std::vector<int> templates,
+// so that the constructors Vector(const std::vector<double>&) and VectorInt(const std::vector<int>&)
+// (defined below with %extend) can accept native lists.
+// VectorBase is a CRTP base class: it must not be instantiated directly
+%ignore yarp::sig::VectorBase::VectorBase;
+%include <yarp/sig/VectorBase.h>
+%template(VectorBaseDouble) yarp::sig::VectorBase<yarp::sig::VectorOfDouble, double>;
+%template(VectorBaseInt) yarp::sig::VectorBase<yarp::sig::VectorOfInt, int>;
+%include <yarp/sig/Vector.h>
+
 //////////////////////////////////////////////////////////////////////////
 // Match Java toString behaviour
 
@@ -554,8 +570,8 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 //typedef yarp::sig::ImageOf<yarp::sig::PixelInt> ImageInt;
 //typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> ImageFloat;
 //typedef yarp::sig::ImageOf<yarp::sig::PixelRgbFloat> ImageRgbFloat;
-typedef yarp::sig::VectorOf<double> Vector;
-typedef yarp::sig::VectorOf<int> VectorInt;
+typedef yarp::sig::VectorOfDouble Vector;
+typedef yarp::sig::VectorOfInt VectorInt;
 typedef yarp::sig::Matrix Matrix;
 
 //These definitions are for C++
@@ -582,8 +598,8 @@ typedef yarp::dev::Nav2D::XYWorld XYWorld;
 %}
 
 #if SWIG_VERSION < 0x030012
-%rename(VectorIterator) yarp::sig::VectorOf<double>::iterator;
-%rename(VectorConstIterator) yarp::sig::VectorOf<double>::const_iterator;
+%rename(VectorIterator) yarp::sig::VectorOfDouble::iterator;
+%rename(VectorConstIterator) yarp::sig::VectorOfDouble::const_iterator;
 #endif
 
 MAKE_COMMS  (Property, Property)
@@ -595,8 +611,8 @@ MAKE_COMMS2 (ImageMono16, yarp::sig::ImageOf<yarp::sig::PixelMono16>)
 MAKE_COMMS2 (ImageInt, yarp::sig::ImageOf<yarp::sig::PixelInt>)
 MAKE_COMMS2 (ImageFloat, yarp::sig::ImageOf<yarp::sig::PixelFloat>)
 MAKE_COMMS2 (ImageRgbFloat, yarp::sig::ImageOf<yarp::sig::PixelRgbFloat>)
-MAKE_COMMS2 (Vector, yarp::sig::VectorOf<double>)
-MAKE_COMMS2 (VectorInt,yarp::sig::VectorOf<int>)
+MAKE_COMMS  (Vector, yarp::sig::VectorOfDouble)
+MAKE_COMMS  (VectorInt, yarp::sig::VectorOfInt)
 MAKE_COMMS  (Matrix, yarp::sig::Matrix)
 MAKE_COMMS  (Sound, yarp::sig::Sound)
 
@@ -1673,18 +1689,54 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
     %extend yarp::dev::ISkinPatches {EXTENDED_ANALOG_SENSOR_INTERFACE(SkinPatch)}
 #endif
 
-%extend yarp::sig::VectorOf<double> {
+%extend yarp::sig::VectorOfDouble {
+
+    // SWIG does not handle the constructors inherited from yarp::sig::VectorBase
+    // (using VectorBase::VectorBase), so they are re-declared here.
+    // All the other methods are inherited from VectorBase.
+
+    VectorOfDouble()
+    {
+        return new yarp::sig::VectorOfDouble();
+    }
+
+    VectorOfDouble(size_t size)
+    {
+        return new yarp::sig::VectorOfDouble(size);
+    }
+
+    VectorOfDouble(size_t size, double def)
+    {
+        return new yarp::sig::VectorOfDouble(size, def);
+    }
+
+    VectorOfDouble(const yarp::sig::VectorOfDouble& other)
+    {
+        return new yarp::sig::VectorOfDouble(other);
+    }
 
     // This in not a real constructor actually, it is converted by swig to a function returning a pointer.
     // See: http://www.swig.org/Doc3.0/CPlusPlus11.html#CPlusPlus11_initializer_lists
-    VectorOf<double>(const std::vector<double>& values)
+    VectorOfDouble(const std::vector<double>& values)
     {
-        VectorOf<double>* newVec = new VectorOf<double>(0);
+        yarp::sig::VectorOfDouble* newVec = new yarp::sig::VectorOfDouble();
         newVec->reserve(values.size());
         for (const auto& element : values) {
             newVec->push_back(element);
         }
         return newVec;
+    }
+
+    // toString() comes from VectorOf*Data and operator== is a friend function of VectorBase:
+    // neither is visible to SWIG.
+    std::string toString()
+    {
+        return self->toString();
+    }
+
+    bool isEqual(const yarp::sig::VectorOfDouble& other) const
+    {
+        return *self == other;
     }
 
     double get(int j)
@@ -1697,7 +1749,6 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
         self->operator [](j) = v;
     }
 
-
 #ifdef SWIGPYTHON
     void __setitem__(int key, double value) {
         self->operator[](key) = value;
@@ -1707,24 +1758,60 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
         return self->operator[](key);
     }
 
-    double __len__() {
-        return self->length();
+    size_t __len__() {
+        return self->size();
     }
 #endif
 }
 
-%extend yarp::sig::VectorOf<int> {
+%extend yarp::sig::VectorOfInt {
+
+    // SWIG does not handle the constructors inherited from yarp::sig::VectorBase
+    // (using VectorBase::VectorBase), so they are re-declared here.
+    // All the other methods are inherited from VectorBase.
+
+    VectorOfInt()
+    {
+        return new yarp::sig::VectorOfInt();
+    }
+
+    VectorOfInt(size_t size)
+    {
+        return new yarp::sig::VectorOfInt(size);
+    }
+
+    VectorOfInt(size_t size, int def)
+    {
+        return new yarp::sig::VectorOfInt(size, def);
+    }
+
+    VectorOfInt(const yarp::sig::VectorOfInt& other)
+    {
+        return new yarp::sig::VectorOfInt(other);
+    }
 
     // This in not a real constructor actually, it is converted by swig to a function returning a pointer.
     // See: http://www.swig.org/Doc3.0/CPlusPlus11.html#CPlusPlus11_initializer_lists
-    VectorOf<int>(const std::vector<int>& values)
+    VectorOfInt(const std::vector<int>& values)
     {
-        VectorOf<int>* newVec = new VectorOf<int>(0);
+        yarp::sig::VectorOfInt* newVec = new yarp::sig::VectorOfInt();
         newVec->reserve(values.size());
         for (const auto& element : values) {
             newVec->push_back(element);
         }
         return newVec;
+    }
+
+    // toString() comes from VectorOf*Data and operator== is a friend function of VectorBase:
+    // neither is visible to SWIG.
+    std::string toString()
+    {
+        return self->toString();
+    }
+
+    bool isEqual(const yarp::sig::VectorOfInt& other) const
+    {
+        return *self == other;
     }
 
     int get(int j)
@@ -1737,8 +1824,6 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
         self->operator [](j) = v;
     }
 
-
-
 #ifdef SWIGPYTHON
     void __setitem__(int key, int value) {
         self->operator[](key) = value;
@@ -1748,8 +1833,8 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
         return self->operator[](key);
     }
 
-    int __len__() {
-        return self->length();
+    size_t __len__() {
+        return self->size();
     }
 #endif
 }
@@ -1990,8 +2075,8 @@ public:
         return self->cast_as<yarp::os::Property>();
     }
 
-    yarp::sig::VectorOf<double>* asVector() {
-        return self->cast_as<yarp::sig::VectorOf<double>>();
+    yarp::sig::VectorOfDouble* asVector() {
+        return self->cast_as<yarp::sig::VectorOfDouble>();
     }
 
     yarp::sig::Matrix* asMatrix() {

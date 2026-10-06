@@ -241,8 +241,8 @@ Vector operator*(const Vector &a, const Vector &b)
 
 Vector& operator*=(Vector &a, const Vector &b)
 {
-    size_t n =a.length();
-    yCAssert(MATH, n==b.length());
+    size_t n =a.size();
+    yCAssert(MATH, n==b.size());
     for (size_t i = 0; i < n; i++) {
         a[i] *= b[i];
     }
@@ -265,8 +265,8 @@ Vector operator/(const Vector &a, const Vector &b)
 
 Vector& operator/=(Vector &a, const Vector &b)
 {
-    size_t n =a.length();
-    yCAssert(MATH, n==b.length());
+    size_t n =a.size();
+    yCAssert(MATH, n==b.size());
     for (size_t i = 0; i < n; i++) {
         a[i] /= b[i];
     }
@@ -281,7 +281,7 @@ Vector operator/(const Vector &b, double k)
 
 Vector& operator/=(Vector &b, double k)
 {
-    size_t n=b.length();
+    size_t n=b.size();
     yCAssert(MATH, k!=0.0);
     for (size_t i = 0; i < n; i++) {
         b[i] /= k;
@@ -547,7 +547,7 @@ double yarp::math::norm2(const Vector &v)
 
 double yarp::math::findMax(const Vector &v)
 {
-    if (v.length() <= 0) {
+    if (v.size() <= 0) {
         return 0.0;
     }
     double ret=v[0];
@@ -561,11 +561,11 @@ double yarp::math::findMax(const Vector &v)
 
 double yarp::math::findMin(const Vector &v)
 {
-    if (v.length() <= 0) {
+    if (v.size() <= 0) {
         return 0.0;
     }
     double ret=v[0];
-    for (size_t i = 1; i < v.length(); i++) {
+    for (size_t i = 1; i < v.size(); i++) {
         if (v[i] < ret) {
             ret = v[i];
         }
@@ -662,8 +662,8 @@ double yarp::math::sign(const double &v)
 
 Vector yarp::math::sign(const Vector &v)
 {
-    Vector ret(v.length());
-    for (size_t i = 0; i < v.length(); i++) {
+    Vector ret(v.size());
+    for (size_t i = 0; i < v.size(); i++) {
         ret[i] = sign(v[i]);
     }
 
@@ -714,7 +714,7 @@ Vector yarp::math::dcm2axis(const Matrix &R)
 
 Matrix yarp::math::axis2dcm(const Vector &v)
 {
-    yCAssert(MATH, v.length()>=4);
+    yCAssert(MATH, v.size()>=4);
 
     Matrix R=eye(4,4);
 
@@ -791,7 +791,7 @@ Vector yarp::math::dcm2euler(const Matrix &R)
 
 Matrix yarp::math::euler2dcm(const Vector &v)
 {
-    yCAssert(MATH, v.length()>=3);
+    yCAssert(MATH, v.size()>=3);
 
     Matrix Rza=eye(4,4); Matrix Ryb=eye(4,4);  Matrix Rzg=eye(4,4);
     double alpha=v[0];   double ca=cos(alpha); double sa=sin(alpha);
@@ -846,7 +846,7 @@ Vector yarp::math::dcm2rpy(const Matrix &R)
 
 Matrix yarp::math::rpy2dcm(const Vector &v)
 {
-    yCAssert(MATH, v.length()>=3);
+    yCAssert(MATH, v.size()>=3);
 
     Matrix Rz=eye(4,4); Matrix Ry=eye(4,4);   Matrix Rx=eye(4,4);
     double roll=v[0];   double cr=cos(roll);  double sr=sin(roll);
@@ -895,7 +895,7 @@ Vector yarp::math::dcm2ypr(const yarp::sig::Matrix &R)
 
 Matrix yarp::math::ypr2dcm(const Vector &v)
 {
-    yCAssert(MATH, v.length() >= 3);
+    yCAssert(MATH, v.size() >= 3);
 
     Matrix Rz = eye(4, 4); Matrix Ry = eye(4, 4);   Matrix Rx = eye(4, 4);
     double roll = v[2];   double cr = cos(roll);  double sr = sin(roll);

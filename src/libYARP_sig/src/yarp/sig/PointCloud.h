@@ -73,7 +73,7 @@ public:
 
     const char* getRawData() const override
     {
-        return m_storage.getMemoryBlock();
+        return (const char*)(m_storage.data());
     }
 
     /**
@@ -244,7 +244,7 @@ public:
     bool filterDataZ(double minZ=0, double maxZ=std::numeric_limits<double>::infinity());
 
 private:
-    yarp::sig::VectorOf<T> m_storage;
+    std::vector<T> m_storage;
 
     void setPointType();
 };
@@ -265,6 +265,13 @@ template <typename T>
 struct has_member_z<T, std::void_t<decltype(std::declval<T>().z)>> : std::true_type {};
 
 } // namespace yarp::sig
+
+template<class T>
+inline int BottleTagMap () {
+    // make sure this is never called unspecified
+    yAssert(0);
+    return 0;
+}
 
 template <>
 inline int BottleTagMap<yarp::sig::DataXY>()

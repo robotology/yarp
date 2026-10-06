@@ -6,6 +6,7 @@
 #include <yarp/sig/Vector.h>
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/LogStream.h>
@@ -138,11 +139,13 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
             portOut.write(vector);
             Bottle tmp2;
             success = portIn.read(tmp2);
-            CHECK(success); // correctly read from the port
+            REQUIRE(success); // correctly read from the port
 
             //compare vector and tmp
             success = true;
-            if (tmp2.size() != vector.size())
+            REQUIRE(tmp2.size() == 1); // the bottle has only one element, which is a list
+            auto vecbot = tmp2.get(0).asList();
+            if (vecbot->size() != vector.size())
             {
                 success = false;
             }
@@ -150,7 +153,7 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
             {
                 for (unsigned int k = 0; k < vector.size(); k++)
                 {
-                    if (tmp2.get(k).asInt32() != vector[k]) {
+                    if (vecbot->get(k).asInt32() != vector[k]) {
                         success = false;
                     }
                 }
@@ -170,7 +173,7 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
             INFO("testing toString int");
             bool ok = true;
             VectorOf<int> vec;
-            std::string strToCheck = "0 1 2 3 4 5 6 7 8 9";
+            std::string strToCheck = "(0 1 2 3 4 5 6 7 8 9)";
             for (size_t i=0; i<10; i++)
             {
                 vec.push_back(i);
@@ -184,14 +187,16 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
             INFO("testing toString double");
             bool ok = true;
             VectorOf<double> vec;
-            std::string strToCheck = " 0.000000\t 1.000000\t 2.000000\t 3.000000\t 4.000000\t"
-                                     " 5.000000\t 6.000000\t 7.000000\t 8.000000\t 9.000000";
+            std::string strToCheck_ExtFormat = " 0.000000\t 1.000000\t 2.000000\t 3.000000\t 4.000000\t"
+                                               " 5.000000\t 6.000000\t 7.000000\t 8.000000\t 9.000000";
+            std::string strToCheck = "(0.0 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0)";
             for (size_t i=0; i<10; i++)
             {
                 vec.push_back(i);
             }
 
-            ok = vec.toString() == strToCheck;
+            std::string ss = vec.toString();
+            ok = (ss == strToCheck);
             CHECK(ok); // string correctly formatted
         }
 
@@ -200,6 +205,7 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
     SECTION("Checking the functionalities of the initializer list constructor")
     {
         VectorOf<int> v{1, 2, 3};
+
         CHECK(v.size() == (size_t) 3); // Checking size
 
         CHECK(v[0] == 1); // Checking data consistency

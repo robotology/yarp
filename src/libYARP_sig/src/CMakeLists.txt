@@ -34,6 +34,7 @@ set(YARP_sig_HDRS
   yarp/sig/SoundFileWav.h
   yarp/sig/SoundUtils.h
   yarp/sig/Vector.h
+  yarp/sig/VectorBase.h
 )
 
 set(YARP_sig_SRCS
@@ -83,11 +84,13 @@ set(YARP_sig_IDL
   idl/IntrinsicParamsData.thrift
   idl/LayeredImageData.thrift
   idl/LaserScan2D.thrift
+  idl/MatrixData.thrift
   idl/Pose6D.thrift
   idl/QuaternionData.thrift
   idl/SoundMarkerData.thrift
   idl/TranslationData.thrift
   idl/Vec2DData.thrift
+  idl/VectorOfData.thrift
 )
 
 yarp_choose_idl(YARP_sig_idl ${YARP_sig_IDL})

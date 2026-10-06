@@ -143,7 +143,7 @@ You should now have libraries called
 
 Or on windows, the equivalent DLLs.
 
-Now try to run `perl/examples/example.pl` (Perl) and/or `python/examples/example.py` (Python) and/or `tcl/examples/example.tcl` (TCL)).
+Now try to run `perl/examples/example.pl` (Perl) and/or `python/examples/example.py` (Python) and/or `tcl/examples/example.tcl` (TCL).
 
 For TCL, on windows, look at `example.tcl` and uncomment the line referring
 to a .dll, and comment the line referring to a .so
