@@ -98,8 +98,15 @@ bool VectorOfSizetData::read_privdata(yarp::os::idl::WireReader& reader)
             }
         }
         privdata.resize(_csize);
-        if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(privdata.data()), privdata.size() * sizeof(size32))) {
-            return false;
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readSizeT(privdata[_i0])) {
+                reader.fail();
+                return false;
+            }
         }
         reader.readListEnd();
     }
@@ -112,8 +119,10 @@ bool VectorOfSizetData::write_privdata(const yarp::os::idl::WireWriter& writer) 
     if (!writer.writeListBegin(BOTTLE_TAG_INT32, privdata.size())) {
         return false;
     }
-    if (!writer.writeBlock(reinterpret_cast<const char*>(privdata.data()), privdata.size() * sizeof(size32))) {
-        return false;
+    for (const auto& _item : privdata) {
+        if (!writer.writeSizeT(_item, true)) {
+            return false;
+        }
     }
     if (!writer.writeListEnd()) {
         return false;
@@ -140,8 +149,15 @@ bool VectorOfSizetData::nested_read_privdata(yarp::os::idl::WireReader& reader)
             }
         }
         privdata.resize(_csize);
-        if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(privdata.data()), privdata.size() * sizeof(size32))) {
-            return false;
+        for (size_t _i0 = 0; _i0 < _csize; ++_i0) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readSizeT(privdata[_i0])) {
+                reader.fail();
+                return false;
+            }
         }
         reader.readListEnd();
     }
@@ -154,8 +170,10 @@ bool VectorOfSizetData::nested_write_privdata(const yarp::os::idl::WireWriter& w
     if (!writer.writeListBegin(BOTTLE_TAG_INT32, privdata.size())) {
         return false;
     }
-    if (!writer.writeBlock(reinterpret_cast<const char*>(privdata.data()), privdata.size() * sizeof(size32))) {
-        return false;
+    for (const auto& _item : privdata) {
+        if (!writer.writeSizeT(_item, true)) {
+            return false;
+        }
     }
     if (!writer.writeListEnd()) {
         return false;

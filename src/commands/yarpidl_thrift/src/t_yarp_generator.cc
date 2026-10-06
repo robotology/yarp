@@ -214,6 +214,8 @@ public:
     void namespace_close(std::ostream& out, const std::string& ns);
 
     bool is_complex_type(t_type* ttype);
+    bool is_float32_type(t_type* ttype);
+    bool is_block_serializable(t_type* ttype);
 
     void generate_serialize_field(std::ostringstream& out,
                                   t_field* tfield,
@@ -423,8 +425,7 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
             return "BOTTLE_TAG_INT64";
         case t_base_type::TYPE_DOUBLE:
         {
-            auto it = type->annotations_.find("yarp.type");
-            if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
+            if (is_float32_type(type)) {
                 return "BOTTLE_TAG_FLOAT32";
             }
             return "BOTTLE_TAG_FLOAT64";
@@ -756,6 +757,53 @@ bool t_yarp_generator::is_complex_type(t_type* ttype)
            ttype->is_struct() ||
            ttype->is_xception() ||
            (ttype->is_base_type() && static_cast<t_base_type*>(ttype)->get_base() == t_base_type::TYPE_STRING);
+}
+
+// Returns true if the type is a double annotated to be a 32 bit float in C++,
+// in this case it is serialized as BOTTLE_TAG_FLOAT32
+bool t_yarp_generator::is_float32_type(t_type* ttype)
+{
+    if (!ttype->is_base_type() || static_cast<t_base_type*>(ttype)->get_base() != t_base_type::TYPE_DOUBLE) {
+        return false;
+    }
+    auto it = ttype->annotations_.find("yarp.type");
+    return it != ttype->annotations_.end() && (it->second == "yarp::conf::float32_t" || it->second == "float");
+}
+
+// Returns true if a list of this type can be serialized by copying the whole
+// memory block, i.e. if the elements are stored in a contiguous array and the
+// size of the C++ type matches the size of the type on the wire.
+bool t_yarp_generator::is_block_serializable(t_type* ttype)
+{
+    if (is_complex_type(ttype)) {
+        return false;
+    }
+    ttype = get_true_type(ttype);
+    if (!ttype->is_base_type()) {
+        // enums
+        return true;
+    }
+    const t_base_type::t_base tbase = static_cast<t_base_type*>(ttype)->get_base();
+    // vector<bool> does not necessarily store its elements as a contiguous array.
+    if (tbase == t_base_type::TYPE_BOOL) {
+        return false;
+    }
+    auto it = ttype->annotations_.find("yarp.type");
+    if (it == ttype->annotations_.end()) {
+        return true;
+    }
+    // Types with a custom C++ type can be serialized as a block only if the
+    // C++ type is known to have the same size of the wire type (for example
+    // size_t is serialized as int32, but it is 8 bytes on 64 bit platforms).
+    static const std::map<t_base_type::t_base, std::set<std::string>> same_size_types {
+        {t_base_type::TYPE_I8, {"std::int8_t", "int8_t", "std::uint8_t", "uint8_t", "char", "signed char", "unsigned char"}},
+        {t_base_type::TYPE_I16, {"std::int16_t", "int16_t", "std::uint16_t", "uint16_t", "short", "short int", "signed short", "unsigned short", "short unsigned int", "unsigned short int"}},
+        {t_base_type::TYPE_I32, {"std::int32_t", "int32_t", "std::uint32_t", "uint32_t", "int", "unsigned int", "unsigned", "yarp::conf::vocab32_t"}},
+        {t_base_type::TYPE_I64, {"std::int64_t", "int64_t", "std::uint64_t", "uint64_t", "long long", "unsigned long long"}},
+        {t_base_type::TYPE_DOUBLE, {"double", "yarp::conf::float64_t", "float", "yarp::conf::float32_t"}},
+    };
+    auto types = same_size_types.find(tbase);
+    return types != same_size_types.end() && types->second.count(it->second) != 0;
 }
 
 /**
@@ -1236,8 +1284,7 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
             }
             case t_base_type::TYPE_DOUBLE:
             {
-                auto it = type->annotations_.find("yarp.type");
-                if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
+                if (is_float32_type(type)) {
                     f_cpp_ << "writeFloat32(" << name << (skip_tag ? ", true" : "") << ")";
                 } else {
                     f_cpp_ << "writeFloat64(" << name << (skip_tag ? ", true" : "") << ")";
@@ -1321,9 +1368,10 @@ void t_yarp_generator::generate_serialize_container(std::ostringstream& f_cpp_,
                         << name
                         << ".size()))"
                         << inline_return_cpp("false");
-        // Do not use block serialization for complex types and for vector<bool>
-        // that does not necessarily store its elements as a contiguous array.
-        if (!is_complex_type(elem_type) && (static_cast<t_base_type*>(elem_type)->get_base() != t_base_type::TYPE_BOOL)) {
+        // Do not use block serialization for complex types, for vector<bool>
+        // that does not necessarily store its elements as a contiguous array,
+        // and for types whose C++ size does not match the wire size.
+        if (is_block_serializable(elem_type)) {
             // For simple types just push the whole data block
             f_cpp_ << indent_cpp() << "if (!writer.writeBlock(reinterpret_cast<const char*>("
                             << name
@@ -1509,8 +1557,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         }
         case t_base_type::TYPE_DOUBLE:
         {
-            auto it = type->annotations_.find("yarp.type");
-            if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
+            if (is_float32_type(type)) {
                 f_cpp_ << "readFloat32(" << name << ")";
             } else {
                 f_cpp_ << "readFloat64(" << name << ")";
@@ -1678,9 +1725,10 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         indent_down_cpp();
         f_cpp_ << indent_cpp() << "}\n";
 
-        // Do not use block serialization for complex types and for vector<bool>
-        // that does not necessarily store its elements as a contiguous array.
-        if (!is_complex_type(elem_type) && (static_cast<t_base_type*>(elem_type)->get_base() != t_base_type::TYPE_BOOL)) {
+        // Do not use block serialization for complex types, for vector<bool>
+        // that does not necessarily store its elements as a contiguous array,
+        // and for types whose C++ size does not match the wire size.
+        if (is_block_serializable(elem_type)) {
             // For simple types just read the whole data block
             f_cpp_ << indent_cpp() << name << ".resize(_csize);\n";
             f_cpp_ << indent_cpp() << "if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>("

@@ -99,7 +99,7 @@ bool PointCloud<T>::write(yarp::os::ConnectionWriter& writer) const
     writer.appendBlock((char*)&header, sizeof(PointCloudNetworkHeader));
     auto storagepointer = m_storage.data();
     writer.appendBlock((char*)storagepointer, m_storage.size() * sizeof(T));
-    return true;
+    return !writer.isError();
 }
 
 template <class T>

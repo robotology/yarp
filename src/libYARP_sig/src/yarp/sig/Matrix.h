@@ -9,6 +9,7 @@
 
 #include <cstdlib> //defines size_t
 #include <cstring> //memset
+#include <utility> //std::move
 #include <yarp/sig/MatrixData.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/ManagedBytes.h>
@@ -307,10 +308,23 @@ public:
 
       bool read(yarp::os::ConnectionReader& connection) override
       {
-          bool b = MatrixData::read(connection);
-          if (!b) { return b;}
+          // Read into a temporary object, so that a failed or malformed read
+          // leaves this matrix (and its row pointers) untouched.
+          Matrix tmp;
+          if (!tmp.MatrixData::read(connection)) {
+              return false;
+          }
+          if (tmp.nrows < 0 ||
+              tmp.ncols < 0 ||
+              tmp.storage.size() != static_cast<size_t>(tmp.nrows) * static_cast<size_t>(tmp.ncols))
+          {
+              return false;
+          }
+          nrows = tmp.nrows;
+          ncols = tmp.ncols;
+          storage = std::move(tmp.storage);
           updatePointers();
-          return b;
+          return true;
       }
 
       bool write(yarp::os::ConnectionWriter& connection) const override

@@ -38,11 +38,11 @@ RESET_CONSTANTS_IN_EXTENDED_ANALOG_SENSOR_INTERFACE
 #endif
 
 #if OrientationSensor_EXTENDED_INTERFACE
-    double get ## sensor ## MeasureAsRollPitchYaw(int sens_index, yarp::sig::VectorOf<double>& rpy) const {
+    double get ## sensor ## MeasureAsRollPitchYaw(int sens_index, yarp::sig::VectorOfDouble& rpy) const {
         double timestamp;
         bool ok = self->get ## sensor ## MeasureAsRollPitchYaw(sens_index, rpy, timestamp);
 #else
-    double get ## sensor ## Measure(int sens_index, yarp::sig::VectorOf<double>& out) const {
+    double get ## sensor ## Measure(int sens_index, yarp::sig::VectorOfDouble& out) const {
         double timestamp;
         bool ok = self->get ## sensor ## Measure(sens_index, out, timestamp);
 #endif

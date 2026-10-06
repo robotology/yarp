@@ -91,7 +91,7 @@ bool VectorOfFloatData::read_privdata(yarp::os::idl::WireReader& reader)
         yarp::os::idl::WireState _etype;
         reader.readListBegin(_etype, _csize);
         // WireReader removes BOTTLE_TAG_LIST from the tag
-        constexpr int expected_tag = ((BOTTLE_TAG_FLOAT64) & (~BOTTLE_TAG_LIST));
+        constexpr int expected_tag = ((BOTTLE_TAG_FLOAT32) & (~BOTTLE_TAG_LIST));
         if constexpr (expected_tag != 0) {
             if (_csize != 0 && _etype.code != expected_tag) {
                 return false;
@@ -109,7 +109,7 @@ bool VectorOfFloatData::read_privdata(yarp::os::idl::WireReader& reader)
 // write privdata field
 bool VectorOfFloatData::write_privdata(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_FLOAT64, privdata.size())) {
+    if (!writer.writeListBegin(BOTTLE_TAG_FLOAT32, privdata.size())) {
         return false;
     }
     if (!writer.writeBlock(reinterpret_cast<const char*>(privdata.data()), privdata.size() * sizeof(float32))) {
@@ -133,7 +133,7 @@ bool VectorOfFloatData::nested_read_privdata(yarp::os::idl::WireReader& reader)
         yarp::os::idl::WireState _etype;
         reader.readListBegin(_etype, _csize);
         // WireReader removes BOTTLE_TAG_LIST from the tag
-        constexpr int expected_tag = ((BOTTLE_TAG_FLOAT64) & (~BOTTLE_TAG_LIST));
+        constexpr int expected_tag = ((BOTTLE_TAG_FLOAT32) & (~BOTTLE_TAG_LIST));
         if constexpr (expected_tag != 0) {
             if (_csize != 0 && _etype.code != expected_tag) {
                 return false;
@@ -151,7 +151,7 @@ bool VectorOfFloatData::nested_read_privdata(yarp::os::idl::WireReader& reader)
 // write (nested) privdata field
 bool VectorOfFloatData::nested_write_privdata(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_FLOAT64, privdata.size())) {
+    if (!writer.writeListBegin(BOTTLE_TAG_FLOAT32, privdata.size())) {
         return false;
     }
     if (!writer.writeBlock(reinterpret_cast<const char*>(privdata.data()), privdata.size() * sizeof(float32))) {

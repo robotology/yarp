@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <algorithm>
+#include <type_traits>
 
 #include <yarp/sig/api.h>
 #include <yarp/sig/VectorBase.h>

@@ -197,7 +197,7 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         Bottle* botlist = bot.get(0).asList();
         REQUIRE(botlist->size() ==  v.size()); // size matches
         {
-            for (size_t i=0; i<bot.size(); i++) {
+            for (size_t i=0; i<botlist->size(); i++) {
                 CHECK(botlist->get(i).asFloat64()>i-0.25); // bounded below
                 CHECK(botlist->get(i).asFloat64()<i+0.25); // bounded above
             }
@@ -448,6 +448,43 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
             Vector  out_v;
             bool bret = yarp::os::Portable::copyPortable(in_b, out_v);
             CHECK(bret==false);
+        }
+    }
+
+    SECTION("Check conversion between bottle and vectors whose C++ type differs from the wire type")
+    {
+        {
+            VectorOf<float> in_v = {1.5f, 2.5f, 3.5f};
+            Bottle out_b;
+            CHECK(yarp::os::Portable::copyPortable(in_v, out_b));
+            REQUIRE(out_b.size() == 1);
+            Bottle* lst = out_b.get(0).asList();
+            REQUIRE(lst != nullptr);
+            REQUIRE(lst->size() == 3);
+            CHECK(lst->get(1).asFloat32() == 2.5f);
+
+            VectorOf<float> out_v;
+            CHECK(yarp::os::Portable::copyPortable(out_b, out_v));
+            REQUIRE(out_v.size() == 3);
+            CHECK(out_v[0] == 1.5f);
+            CHECK(out_v[2] == 3.5f);
+        }
+        {
+            VectorOf<size_t> in_v = {1, 2, 3};
+            Bottle out_b;
+            CHECK(yarp::os::Portable::copyPortable(in_v, out_b));
+            REQUIRE(out_b.size() == 1);
+            Bottle* lst = out_b.get(0).asList();
+            REQUIRE(lst != nullptr);
+            REQUIRE(lst->size() == 3);
+            CHECK(lst->get(1).asInt32() == 2);
+            CHECK(out_b.toString() == "(1 2 3)");
+
+            VectorOf<size_t> out_v;
+            CHECK(yarp::os::Portable::copyPortable(out_b, out_v));
+            REQUIRE(out_v.size() == 3);
+            CHECK(out_v[0] == 1);
+            CHECK(out_v[2] == 3);
         }
     }
 

@@ -96,7 +96,7 @@ class VectorBase
     void reserve(size_t size)
     {
         auto& v = static_cast<Derived&>(*this);
-        return v.privVec().reserve(size);
+        v.privVec().reserve(size);
     }
 
     /**
