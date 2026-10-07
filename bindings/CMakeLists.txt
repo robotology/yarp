@@ -118,6 +118,10 @@ if (_nested_build)
   foreach(f
     CMakeLists.txt
     yarp.i
+    yarp_os.i
+    yarp_sig.i
+    yarp_sig_vector.i
+    yarp_dev.i
     macrosForMultipleAnalogSensors.i
     matlab/vectors_fromTo_matlab.i
     README.md
