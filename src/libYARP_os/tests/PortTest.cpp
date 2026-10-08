@@ -1352,7 +1352,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         p2.close();
     }
 
-    SECTION("check port admin ver/list/set/get/atch/dtch commands")
+    SECTION("check port admin ver/list/set/get/attach/detach portmonitor commands")
     {
         // /p2 -> /p1, admin commands are sent by /p2 and processed by /p1
         const auto ok = yarp::os::createVocab32('o', 'k');
@@ -1436,29 +1436,36 @@ TEST_CASE("os::PortTest", "[yarp::os]")
             CHECK(reply.get(0).asVocab32() == fail);
         }
 
-        // atch: wrong direction, and a portmonitor which cannot be configured
+        // attachPortmonitorIn/Out: missing argument, and a portmonitor which cannot be configured
         {
             Bottle reply;
-            CHECK(p2.write(Bottle("atch wrong \"(file nonexistent)\""), reply));
+            CHECK(p2.write(Bottle("attachPortmonitorIn"), reply));
             CHECK(reply.get(0).asVocab32() == fail);
 
             reply.clear();
-            CHECK(p2.write(Bottle("atch in \"(type nonexistent_type) (file nonexistent_file)\""), reply));
+            CHECK(p2.write(Bottle("attachPortmonitorIn \"(type nonexistent_type) (file nonexistent_file)\""), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("attachPortmonitorOut \"(type nonexistent_type) (file nonexistent_file)\""), reply));
             CHECK(reply.get(0).asVocab32() == fail);
         }
 
-        // dtch: always succeeds on a valid direction
+        // detachPortmonitorIn/Out: always succeed
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("detachPortmonitorIn"), reply));
+            CHECK(reply.get(0).asVocab32() == ok);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("detachPortmonitorOut"), reply));
+            CHECK(reply.get(0).asVocab32() == ok);
+        }
+
+        // the old hand-written commands are not supported anymore
         {
             Bottle reply;
             CHECK(p2.write(Bottle("dtch in"), reply));
-            CHECK(reply.get(0).asVocab32() == ok);
-
-            reply.clear();
-            CHECK(p2.write(Bottle("dtch out"), reply));
-            CHECK(reply.get(0).asVocab32() == ok);
-
-            reply.clear();
-            CHECK(p2.write(Bottle("dtch wrong"), reply));
             CHECK(reply.get(0).asVocab32() == fail);
         }
 

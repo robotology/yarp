@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GENERATION is ON.
 
-// Generated on: Tue Jul 28 23:41:11 2026
+// Generated on: Thu Oct 15 17:20:08 2026
 
 
 #include "TestDeviceWGP2_ParamsParser.h"

@@ -35,6 +35,7 @@ interface:
 - \ref port_admin_del
 - \ref port_admin_list
 - \ref port_admin_ver
+- \ref port_admin_portmonitor
 
 \section port_admin_help help
 
@@ -81,5 +82,30 @@ List input or output connections.
 \endverbatim
 
 Report the version of the port protocol in operation.
+
+
+\section port_admin_portmonitor attachPortmonitorIn / attachPortmonitorOut / detachPortmonitorIn / detachPortmonitorOut
+
+\verbatim
+attachPortmonitorIn  "(type dll) (file test_numbers1)"
+attachPortmonitorOut "(type dll) (file test_numbers1)"
+detachPortmonitorIn
+detachPortmonitorOut
+\endverbatim
+
+Attach a portmonitor plug-in to the input or to the output of the port, or
+detach it. The argument of the attach commands is a single string containing
+the portmonitor configuration, e.g. its \c type (\c dll, \c lua, ...) and its
+\c file. Attaching a new portmonitor replaces the one previously attached (if
+any). The reply is \c ok on success, \c fail otherwise.
+
+These commands are defined in the thrift service \c PortCoreMsgs
+(\c src/libYARP_os/src/idl/PortCoreMsgs.thrift). From code, they can be sent
+using the corresponding methods of yarp::os::impl::PortCoreClient:
+\code
+yarp::os::impl::PortCoreClient client("/port_name");
+client.attachPortmonitorIn("(type dll) (file test_numbers1)");
+client.detachPortmonitorIn();
+\endcode
 
 */

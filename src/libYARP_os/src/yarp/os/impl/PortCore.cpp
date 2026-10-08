@@ -28,6 +28,7 @@
 #include <yarp/os/ThreadInfoData.h>
 
 #include <yarp/os/ConnectionQosData.h>
+#include <yarp/os/PortCoreMsgs.h>
 
 #include <cstdio>
 #include <functional>
@@ -1532,8 +1533,6 @@ enum class PortCoreCommand : yarp::conf::vocab32_t
     Ver = yarp::os::createVocab32('v', 'e', 'r'),
     Add = yarp::os::createVocab32('a', 'd', 'd'),
     Del = yarp::os::createVocab32('d', 'e', 'l'),
-    Atch = yarp::os::createVocab32('a', 't', 'c', 'h'),
-    Dtch = yarp::os::createVocab32('d', 't', 'c', 'h'),
     List = yarp::os::createVocab32('l', 'i', 's', 't'),
     Set = yarp::os::createVocab32('s', 'e', 't'),
     Get = yarp::os::createVocab32('g', 'e', 't'),
@@ -1556,8 +1555,6 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
     case PortCoreCommand::Ver:
     case PortCoreCommand::Add:
     case PortCoreCommand::Del:
-    case PortCoreCommand::Atch:
-    case PortCoreCommand::Dtch:
     case PortCoreCommand::List:
     case PortCoreCommand::Set:
     case PortCoreCommand::Get:
@@ -1643,10 +1640,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addString("[qos] get $portname       # get Qos properties of a connection to/from a port");
         result.addString("[qos] set_all ($portname $priority $policy $tos) # set Qos properties of a connection to/from a port");
         result.addString("[qos] set_process $cur_port $priority $policy  # set scheduling of all the threads of the current process");
-        result.addString("[atch] [out] $portmonitor # attach a portmonitor plug-in to the port's output");
-        result.addString("[atch] [in]  $portmonitor # attach a portmonitor plug-in to the port's input");
-        result.addString("[dtch] [out]              # detach portmonitor plug-in from the port's output");
-        result.addString("[dtch] [in]               # detach portmonitor plug-in from the port's input");
+        result.addString("attachPortmonitorOut $portmonitor # attach a portmonitor plug-in to the port's output");
+        result.addString("attachPortmonitorIn  $portmonitor # attach a portmonitor plug-in to the port's input");
+        result.addString("detachPortmonitorOut              # detach portmonitor plug-in from the port's output");
+        result.addString("detachPortmonitorIn               # detach portmonitor plug-in from the port's input");
         return result;
     };
 
@@ -1697,57 +1694,43 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
-    auto handleAdminAtchCmd = [this](PortCoreConnectionDirection direction,
-                                     const std::string& portmonitor_options) {
-        Bottle result;
-        switch (direction) {
-        case PortCoreConnectionDirection::Out: {
+    // Server side of the commands defined in idl/PortCoreMsgs.thrift.
+    // NOTE: being a local class, it has the same access rights of adminBlock().
+    class PortCoreMsgsServer : public yarp::os::PortCoreMsgs
+    {
+        PortCore& m_owner;
+
+        bool attach(const std::string& portmonitor_options, bool isOutput)
+        {
             std::string errMsg;
-            if (!attachPortMonitor(portmonitor_options, true, errMsg)) {
-                result.addVocab32("fail");
-                result.addString(errMsg);
-            } else {
-                result.addVocab32("ok");
+            if (!m_owner.attachPortMonitor(portmonitor_options, isOutput, errMsg)) {
+                yCIError(PORTCORE, m_owner.getName(), "%s", errMsg.c_str());
+                return false;
             }
-        } break;
-        case PortCoreConnectionDirection::In: {
-            std::string errMsg;
-            if (!attachPortMonitor(portmonitor_options, false, errMsg)) {
-                result.addVocab32("fail");
-                result.addString(errMsg);
-            } else {
-                result.addVocab32("ok");
-            }
-        } break;
-        case PortCoreConnectionDirection::Error:
-            result.addVocab32("fail");
-            result.addString("attach command must be followed by [out] or [in]");
+            return true;
         }
-        return result;
+
+    public:
+        explicit PortCoreMsgsServer(PortCore& owner) : m_owner(owner) {}
+
+        bool attachPortmonitorOut(const std::string& prop) override { return attach(prop, true); }
+        bool attachPortmonitorIn(const std::string& prop) override { return attach(prop, false); }
+        bool detachPortmonitorOut() override { return m_owner.detachPortMonitor(true); }
+        bool detachPortmonitorIn() override { return m_owner.detachPortMonitor(false); }
     };
 
-    auto handleAdminDtchCmd = [this](PortCoreConnectionDirection direction) {
-        Bottle result;
-        switch (direction) {
-        case PortCoreConnectionDirection::Out: {
-            if (detachPortMonitor(true)) {
-                result.addVocab32("ok");
-            } else {
-                result.addVocab32("fail");
-            }
-        } break;
-        case PortCoreConnectionDirection::In: {
-            if (detachPortMonitor(false)) {
-                result.addVocab32("ok");
-            } else {
-                result.addVocab32("fail");
-            }
-        } break;
-        case PortCoreConnectionDirection::Error:
-            result.addVocab32("fail");
-            result.addString("detach command must be followed by [out] or [in]");
-        };
-        return result;
+    auto handleAdminThriftCmd = [this](const Bottle& cmd, Bottle& result) {
+        // Forward the (already read) command to the thrift service and
+        // collect its reply. Returns false if the command is not one of
+        // the commands of the service.
+        PortCoreMsgsServer server(*this);
+        DummyConnector con;
+        cmd.write(con.getWriter());
+        if (!server.read(con.getReader())) {
+            return false;
+        }
+        result.read(con.getReader());
+        return true;
     };
 
     auto handleAdminListCmd = [this](const PortCoreConnectionDirection direction,
@@ -2302,15 +2285,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         const std::string dest = cmd.get(1).asString();
         result = handleAdminDelCmd(dest);
     } break;
-    case PortCoreCommand::Atch: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32());
-        std::string portmonitor_options = cmd.get(2).asString();
-        result = handleAdminAtchCmd(direction, portmonitor_options);
-    } break;
-    case PortCoreCommand::Dtch: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32());
-        result = handleAdminDtchCmd(direction);
-    } break;
     case PortCoreCommand::List: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32(), true);
         const std::string target = cmd.get(2).asString();
@@ -2403,7 +2377,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
     } break;
     case PortCoreCommand::Unknown:
-        result = handleAdminUnknownCmd(cmd);
+        // Commands of the thrift service PortCoreMsgs, otherwise forwarded
+        // to the admin reader (if any)
+        if (!handleAdminThriftCmd(cmd, result)) {
+            result = handleAdminUnknownCmd(cmd);
+        }
         break;
     }
 

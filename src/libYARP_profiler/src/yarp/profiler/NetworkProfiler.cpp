@@ -11,13 +11,13 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
+#include <yarp/os/impl/PortCoreClient.h>
 #include <yarp/companion/impl/Companion.h>
 #include <algorithm>
 
 using namespace yarp::os;
 using namespace yarp::profiler;
 using namespace yarp::profiler::graph;
-
 
 
 NetworkProfiler::ProgressCallback* NetworkProfiler::progCallback = nullptr;
@@ -249,42 +249,20 @@ bool NetworkProfiler::updateConnectionQosStatus(yarp::profiler::graph::Graph& gr
 
 bool NetworkProfiler::attachPortmonitorPlugin(std::string portName, yarp::os::Property pluginProp) {
 
-    //e.g.,  atch in "(context yarpviz) (file portrate)"
-    yarp::os::Bottle cmd, reply;
-    cmd.addString("atch");
-    cmd.addString("in");
-    cmd.addString(pluginProp.toString());
-    //Property& prop = cmd.addDict();
-    //prop.fromString(pluginProp.toString());
-    //yInfo()<<cmd.toString();
-    Contact srcCon = Contact::fromString(portName);
-    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, reply, true, true, 2.0);
-    if(!ret) {
-        yError()<<"Cannot write to"<<portName;
+    //e.g.,  attachPortmonitorIn "(context yarpviz) (file portrate)"
+    yarp::os::impl::PortCoreClient client(portName);
+    if (!client.attachPortmonitorIn(pluginProp.toString())) {
+        yError() << "Cannot attach the portmonitor plug-in to" << portName;
         return false;
     }
-    if(reply.get(0).asString() != "ok") {
-             yError()<<reply.toString();
-        return false;
-    }
-
     return true;
-
 }
 
 bool NetworkProfiler::detachPortmonitorPlugin(std::string portName) {
-    //e.g.,  dtch in
-    yarp::os::Bottle cmd, reply;
-    cmd.addString("dtch");
-    cmd.addString("in");
-    Contact srcCon = Contact::fromString(portName);
-    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, reply, true, true, 2.0);
-    if(!ret) {
-        yError()<<"Cannot write to"<<portName;
-        return false;
-    }
-    if(reply.get(0).asString() != "ok") {
-             yError()<<reply.toString();
+    //e.g.,  detachPortmonitorIn
+    yarp::os::impl::PortCoreClient client(portName);
+    if (!client.detachPortmonitorIn()) {
+        yError() << "Cannot detach the portmonitor plug-in from" << portName;
         return false;
     }
     return true;
