@@ -1,0 +1,2 @@
+yarp/os/ConnectionQosData.h
+yarp/os/ConnectionQosData.cpp

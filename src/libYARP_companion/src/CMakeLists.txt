@@ -38,7 +38,6 @@ set(YARP_companion_IMPL_SRCS
   yarp/companion/impl/Companion.cmdNamespace.cpp
   yarp/companion/impl/Companion.cmdPing.cpp
   yarp/companion/impl/Companion.cmdPlugin.cpp
-  yarp/companion/impl/Companion.cmdPray.cpp
   yarp/companion/impl/Companion.cmdPriorityQos.cpp
   yarp/companion/impl/Companion.cmdPrioritySched.cpp
   yarp/companion/impl/Companion.cmdResource.cpp

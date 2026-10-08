@@ -5,6 +5,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/SystemInfo.h>
 #include <yarp/os/Time.h>
 #include <yarp/profiler/NetworkProfilerBasic.h>
 
@@ -102,6 +103,9 @@ TEST_CASE("profiler::NetworkProfilerBasicTest", "[yarp::profiler]")
             //CHECK(info.owner_process.arguments == "");
             CHECK(info.owner_process.process_name != "");
             CHECK(info.owner_process.process_fullname != "");
+            CHECK(info.owner_process.pid == yarp::os::SystemInfo::getProcessInfo().pid);
+            CHECK(info.owner_process.owner_machine.os == yarp::os::SystemInfo::getPlatformInfo().name);
+            CHECK(info.owner_process.owner_machine.hostname != "");
         }
 
         {

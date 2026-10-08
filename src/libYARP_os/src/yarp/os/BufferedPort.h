@@ -270,12 +270,6 @@ public:
     void setRpcMode(bool expectRpc) override;
 
     // documented in Contactable
-    Property* acquireProperties(bool readOnly) override;
-
-    // documented in Contactable
-    void releaseProperties(Property* prop) override;
-
-    // documented in Contactable
     bool setCallbackLock(std::mutex* mutex) override;
 
     // documented in Contactable
