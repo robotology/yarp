@@ -24,6 +24,12 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/PortInfo.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/SystemInfo.h>
+#include <yarp/os/ConnectionQosData.h>
+#include <yarp/os/ProcessInfoData.h>
+#include <yarp/os/PlatformInfoData.h>
+#include <yarp/os/ThreadInfoData.h>
+#include <yarp/os/PortInfoData.h>
 
 #include <yarp/companion/impl/Companion.h>
 
@@ -1187,6 +1193,126 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         p2.write(cmd, reply);
 
         CHECK(reply.size()>=1); // got a reply
+
+        p1.close();
+        p2.close();
+    }
+
+    SECTION("check port admin qos/info/get commands")
+    {
+        // /p2 -> /p1, admin commands are sent by /p2 and processed by /p1
+        BufferedPort<Bottle> p1;
+        Port p2;
+        p1.open("/p1");
+        p2.open("/p2");
+        Network::connect("/p2", "/p1");
+        Network::sync("/p1");
+        Network::sync("/p2");
+        p2.setAdminMode();
+
+        // qos get on an existing connection returns ok + ConnectionQosData
+        {
+            Bottle cmd;
+            Bottle reply;
+            cmd.addVocab32("qos");
+            cmd.addString("get");
+            cmd.addString("/p2");
+            CHECK(p2.write(cmd, reply));
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
+            Bottle* data = reply.get(1).asList();
+            REQUIRE(data != nullptr);
+            ConnectionQosData qos;
+            CHECK(Portable::copyPortable(Bottle(*data), qos));
+            CHECK(qos.portname == "/p2");
+        }
+
+        // qos get on a missing connection fails
+        {
+            Bottle cmd;
+            Bottle reply;
+            cmd.addVocab32("qos");
+            cmd.addString("get");
+            cmd.addString("/nonexistent");
+            CHECK(p2.write(cmd, reply));
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f', 'a', 'i', 'l'));
+        }
+
+        // qos set_all round trip
+        {
+            ConnectionQosData qos;
+            qos.portname = "/p2";
+            qos.scheduler_priority = -1;
+            qos.scheduler_policy = -1;
+            qos.qos_tos = 0;
+            Bottle cmd;
+            Bottle reply;
+            cmd.addVocab32("qos");
+            cmd.addString("set_all");
+            CHECK(Portable::copyPortable(qos, cmd.addList()));
+            CHECK(p2.write(cmd, reply));
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
+        }
+
+        // qos set_all with a malformed payload fails
+        {
+            Bottle cmd;
+            Bottle reply;
+            cmd.addVocab32("qos");
+            cmd.addString("set_all");
+            cmd.addString("/p2");
+            CHECK(p2.write(cmd, reply));
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f', 'a', 'i', 'l'));
+        }
+
+        // info on the port itself returns process, platform, thread and port info
+        {
+            Bottle cmd;
+            Bottle reply;
+            cmd.addVocab32("info");
+            cmd.addString("/p1");
+            CHECK(p2.write(cmd, reply));
+            REQUIRE(reply.size() == 4);
+            ProcessInfoData proc;
+            PlatformInfoData platform;
+            ThreadInfoData thread;
+            PortInfoData port;
+            REQUIRE(reply.get(0).asList() != nullptr);
+            REQUIRE(reply.get(1).asList() != nullptr);
+            REQUIRE(reply.get(2).asList() != nullptr);
+            REQUIRE(reply.get(3).asList() != nullptr);
+            CHECK(Portable::copyPortable(Bottle(*reply.get(0).asList()), proc));
+            CHECK(Portable::copyPortable(Bottle(*reply.get(1).asList()), platform));
+            CHECK(Portable::copyPortable(Bottle(*reply.get(2).asList()), thread));
+            CHECK(Portable::copyPortable(Bottle(*reply.get(3).asList()), port));
+            CHECK(proc.pid == SystemInfo::getProcessInfo().pid);
+            CHECK(port.is_input);
+        }
+
+        // info on a connection returns thread info
+        {
+            Bottle cmd;
+            Bottle reply;
+            cmd.addVocab32("info");
+            cmd.addString("/p2");
+            CHECK(p2.write(cmd, reply));
+            REQUIRE(reply.size() == 1);
+            REQUIRE(reply.get(0).asList() != nullptr);
+            ThreadInfoData thread;
+            CHECK(Portable::copyPortable(Bottle(*reply.get(0).asList()), thread));
+        }
+
+        // get in on a connection returns the carrier parameters as a nested list
+        // (this is the format expected by NetworkProfiler::getPortmonitorParams)
+        {
+            Bottle cmd;
+            Bottle reply;
+            cmd.addVocab32("get");
+            cmd.addVocab32("in");
+            cmd.addString("/p2");
+            CHECK(p2.write(cmd, reply));
+            REQUIRE(reply.size() == 1);
+            CHECK(reply.get(0).isList());
+        }
 
         p1.close();
         p2.close();

@@ -1140,71 +1140,57 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
     return setConnectionQos(src, dest, style, style, quiet);
 }
 
-bool NetworkBase::setConnectionQos(const std::string& src, const std::string& dest, const QosStyle& srcStyle, const QosStyle& destStyle, bool quiet)
+// Sets the Qos of the connection between `port` and `unit`, as seen from `port`.
+// request: [qos] set_all (/unit scheduler_priority scheduler_policy qos_tos)
+// reply  : [ok] or [fail] "message"
+static bool setPortQos(const std::string& port, const std::string& unit, const QosStyle& style, bool quiet)
 {
-    //e.g.,  prop set /portname (sched ((priority 30) (policy 1))) (qos ((tos 0)))
-
-    // source side: ignore if everything left as default
-    if (srcStyle.getPacketPriorityAsTOS() != -1 || srcStyle.getThreadPolicy() != -1)
-    {
-        // set the source Qos
-        yarp::os::Bottle cmd;
-        yarp::os::Bottle reply;
-        cmd.addVocab32("qos");
-        cmd.addString("set_all");
-        yarp::os::Bottle& botcmd = cmd.addList();
-        yarp::os::ConnectionQosData qoscmd;
-        qoscmd.portname = dest.c_str();
-        qoscmd.scheduler_policy = srcStyle.getThreadPolicy();
-        qoscmd.scheduler_priority = srcStyle.getThreadPriority();
-        qoscmd.qos_tos = srcStyle.getPacketPriorityAsTOS();
-        bool bcp = yarp::os::Portable::copyPortable(qoscmd, botcmd);
-        Contact srcCon = Contact::fromString(src);
-        bool ret = write(srcCon, cmd, reply, true, true, 2.0);
-        if (!ret) {
-            if (!quiet) {
-                yCError(NETWORK, "Cannot write to '%s'", src.c_str());
-            }
-            return false;
-        }
-        std::string sssreply = reply.toString();
-        if (reply.get(0).asString() != "ok") {
-            if (!quiet) {
-                yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", src.c_str(), reply.toString().c_str());
-            }
-            return false;
-        }
+    // ignore if everything left as default
+    if (style.getPacketPriorityAsTOS() == -1 && style.getThreadPolicy() == -1) {
+        return true;
     }
 
-    // destination side: ignore if everything left as default
-    if (destStyle.getPacketPriorityAsTOS() != -1 || destStyle.getThreadPolicy() != -1)
-    {
-        // set the destination Qos
-        yarp::os::Bottle cmd;
-        yarp::os::Bottle reply;
-        cmd.addVocab32("qos");
-        cmd.addString("set_all");
-        yarp::os::Bottle& botcmd = cmd.addList();
-        yarp::os::ConnectionQosData qoscmd;
-        qoscmd.portname = src.c_str();
-        qoscmd.scheduler_policy = destStyle.getThreadPolicy();
-        qoscmd.scheduler_priority = destStyle.getThreadPriority();
-        qoscmd.qos_tos = destStyle.getPacketPriorityAsTOS();
-        bool bcp = yarp::os::Portable::copyPortable(qoscmd, botcmd);
-        Contact destCon = Contact::fromString(dest);
-        bool ret = write(destCon, cmd, reply, true, true, 2.0);
-        if (!ret) {
-            if (!quiet) {
-                yCError(NETWORK, "Cannot write to '%s'", dest.c_str());
-            }
-            return false;
+    yarp::os::ConnectionQosData qoscmd;
+    qoscmd.portname = unit;
+    qoscmd.scheduler_priority = style.getThreadPriority();
+    qoscmd.scheduler_policy = style.getThreadPolicy();
+    qoscmd.qos_tos = style.getPacketPriorityAsTOS();
+
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle reply;
+    cmd.addVocab32("qos");
+    cmd.addString("set_all");
+    if (!yarp::os::Portable::copyPortable(qoscmd, cmd.addList())) {
+        if (!quiet) {
+            yCError(NETWORK, "Cannot serialize qos properties for '%s'", port.c_str());
         }
-        if (reply.get(0).asString() != "ok") {
-            if (!quiet) {
-                yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", dest.c_str(), reply.toString().c_str());
-            }
-            return false;
+        return false;
+    }
+
+    Contact portCon = Contact::fromString(port);
+    bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
+    if (!ret) {
+        if (!quiet) {
+            yCError(NETWORK, "Cannot write to '%s'", port.c_str());
         }
+        return false;
+    }
+    if (reply.get(0).asString() != "ok") {
+        if (!quiet) {
+            yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", port.c_str(), reply.toString().c_str());
+        }
+        return false;
+    }
+    return true;
+}
+
+bool NetworkBase::setConnectionQos(const std::string& src, const std::string& dest, const QosStyle& srcStyle, const QosStyle& destStyle, bool quiet)
+{
+    if (!setPortQos(src, dest, srcStyle, quiet)) {
+        return false;
+    }
+    if (!setPortQos(dest, src, destStyle, quiet)) {
+        return false;
     }
     return true;
 }
@@ -1265,19 +1251,18 @@ bool NetworkBase::cleanUnresponsivePorts(double timeout)
     return true;
 }
 
+// Gets the Qos of the connection between `port` and `unit`, as seen from `port`.
+// request: [qos] get /unit
+// reply  : [ok] (/unit scheduler_priority scheduler_policy qos_tos) or [fail] "message"
 static bool getPortQos(const std::string& port, const std::string& unit, QosStyle& style, bool quiet)
 {
-    // request: "prop get /portname"
-    // reply  : "(sched ((priority 30) (policy 1))) (qos ((priority HIGH)))"
     yarp::os::Bottle cmd;
-    yarp::os::ConnectionQosData qosreply;
-
-    // set the source Qos
-    cmd.addString("prop");
+    yarp::os::Bottle reply;
+    cmd.addVocab32("qos");
     cmd.addString("get");
-    cmd.addString(unit.c_str());
+    cmd.addString(unit);
     Contact portCon = Contact::fromString(port);
-    bool ret = NetworkBase::write(portCon, cmd, qosreply, true, true, 2.0);
+    bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
     if (!ret) {
         if (!quiet) {
             yCError(NETWORK, "Cannot write to '%s'", port.c_str());
@@ -1285,15 +1270,16 @@ static bool getPortQos(const std::string& port, const std::string& unit, QosStyl
         return false;
     }
 
-    //Failure detection mechanism needed
-    /*
-    if (reply.size() == 0 || reply.get(0).asString() == "fail") {
+    yarp::os::ConnectionQosData qosreply;
+    // copy the sub-list to a standalone bottle, otherwise it is serialized without the list header
+    Bottle* data = reply.get(1).asList();
+    if (reply.get(0).asString() != "ok" || data == nullptr || !yarp::os::Portable::copyPortable(Bottle(*data), qosreply)) {
         if (!quiet) {
             yCError(NETWORK, "Cannot get qos properties of '%s'. (%s)", port.c_str(), reply.toString().c_str());
         }
         return false;
     }
-    */
+
     style.setThreadPriority(qosreply.scheduler_priority);
     style.setThreadPolicy(qosreply.scheduler_policy);
     style.setPacketPrioritybyTOS(qosreply.qos_tos);

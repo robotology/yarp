@@ -25,8 +25,6 @@
 #include <yarp/os/impl/PortCoreOutputUnit.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/PortInfoData.h>
-#include <yarp/os/ProcessInfoData.h>
-#include <yarp/os/PlatformInfoData.h>
 #include <yarp/os/ThreadInfoData.h>
 
 #include <yarp/os/ConnectionQosData.h>
@@ -1651,13 +1649,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addString("[list] [out]            # list output connections");
         result.addString("[list] [in]  $portname  # give details for input");
         result.addString("[list] [out] $portname  # give details for output");
-        result.addString("[prop] [get]            # get all user-defined port properties");
-        result.addString("[prop] [get] $prop      # get a user-defined port property (prop, val)");
-        result.addString("[prop] [set] $prop $val # set a user-defined port property (prop, val)");
-        result.addString("[prop] [get] $portname  # get Qos properties of a connection to/from a port");
-        result.addString("[prop] [set] $portname  # set Qos properties of a connection to/from a port");
-        result.addString("[prop] [get] $cur_port  # get information about current process (e.g., scheduling priority, pid)");
-        result.addString("[prop] [set] $cur_port  # set properties of the current process (e.g., scheduling priority, pid)");
+        result.addString("[info] $cur_port        # get information about current process, platform, thread and port");
+        result.addString("[info] $portname        # get thread information of a connection to/from a port");
+        result.addString("[qos] get $portname     # get Qos properties of a connection to/from a port");
+        result.addString("[qos] set_all ($portname $priority $policy $tos) # set Qos properties of a connection to/from a port");
         result.addString("[atch] [out] $portmonitor # attach a portmonitor plug-in to the port's output");
         result.addString("[atch] [in]  $portmonitor # attach a portmonitor plug-in to the port's input");
         result.addString("[dtch] [out]            # detach portmonitor plug-in from the port's output");
@@ -1912,7 +1907,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
-                result.addString(property.toString()); //PROPERTY2STRING
+                result.addList().fromString(property.toString());
             }
         } else {
             for (auto* unit : m_units) {
@@ -1921,7 +1916,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     if (route.getFromName() == target) {
                         yarp::os::Property property;
                         unit->getCarrierParams(property);
-                        result.addString(property.toString()); //PROPERTY2STRING
+                        result.addList().fromString(property.toString());
                         break;
                     }
                 }
@@ -1951,7 +1946,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
-                result.addString(property.toString()); //PROPERTY2STRING
+                result.addList().fromString(property.toString());
             }
         } else {
             for (auto* unit : m_units) {
@@ -1960,7 +1955,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     if (route.getToName() == target) {
                         yarp::os::Property property;
                         unit->getCarrierParams(property);
-                        result.addString(property.toString()); //PROPERTY2STRING
+                        result.addList().fromString(property.toString());
                         break;
                     }
                 }
@@ -1995,26 +1990,17 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         {
             bFound = true;
 
-            SystemInfo::ProcessInfo info = SystemInfo::getProcessInfo();
-            Bottle& proc_bottle = result.addList();
-            //proc.addString("process");
-            yarp::os::ProcessInfoData procinfodata;
-            procinfodata.pid  = info.pid;
-            procinfodata.name = (info.pid != -1) ? info.name : "unknown";
-            procinfodata.arguments = (info.pid != -1) ? info.arguments : "unknown";
-            procinfodata.priority = info.schedPriority;
-            procinfodata.policy = info.schedPolicy;
-            //Property& proc_prop = proc.addDict(); //COPYPORTABLE
-            Portable::copyPortable(procinfodata, proc_bottle);
+            // reply: (ProcessInfoData) (PlatformInfoData) (ThreadInfoData) (PortInfoData)
+            // ProcessInfoData and PlatformInfoData are defined in SystemInfoData.thrift
+            SystemInfo::ProcessInfo procinfodata = SystemInfo::getProcessInfo();
+            if (procinfodata.pid == -1) {
+                procinfodata.name = "unknown";
+                procinfodata.arguments = "unknown";
+            }
+            Portable::copyPortable(procinfodata, result.addList());
 
-            SystemInfo::PlatformInfo pinfo = SystemInfo::getPlatformInfo();
-            Bottle& platform_bottle = result.addList();
-            //platform.addString("platform");
-            yarp::os::PlatformInfoData platforminfodata;
-            platforminfodata.os = pinfo.name;
-            platforminfodata.hostname = m_address.getHost();
-            //Property& platform_prop = platform.addDict(); //COPYPORTABLE
-            Portable::copyPortable(platforminfodata,platform_bottle);
+            SystemInfo::PlatformInfo platforminfodata = SystemInfo::getPlatformInfo();
+            Portable::copyPortable(platforminfodata, result.addList());
 
             Bottle& thread_bot = result.addList();
             //thread_bot.addString("sched");
@@ -2036,7 +2022,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             portinfodata.is_output = is_output;
             portinfodata.is_rpc = is_rpc;
             portinfodata.type = getType().getName();
-            //Property& port_prop = port.addDict();//COPYPORTABLE
+            portinfodata.hostname = m_address.getHost();
             Portable::copyPortable(portinfodata, portinfo_bottle);
 
         }
@@ -2052,7 +2038,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     if (portname == coreName)
                     {
                         bFound = true;
-                        int tos = getTypeOfService(unit);
 
                         Bottle& thread_bot = result.addList();
                         //sched.addString("sched");
@@ -2251,6 +2236,42 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminQosGetCmd = [this](const std::string& portName) -> Bottle
+    {
+        // reply: [ok] (portname scheduler_priority scheduler_policy qos_tos)
+        Bottle result;
+
+        if (portName.empty() || portName[0] != '/')
+        {
+            result.addVocab32("fail");
+            result.addString("invalid portname, missing `/` prefix");
+            return result;
+        }
+
+        std::lock_guard<std::mutex> lock(m_stateMutex);
+        for (auto* unit : m_units)
+        {
+            if (unit == nullptr || unit->isFinished()) continue;
+
+            Route route = unit->getRoute();
+            std::string name_to_be_found = unit->isOutput() ? route.getToName() : route.getFromName();
+            if (portName != name_to_be_found) continue;
+
+            yarp::os::ConnectionQosData data;
+            data.portname = portName;
+            data.scheduler_priority = unit->getPriority();
+            data.scheduler_policy = unit->getPolicy();
+            data.qos_tos = getTypeOfService(unit);
+            result.addVocab32("ok");
+            Portable::copyPortable(data, result.addList());
+            return result;
+        }
+
+        result.addVocab32("fail");
+        result.addString("cannot find any connection to/from " + portName);
+        return result;
+    };
+
     auto handleAdminUnknownCmd = [this](const Bottle& cmd) {
         Bottle result;
         bool ok = false;
@@ -2353,21 +2374,32 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         const std::string action = cmd.get(1).asString();
         if (action == "set_all")
         {
-            std::string ssscmd = cmd.toString();
-
+            // e.g. qos set_all (/portname scheduler_priority scheduler_policy qos_tos)
+            // NOTE: a sub-list of a bottle received in binary mode is flagged as nested and,
+            // if serialized directly, it omits the list header. Copy it to a standalone bottle first.
             Bottle* bot = cmd.get(2).asList();
-            if (bot)
+            yarp::os::ConnectionQosData data;
+            if (bot == nullptr || !yarp::os::Portable::copyPortable(Bottle(*bot), data))
             {
-                yarp::os::ConnectionQosData data;
-                std::string debugs = bot->toString();
-                bool bcp = yarp::os::Portable::copyPortable(*bot, data);
-                result = handleAdminPropSetCmdSched(data.portname, data.scheduler_priority, data.scheduler_policy);
+                result.addVocab32("fail");
+                result.addString("invalid ConnectionQosData");
+            }
+            else
+            {
                 // execute the set_sched command first, then execute the set_qos command
+                result = handleAdminPropSetCmdSched(data.portname, data.scheduler_priority, data.scheduler_policy);
                 if (result.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'))
                 {
-                    result = handleAdminPropSetCmdQos(data.portname, std::nullopt, std::nullopt, data.qos_tos);
+                    // a negative tos means "leave unchanged"
+                    std::optional<int> tos = (data.qos_tos >= 0) ? std::optional<int>(data.qos_tos) : std::nullopt;
+                    result = handleAdminPropSetCmdQos(data.portname, std::nullopt, std::nullopt, tos);
                 }
             }
+        }
+        else if (action == "get")
+        {
+            // e.g. qos get /portname
+            result = handleAdminQosGetCmd(cmd.get(2).asString());
         }
         else
         {

@@ -27,7 +27,9 @@ public:
     bool is_output{false};
     bool is_rpc{false};
     std::string type{};
+    std::string hostname{};
 
+public:
     // Default constructor
     PortInfoData() = default;
 
@@ -35,7 +37,8 @@ public:
     PortInfoData(const bool is_input,
                  const bool is_output,
                  const bool is_rpc,
-                 const std::string& type);
+                 const std::string& type,
+                 const std::string& hostname);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -79,6 +82,12 @@ private:
     bool write_type(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_type(yarp::os::idl::WireReader& reader);
     bool nested_write_type(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write hostname field
+    bool read_hostname(yarp::os::idl::WireReader& reader);
+    bool write_hostname(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_hostname(yarp::os::idl::WireReader& reader);
+    bool nested_write_hostname(const yarp::os::idl::WireWriter& writer) const;
 };
 
 } // namespace yarp::os

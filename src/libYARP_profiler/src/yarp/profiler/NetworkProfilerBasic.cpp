@@ -16,6 +16,7 @@
 
 #include <yarp/os/ProcessInfoData.h>
 #include <yarp/os/PlatformInfoData.h>
+#include <yarp/os/PortInfoData.h>
 
 using namespace yarp::os;
 using namespace yarp::profiler;
@@ -331,38 +332,43 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
         return false;
     }
 
-    //Check reply validity
-    std::string reps = reply.toString();
-    if (reply.size() < 2 || !reply.get(0).isList() || !reply.get(1).isList())
+    // reply: (ProcessInfoData) (PlatformInfoData) (ThreadInfoData) (PortInfoData)
+    if (reply.size() < 4 || !reply.get(0).isList() || !reply.get(1).isList() || !reply.get(3).isList())
     {
-         yWarning() << "Invalid info reply from port " << portName;
+         yWarning() << "Invalid info reply from port " << portName << ":" << reply.toString();
          ping.close();
          return false;
     }
 
-    yarp::os::Bottle info = *reply.get(0).asList();
+    // sub-lists are copied to standalone bottles, otherwise they are serialized without the list header
     yarp::os::ProcessInfoData processinfodata;
-    if (Portable::copyPortable(info, processinfodata))
+    if (Portable::copyPortable(Bottle(*reply.get(0).asList()), processinfodata))
     {
         details.owner_process.process_name = processinfodata.name;
         details.owner_process.arguments = processinfodata.arguments;
         details.owner_process.pid = processinfodata.pid;
-        details.owner_process.priority = processinfodata.priority;
-        details.owner_process.policy = processinfodata.policy;
+        details.owner_process.priority = processinfodata.schedPriority;
+        details.owner_process.policy = processinfodata.schedPolicy;
         details.owner_process.process_fullname = details.owner_process.process_name + "(" + std::to_string(details.owner_process.pid) + ")";
     } else {
         yWarning()<<"Cannot find 'ProcessInfoData' of port "<<portName;
     }
 
-    yarp::os::Bottle platform = *reply.get(1).asList();
     yarp::os::PlatformInfoData platforminfodata;
-    if (Portable::copyPortable(platform, platforminfodata))
+    if (Portable::copyPortable(Bottle(*reply.get(1).asList()), platforminfodata))
     {
-        details.owner_process.owner_machine.os = platforminfodata.os;
-        details.owner_process.owner_machine.hostname = platforminfodata.hostname;
-        details.owner_process.owner_machine.ip = platforminfodata.hostname;
+        details.owner_process.owner_machine.os = platforminfodata.name;
     } else {
         yWarning()<<"Cannot find 'PlatformInfoData' of port "<<portName;
+    }
+
+    yarp::os::PortInfoData portinfodata;
+    if (Portable::copyPortable(Bottle(*reply.get(3).asList()), portinfodata))
+    {
+        details.owner_process.owner_machine.hostname = portinfodata.hostname;
+        details.owner_process.owner_machine.ip = portinfodata.hostname;
+    } else {
+        yWarning()<<"Cannot find 'PortInfoData' of port "<<portName;
     }
 
     ping.close();

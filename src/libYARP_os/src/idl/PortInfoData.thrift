@@ -11,6 +11,7 @@ struct PortInfoData
     2: bool         is_output;
     3: bool         is_rpc;
     4: string       type;
+    5: string       hostname;
 }
 (
     yarp.api.include = "yarp/os/api.h"

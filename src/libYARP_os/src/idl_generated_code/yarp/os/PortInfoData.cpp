@@ -16,12 +16,14 @@ namespace yarp::os {
 PortInfoData::PortInfoData(const bool is_input,
                            const bool is_output,
                            const bool is_rpc,
-                           const std::string& type) :
+                           const std::string& type,
+                           const std::string& hostname) :
         WirePortable(),
         is_input(is_input),
         is_output(is_output),
         is_rpc(is_rpc),
-        type(type)
+        type(type),
+        hostname(hostname)
 {
 }
 
@@ -40,6 +42,9 @@ bool PortInfoData::read(yarp::os::idl::WireReader& reader)
     if (!read_type(reader)) {
         return false;
     }
+    if (!read_hostname(reader)) {
+        return false;
+    }
     if (reader.isError()) {
         return false;
     }
@@ -50,7 +55,7 @@ bool PortInfoData::read(yarp::os::idl::WireReader& reader)
 bool PortInfoData::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(4)) {
+    if (!reader.readListHeader(5)) {
         return false;
     }
     if (!read(reader)) {
@@ -74,6 +79,9 @@ bool PortInfoData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_type(writer)) {
         return false;
     }
+    if (!write_hostname(writer)) {
+        return false;
+    }
     if (writer.isError()) {
         return false;
     }
@@ -84,7 +92,7 @@ bool PortInfoData::write(const yarp::os::idl::WireWriter& writer) const
 bool PortInfoData::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(4)) {
+    if (!writer.writeListHeader(5)) {
         return false;
     }
     if (!write(writer)) {
@@ -282,6 +290,52 @@ bool PortInfoData::nested_read_type(yarp::os::idl::WireReader& reader)
 bool PortInfoData::nested_write_type(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeString(type)) {
+        return false;
+    }
+    return true;
+}
+
+// read hostname field
+bool PortInfoData::read_hostname(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(hostname)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write hostname field
+bool PortInfoData::write_hostname(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(hostname)) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) hostname field
+bool PortInfoData::nested_read_hostname(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(hostname)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write (nested) hostname field
+bool PortInfoData::nested_write_hostname(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(hostname)) {
         return false;
     }
     return true;
