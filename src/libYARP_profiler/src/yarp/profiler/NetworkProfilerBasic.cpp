@@ -331,7 +331,15 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
         return false;
     }
 
+    //Check reply validity
     std::string reps = reply.toString();
+    if (reply.size() < 2 || !reply.get(0).isList() || !reply.get(1).isList())
+    {
+         yWarning() << "Invalid info reply from port " << portName;
+         ping.close();
+         return false;
+    }
+
     yarp::os::Bottle info = *reply.get(0).asList();
     yarp::os::ProcessInfoData processinfodata;
     if (Portable::copyPortable(info, processinfodata))

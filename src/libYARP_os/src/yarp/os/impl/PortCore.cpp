@@ -2042,6 +2042,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         else
         {
+            std::lock_guard<std::mutex> lock(m_stateMutex);
             for (auto* unit : m_units)
             {
                 if ((unit != nullptr) && !unit->isFinished())
@@ -2142,6 +2143,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         // SCHED_FIFO  : policy=1, priority=[1 .. 99]
         // SCHED_RR    : policy=2, priority=[1 .. 99]
         bOk = false;
+        std::lock_guard<std::mutex> lock(m_stateMutex);
         for (auto* unit : m_units)
         {
             if ((unit != nullptr) && !unit->isFinished())
@@ -2180,6 +2182,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         if (qos_priority || qos_dscp || qos_tos)
         {
             bOk = false;
+            std::lock_guard<std::mutex> lock(m_stateMutex);
             for (auto* unit : m_units)
             {
                 if (unit == nullptr || unit->isFinished()) continue;
@@ -2359,7 +2362,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 std::string debugs = bot->toString();
                 bool bcp = yarp::os::Portable::copyPortable(*bot, data);
                 result = handleAdminPropSetCmdSched(data.portname, data.scheduler_priority, data.scheduler_policy);
-                result = handleAdminPropSetCmdQos(data.portname, std::nullopt, std::nullopt, data.qos_tos);
+                // execute the set_sched command first, then execute the set_qos command
+                if (result.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'))
+                {
+                    result = handleAdminPropSetCmdQos(data.portname, std::nullopt, std::nullopt, data.qos_tos);
+                }
             }
         }
         else
