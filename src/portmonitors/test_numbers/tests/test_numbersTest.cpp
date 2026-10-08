@@ -19,7 +19,8 @@
 
 TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
 {
-    YARP_REQUIRE_PLUGIN("test_numbers", "portmonitor")
+    YARP_REQUIRE_PLUGIN("test_numbers1", "portmonitor")
+    YARP_REQUIRE_PLUGIN("test_numbers2", "portmonitor")
 
     yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
