@@ -23,10 +23,8 @@ m_thrift_rpcPort_Name("/frameTransformGet/rpc")
 /** Device driver interface */
 bool FrameTransformGet_nws_yarp::open(yarp::os::Searchable &config)
 {
-    if (!yarp::os::NetworkBase::checkNetwork()) {
-        yCError(FRAMETRANSFORMGETNWSYARP,"Error! YARP Network is not initialized");
-        return false;
-    }
+    if (!parseParams(config)) { return false; }
+
     std::string prefix;
     //checking default config param
     bool default_config = true;

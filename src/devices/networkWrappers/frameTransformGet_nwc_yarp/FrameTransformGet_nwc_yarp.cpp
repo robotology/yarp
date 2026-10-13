@@ -15,10 +15,8 @@ YARP_LOG_COMPONENT(FRAMETRANSFORMGETNWCYARP, "yarp.devices.FrameTransformGet_nwc
 
 bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
 {
-    if (!yarp::os::NetworkBase::checkNetwork()) {
-        yCError(FRAMETRANSFORMGETNWCYARP,"Error! YARP Network is not initialized");
-        return false;
-    }
+    if (!parseParams(config)) { return false; }
+
     std::string prefix;
     //checking default config params
     bool default_config = true;
@@ -71,11 +69,7 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
     }
 
     //checking streaming_enabled param
-    if(config.check("streaming_enabled")) {
-        m_streaming_port_enabled = config.find("streaming_enabled").asString() == "true";
-    }
-
-    if (m_streaming_port_enabled)
+    if (m_streaming_enabled)
     {
         yCInfo(FRAMETRANSFORMGETNWCYARP) << "Receiving transforms from Yarp port enabled";
         if (config.check("input_streaming_port_prefix")){
@@ -132,7 +126,7 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
 
 bool FrameTransformGet_nwc_yarp::close()
 {
-    if (m_streaming_port_enabled)
+    if (m_streaming_enabled)
     {
         m_dataReader->close();
     }
@@ -149,7 +143,7 @@ bool FrameTransformGet_nwc_yarp::close()
 
 ReturnValue FrameTransformGet_nwc_yarp::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
-    if (!m_streaming_port_enabled)
+    if (!m_streaming_enabled)
     {
         return_getAllTransforms retrievedFromRPC = m_frameTransformStorageGetRPC.getTransformsRPC();
         if(!retrievedFromRPC.retvalue)

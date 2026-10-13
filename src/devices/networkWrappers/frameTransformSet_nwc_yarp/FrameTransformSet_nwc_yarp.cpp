@@ -22,11 +22,8 @@ YARP_LOG_COMPONENT(FRAMETRANSFORMSETNWCYARP, "yarp.device.frameTransformSet_nwc_
 
 bool FrameTransformSet_nwc_yarp::open(yarp::os::Searchable& config)
 {
+    if (!parseParams(config)) { return false; }
 
-    if (!yarp::os::NetworkBase::checkNetwork()) {
-        yCError(FRAMETRANSFORMSETNWCYARP,"Error! YARP Network is not initialized");
-        return false;
-    }
     std::string prefix;
     //checking default config params
     bool default_config = true;
