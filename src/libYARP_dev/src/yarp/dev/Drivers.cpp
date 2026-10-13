@@ -362,7 +362,6 @@ DriverCreator* Drivers::Private::load(const std::string& name) {
 }
 
 static std::string terminatorKey;
-static bool terminated = false;
 static void handler (int)
 {
     Time::useSystemClock();
@@ -380,7 +379,6 @@ static void handler (int)
     }
     if (!terminatorKey.empty()) {
         yCInfo(DRIVERS, "[try %d of 3] Trying to shut down %s", ct, terminatorKey.c_str());
-        terminated = true;
         Terminator::terminateByName(terminatorKey.c_str());
     } else {
         yCInfo(DRIVERS, "Aborting...");
@@ -610,6 +608,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             service = nullptr;
         }
     }
+    bool terminated = false;
     while (dd.isValid() && !(terminated||(terminee&&terminee->mustQuit()))) {
         if (service!=nullptr) {
             double now = Time::now();
