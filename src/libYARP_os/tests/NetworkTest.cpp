@@ -249,7 +249,35 @@ TEST_CASE("os::NetworkTest", "[yarp::os]")
         style.setThreadPolicy(0);
         style.setPacketPriorityByLevel(yarp::os::QosStyle::PacketPriorityNormal);
         CHECK(Network::setConnectionQos(p1.getName(), p2.getName(), style, style, false)); // connection Qos working
+
+        yarp::os::QosStyle srcStyle;
+        yarp::os::QosStyle destStyle;
+        CHECK(Network::getConnectionQos(p1.getName(), p2.getName(), srcStyle, destStyle, false)); // connection Qos readable
+#if defined(__linux__)
+        // thread priority and TOS can be read back reliably only on linux
+        CHECK(srcStyle.getThreadPriority() == style.getThreadPriority());
+        CHECK(srcStyle.getThreadPolicy() == style.getThreadPolicy());
+        CHECK(srcStyle.getPacketPriorityAsTOS() == style.getPacketPriorityAsTOS());
+        CHECK(destStyle.getThreadPriority() == style.getThreadPriority());
+        CHECK(destStyle.getThreadPolicy() == style.getThreadPolicy());
+        CHECK(destStyle.getPacketPriorityAsTOS() == style.getPacketPriorityAsTOS());
+
+        // a non default TOS value is applied and read back
+        yarp::os::QosStyle highStyle;
+        highStyle.setPacketPriorityByLevel(yarp::os::QosStyle::PacketPriorityHigh);
+        CHECK(Network::setConnectionQos(p1.getName(), p2.getName(), highStyle, highStyle, false));
+        CHECK(Network::getConnectionQos(p1.getName(), p2.getName(), srcStyle, destStyle, false));
+        CHECK(srcStyle.getPacketPriorityAsTOS() == highStyle.getPacketPriorityAsTOS());
+        CHECK(destStyle.getPacketPriorityAsTOS() == highStyle.getPacketPriorityAsTOS());
+#endif
+
+        // without a connection, qos cannot be set nor read
+        const std::string unconnected = "/NetworkTest/checkConnectionQos/unconnected";
+        CHECK_FALSE(Network::setConnectionQos(p1.getName(), unconnected, style, style, true));
+        CHECK_FALSE(Network::getConnectionQos(p1.getName(), unconnected, srcStyle, destStyle, true));
+
         Network::disconnect(p1.getName(), p2.getName());
+
         p1.close();
         p2.close();
     }

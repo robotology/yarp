@@ -49,36 +49,83 @@ latency and improving determinism for selected communication channels.
 Suppose you want to modify the priority of the connection between /sender and
 /receiver.
 
+Both the thread scheduling parameters and the packet priority of a connection
+are configured with the \c qos \c set_all administrative command, which takes a
+single list with four values:
+
+\verbatim
+ qos set_all (<portname> <scheduler_priority> <scheduler_policy> <qos_tos>)
+\endverbatim
+
+where \c portname is the name of the port at the other end of the connection,
+\c scheduler_priority and \c scheduler_policy are the numeric (OS specific)
+scheduling parameters of the thread which serves the connection, and \c qos_tos
+is the numeric TOS value assigned to the IP packets of the connection.
+Symbolic names (e.g. SCHED_FIFO or HIGH) are not accepted: use their numeric
+values instead.
+A value of -1 for both scheduling parameters restores the default scheduling of
+the thread, while a \c qos_tos of -1 leaves the packet priority unchanged.
+
 Firstly you can select the scheduling policy and priority for the thread that
 manages the communication.
 
 \verbatim
  $ yarp admin rpc /sender
-   >> prop set /receiver (sched
-                            ((policy SCHED_FIFO)
-                            (priority 30)))
+   >> qos set_all (/receiver 30 1 -1)
 \endverbatim
 
 The first line "yarp admin rpc" opens an administrative session with the port
 object of /sender.
 The second line is the real command to the administrative port.
-It adjusts the scheduling policy and priority of the thread in /sender which
-handles the connection to /receiver respectively to SCHED_FIFO and 30 on Linux
-machines (scheduling parameters are OS specific).
+It adjusts the scheduling priority and policy of the thread in /sender which
+handles the connection to /receiver respectively to 30 and SCHED_FIFO (whose
+numeric value is 1) on Linux machines, leaving the packet priority unchanged.
+Scheduling parameters are OS specific; on Linux the policy values are
+SCHED_OTHER = 0 (priority 0), SCHED_FIFO = 1 and SCHED_RR = 2 (priority 1..99).
 
 Analogously, data packet priority can be configured via administrative commands
-by setting one of the predefined priority classes:
+by setting the TOS value of one of the predefined priority classes:
 
 \verbatim
  $ yarp admin rpc /sender
-  >> prop set /receiver (qos ((priority HIGH)))
+  >> qos set_all (/receiver -1 -1 144)
 \endverbatim
 
-This simply sets the outbound packets priority to HIGH for the connection from
-/sender to /receiver.
+This simply sets the outbound packets priority to HIGH (TOS 144) for the
+connection from /sender to /receiver, using the default thread scheduling.
 The priority band affects the TOS/DSCP in the IP packets and the queuing policy
 used by the OS.
-Possible values are LOW, NORMAL, HIGH and CRITICAL.
+The TOS values of the predefined classes are LOW = 40, NORMAL = 0, HIGH = 144
+and CRITICAL = 176 (i.e. the DSCP values 10, 0, 36 and 44 shifted left by two
+bits).
+Both settings can also be applied at once, e.g.
+<tt>qos set_all (/receiver 30 1 144)</tt>.
+
+The current settings of a connection can be read back with:
+
+\verbatim
+ $ yarp admin rpc /sender
+  >> qos get /receiver
+\endverbatim
+
+which replies with \c ok followed by the list
+<tt>(/receiver scheduler_priority scheduler_policy qos_tos)</tt>, or with
+\c fail and an error message if no connection to /receiver exists.
+
+It is also possible to set the scheduling policy and priority of all the
+threads of the process which owns a port, by addressing the port itself:
+
+\verbatim
+ $ yarp admin rpc /sender
+  >> qos set_process /sender 30 1
+\endverbatim
+
+where the two values are respectively the scheduling priority and policy
+(30 and SCHED_FIFO on Linux, in this example). The command fails if the given
+name is not the name of the port which receives it.
+
+The \c yarp \c priority-sched and \c yarp \c priority-qos companion commands
+provide a higher level interface to the same functionality.
 
 These two set of parameters can be set for every channel in the same way and
 jointly define the actual priority of a communication channel in a YARP network.
