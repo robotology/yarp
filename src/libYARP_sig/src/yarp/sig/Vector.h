@@ -55,6 +55,17 @@ class YARP_sig_API yarp::sig::VectorOfDouble : public yarp::sig::VectorOfDoubleD
     using yarp::sig::VectorOfDoubleData::VectorOfDoubleData;
     using yarp::sig::VectorBase<VectorOfDouble, double>::VectorBase;
     using yarp::sig::VectorBase<VectorOfDouble, double>::operator=;
+
+    /**
+     * Returns a human readable representation of the vector, with formatted numbers.
+     * @param precision number of digits after the decimal point. A negative value
+     *        selects the printf default (6). Values greater than 100 are clamped.
+     * @param width minimum field width of each element. If negative, elements are
+     *        separated by a tab, otherwise they are right-aligned in a field of the
+     *        given width and separated by a space. Values greater than 100 are clamped.
+     * @return the formatted string (empty if the vector is empty).
+     */
+    std::string toFormattedString(int precision = -1, int width = -1) const;
     protected:
 #ifndef SWIG
     auto& privVec() { return privdata; }
@@ -85,6 +96,17 @@ class YARP_sig_API yarp::sig::VectorOfFloat : public yarp::sig::VectorOfFloatDat
     using yarp::sig::VectorOfFloatData::VectorOfFloatData;
     using yarp::sig::VectorBase<VectorOfFloat, float>::VectorBase;
     using yarp::sig::VectorBase<VectorOfFloat, float>::operator=;
+
+    /**
+     * Returns a human readable representation of the vector, with formatted numbers.
+     * @param precision number of digits after the decimal point. A negative value
+     *        selects the printf default (6). Values greater than 100 are clamped.
+     * @param width minimum field width of each element. If negative, elements are
+     *        separated by a tab, otherwise they are right-aligned in a field of the
+     *        given width and separated by a space. Values greater than 100 are clamped.
+     * @return the formatted string (empty if the vector is empty).
+     */
+    std::string toFormattedString(int precision = -1, int width = -1) const;
     protected:
 #ifndef SWIG
     auto& privVec() { return privdata; }

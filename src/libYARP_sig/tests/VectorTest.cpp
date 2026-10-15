@@ -495,5 +495,34 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         CHECK(vCopy.size() == v.size());
     }
 
+    SECTION("Check toFormattedString")
+    {
+        Vector empty;
+        CHECK(empty.toFormattedString().empty());
+        CHECK(empty.toFormattedString(3, 8).empty());
+
+        Vector v{1.0, -2.5, 3.25};
+        CHECK(v.toFormattedString() == " 1.000000\t-2.500000\t 3.250000");
+        CHECK(v.toFormattedString(2) == " 1.00\t-2.50\t 3.25");
+        CHECK(v.toFormattedString(2, 6) == "  1.00  -2.50   3.25");
+        CHECK(Vector{1.0, -2.0}.toFormattedString(0, 0) == " 1 -2");
+
+        VectorOf<float> vf{1.5f, -0.25f};
+        CHECK(vf.toFormattedString(2) == " 1.50\t-0.25");
+        CHECK(vf.toFormattedString(3, 7) == "  1.500  -0.250");
+
+        // Values whose representation exceeds the internal buffer must not be truncated
+        Vector big{1e300, -1e300};
+        std::string s = big.toFormattedString(2);
+        CHECK(s.size() == (1 + 301 + 3) * 2 + 1);
+        CHECK(s.substr(0, 3) == " 10");
+        CHECK(s.substr(s.size() - 3) == ".00");
+
+        // Huge precision / width are clamped
+        Vector one{1.0};
+        CHECK(one.toFormattedString(1000000).size() == 1 + 1 + 1 + 100);
+        CHECK(one.toFormattedString(1, 1000000).size() == 100);
+    }
+
     NetworkBase::setLocalMode(false);
 }
