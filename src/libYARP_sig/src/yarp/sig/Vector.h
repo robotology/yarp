@@ -420,6 +420,10 @@ public:
         }
         return ret;
     }
+    std::string toFormattedString(int precision=-1, int width=-1) const
+    {
+        return toString(precision, width);
+    }
 
     /**
     * Creates and returns a new vector, being the portion of the original
