@@ -41,7 +41,9 @@ include(YarpVersion)
 set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
-set_property(GLOBAL PROPERTY INSTALL_PARALLEL ON)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30)
+  set_property(GLOBAL PROPERTY INSTALL_PARALLEL ON)
+endif()
 
 # Check system configuration.
 # See cmake/YarpSystemCheck.cmake.
