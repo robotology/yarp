@@ -269,10 +269,6 @@ void PortCore::close()
 {
     closeMain();
 
-    if (m_prop != nullptr) {
-        delete m_prop;
-        m_prop = nullptr;
-    }
     m_modifier.releaseOutModifier();
     m_modifier.releaseInModifier();
 }
@@ -1552,13 +1548,6 @@ enum class PortCoreConnectionDirection : yarp::conf::vocab32_t
     In = yarp::os::createVocab32('i', 'n'),
 };
 
-enum class PortCorePropertyAction : yarp::conf::vocab32_t
-{
-    Error = 0,
-    Get = yarp::os::createVocab32('g', 'e', 't'),
-    Set = yarp::os::createVocab32('s', 'e', 't')
-};
-
 PortCoreCommand parseCommand(const yarp::os::Value& v)
 {
     auto cmd = static_cast<PortCoreCommand>(v.asVocab32());
@@ -1645,20 +1634,19 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addString("[add] $portname         # add an output connection");
         result.addString("[add] $portname $car    # add an output with a given protocol");
         result.addString("[del] $portname         # remove an input or output connection");
-        result.addString("[list] [in]             # list input connections");
-        result.addString("[list] [out]            # list output connections");
-        result.addString("[list] [in]  $portname  # give details for input");
-        result.addString("[list] [out] $portname  # give details for output");
-        result.addString("[info] $cur_port        # get information about current process, platform, thread and port");
-        result.addString("[info] $portname        # get thread information of a connection to/from a port");
-        result.addString("[qos] get $portname     # get Qos properties of a connection to/from a port");
+        result.addString("[list] [in]               # list input connections");
+        result.addString("[list] [out]              # list output connections");
+        result.addString("[list] [in]  $portname    # give details for input");
+        result.addString("[list] [out] $portname    # give details for output");
+        result.addString("[info] $cur_port          # get information about current process, platform, thread and port");
+        result.addString("[info] $portname          # get thread information of a connection to/from a port");
+        result.addString("[qos] get $portname       # get Qos properties of a connection to/from a port");
         result.addString("[qos] set_all ($portname $priority $policy $tos) # set Qos properties of a connection to/from a port");
+        result.addString("[qos] set_process $cur_port $priority $policy  # set scheduling of all the threads of the current process");
         result.addString("[atch] [out] $portmonitor # attach a portmonitor plug-in to the port's output");
         result.addString("[atch] [in]  $portmonitor # attach a portmonitor plug-in to the port's input");
-        result.addString("[dtch] [out]            # detach portmonitor plug-in from the port's output");
-        result.addString("[dtch] [in]             # detach portmonitor plug-in from the port's input");
-        //result.addString("[atch] $portname $prop  # attach a portmonitor plug-in to the connection to/from $portname");
-        //result.addString("[dtch] $portname        # detach any portmonitor plug-in from the connection to/from $portname");
+        result.addString("[dtch] [out]              # detach portmonitor plug-in from the port's output");
+        result.addString("[dtch] [in]               # detach portmonitor plug-in from the port's input");
         return result;
     };
 
@@ -1710,12 +1698,12 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     };
 
     auto handleAdminAtchCmd = [this](PortCoreConnectionDirection direction,
-                                     Property prop) {
+                                     const std::string& portmonitor_options) {
         Bottle result;
         switch (direction) {
         case PortCoreConnectionDirection::Out: {
             std::string errMsg;
-            if (!attachPortMonitor(prop, true, errMsg)) {
+            if (!attachPortMonitor(portmonitor_options, true, errMsg)) {
                 result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
@@ -1724,7 +1712,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         } break;
         case PortCoreConnectionDirection::In: {
             std::string errMsg;
-            if (!attachPortMonitor(prop, false, errMsg)) {
+            if (!attachPortMonitor(portmonitor_options, false, errMsg)) {
                 result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
@@ -1974,7 +1962,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     auto handleAdminGetInfoCmd = [this](const std::string& portname) {
         Bottle result;
 
-        // request: "prop get /portname"
+        // request: "info /portname"
         if ((portname.empty()) || (portname[0] != '/'))
         {
             result.addVocab32("fail");
@@ -2077,7 +2065,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
-    auto handleAdminPropSetCmdProcess = [this](const std::string& portName,
+    auto handleAdminSetProcessCmd = [this](const std::string& portName,
                                         int prio =-1,
                                         int policy = -1)
     {
@@ -2094,19 +2082,25 @@ bool PortCore::adminBlock(ConnectionReader& reader,
 
         // setting scheduling properties of all threads within the process
         // scope through the admin port
-        // e.g. prop set /current_port (process ((priority 30) (policy 1)))
+        // e.g. qos set_process /current_port 30 1
 
         // check for their own name
         if (portName == getName())
         {
             bOk = setProcessSchedulingParam(prio, policy);
         }
+        else
+        {
+            result.addVocab32("fail");
+            result.addString("set_process requires the name of the port itself (" + getName() + ")");
+            return result;
+        }
 
         result.addVocab32((bOk) ? "ok" : "fail");
         return result;
     };
 
-    auto handleAdminPropSetCmdSched = [this](const std::string& portName,
+    auto handleAdminSetSchedCmd = [this](const std::string& portName,
                                         int prio =-1,
                                         int policy = -1)
     {
@@ -2122,7 +2116,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
 
         // check if we need to set the PortCoreUnit scheduling policy
-        // e.g., "prop set /portname (sched ((priority 30) (policy 1)))"
+        // e.g., "qos set_all (/portname 30 1 -1)"
         // The priority and policy values on Linux are:
         // SCHED_OTHER : policy=0, priority=[0 ..  0]
         // SCHED_FIFO  : policy=1, priority=[1 .. 99]
@@ -2148,7 +2142,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
-    auto handleAdminPropSetCmdQos = [this](const std::string& portName,
+    auto handleAdminSetQosCmd = [this](const std::string& portName,
                                             std::optional<NetInt32> qos_priority = std::nullopt,
                                             std::optional<NetInt32> qos_dscp = std::nullopt,
                                             std::optional<int> qos_tos = std::nullopt) -> Bottle
@@ -2209,9 +2203,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     // Set the packet TOS value on the socket based on the DSCP level
                     QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(*qos_dscp);
                     int dscp = -1;
-                    if (dscp_class == QosStyle::DSCP_Invalid) {
-                        // qos_dscp potrebbe essere un intero diretto e non un vocab valido;
-                        // in questo caso lo trattiamo come valore DSCP numerico
+                    if (dscp_class == QosStyle::DSCP_Invalid)
+                    {
                         dscp = *qos_dscp;
                     } else {
                         dscp = static_cast<int>(dscp_class);
@@ -2236,7 +2229,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
-    auto handleAdminQosGetCmd = [this](const std::string& portName) -> Bottle
+    auto handleAdminGetQosCmd = [this](const std::string& portName) -> Bottle
     {
         // reply: [ok] (portname scheduler_priority scheduler_policy qos_tos)
         Bottle result;
@@ -2311,8 +2304,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     } break;
     case PortCoreCommand::Atch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32());
-        Property prop(cmd.get(2).asString().c_str());
-        result = handleAdminAtchCmd(direction, std::move(prop));
+        std::string portmonitor_options = cmd.get(2).asString();
+        result = handleAdminAtchCmd(direction, portmonitor_options);
     } break;
     case PortCoreCommand::Dtch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32());
@@ -2360,17 +2353,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result = handleAdminGetInfoCmd(portname);
     } break;
     case PortCoreCommand::Qos: {
-/*
-        result.addString("[prop] [get]            # get all user-defined port properties");
-        result.addString("[prop] [get] $prop      # get a user-defined port property (prop, val)");
-        result.addString("[prop] [get] $portname  # get Qos properties of a connection to/from a port");
-        result.addString("[prop] [get] $cur_port  # get information about current process (e.g., scheduling priority, pid)");
-
-        result.addString("[qos] set_process $cur_port $props # set properties of the current process (e.g., scheduling priority, pid)");
-        result.addString("[qos] set_sched   $cur_port $props # set properties of the current process (e.g., scheduling priority, pid)");
-        result.addString("[qos] set_qos     $cur_port $props # set properties of the current process (e.g., scheduling priority, pid)");
-        result.addString("[qos] set_all     $cur_port $props # set properties of the current process (e.g., scheduling priority, pid)");
-*/
         const std::string action = cmd.get(1).asString();
         if (action == "set_all")
         {
@@ -2387,36 +2369,38 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             else
             {
                 // execute the set_sched command first, then execute the set_qos command
-                result = handleAdminPropSetCmdSched(data.portname, data.scheduler_priority, data.scheduler_policy);
+                result = handleAdminSetSchedCmd(data.portname, data.scheduler_priority, data.scheduler_policy);
                 if (result.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'))
                 {
                     // a negative tos means "leave unchanged"
                     std::optional<int> tos = (data.qos_tos >= 0) ? std::optional<int>(data.qos_tos) : std::nullopt;
-                    result = handleAdminPropSetCmdQos(data.portname, std::nullopt, std::nullopt, tos);
+                    result = handleAdminSetQosCmd(data.portname, std::nullopt, std::nullopt, tos);
                 }
             }
         }
         else if (action == "get")
         {
             // e.g. qos get /portname
-            result = handleAdminQosGetCmd(cmd.get(2).asString());
+            result = handleAdminGetQosCmd(cmd.get(2).asString());
+        }
+        else if (action == "set_process")
+        {
+            // e.g. qos set_process /current_port 30 1   (priority policy)
+            if (!cmd.get(3).isInt32() || !cmd.get(4).isInt32())
+            {
+                result.addVocab32("fail");
+                result.addString("usage: qos set_process $cur_port $priority $policy");
+            }
+            else
+            {
+                result = handleAdminSetProcessCmd(cmd.get(2).asString(), cmd.get(3).asInt32(), cmd.get(4).asInt32());
+            }
         }
         else
         {
             result.addVocab32("fail");
-            result.addString("property action not known");
+            result.addString("qos action not known");
         }
-    /*
-        case PortCorePropertyAction::Set: {
-            const Bottle& process = cmd.findGroup("process");
-            const Bottle& sched = cmd.findGroup("sched");
-            const Bottle& qos = cmd.findGroup("qos");
-            std::string portname;//////////////////////
-            result = handleAdminPropSetCmdProcess(portname, process);//////////////////////
-            result = handleAdminPropSetCmdSched(portname, sched);//////////////////////
-            result = handleAdminPropSetCmdQos(portname, qos);//////////////////////
-        } break;
-        }*/
     } break;
     case PortCoreCommand::Unknown:
         result = handleAdminUnknownCmd(cmd);
@@ -2512,7 +2496,7 @@ int PortCore::getTypeOfService(PortCoreUnit* unit)
 }
 
 // attach a portmonitor plugin to the port or to a specific connection
-bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::string& errMsg)
+bool PortCore::attachPortMonitor(const std::string& portmonitor_options, bool isOutput, std::string& errMsg)
 {
     // attach to the current port
     Carrier* portmonitor = Carriers::chooseCarrier("portmonitor");
@@ -2520,6 +2504,9 @@ bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::s
         errMsg = "Portmonitor carrier modifier cannot be find or it is not enabled in YARP!";
         return false;
     }
+
+    yarp::os::Property prop;
+    prop.fromString(portmonitor_options);
 
     if (isOutput) {
         detachPortMonitor(true);

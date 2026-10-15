@@ -1253,6 +1253,40 @@ TEST_CASE("os::PortTest", "[yarp::os]")
             CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
         }
 
+        // qos set_all/get with the textual syntax documented in doc/010_ports/channelprioritization.dox
+        {
+            Bottle cmd("qos set_all (/p2 -1 -1 0)");
+            Bottle reply;
+            CHECK(p2.write(cmd, reply));
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
+
+            Bottle cmd2("qos get /p2");
+            Bottle reply2;
+            CHECK(p2.write(cmd2, reply2));
+            CHECK(reply2.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
+            REQUIRE(reply2.get(1).asList() != nullptr);
+            CHECK(reply2.get(1).asList()->size() == 4);
+            CHECK(reply2.get(1).asList()->get(0).asString() == "/p2");
+        }
+
+        // qos set_process fails on a name which is not the port itself, or with missing arguments
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("qos set_process /p2 0 0"), reply));
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f', 'a', 'i', 'l'));
+            reply.clear();
+            CHECK(p2.write(Bottle("qos set_process /p1"), reply));
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f', 'a', 'i', 'l'));
+        }
+#if defined(__linux__)
+        // SCHED_OTHER with priority 0 is allowed without privileges
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("qos set_process /p1 0 0"), reply));
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
+        }
+#endif
+
         // qos set_all with a malformed payload fails
         {
             Bottle cmd;
@@ -1312,6 +1346,131 @@ TEST_CASE("os::PortTest", "[yarp::os]")
             CHECK(p2.write(cmd, reply));
             REQUIRE(reply.size() == 1);
             CHECK(reply.get(0).isList());
+        }
+
+        p1.close();
+        p2.close();
+    }
+
+    SECTION("check port admin ver/list/set/get/atch/dtch commands")
+    {
+        // /p2 -> /p1, admin commands are sent by /p2 and processed by /p1
+        const auto ok = yarp::os::createVocab32('o', 'k');
+        const auto fail = yarp::os::createVocab32('f', 'a', 'i', 'l');
+        BufferedPort<Bottle> p1;
+        Port p2;
+        p1.open("/p1");
+        p2.open("/p2");
+        Network::connect("/p2", "/p1");
+        Network::sync("/p1");
+        Network::sync("/p2");
+        p2.setAdminMode();
+
+        // ver: [ver] major minor patch
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("ver"), reply));
+            REQUIRE(reply.size() == 4);
+            CHECK(reply.get(0).asString() == "ver");
+            CHECK(reply.get(3).asInt32() == 4);
+        }
+
+        // list in: the names of the inputs; list out: no outputs
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("list in"), reply));
+            bool found = false;
+            for (size_t i = 0; i < reply.size(); i++) {
+                found |= (reply.get(i).asString() == "/p2");
+            }
+            CHECK(found);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("list out"), reply));
+            CHECK(reply.size() == 0);
+        }
+
+        // list in $portname: details of the connection
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("list in /p2"), reply));
+            CHECK(reply.find("from").asString() == "/p2");
+            CHECK(reply.find("to").asString() == "/p1");
+            CHECK(reply.find("carrier").asString() == "tcp");
+        }
+
+        // set in/out on a connection: [0 "message"] on success, [-1 "message"] if not found
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("set in /p2 (key 1)"), reply));
+            CHECK(reply.get(0).asInt32() == 0);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("set in /nonexistent (key 1)"), reply));
+            CHECK(reply.get(0).asInt32() == -1);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("set out /nonexistent (key 1)"), reply));
+            CHECK(reply.get(0).asInt32() == -1);
+        }
+
+        // get in/out on a missing connection: [-1 "message"]
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("get in /nonexistent"), reply));
+            CHECK(reply.get(0).asInt32() == -1);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("get out /nonexistent"), reply));
+            CHECK(reply.get(0).asInt32() == -1);
+        }
+
+        // set/get on the port itself require an attached portmonitor
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("get in /p1"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("set in /p1 (key 1)"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+        }
+
+        // atch: wrong direction, and a portmonitor which cannot be configured
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("atch wrong \"(file nonexistent)\""), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("atch in \"(type nonexistent_type) (file nonexistent_file)\""), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+        }
+
+        // dtch: always succeeds on a valid direction
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("dtch in"), reply));
+            CHECK(reply.get(0).asVocab32() == ok);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("dtch out"), reply));
+            CHECK(reply.get(0).asVocab32() == ok);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("dtch wrong"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+        }
+
+        // unknown commands fail when there is no admin reader
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("prop get /p2"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("qos unknown_action"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
         }
 
         p1.close();
