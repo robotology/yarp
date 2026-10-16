@@ -1,0 +1,6 @@
+yarp/os/return_listConnections.h
+yarp/os/return_listConnections.cpp
+yarp/os/return_getConnectionInfo.h
+yarp/os/return_getConnectionInfo.cpp
+yarp/os/PortCoreMsgs.h
+yarp/os/PortCoreMsgs.cpp

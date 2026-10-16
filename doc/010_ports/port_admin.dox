@@ -18,10 +18,9 @@ To send an administrative message to a port is simple.
 From the commandline, just use "yarp admin write" or
 "yarp admin rpc" instead of "yarp write" or "yarp rpc":
 \verbatim
-  echo "[list] [in]" | yarp admin rpc /port_name
+  echo "listConnectionsIn" | yarp admin rpc /port_name
 \endverbatim
-This will list all the inputs to the port /port_name.  The square
-brackets may be omitted in the current implementation of YARP.
+This will list all the inputs to the port /port_name.
 
 From code, set the "admin" flag in yarp::os::Network::write, or call
 yarp::os::Port::setAdminMode.  Messages can be read/written as regular
@@ -65,14 +64,28 @@ Add an output to the specified port, using a given carrier (tcp, udp, etc.)
 Remove an output to the specified port.
 
 
-\section port_admin_list list
+\section port_admin_list listConnectionsIn / listConnectionsOut / getConnectionInfoIn / getConnectionInfoOut
 
 \verbatim
-[list] [in]
-[list] [out]
+listConnectionsIn
+listConnectionsOut
+getConnectionInfoIn  /portname
+getConnectionInfoOut /portname
 \endverbatim
 
-List input or output connections.
+\c listConnectionsIn and \c listConnectionsOut list the names of the ports
+connected to the input or to the output of the port. The reply is
+<tt>ok (names...)</tt>.
+
+\c getConnectionInfoIn and \c getConnectionInfoOut give details about the
+connection coming from (or going to) the specified port. The reply is
+<tt>ret found from_port to_port carrier connectionless push</tt>, where
+\c found is \c fail if there is no such connection.
+
+From code, use the corresponding methods of yarp::os::impl::PortCoreClient,
+which return the structs yarp::os::return_listConnections and
+yarp::os::return_getConnectionInfo. The field \c ret of the returned struct
+is \c false if the remote port could not be reached.
 
 
 \section port_admin_ver ver

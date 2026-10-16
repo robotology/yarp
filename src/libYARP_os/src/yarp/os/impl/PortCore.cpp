@@ -1533,7 +1533,6 @@ enum class PortCoreCommand : yarp::conf::vocab32_t
     Ver = yarp::os::createVocab32('v', 'e', 'r'),
     Add = yarp::os::createVocab32('a', 'd', 'd'),
     Del = yarp::os::createVocab32('d', 'e', 'l'),
-    List = yarp::os::createVocab32('l', 'i', 's', 't'),
     Set = yarp::os::createVocab32('s', 'e', 't'),
     Get = yarp::os::createVocab32('g', 'e', 't'),
     Qos = yarp::os::createVocab32('q', 'o', 's'),
@@ -1555,7 +1554,6 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
     case PortCoreCommand::Ver:
     case PortCoreCommand::Add:
     case PortCoreCommand::Del:
-    case PortCoreCommand::List:
     case PortCoreCommand::Set:
     case PortCoreCommand::Get:
     case PortCoreCommand::Qos:
@@ -1576,34 +1574,6 @@ PortCoreConnectionDirection parseConnectionDirection(yarp::conf::vocab32_t v, bo
     default:
         return errorIsOut ? PortCoreConnectionDirection::Out : PortCoreConnectionDirection::Error;
     }
-}
-
-void describeRoute(const Route& route, Bottle& result)
-{
-    Bottle& bfrom = result.addList();
-    bfrom.addString("from");
-    bfrom.addString(route.getFromName());
-
-    Bottle& bto = result.addList();
-    bto.addString("to");
-    bto.addString(route.getToName());
-
-    Bottle& bcarrier = result.addList();
-    bcarrier.addString("carrier");
-    bcarrier.addString(route.getCarrierName());
-
-    Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
-    if (carrier->isConnectionless()) {
-        Bottle& bconnectionless = result.addList();
-        bconnectionless.addString("connectionless");
-        bconnectionless.addInt32(1);
-    }
-    if (!carrier->isPush()) {
-        Bottle& breverse = result.addList();
-        breverse.addString("push");
-        breverse.addInt32(0);
-    }
-    delete carrier;
 }
 
 } // namespace
@@ -1631,10 +1601,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addString("[add] $portname         # add an output connection");
         result.addString("[add] $portname $car    # add an output with a given protocol");
         result.addString("[del] $portname         # remove an input or output connection");
-        result.addString("[list] [in]               # list input connections");
-        result.addString("[list] [out]              # list output connections");
-        result.addString("[list] [in]  $portname    # give details for input");
-        result.addString("[list] [out] $portname    # give details for output");
+        result.addString("listConnectionsIn                 # list input connections");
+        result.addString("listConnectionsOut                # list output connections");
+        result.addString("getConnectionInfoIn  $portname    # give details for input");
+        result.addString("getConnectionInfoOut $portname    # give details for output");
         result.addString("[info] $cur_port          # get information about current process, platform, thread and port");
         result.addString("[info] $portname          # get thread information of a connection to/from a port");
         result.addString("[qos] get $portname       # get Qos properties of a connection to/from a port");
@@ -1710,6 +1680,49 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             return true;
         }
 
+        return_listConnections listConnections(bool isInput)
+        {
+            return_listConnections result;
+            result.ret = true;
+            std::lock_guard<std::mutex> lock(m_owner.m_stateMutex);
+            for (auto* unit : m_owner.m_units) {
+                if ((unit != nullptr) && (isInput ? unit->isInput() : unit->isOutput()) && !unit->isFinished()) {
+                    const Route route = unit->getRoute();
+                    const std::string& name = isInput ? route.getFromName() : route.getToName();
+                    if (!name.empty()) {
+                        result.connections.push_back(name);
+                    }
+                }
+            }
+            return result;
+        }
+
+        return_getConnectionInfo getConnectionInfo(bool isInput, const std::string& portname)
+        {
+            return_getConnectionInfo result;
+            result.ret = true;
+            std::lock_guard<std::mutex> lock(m_owner.m_stateMutex);
+            for (auto* unit : m_owner.m_units) {
+                if ((unit != nullptr) && (isInput ? unit->isInput() : unit->isOutput()) && !unit->isFinished()) {
+                    const Route route = unit->getRoute();
+                    if ((isInput ? route.getFromName() : route.getToName()) == portname) {
+                        result.found = true;
+                        result.from_port = route.getFromName();
+                        result.to_port = route.getToName();
+                        result.carrier = route.getCarrierName();
+                        Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
+                        if (carrier != nullptr) {
+                            result.connectionless = carrier->isConnectionless();
+                            result.push = carrier->isPush();
+                            delete carrier;
+                        }
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
     public:
         explicit PortCoreMsgsServer(PortCore& owner) : m_owner(owner) {}
 
@@ -1717,6 +1730,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         bool attachPortmonitorIn(const std::string& prop) override { return attach(prop, false); }
         bool detachPortmonitorOut() override { return m_owner.detachPortMonitor(true); }
         bool detachPortmonitorIn() override { return m_owner.detachPortMonitor(false); }
+        return_listConnections listConnectionsIn() override { return listConnections(true); }
+        return_listConnections listConnectionsOut() override { return listConnections(false); }
+        return_getConnectionInfo getConnectionInfoIn(const std::string& portname) override { return getConnectionInfo(true, portname); }
+        return_getConnectionInfo getConnectionInfoOut(const std::string& portname) override { return getConnectionInfo(false, portname); }
     };
 
     auto handleAdminThriftCmd = [this](const Bottle& cmd, Bottle& result) {
@@ -1731,49 +1748,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         result.read(con.getReader());
         return true;
-    };
-
-    auto handleAdminListCmd = [this](const PortCoreConnectionDirection direction,
-                                     const std::string& target) {
-        Bottle result;
-        switch (direction) {
-        case PortCoreConnectionDirection::In: {
-            // Return a list of all input connections.
-            std::lock_guard<std::mutex> lock(m_stateMutex);
-            for (auto* unit : m_units) {
-                if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
-                    Route route = unit->getRoute();
-                    if (target.empty()) {
-                        const std::string& name = route.getFromName();
-                        if (!name.empty()) {
-                            result.addString(name);
-                        }
-                    } else if (route.getFromName() == target) {
-                        describeRoute(route, result);
-                    }
-                }
-            }
-        } break;
-        case PortCoreConnectionDirection::Out: {
-            // Return a list of all output connections.
-            std::lock_guard<std::mutex> lock(m_stateMutex);
-            for (auto* unit : m_units) {
-                if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
-                    Route route = unit->getRoute();
-                    if (target.empty()) {
-                        result.addString(route.getToName());
-                    } else if (route.getToName() == target) {
-                        describeRoute(route, result);
-                    }
-                }
-            }
-        } break;
-        case PortCoreConnectionDirection::Error:
-            // Should never happen
-            yCIAssert(PORTCORE, getName(), false);
-            break;
-        }
-        return result;
     };
 
     auto handleAdminSetInCmd = [this](const std::string& target,
@@ -2284,11 +2258,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     case PortCoreCommand::Del: {
         const std::string dest = cmd.get(1).asString();
         result = handleAdminDelCmd(dest);
-    } break;
-    case PortCoreCommand::List: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32(), true);
-        const std::string target = cmd.get(2).asString();
-        result = handleAdminListCmd(direction, target);
     } break;
     case PortCoreCommand::Set: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32(), true);
