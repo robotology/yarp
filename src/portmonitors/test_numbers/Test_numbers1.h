@@ -20,6 +20,7 @@ class Test_numbers1 : public yarp::os::MonitorObject
 {
     yarp::os::Things m_th;
     int m_valueoperation = 0;
+    int m_increment = 1; // the value added to each number (parameter "increment")
 
 public:
     void getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop);

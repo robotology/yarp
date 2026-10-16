@@ -11,8 +11,13 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
+#include <yarp/os/impl/PortCoreClient.h>
 #include <yarp/companion/impl/Companion.h>
 #include <algorithm>
+
+#include <yarp/os/ProcessInfoData.h>
+#include <yarp/os/PlatformInfoData.h>
+#include <yarp/os/PortInfoData.h>
 
 using namespace yarp::os;
 using namespace yarp::profiler;
@@ -273,81 +278,96 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
     Port ping;
     ping.open("...");
     ping.setAdminMode(true);
-    ping.setTimeout(1.0);
+    ping.setTimeout(2.0);
     if(!NetworkBase::connect(ping.getName(), portName)) {
         yWarning()<<"Cannot connect to"<<portName;
         ping.close();
         return false;
     }
 
+    yarp::os::impl::PortCoreClient client(ping);
+
     // Getting output connections list
-    Bottle cmd, reply;
-    cmd.addString("list"); cmd.addString("out");
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (list out) to"<<portName;
+    const yarp::os::return_listConnections outputs = client.listConnectionsOut();
+    if (!outputs.ret) {
+        yError()<<"Cannot get the output connections of"<<portName;
         ping.close();
         return false;
     }
-    for(size_t i=0; i<reply.size(); i++) {
+    for (const auto& name : outputs.connections) {
         ConnectedPortInfo cnn;
-        cnn.port_name = reply.get(i).asString();
-        Bottle reply2;
-        cmd.clear();
-        cmd.addString("list"); cmd.addString("out"); cmd.addString(cnn.port_name);
-        if (!ping.write(cmd, reply2)) {
-            yWarning()<<"Cannot write (list out"<<cnn.port_name <<") to"<<portName;
+        cnn.port_name = name;
+        const yarp::os::return_getConnectionInfo info = client.getConnectionInfoOut(name);
+        if (!info.ret) {
+            yWarning()<<"Cannot get the details of the connection from"<<portName<<"to"<<name;
         } else {
-            cnn.carrier = reply2.find("carrier").asString();
+            cnn.carrier = info.carrier;
         }
         details.outputs.push_back(cnn);
     }
 
     // Getting input connections list
-    cmd.clear(); reply.clear();
-    cmd.addString("list"); cmd.addString("in");
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (list in) to"<<portName;
+    const yarp::os::return_listConnections inputs = client.listConnectionsIn();
+    if (!inputs.ret) {
+        yError()<<"Cannot get the input connections of"<<portName;
         ping.close();
         return false;
     }
-    for(size_t i=0; i<reply.size(); i++) {
-        ConnectedPortInfo cnn;
-        cnn.port_name = reply.get(i).asString();
-        if (cnn.port_name != ping.getName()) {
+    for (const auto& name : inputs.connections) {
+        if (name != ping.getName()) {
+            ConnectedPortInfo cnn;
+            cnn.port_name = name;
             details.inputs.push_back(cnn);
         }
     }
 
     // Getting owner info
-    cmd.clear(); reply.clear();
-    cmd.addString("prop"); cmd.addString("get"); cmd.addString(portName);
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (prop get"<<portName<<") to"<<portName;
+    Bottle cmd, reply;
+    cmd.addString("info"); cmd.addString(portName);
+    bool bwrite = ping.write(cmd, reply);
+    if(!bwrite) {
+        yError()<<"Cannot write (info "<<portName<<") to"<<portName;
         ping.close();
         return false;
     }
 
-    Property* process = reply.find("process").asDict();
-    if (!process) {
-        yWarning()<<"Cannot find 'process' property of port "<<portName;
-    } else {
-        std::string process_str = process->toString();
-        details.owner_process.process_name = process->find("name").asString();
-        details.owner_process.arguments = process->find("arguments").asString();
-        details.owner_process.pid = process->find("pid").asInt32();
-        details.owner_process.priority = process->find("priority").asInt32();
-        details.owner_process.policy = process->find("policy").asInt32();
-        details.owner_process.process_fullname = details.owner_process.process_name + "(" + std::to_string(details.owner_process.pid) + ")";
+    // reply: (ProcessInfoData) (PlatformInfoData) (ThreadInfoData) (PortInfoData)
+    if (reply.size() < 4 || !reply.get(0).isList() || !reply.get(1).isList() || !reply.get(3).isList())
+    {
+         yWarning() << "Invalid info reply from port " << portName << ":" << reply.toString();
+         ping.close();
+         return false;
     }
 
-    Property* platform = reply.find("platform").asDict();
-    if (!platform) {
-        yWarning()<<"Cannot find 'platform' property of port "<<portName;
+    // sub-lists are copied to standalone bottles, otherwise they are serialized without the list header
+    yarp::os::ProcessInfoData processinfodata;
+    if (Portable::copyPortable(Bottle(*reply.get(0).asList()), processinfodata))
+    {
+        details.owner_process.process_name = processinfodata.name;
+        details.owner_process.arguments = processinfodata.arguments;
+        details.owner_process.pid = processinfodata.pid;
+        details.owner_process.priority = processinfodata.schedPriority;
+        details.owner_process.policy = processinfodata.schedPolicy;
+        details.owner_process.process_fullname = details.owner_process.process_name + "(" + std::to_string(details.owner_process.pid) + ")";
     } else {
-        std::string platform_str = platform->toString();
-        details.owner_process.owner_machine.os = platform->find("os").asString();
-        details.owner_process.owner_machine.hostname = platform->find("hostname").asString();
-        details.owner_process.owner_machine.ip = platform->find("hostname").asString();
+        yWarning()<<"Cannot find 'ProcessInfoData' of port "<<portName;
+    }
+
+    yarp::os::PlatformInfoData platforminfodata;
+    if (Portable::copyPortable(Bottle(*reply.get(1).asList()), platforminfodata))
+    {
+        details.owner_process.owner_machine.os = platforminfodata.name;
+    } else {
+        yWarning()<<"Cannot find 'PlatformInfoData' of port "<<portName;
+    }
+
+    yarp::os::PortInfoData portinfodata;
+    if (Portable::copyPortable(Bottle(*reply.get(3).asList()), portinfodata))
+    {
+        details.owner_process.owner_machine.hostname = portinfodata.hostname;
+        details.owner_process.owner_machine.ip = portinfodata.hostname;
+    } else {
+        yWarning()<<"Cannot find 'PortInfoData' of port "<<portName;
     }
 
     ping.close();

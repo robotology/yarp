@@ -290,6 +290,7 @@ set(YARP_os_IMPL_HDRS
   yarp/os/impl/PlatformUnistd.h
   yarp/os/impl/PortCommand.h
   yarp/os/impl/PortCore.h
+  yarp/os/impl/PortCoreClient.h
   yarp/os/impl/PortCoreAdapter.h
   yarp/os/impl/PortCoreInputUnit.h
   yarp/os/impl/PortCoreOutputUnit.h
@@ -334,6 +335,7 @@ set(YARP_os_IMPL_SRCS
   yarp/os/impl/PlatformTime.cpp
   yarp/os/impl/PortCommand.cpp
   yarp/os/impl/PortCore.cpp
+  yarp/os/impl/PortCoreClient.cpp
   yarp/os/impl/PortCoreAdapter.cpp
   yarp/os/impl/PortCoreInputUnit.cpp
   yarp/os/impl/PortCoreOutputUnit.cpp
@@ -377,6 +379,10 @@ set(YARP_os_IDL
   idl/SystemInfoData.thrift
   idl/StampData.thrift
   idl/StampWithFrameData.thrift
+  idl/ConnectionQosData.thrift
+  idl/PortInfoData.thrift
+  idl/ThreadInfoData.thrift
+  idl/PortCoreMsgs.thrift
 )
 
 yarp_choose_idl(YARP_os_idl ${YARP_os_IDL})

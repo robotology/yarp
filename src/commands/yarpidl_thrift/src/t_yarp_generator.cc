@@ -3749,6 +3749,20 @@ void t_yarp_generator::generate_service(t_service* tservice)
     const auto& extends_service = tservice->get_extends();
     const auto& annotations = tservice->annotations_;
 
+    // Read annotations for defining the import/export macro (e.g. YARP_os_API)
+    //  * yarp.api.include = the header file that contains the definition of
+    //    the import/export keyword
+    //  * yarp.api.keyword = the name of the keyword
+    std::string yarp_api_include{};
+    if (annotations.find("yarp.api.include") != annotations.end()) {
+        yarp_api_include = annotations.at("yarp.api.include");
+    }
+
+    std::string yarp_api_keyword{};
+    if (annotations.find("yarp.api.keyword") != annotations.end()) {
+        yarp_api_keyword = annotations.at("yarp.api.keyword");
+    }
+
     // Open header file
     std::string f_header_name = get_out_dir() + get_include_prefix(program_) + service_name + ".h";
     ofstream_with_content_based_conditional_update f_h_;
@@ -3784,6 +3798,10 @@ void t_yarp_generator::generate_service(t_service* tservice)
     }
 
     // Add includes to .h file
+    if (!yarp_api_include.empty()) {
+        f_h_ << "#include <" << yarp_api_include << ">\n";
+        f_h_ << '\n';
+    }
     f_h_ << "#include <yarp/os/Wire.h>\n";
     f_h_ << "#include <yarp/os/idl/WireTypes.h>\n";
     if (monitor_enabled) {
@@ -3864,7 +3882,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
     print_doc(f_h_, tservice);
 
     // Begin class
-    f_h_ << "class " << service_name_ << " :\n";
+    f_h_ << "class " << yarp_api_keyword << (yarp_api_keyword.empty() ? "" : " ") << service_name_ << " :\n";
     f_h_ << indent_initializer_h() << "public " << (extends_service ? type_name(extends_service) : "yarp::os::Wire") << '\n';
     f_h_ << indent_h() << "{\n";
     indent_up_h();

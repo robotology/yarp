@@ -36,14 +36,6 @@ int yarp::companion::main(int argc, char *argv[])
         more = false;
         std::string s = std::string(argv[0]);
 
-        // "pray" command requires the full command line, therefore it is
-        // handled before anything else
-        if (s == std::string("pray")) {
-            argc++;
-            argv--;
-            return instance.cmdPray(argc, argv);
-        }
-
         if (s == std::string("verbose") || s == std::string("quiet")) {
             yCWarning(COMPANION, "The %s argument is deprecated.", s.c_str());
             argc--;
