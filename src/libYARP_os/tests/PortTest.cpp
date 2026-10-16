@@ -1382,6 +1382,16 @@ TEST_CASE("os::PortTest", "[yarp::os]")
             CHECK(reply.get(0).asVocab32() == fail);
         }
 
+        // addConnection/delConnection: [ok success "message"]
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("delConnection /nonexistent"), reply));
+            REQUIRE(reply.size() == 3);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == fail);
+            CHECK(reply.get(2).isString());
+        }
+
         // listConnectionsIn: the names of the inputs; listConnectionsOut: no outputs
         // reply: [ok (names...)]
         {

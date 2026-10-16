@@ -1010,14 +1010,15 @@ bool PortCore::addOutput(const std::string& dest,
 }
 
 
-void PortCore::removeOutput(const std::string& dest, void* id, OutputStream* os)
+bool PortCore::removeOutput(const std::string& dest, void* id, OutputStream* os)
 {
     YARP_UNUSED(id);
     yCIDebug(PORTCORE, getName(), "asked to remove output to %s", dest.c_str());
 
     // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
-    if (removeUnit(Route("*", dest, "*"), true)) {
+    const bool removed = removeUnit(Route("*", dest, "*"), true);
+    if (removed) {
         bw.appendLine(std::string("Removed connection from ") + getName() + " to " + dest);
     } else {
         bw.appendLine(std::string("Could not find an outgoing connection to ") + dest);
@@ -1026,16 +1027,18 @@ void PortCore::removeOutput(const std::string& dest, void* id, OutputStream* os)
         bw.write(*os);
     }
     cleanUnits();
+    return removed;
 }
 
-void PortCore::removeInput(const std::string& src, void* id, OutputStream* os)
+bool PortCore::removeInput(const std::string& src, void* id, OutputStream* os)
 {
     YARP_UNUSED(id);
     yCIDebug(PORTCORE, getName(), "asked to remove input to %s", src.c_str());
 
     // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
-    if (removeUnit(Route(src, "*", "*"), true)) {
+    const bool removed = removeUnit(Route(src, "*", "*"), true);
+    if (removed) {
         bw.appendLine(std::string("Removing connection from ") + src + " to " + getName());
     } else {
         bw.appendLine(std::string("Could not find an incoming connection from ") + src);
@@ -1044,6 +1047,7 @@ void PortCore::removeInput(const std::string& src, void* id, OutputStream* os)
         bw.write(*os);
     }
     cleanUnits();
+    return removed;
 }
 
 void PortCore::describe(void* id, OutputStream* os)
@@ -1530,8 +1534,6 @@ enum class PortCoreCommand : yarp::conf::vocab32_t
 {
     Unknown = 0,
     Help = yarp::os::createVocab32('h', 'e', 'l', 'p'),
-    Add = yarp::os::createVocab32('a', 'd', 'd'),
-    Del = yarp::os::createVocab32('d', 'e', 'l'),
     Set = yarp::os::createVocab32('s', 'e', 't'),
     Get = yarp::os::createVocab32('g', 'e', 't'),
     Qos = yarp::os::createVocab32('q', 'o', 's'),
@@ -1550,8 +1552,6 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
     auto cmd = static_cast<PortCoreCommand>(v.asVocab32());
     switch (cmd) {
     case PortCoreCommand::Help:
-    case PortCoreCommand::Add:
-    case PortCoreCommand::Del:
     case PortCoreCommand::Set:
     case PortCoreCommand::Get:
     case PortCoreCommand::Qos:
@@ -1596,9 +1596,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addVocab32('m', 'a', 'n', 'y');
         result.addString("[help]                  # give this help");
         result.addString("getAdminProtocolVersion           # report protocol version information");
-        result.addString("[add] $portname         # add an output connection");
-        result.addString("[add] $portname $car    # add an output with a given protocol");
-        result.addString("[del] $portname         # remove an input or output connection");
+        result.addString("addConnection $portname           # add an output connection");
+        result.addString("addConnection $portname $carrier  # add an output with a given protocol");
+        result.addString("delConnection $portname           # remove an input or output connection");
         result.addString("listConnectionsIn                 # list input connections");
         result.addString("listConnectionsOut                # list output connections");
         result.addString("getConnectionInfoIn  $portname    # give details for input");
@@ -1615,48 +1615,12 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
-    auto handleAdminAddCmd = [this, id](std::string output,
-                                        const std::string& carrier) {
-        // Add an output to the port.
-        Bottle result;
-        StringOutputStream cache;
-        if (!carrier.empty()) {
-            output = carrier + ":/" + output;
-        }
-        addOutput(output, id, &cache, false);
-        std::string r = cache.toString();
-        int v = (r[0] == 'A') ? 0 : -1;
-        result.addInt32(v);
-        result.addString(r);
-        return result;
-    };
-
-    auto handleAdminDelCmd = [this, id](const std::string& dest) {
-        // Delete any inputs or outputs involving the named port.
-        Bottle result;
-        StringOutputStream cache;
-        removeOutput(dest, id, &cache);
-        std::string r1 = cache.toString();
-        cache.reset();
-        removeInput(dest, id, &cache);
-        std::string r2 = cache.toString();
-        int v = (r1[0] == 'R' || r2[0] == 'R') ? 0 : -1;
-        result.addInt32(v);
-        if (r1[0] == 'R' && r2[0] != 'R') {
-            result.addString(r1);
-        } else if (r1[0] != 'R' && r2[0] == 'R') {
-            result.addString(r2);
-        } else {
-            result.addString(r1 + r2);
-        }
-        return result;
-    };
-
     // Server side of the commands defined in idl/PortCoreMsgs.thrift.
     // NOTE: being a local class, it has the same access rights of adminBlock().
     class PortCoreMsgsServer : public yarp::os::PortCoreMsgs
     {
         PortCore& m_owner;
+        void* m_id; // the id of the unit which sent the command
 
         bool attach(const std::string& portmonitor_options, bool isOutput)
         {
@@ -1712,7 +1676,44 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
 
     public:
-        explicit PortCoreMsgsServer(PortCore& owner) : m_owner(owner) {}
+        PortCoreMsgsServer(PortCore& owner, void* id) : m_owner(owner), m_id(id) {}
+
+        return_addConnection addConnection(const std::string& portname, const std::string& carrier) override
+        {
+            // Add an output to the port.
+            return_addConnection result;
+            result.ret = true;
+            const std::string output = carrier.empty() ? portname : carrier + ":/" + portname;
+            StringOutputStream cache;
+            result.success = m_owner.addOutput(output, m_id, &cache, false);
+            result.message = cache.toString();
+            return result;
+        }
+
+        return_delConnection delConnection(const std::string& portname) override
+        {
+            // Delete any inputs or outputs involving the named port.
+            return_delConnection result;
+            result.ret = true;
+            StringOutputStream cache;
+            const bool removedOutput = m_owner.removeOutput(portname, m_id, &cache);
+            const std::string outputMessage = cache.toString();
+            cache.reset();
+            const bool removedInput = m_owner.removeInput(portname, m_id, &cache);
+            const std::string inputMessage = cache.toString();
+            // The operation succeeds if at least one connection was removed.
+            // The reply contains only the message(s) of the removal(s) which
+            // actually happened (or both failure messages, if none).
+            result.success = removedOutput || removedInput;
+            if (removedOutput && !removedInput) {
+                result.message = outputMessage;
+            } else if (!removedOutput && removedInput) {
+                result.message = inputMessage;
+            } else {
+                result.message = outputMessage + inputMessage;
+            }
+            return result;
+        }
 
         bool attachPortmonitorOut(const std::string& prop) override { return attach(prop, true); }
         bool attachPortmonitorIn(const std::string& prop) override { return attach(prop, false); }
@@ -1736,11 +1737,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
     };
 
-    auto handleAdminThriftCmd = [this](const Bottle& cmd, Bottle& result) {
+    auto handleAdminThriftCmd = [this, id](const Bottle& cmd, Bottle& result) {
         // Forward the (already read) command to the thrift service and
         // collect its reply. Returns false if the command is not one of
         // the commands of the service.
-        PortCoreMsgsServer server(*this);
+        PortCoreMsgsServer server(*this, id);
         DummyConnector con;
         cmd.write(con.getWriter());
         if (!server.read(con.getReader())) {
@@ -2247,15 +2248,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     case PortCoreCommand::Help:
         result = handleAdminHelpCmd();
         break;
-    case PortCoreCommand::Add: {
-        std::string output = cmd.get(1).asString();
-        std::string carrier = cmd.get(2).asString();
-        result = handleAdminAddCmd(std::move(output), carrier);
-    } break;
-    case PortCoreCommand::Del: {
-        const std::string dest = cmd.get(1).asString();
-        result = handleAdminDelCmd(dest);
-    } break;
     case PortCoreCommand::Set: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32(), true);
         const std::string target = cmd.get(2).asString();

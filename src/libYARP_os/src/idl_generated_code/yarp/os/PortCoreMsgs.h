@@ -16,6 +16,8 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
+#include <yarp/os/return_addConnection.h>
+#include <yarp/os/return_delConnection.h>
 #include <yarp/os/return_getAdminProtocolVersion.h>
 #include <yarp/os/return_getConnectionInfo.h>
 #include <yarp/os/return_listConnections.h>
@@ -35,6 +37,10 @@ public:
     PortCoreMsgs();
 
     //Service methods
+    virtual return_addConnection addConnection(const std::string& portname, const std::string& carrier = "");
+
+    virtual return_delConnection delConnection(const std::string& portname);
+
     virtual bool attachPortmonitorOut(const std::string& prop);
 
     virtual bool attachPortmonitorIn(const std::string& prop);

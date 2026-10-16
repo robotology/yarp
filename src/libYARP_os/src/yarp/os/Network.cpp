@@ -148,7 +148,8 @@ static int noteDud(const Contact& src)
  *   the connection and on its carrier (which must match @p style.carrier);
  * - an existing connectionless connection is explicitly disconnected also
  *   from the other side, since the other side would not notice it otherwise;
- * - finally, an [add] or [del] command is sent to @p src.
+ * - finally, @p src is asked to add (addConnection) or to remove
+ *   (delConnection) the connection.
  *
  * @param src the port which is asked to make/break/check the connection
  * @param dest the port at the other end of the connection
@@ -229,22 +230,12 @@ static int enactConnection(const Contact& src,
         return 1;
     }
 
-    yarp::conf::vocab32_t act = (mode == YARP_ENACT_DISCONNECT) ? yarp::os::createVocab32('d', 'e', 'l') : yarp::os::createVocab32('a', 'd', 'd');
-
     // Let's ask the destination to connect/disconnect to the source.
     // We assume the YARP carrier will reverse the connection if
     // appropriate when connecting.
-    Bottle cmd;
-    Bottle reply;
-    cmd.addVocab32(act);
     Contact c = dest;
     if (!style.carrier.empty()) {
         c.setCarrier(style.carrier);
-    }
-    if (mode != YARP_ENACT_DISCONNECT) {
-        cmd.addString(c.toString());
-    } else {
-        cmd.addString(c.getName());
     }
 
     Contact c2 = src;
@@ -252,21 +243,24 @@ static int enactConnection(const Contact& src,
         c2 = NetworkBase::queryName(c2.getName());
     }
 
-    yCDebug(NETWORK, "** asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
-    bool ok = NetworkBase::write(c2, cmd, reply, rpc);
-    if (!ok) {
+    PortCoreClient srcClient(c2, rpc);
+    bool ret = false;
+    bool ok = false;
+    std::string msg;
+    if (mode == YARP_ENACT_DISCONNECT) {
+        const return_delConnection result = srcClient.delConnection(c.getName());
+        ret = result.ret;
+        ok = result.success;
+        msg = result.message;
+    } else {
+        const return_addConnection result = srcClient.addConnection(c.toString());
+        ret = result.ret;
+        ok = result.success;
+        msg = result.message;
+    }
+    if (!ret) {
         noteDud(src);
         return 1;
-    }
-    std::string msg;
-    if (reply.get(0).isInt32()) {
-        ok = (reply.get(0).asInt32() == 0);
-        msg = reply.get(1).asString();
-    } else {
-        // older protocol
-        // FIXME Is this protocol still in use?
-        msg = reply.get(0).asString();
-        ok = msg[0] == 'A' || msg[0] == 'R';
     }
     if (mode == YARP_ENACT_DISCONNECT && !ok) {
         msg = "no such connection";
@@ -299,6 +293,14 @@ static std::string extractCarrierNameOnly(const std::string& carrier_name_with_p
     return carrier_name_with_params.substr(0, carrier_name_with_params.find('+'));
 }
 
+/**
+ * Check if the given source and destination ports are log ports.
+ * Note: /log/... ports are used by clients (the application which send the log)
+ * /logger/... ports are used by the log server (the application which receives the log)
+ * @param src the source port
+ * @param dest the destination port
+ * @return true if both ports are log ports, false otherwise
+ */
 static bool is_log_port(const std::string& src,
                         const std::string& dest)
 {
@@ -312,6 +314,14 @@ static bool is_log_port(const std::string& src,
     return false;
 }
 
+/**
+ * Check if the given source and destination ports are stats ports.#
+ * Note: /stats_monitor/... ports are used by clients (the application which send the stats)
+ * /yarpConnectionsStats/... ports are used by the stats server (the application which receives the stats)
+ * @param src the source port
+ * @param dest the destination port
+ * @return true if both ports are stats ports, false otherwise
+ */
 static bool is_stats_port(const std::string& src,
                           const std::string& dest)
 {
