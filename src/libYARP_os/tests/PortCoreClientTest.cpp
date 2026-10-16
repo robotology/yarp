@@ -9,6 +9,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/YarpPluginSelector.h>
 
@@ -110,6 +111,180 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         REQUIRE(sendClient.detachPortmonitorOut());
         REQUIRE(recvClient.detachPortmonitorIn());
         CHECK(sendAndReceive(1) == 1);
+
+        receiver.close();
+        sender.close();
+    }
+
+    SECTION("setPortmonitorParamsIn/Out and getPortmonitorParamsIn/Out without a portmonitor")
+    {
+        BufferedPort<Bottle> p1;
+        REQUIRE(p1.open("/p1"));
+
+        PortCoreClient client("/p1");
+        for (const return_setPortmonitorParams& result : {client.setPortmonitorParamsIn("(increment 5)"),
+                                                          client.setPortmonitorParamsOut("(increment 5)")}) {
+            REQUIRE(result.ret);
+            CHECK_FALSE(result.success);
+            CHECK_FALSE(result.message.empty());
+        }
+        for (const return_getPortmonitorParams& result : {client.getPortmonitorParamsIn(),
+                                                          client.getPortmonitorParamsOut()}) {
+            REQUIRE(result.ret);
+            CHECK_FALSE(result.success);
+            CHECK(result.params.empty());
+            CHECK_FALSE(result.message.empty());
+        }
+
+        p1.close();
+    }
+
+    SECTION("setPortmonitorParamsIn/Out and getPortmonitorParamsIn/Out with the test_numbers1 portmonitor")
+    {
+        YARP_REQUIRE_PLUGIN("test_numbers1", "portmonitor");
+
+        const std::string pm_options = "(type dll) (file test_numbers1)";
+
+        Port sender;
+        BufferedPort<Value> receiver;
+        receiver.setStrict();
+        REQUIRE(sender.open("/send"));
+        REQUIRE(receiver.open("/recv"));
+        REQUIRE(NetworkBase::connect("/send", "/recv"));
+
+        auto sendAndReceive = [&](int sent) {
+            sender.write(Value(sent));
+            Value* received = receiver.read();
+            REQUIRE(received != nullptr);
+            return received->asInt64();
+        };
+
+        auto getIncrement = [](const std::string& params) {
+            Property property;
+            property.fromString(params);
+            return property.find("increment").asInt32();
+        };
+
+        // receiver side
+        PortCoreClient recvClient("/recv");
+        REQUIRE(recvClient.attachPortmonitorIn(pm_options));
+        CHECK(sendAndReceive(1) == 2);
+
+        return_getPortmonitorParams params = recvClient.getPortmonitorParamsIn();
+        REQUIRE(params.ret);
+        REQUIRE(params.success);
+        CHECK(getIncrement(params.params) == 1);
+
+        const return_setPortmonitorParams set = recvClient.setPortmonitorParamsIn("(increment 5)");
+        REQUIRE(set.ret);
+        CHECK(set.success);
+        CHECK(sendAndReceive(1) == 6);
+        params = recvClient.getPortmonitorParamsIn();
+        REQUIRE(params.success);
+        CHECK(getIncrement(params.params) == 5);
+
+        // the output has no portmonitor attached
+        CHECK_FALSE(recvClient.getPortmonitorParamsOut().success);
+        REQUIRE(recvClient.detachPortmonitorIn());
+
+        // sender side
+        PortCoreClient sendClient("/send");
+        REQUIRE(sendClient.attachPortmonitorOut(pm_options));
+        CHECK(sendClient.setPortmonitorParamsOut("(increment 10)").success);
+        CHECK(sendAndReceive(1) == 11);
+        params = sendClient.getPortmonitorParamsOut();
+        REQUIRE(params.success);
+        CHECK(getIncrement(params.params) == 10);
+        REQUIRE(sendClient.detachPortmonitorOut());
+
+        // after the detach the parameters are not available anymore
+        CHECK_FALSE(sendClient.getPortmonitorParamsOut().success);
+        CHECK(sendAndReceive(1) == 1);
+
+        receiver.close();
+        sender.close();
+    }
+
+    SECTION("setConnectionParamsIn/Out and getConnectionParamsIn/Out")
+    {
+        Port sender;
+        BufferedPort<Bottle> receiver;
+        REQUIRE(sender.open("/send"));
+        REQUIRE(receiver.open("/recv"));
+        REQUIRE(NetworkBase::connect("/send", "/recv"));
+
+        PortCoreClient sendClient("/send");
+        PortCoreClient recvClient("/recv");
+
+        // existing connections, from both sides
+        return_setConnectionParams set = sendClient.setConnectionParamsOut("/recv", "(key 1)");
+        REQUIRE(set.ret);
+        CHECK(set.success);
+        set = recvClient.setConnectionParamsIn("/send", "(key 1)");
+        REQUIRE(set.ret);
+        CHECK(set.success);
+
+        return_getConnectionParams params = sendClient.getConnectionParamsOut("/recv");
+        REQUIRE(params.ret);
+        CHECK(params.success);
+        params = recvClient.getConnectionParamsIn("/send");
+        REQUIRE(params.ret);
+        CHECK(params.success);
+
+        // connections which do not exist (wrong port, or wrong direction)
+        for (const return_setConnectionParams& result : {sendClient.setConnectionParamsOut("/nonexistent", "(key 1)"),
+                                                         sendClient.setConnectionParamsIn("/recv", "(key 1)"),
+                                                         recvClient.setConnectionParamsOut("/send", "(key 1)")}) {
+            REQUIRE(result.ret);
+            CHECK_FALSE(result.success);
+            CHECK_FALSE(result.message.empty());
+        }
+        for (const return_getConnectionParams& result : {sendClient.getConnectionParamsOut("/nonexistent"),
+                                                         sendClient.getConnectionParamsIn("/recv"),
+                                                         recvClient.getConnectionParamsOut("/send")}) {
+            REQUIRE(result.ret);
+            CHECK_FALSE(result.success);
+            CHECK(result.params.empty());
+            CHECK_FALSE(result.message.empty());
+        }
+
+        receiver.close();
+        sender.close();
+    }
+
+    SECTION("setConnectionParamsIn/getConnectionParamsIn on a connection with the test_numbers1 portmonitor carrier")
+    {
+        YARP_REQUIRE_PLUGIN("test_numbers1", "portmonitor");
+
+        Port sender;
+        BufferedPort<Value> receiver;
+        receiver.setStrict();
+        REQUIRE(sender.open("/send"));
+        REQUIRE(receiver.open("/recv"));
+        REQUIRE(NetworkBase::connect("/send", "/recv", "fast_tcp+recv.portmonitor+type.dll+file.test_numbers1"));
+
+        auto sendAndReceive = [&](int sent) {
+            sender.write(Value(sent));
+            Value* received = receiver.read();
+            REQUIRE(received != nullptr);
+            return received->asInt64();
+        };
+
+        CHECK(sendAndReceive(1) == 2);
+
+        // the parameters are forwarded to the portmonitor carrier of the connection
+        PortCoreClient recvClient("/recv");
+        const return_setConnectionParams set = recvClient.setConnectionParamsIn("/send", "(increment 3)");
+        REQUIRE(set.ret);
+        CHECK(set.success);
+        CHECK(sendAndReceive(1) == 4);
+
+        const return_getConnectionParams params = recvClient.getConnectionParamsIn("/send");
+        REQUIRE(params.ret);
+        REQUIRE(params.success);
+        Property property;
+        property.fromString(params.params);
+        CHECK(property.find("increment").asInt32() == 3);
 
         receiver.close();
         sender.close();
@@ -308,6 +483,14 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         CHECK_FALSE(client.getAdminProtocolVersion().ret);
         CHECK_FALSE(client.addConnection("/p1").ret);
         CHECK_FALSE(client.delConnection("/p1").ret);
+        CHECK_FALSE(client.setPortmonitorParamsIn("(key 1)").ret);
+        CHECK_FALSE(client.setPortmonitorParamsOut("(key 1)").ret);
+        CHECK_FALSE(client.getPortmonitorParamsIn().ret);
+        CHECK_FALSE(client.getPortmonitorParamsOut().ret);
+        CHECK_FALSE(client.setConnectionParamsIn("/p1", "(key 1)").ret);
+        CHECK_FALSE(client.setConnectionParamsOut("/p1", "(key 1)").ret);
+        CHECK_FALSE(client.getConnectionParamsIn("/p1").ret);
+        CHECK_FALSE(client.getConnectionParamsOut("/p1").ret);
     }
 
     NetworkBase::setLocalMode(false);

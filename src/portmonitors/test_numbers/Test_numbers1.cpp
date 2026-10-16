@@ -36,12 +36,16 @@ void Test_numbers1::destroy()
 
 bool Test_numbers1::setparam(const yarp::os::Property &params)
 {
-    return false;
+    if (params.check("increment")) {
+        m_increment = params.find("increment").asInt32();
+    }
+    return true;
 }
 
 bool Test_numbers1::getparam(yarp::os::Property &params)
 {
-    return false;
+    params.put("increment", m_increment);
+    return true;
 }
 
 bool Test_numbers1::accept(yarp::os::Things &thing)
@@ -66,7 +70,7 @@ yarp::os::Things & Test_numbers1::update(yarp::os::Things &thing)
         return thing;
     }
 
-    int v = s->asInt64() + 1;
+    int v = s->asInt64() + m_increment;
     *s = yarp::os::Value(v);
 
     //send data

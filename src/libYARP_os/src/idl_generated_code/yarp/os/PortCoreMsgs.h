@@ -20,7 +20,11 @@
 #include <yarp/os/return_delConnection.h>
 #include <yarp/os/return_getAdminProtocolVersion.h>
 #include <yarp/os/return_getConnectionInfo.h>
+#include <yarp/os/return_getConnectionParams.h>
+#include <yarp/os/return_getPortmonitorParams.h>
 #include <yarp/os/return_listConnections.h>
+#include <yarp/os/return_setConnectionParams.h>
+#include <yarp/os/return_setPortmonitorParams.h>
 
 namespace yarp::os {
 
@@ -48,6 +52,22 @@ public:
     virtual bool detachPortmonitorOut();
 
     virtual bool detachPortmonitorIn();
+
+    virtual return_setPortmonitorParams setPortmonitorParamsOut(const std::string& params);
+
+    virtual return_setPortmonitorParams setPortmonitorParamsIn(const std::string& params);
+
+    virtual return_getPortmonitorParams getPortmonitorParamsOut();
+
+    virtual return_getPortmonitorParams getPortmonitorParamsIn();
+
+    virtual return_setConnectionParams setConnectionParamsOut(const std::string& portname, const std::string& params);
+
+    virtual return_setConnectionParams setConnectionParamsIn(const std::string& portname, const std::string& params);
+
+    virtual return_getConnectionParams getConnectionParamsOut(const std::string& portname);
+
+    virtual return_getConnectionParams getConnectionParamsIn(const std::string& portname);
 
     virtual return_listConnections listConnectionsIn();
 

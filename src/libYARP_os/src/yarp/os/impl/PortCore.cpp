@@ -1534,17 +1534,8 @@ enum class PortCoreCommand : yarp::conf::vocab32_t
 {
     Unknown = 0,
     Help = yarp::os::createVocab32('h', 'e', 'l', 'p'),
-    Set = yarp::os::createVocab32('s', 'e', 't'),
-    Get = yarp::os::createVocab32('g', 'e', 't'),
     Qos = yarp::os::createVocab32('q', 'o', 's'),
     GetInfo = yarp::os::createVocab32('i', 'n', 'f','o'),
-};
-
-enum class PortCoreConnectionDirection : yarp::conf::vocab32_t
-{
-    Error = 0,
-    Out = yarp::os::createVocab32('o', 'u', 't'),
-    In = yarp::os::createVocab32('i', 'n'),
 };
 
 PortCoreCommand parseCommand(const yarp::os::Value& v)
@@ -1552,25 +1543,11 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
     auto cmd = static_cast<PortCoreCommand>(v.asVocab32());
     switch (cmd) {
     case PortCoreCommand::Help:
-    case PortCoreCommand::Set:
-    case PortCoreCommand::Get:
     case PortCoreCommand::Qos:
     case PortCoreCommand::GetInfo:
         return cmd;
     default:
         return PortCoreCommand::Unknown;
-    }
-}
-
-PortCoreConnectionDirection parseConnectionDirection(yarp::conf::vocab32_t v, bool errorIsOut = false)
-{
-    auto dir = static_cast<PortCoreConnectionDirection>(v);
-    switch (dir) {
-    case PortCoreConnectionDirection::In:
-    case PortCoreConnectionDirection::Out:
-        return dir;
-    default:
-        return errorIsOut ? PortCoreConnectionDirection::Out : PortCoreConnectionDirection::Error;
     }
 }
 
@@ -1612,6 +1589,14 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addString("attachPortmonitorIn  $portmonitor # attach a portmonitor plug-in to the port's input");
         result.addString("detachPortmonitorOut              # detach portmonitor plug-in from the port's output");
         result.addString("detachPortmonitorIn               # detach portmonitor plug-in from the port's input");
+        result.addString("setPortmonitorParamsOut $params   # set the parameters of the portmonitor attached to the port's output");
+        result.addString("setPortmonitorParamsIn  $params   # set the parameters of the portmonitor attached to the port's input");
+        result.addString("getPortmonitorParamsOut           # get the parameters of the portmonitor attached to the port's output");
+        result.addString("getPortmonitorParamsIn            # get the parameters of the portmonitor attached to the port's input");
+        result.addString("setConnectionParamsOut $portname $params # set the carrier parameters of an output connection");
+        result.addString("setConnectionParamsIn  $portname $params # set the carrier parameters of an input connection");
+        result.addString("getConnectionParamsOut $portname  # get the carrier parameters of an output connection");
+        result.addString("getConnectionParamsIn  $portname  # get the carrier parameters of an input connection");
         return result;
     };
 
@@ -1675,6 +1660,87 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             return result;
         }
 
+        return_setPortmonitorParams setPortmonitorParams(const std::string& params, bool isOutput)
+        {
+            return_setPortmonitorParams result;
+            result.ret = true;
+            Property property;
+            property.fromString(params);
+            result.success = m_owner.setParamPortMonitor(property, isOutput, result.message);
+            return result;
+        }
+
+        return_getPortmonitorParams getPortmonitorParams(bool isOutput)
+        {
+            return_getPortmonitorParams result;
+            result.ret = true;
+            Property property;
+            result.success = m_owner.getParamPortMonitor(property, isOutput, result.message);
+            if (result.success) {
+                result.params = property.toString();
+            }
+            return result;
+        }
+
+        // Returns the unit of the (active) connection coming from (isInput) or
+        // going to (!isInput) the given port, or nullptr if there is none.
+        // NOTE: m_owner.m_stateMutex must be locked by the caller.
+        PortCoreUnit* findConnectionUnit(bool isInput, const std::string& portname)
+        {
+            for (auto* unit : m_owner.m_units) {
+                if ((unit != nullptr) && (isInput ? unit->isInput() : unit->isOutput()) && !unit->isFinished()) {
+                    const Route route = unit->getRoute();
+                    if ((isInput ? route.getFromName() : route.getToName()) == portname) {
+                        return unit;
+                    }
+                }
+            }
+            return nullptr;
+        }
+
+        std::string connectionNotFoundMessage(bool isInput, const std::string& portname)
+        {
+            return isInput ? "Could not find an incoming connection from " + portname
+                           : "Could not find an outgoing connection to " + portname;
+        }
+
+        return_setConnectionParams setConnectionParams(bool isInput, const std::string& portname, const std::string& params)
+        {
+            return_setConnectionParams result;
+            result.ret = true;
+            std::lock_guard<std::mutex> lock(m_owner.m_stateMutex);
+            PortCoreUnit* unit = findConnectionUnit(isInput, portname);
+            if (unit == nullptr) {
+                result.success = false;
+                result.message = connectionNotFoundMessage(isInput, portname);
+                return result;
+            }
+            Property property;
+            property.fromString(params);
+            unit->setCarrierParams(property);
+            result.success = true;
+            result.message = (isInput ? "Configured connection from " : "Configured connection to ") + portname;
+            return result;
+        }
+
+        return_getConnectionParams getConnectionParams(bool isInput, const std::string& portname)
+        {
+            return_getConnectionParams result;
+            result.ret = true;
+            std::lock_guard<std::mutex> lock(m_owner.m_stateMutex);
+            PortCoreUnit* unit = findConnectionUnit(isInput, portname);
+            if (unit == nullptr) {
+                result.success = false;
+                result.message = connectionNotFoundMessage(isInput, portname);
+                return result;
+            }
+            Property property;
+            unit->getCarrierParams(property);
+            result.success = true;
+            result.params = property.toString();
+            return result;
+        }
+
     public:
         PortCoreMsgsServer(PortCore& owner, void* id) : m_owner(owner), m_id(id) {}
 
@@ -1719,6 +1785,14 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         bool attachPortmonitorIn(const std::string& prop) override { return attach(prop, false); }
         bool detachPortmonitorOut() override { return m_owner.detachPortMonitor(true); }
         bool detachPortmonitorIn() override { return m_owner.detachPortMonitor(false); }
+        return_setPortmonitorParams setPortmonitorParamsOut(const std::string& params) override { return setPortmonitorParams(params, true); }
+        return_setPortmonitorParams setPortmonitorParamsIn(const std::string& params) override { return setPortmonitorParams(params, false); }
+        return_getPortmonitorParams getPortmonitorParamsOut() override { return getPortmonitorParams(true); }
+        return_getPortmonitorParams getPortmonitorParamsIn() override { return getPortmonitorParams(false); }
+        return_setConnectionParams setConnectionParamsOut(const std::string& portname, const std::string& params) override { return setConnectionParams(false, portname, params); }
+        return_setConnectionParams setConnectionParamsIn(const std::string& portname, const std::string& params) override { return setConnectionParams(true, portname, params); }
+        return_getConnectionParams getConnectionParamsOut(const std::string& portname) override { return getConnectionParams(false, portname); }
+        return_getConnectionParams getConnectionParamsIn(const std::string& portname) override { return getConnectionParams(true, portname); }
         return_listConnections listConnectionsIn() override { return listConnections(true); }
         return_listConnections listConnectionsOut() override { return listConnections(false); }
         return_getConnectionInfo getConnectionInfoIn(const std::string& portname) override { return getConnectionInfo(true, portname); }
@@ -1749,172 +1823,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         result.read(con.getReader());
         return true;
-    };
-
-    auto handleAdminSetInCmd = [this](const std::string& target,
-                                      const Property& property) {
-        Bottle result;
-        // Set carrier parameters on a given input connection.
-        std::lock_guard<std::mutex> lock(m_stateMutex);
-        if (target.empty()) {
-            result.addInt32(-1);
-            result.addString("target port is not specified.\r\n");
-        } else {
-            if (target == getName()) {
-                std::string errMsg;
-                if (!setParamPortMonitor(property, false, errMsg)) {
-                    result.addVocab32("fail");
-                    result.addString(errMsg);
-                } else {
-                    result.addVocab32("ok");
-                }
-            } else {
-                for (auto* unit : m_units) {
-                    if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
-                        Route route = unit->getRoute();
-                        if (route.getFromName() == target) {
-                            unit->setCarrierParams(property);
-                            result.addInt32(0);
-                            std::string msg = "Configured connection from ";
-                            msg += route.getFromName();
-                            msg += "\r\n";
-                            result.addString(msg);
-                            break;
-                        }
-                    }
-                }
-            }
-            if (result.size() == 0) {
-                result.addInt32(-1);
-                std::string msg = "Could not find an incoming connection from ";
-                msg += target;
-                msg += "\r\n";
-                result.addString(msg);
-            }
-        }
-        return result;
-    };
-
-    auto handleAdminSetOutCmd = [this](const std::string& target,
-                                       const Property& property) {
-        Bottle result;
-        // Set carrier parameters on a given output connection.
-        std::lock_guard<std::mutex> lock(m_stateMutex);
-        if (target.empty()) {
-            result.addInt32(-1);
-            result.addString("target port is not specified.\r\n");
-        } else {
-            if (target == getName()) {
-                std::string errMsg;
-                if (!setParamPortMonitor(property, true, errMsg)) {
-                    result.addVocab32("fail");
-                    result.addString(errMsg);
-                } else {
-                    result.addVocab32("ok");
-                }
-            } else {
-                for (auto* unit : m_units) {
-                    if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
-                        Route route = unit->getRoute();
-                        if (route.getToName() == target) {
-                            unit->setCarrierParams(property);
-                            result.addInt32(0);
-                            std::string msg = "Configured connection to ";
-                            msg += route.getToName();
-                            msg += "\r\n";
-                            result.addString(msg);
-                            break;
-                        }
-                    }
-                }
-            }
-            if (result.size() == 0) {
-                result.addInt32(-1);
-                std::string msg = "Could not find an incoming connection to ";
-                msg += target;
-                msg += "\r\n";
-                result.addString(msg);
-            }
-        }
-        return result;
-    };
-
-    auto handleAdminGetInCmd = [this](const std::string& target) {
-        Bottle result;
-        // Get carrier parameters for a given input connection.
-        std::lock_guard<std::mutex> lock(m_stateMutex);
-        if (target.empty()) {
-            result.addInt32(-1);
-            result.addString("target port is not specified.\r\n");
-        } else if (target == getName()) {
-            yarp::os::Property property;
-            std::string errMsg;
-            if (!getParamPortMonitor(property, false, errMsg)) {
-                result.addVocab32("fail");
-                result.addString(errMsg);
-            } else {
-                result.addList().fromString(property.toString());
-            }
-        } else {
-            for (auto* unit : m_units) {
-                if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
-                    Route route = unit->getRoute();
-                    if (route.getFromName() == target) {
-                        yarp::os::Property property;
-                        unit->getCarrierParams(property);
-                        result.addList().fromString(property.toString());
-                        break;
-                    }
-                }
-            }
-            if (result.size() == 0) {
-                result.addInt32(-1);
-                std::string msg = "Could not find an incoming connection from ";
-                msg += target;
-                msg += "\r\n";
-                result.addString(msg);
-            }
-        }
-        return result;
-    };
-
-    auto handleAdminGetOutCmd = [this](const std::string& target) {
-        Bottle result;
-        // Get carrier parameters for a given output connection.
-        std::lock_guard<std::mutex> lock(m_stateMutex);
-        if (target.empty()) {
-            result.addInt32(-1);
-            result.addString("target port is not specified.\r\n");
-        } else if (target == getName()) {
-            yarp::os::Property property;
-            std::string errMsg;
-            if (!getParamPortMonitor(property, true, errMsg)) {
-                result.addVocab32("fail");
-                result.addString(errMsg);
-            } else {
-                result.addList().fromString(property.toString());
-            }
-        } else {
-            for (auto* unit : m_units) {
-                if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
-                    Route route = unit->getRoute();
-                    if (route.getToName() == target) {
-                        yarp::os::Property property;
-                        unit->getCarrierParams(property);
-                        result.addList().fromString(property.toString());
-                        break;
-                    }
-                }
-            }
-            if (result.size() == 0) {
-                result.addInt32(-1);
-                std::string msg = "Could not find an incoming connection to ";
-                msg += target;
-                msg += "\r\n";
-                result.addString(msg);
-            }
-        }
-        return result;
     };
 
     auto handleAdminGetInfoCmd = [this](const std::string& portname) {
@@ -2248,38 +2156,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     case PortCoreCommand::Help:
         result = handleAdminHelpCmd();
         break;
-    case PortCoreCommand::Set: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32(), true);
-        const std::string target = cmd.get(2).asString();
-        yarp::os::Property property;
-        property.fromString(cmd.toString());
-        switch (direction) {
-        case PortCoreConnectionDirection::In:
-            result = handleAdminSetInCmd(target, property);
-            break;
-        case PortCoreConnectionDirection::Out:
-            result = handleAdminSetOutCmd(target, property);
-            break;
-        case PortCoreConnectionDirection::Error:
-            yCIAssert(PORTCORE, getName(), false); // Should never happen (error is out)
-            break;
-        }
-    } break;
-    case PortCoreCommand::Get: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32(), true);
-        const std::string target = cmd.get(2).asString();
-        switch (direction) {
-        case PortCoreConnectionDirection::In:
-            result = handleAdminGetInCmd(target);
-            break;
-        case PortCoreConnectionDirection::Out:
-            result = handleAdminGetOutCmd(target);
-            break;
-        case PortCoreConnectionDirection::Error:
-            yCIAssert(PORTCORE, getName(), false); // Should never happen (error is out)
-            break;
-        }
-    } break;
     case PortCoreCommand::GetInfo: {
         const std::string portname = cmd.get(1).asString();
         result = handleAdminGetInfoCmd(portname);
