@@ -42,9 +42,40 @@ struct return_getAdminProtocolVersion
     yarp.api.keyword = "YARP_os_API"
 )
 
+struct return_addConnection
+{
+    1: bool   ret;          // false if the request could not be processed
+    2: bool   success;      // true if the connection has been added
+    3: string message;      // a human readable description of the result
+}
+(
+    yarp.api.include = "yarp/os/api.h"
+    yarp.api.keyword = "YARP_os_API"
+)
+
+struct return_delConnection
+{
+    1: bool   ret;          // false if the request could not be processed
+    2: bool   success;      // true if the connection has been removed
+    3: string message;      // a human readable description of the result
+}
+(
+    yarp.api.include = "yarp/os/api.h"
+    yarp.api.keyword = "YARP_os_API"
+)
+
 // Administrative commands handled by PortCore::adminBlock().
 service PortCoreMsgs
 {
+    // Add an output connection to the port
+    // portname: the destination port of the connection
+    // carrier: the carrier of the connection (optional)
+    return_addConnection addConnection(1: string portname, 2: string carrier = "");
+
+    // Remove any input or output connection involving the given port
+    // portname: the port at the other end of the connection(s)
+    return_delConnection delConnection(1: string portname);
+
     // Attach a portmonitor plug-in to the port's output
     // prop: the portmonitor configuration, e.g. "(context yarpviz) (file portrate)"
     bool attachPortmonitorOut(1: string prop);

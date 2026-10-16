@@ -107,6 +107,133 @@ yarp::os::ApplicationNetworkProtocolVersion PortCoreMsgs::getLocalProtocolVersio
     return myproto;
 }
 
+// addConnection helper class declaration
+class PortCoreMsgs_addConnection_helper :
+        public yarp::os::Portable
+{
+public:
+    PortCoreMsgs_addConnection_helper() = default;
+    PortCoreMsgs_addConnection_helper(const std::string& portname, const std::string& carrier);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        Command(const std::string& portname, const std::string& carrier);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string portname{};
+        std::string carrier{""};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_addConnection return_helper{};
+    };
+
+    using funcptr_t = return_addConnection (*)(const std::string&, const std::string&);
+    void call(PortCoreMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"addConnection"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{3};
+    static constexpr size_t s_reply_len{3};
+    static constexpr const char* s_prototype{"return_addConnection PortCoreMsgs::addConnection(const std::string& portname, const std::string& carrier)"};
+    static constexpr const char* s_help{""};
+};
+
+// delConnection helper class declaration
+class PortCoreMsgs_delConnection_helper :
+        public yarp::os::Portable
+{
+public:
+    PortCoreMsgs_delConnection_helper() = default;
+    explicit PortCoreMsgs_delConnection_helper(const std::string& portname);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& portname);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string portname{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_delConnection return_helper{};
+    };
+
+    using funcptr_t = return_delConnection (*)(const std::string&);
+    void call(PortCoreMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"delConnection"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{3};
+    static constexpr const char* s_prototype{"return_delConnection PortCoreMsgs::delConnection(const std::string& portname)"};
+    static constexpr const char* s_help{""};
+};
+
 // attachPortmonitorOut helper class declaration
 class PortCoreMsgs_attachPortmonitorOut_helper :
         public yarp::os::Portable
@@ -648,6 +775,321 @@ public:
     static constexpr const char* s_prototype{"return_getAdminProtocolVersion PortCoreMsgs::getAdminProtocolVersion()"};
     static constexpr const char* s_help{""};
 };
+
+// addConnection helper class implementation
+PortCoreMsgs_addConnection_helper::PortCoreMsgs_addConnection_helper(const std::string& portname, const std::string& carrier) :
+        cmd{portname, carrier}
+{
+}
+
+bool PortCoreMsgs_addConnection_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool PortCoreMsgs_addConnection_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+PortCoreMsgs_addConnection_helper::Command::Command(const std::string& portname, const std::string& carrier) :
+        portname{portname},
+        carrier{carrier}
+{
+}
+
+bool PortCoreMsgs_addConnection_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool PortCoreMsgs_addConnection_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool PortCoreMsgs_addConnection_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_addConnection_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_addConnection_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(portname)) {
+        return false;
+    }
+    if (!writer.writeString(carrier)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_addConnection_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_addConnection_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_addConnection_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(portname)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(carrier)) {
+        carrier = "";
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_addConnection_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool PortCoreMsgs_addConnection_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool PortCoreMsgs_addConnection_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool PortCoreMsgs_addConnection_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void PortCoreMsgs_addConnection_helper::call(PortCoreMsgs* ptr)
+{
+    reply.return_helper = ptr->addConnection(cmd.portname, cmd.carrier);
+}
+
+// delConnection helper class implementation
+PortCoreMsgs_delConnection_helper::PortCoreMsgs_delConnection_helper(const std::string& portname) :
+        cmd{portname}
+{
+}
+
+bool PortCoreMsgs_delConnection_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool PortCoreMsgs_delConnection_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+PortCoreMsgs_delConnection_helper::Command::Command(const std::string& portname) :
+        portname{portname}
+{
+}
+
+bool PortCoreMsgs_delConnection_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool PortCoreMsgs_delConnection_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool PortCoreMsgs_delConnection_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_delConnection_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_delConnection_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(portname)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_delConnection_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_delConnection_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_delConnection_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(portname)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_delConnection_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool PortCoreMsgs_delConnection_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool PortCoreMsgs_delConnection_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool PortCoreMsgs_delConnection_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void PortCoreMsgs_delConnection_helper::call(PortCoreMsgs* ptr)
+{
+    reply.return_helper = ptr->delConnection(cmd.portname);
+}
 
 // attachPortmonitorOut helper class implementation
 PortCoreMsgs_attachPortmonitorOut_helper::PortCoreMsgs_attachPortmonitorOut_helper(const std::string& prop) :
@@ -1936,6 +2378,26 @@ PortCoreMsgs::PortCoreMsgs()
     yarp().setOwner(*this);
 }
 
+return_addConnection PortCoreMsgs::addConnection(const std::string& portname, const std::string& carrier)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", PortCoreMsgs_addConnection_helper::s_prototype);
+    }
+    PortCoreMsgs_addConnection_helper helper{portname, carrier};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_addConnection{};
+}
+
+return_delConnection PortCoreMsgs::delConnection(const std::string& portname)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", PortCoreMsgs_delConnection_helper::s_prototype);
+    }
+    PortCoreMsgs_delConnection_helper helper{portname};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_delConnection{};
+}
+
 bool PortCoreMsgs::attachPortmonitorOut(const std::string& prop)
 {
     if (!yarp().canWrite()) {
@@ -2033,6 +2495,8 @@ std::vector<std::string> PortCoreMsgs::help(const std::string& functionName)
     std::vector<std::string> helpString;
     if (showAll) {
         helpString.emplace_back("*** Available commands:");
+        helpString.emplace_back(PortCoreMsgs_addConnection_helper::s_tag);
+        helpString.emplace_back(PortCoreMsgs_delConnection_helper::s_tag);
         helpString.emplace_back(PortCoreMsgs_attachPortmonitorOut_helper::s_tag);
         helpString.emplace_back(PortCoreMsgs_attachPortmonitorIn_helper::s_tag);
         helpString.emplace_back(PortCoreMsgs_detachPortmonitorOut_helper::s_tag);
@@ -2044,6 +2508,12 @@ std::vector<std::string> PortCoreMsgs::help(const std::string& functionName)
         helpString.emplace_back(PortCoreMsgs_getAdminProtocolVersion_helper::s_tag);
         helpString.emplace_back("help");
     } else {
+        if (functionName == PortCoreMsgs_addConnection_helper::s_tag) {
+            helpString.emplace_back(PortCoreMsgs_addConnection_helper::s_prototype);
+        }
+        if (functionName == PortCoreMsgs_delConnection_helper::s_tag) {
+            helpString.emplace_back(PortCoreMsgs_delConnection_helper::s_prototype);
+        }
         if (functionName == PortCoreMsgs_attachPortmonitorOut_helper::s_tag) {
             helpString.emplace_back(PortCoreMsgs_attachPortmonitorOut_helper::s_prototype);
         }
@@ -2118,6 +2588,36 @@ bool PortCoreMsgs::read(yarp::os::ConnectionReader& connection)
                return false;}
             if (!writer.write(proto)) {
                 yWarning("Writer invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == PortCoreMsgs_addConnection_helper::s_tag) {
+            PortCoreMsgs_addConnection_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == PortCoreMsgs_delConnection_helper::s_tag) {
+            PortCoreMsgs_delConnection_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();

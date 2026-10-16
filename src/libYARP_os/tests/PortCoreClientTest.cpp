@@ -165,6 +165,116 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         sender.close();
     }
 
+    SECTION("addConnection/delConnection")
+    {
+        Port sender;
+        BufferedPort<Bottle> receiver;
+        REQUIRE(sender.open("/send"));
+        REQUIRE(receiver.open("/recv"));
+
+        PortCoreClient sendClient("/send");
+
+        // add, without and with a carrier
+        return_addConnection added = sendClient.addConnection("/recv");
+        REQUIRE(added.ret);
+        CHECK(added.success);
+        CHECK_FALSE(added.message.empty());
+        CHECK(NetworkBase::isConnected("/send", "/recv"));
+        CHECK(sendClient.getConnectionInfoOut("/recv").carrier == "tcp");
+
+        return_delConnection removed = sendClient.delConnection("/recv");
+        REQUIRE(removed.ret);
+        CHECK(removed.success);
+        CHECK_FALSE(removed.message.empty());
+        CHECK_FALSE(NetworkBase::isConnected("/send", "/recv"));
+
+        added = sendClient.addConnection("/recv", "fast_tcp");
+        REQUIRE(added.ret);
+        CHECK(added.success);
+        CHECK(sendClient.getConnectionInfoOut("/recv").carrier == "fast_tcp");
+
+        // del removes also the input connections
+        PortCoreClient recvClient("/recv");
+        removed = recvClient.delConnection("/send");
+        REQUIRE(removed.ret);
+        CHECK(removed.success);
+        CHECK_FALSE(NetworkBase::isConnected("/send", "/recv"));
+
+        // nothing to remove / nothing to connect to
+        removed = sendClient.delConnection("/nonexistent");
+        REQUIRE(removed.ret);
+        CHECK_FALSE(removed.success);
+
+        added = sendClient.addConnection("/nonexistent");
+        REQUIRE(added.ret);
+        CHECK_FALSE(added.success);
+
+        receiver.close();
+        sender.close();
+    }
+
+    SECTION("addConnection fails when the port does not allow the connection")
+    {
+        BufferedPort<Bottle> recv1;
+        BufferedPort<Bottle> recv2;
+        REQUIRE(recv1.open("/recv1"));
+        REQUIRE(recv2.open("/recv2"));
+
+        // a port which does not allow outputs
+        Port readOnly;
+        readOnly.setReadOnly();
+        REQUIRE(readOnly.open("/readonly"));
+        PortCoreClient readOnlyClient("/readonly");
+        return_addConnection added = readOnlyClient.addConnection("/recv1");
+        REQUIRE(added.ret);
+        CHECK_FALSE(added.success);
+        CHECK_FALSE(added.message.empty());
+        CHECK_FALSE(NetworkBase::isConnected("/readonly", "/recv1"));
+
+        // an rpc client allows only one output
+        Port rpcClient;
+        rpcClient.setRpcClient();
+        REQUIRE(rpcClient.open("/rpcclient"));
+        PortCoreClient rpcClientClient("/rpcclient");
+        added = rpcClientClient.addConnection("/recv1");
+        REQUIRE(added.ret);
+        CHECK(added.success);
+        added = rpcClientClient.addConnection("/recv2");
+        REQUIRE(added.ret);
+        CHECK_FALSE(added.success);
+        CHECK_FALSE(added.message.empty());
+        CHECK(NetworkBase::isConnected("/rpcclient", "/recv1"));
+        CHECK_FALSE(NetworkBase::isConnected("/rpcclient", "/recv2"));
+
+        rpcClient.close();
+        readOnly.close();
+        recv2.close();
+        recv1.close();
+    }
+
+    SECTION("delConnection removes both the input and the output connections")
+    {
+        BufferedPort<Bottle> a;
+        BufferedPort<Bottle> b;
+        REQUIRE(a.open("/a"));
+        REQUIRE(b.open("/b"));
+        REQUIRE(NetworkBase::connect("/a", "/b"));
+        REQUIRE(NetworkBase::connect("/b", "/a"));
+
+        PortCoreClient aClient("/a");
+        const return_delConnection removed = aClient.delConnection("/b");
+        REQUIRE(removed.ret);
+        CHECK(removed.success);
+        // the connections are removed synchronously on the side of /a
+        // (/b notices the removal asynchronously)
+        CHECK(aClient.listConnectionsOut().connections.empty());
+        const std::vector<std::string> inputs = aClient.listConnectionsIn().connections;
+        CHECK(std::find(inputs.begin(), inputs.end(), "/b") == inputs.end());
+
+        b.close();
+        a.close();
+    }
+
     SECTION("commands sent through a port already connected in admin mode")
     {
         BufferedPort<Bottle> p1;
@@ -196,6 +306,8 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         CHECK_FALSE(client.getConnectionInfoIn("/p1").ret);
         CHECK_FALSE(client.getConnectionInfoOut("/p1").ret);
         CHECK_FALSE(client.getAdminProtocolVersion().ret);
+        CHECK_FALSE(client.addConnection("/p1").ret);
+        CHECK_FALSE(client.delConnection("/p1").ret);
     }
 
     NetworkBase::setLocalMode(false);

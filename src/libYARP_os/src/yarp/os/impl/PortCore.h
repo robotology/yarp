@@ -177,8 +177,9 @@ public:
      * @param src the name of the source port
      * @param id an opaque tracker for the connection
      * @param os the output stream for messages about this operation
+     * @return true if at least one input connection has been removed
      */
-    void removeInput(const std::string& src,
+    bool removeInput(const std::string& src,
                      void* id,
                      yarp::os::OutputStream* os);
 
@@ -187,8 +188,9 @@ public:
      * @param dest the name of the target port
      * @param id an opaque tracker for the connection
      * @param os the output stream for messages about this operation
+     * @return true if at least one output connection has been removed
      */
-    void removeOutput(const std::string& dest,
+    bool removeOutput(const std::string& dest,
                       void* id,
                       yarp::os::OutputStream* os);
 

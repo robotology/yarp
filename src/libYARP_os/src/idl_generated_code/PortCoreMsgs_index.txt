@@ -4,5 +4,9 @@ yarp/os/return_getConnectionInfo.h
 yarp/os/return_getConnectionInfo.cpp
 yarp/os/return_getAdminProtocolVersion.h
 yarp/os/return_getAdminProtocolVersion.cpp
+yarp/os/return_addConnection.h
+yarp/os/return_addConnection.cpp
+yarp/os/return_delConnection.h
+yarp/os/return_delConnection.cpp
 yarp/os/PortCoreMsgs.h
 yarp/os/PortCoreMsgs.cpp

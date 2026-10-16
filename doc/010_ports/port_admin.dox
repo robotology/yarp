@@ -45,23 +45,32 @@ interface:
 Lists all the available administration commands.
 
 
-\section port_admin_add add
+\section port_admin_add addConnection
 
 \verbatim
-[add] /port/name
-[add] /port/name carrier
+addConnection /port/name
+addConnection /port/name carrier
 \endverbatim
 
-Add an output to the specified port, using a given carrier (tcp, udp, etc.)
+Add an output to the specified port, using a given carrier (tcp, udp, etc.).
+The carrier is optional.
 
 
-\section port_admin_del del
+\section port_admin_del delConnection
 
 \verbatim
-[del] /port/name
+delConnection /port/name
 \endverbatim
 
-Remove an output to the specified port.
+Remove any input or output connection involving the specified port.
+
+The reply of both commands is <tt>ok success message</tt>, where
+\c success is \c fail if the connection could not be added/removed, and
+\c message is a human readable description of the result.
+From code, use the corresponding methods of yarp::os::impl::PortCoreClient,
+which return the structs yarp::os::return_addConnection and
+yarp::os::return_delConnection. The field \c ret
+of the returned struct is \c false if the remote port could not be reached.
 
 
 \section port_admin_list listConnectionsIn / listConnectionsOut / getConnectionInfoIn / getConnectionInfoOut
