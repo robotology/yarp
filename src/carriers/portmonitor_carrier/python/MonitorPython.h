@@ -9,7 +9,19 @@
 #include <string>
 #include "MonitorBinding.h"
 
-#include "Python.h"
+// Avoid linking against python3XX_d.lib in Debug builds on MSVC.
+// Otherwise you need to python debug libs installed, which is not the case for most users.
+#if defined(_MSC_VER) && defined(_DEBUG)
+    #  include <cstddef>
+    #  include <cstdio>
+    #  include <cstdlib>
+    #  undef _DEBUG
+    #  include "Python.h"
+    #  define _DEBUG
+#else
+    #  include "Python.h"
+#endif
+
 
 #include <mutex>
 

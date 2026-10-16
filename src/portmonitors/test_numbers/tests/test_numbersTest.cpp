@@ -30,6 +30,7 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
     struct TestCase {
         std::string carrier;
         int expected_value;
+        int sent_value=1;
     };
 
     auto tc = GENERATE(
@@ -62,7 +63,7 @@ TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
         bool b = yarp::os::Network::connect("/send", "/recv", tc.carrier);
         REQUIRE(b);
 
-        sender.write(yarp::os::Value(tc.expected_value));
+        sender.write(yarp::os::Value(tc.sent_value));
 
         yarp::os::Time::delay(0.5);
 
