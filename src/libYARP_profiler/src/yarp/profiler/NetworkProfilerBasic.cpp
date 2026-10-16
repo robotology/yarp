@@ -11,6 +11,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
+#include <yarp/os/impl/PortCoreClient.h>
 #include <yarp/companion/impl/Companion.h>
 #include <algorithm>
 
@@ -284,46 +285,44 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
         return false;
     }
 
+    yarp::os::impl::PortCoreClient client(ping);
+
     // Getting output connections list
-    Bottle cmd, reply;
-    cmd.addString("list"); cmd.addString("out");
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (list out) to"<<portName;
+    const yarp::os::return_listConnections outputs = client.listConnectionsOut();
+    if (!outputs.ret) {
+        yError()<<"Cannot get the output connections of"<<portName;
         ping.close();
         return false;
     }
-    for(size_t i=0; i<reply.size(); i++) {
+    for (const auto& name : outputs.connections) {
         ConnectedPortInfo cnn;
-        cnn.port_name = reply.get(i).asString();
-        Bottle reply2;
-        cmd.clear();
-        cmd.addString("list"); cmd.addString("out"); cmd.addString(cnn.port_name);
-        if (!ping.write(cmd, reply2)) {
-            yWarning()<<"Cannot write (list out"<<cnn.port_name <<") to"<<portName;
+        cnn.port_name = name;
+        const yarp::os::return_getConnectionInfo info = client.getConnectionInfoOut(name);
+        if (!info.ret) {
+            yWarning()<<"Cannot get the details of the connection from"<<portName<<"to"<<name;
         } else {
-            cnn.carrier = reply2.find("carrier").asString();
+            cnn.carrier = info.carrier;
         }
         details.outputs.push_back(cnn);
     }
 
     // Getting input connections list
-    cmd.clear(); reply.clear();
-    cmd.addString("list"); cmd.addString("in");
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (list in) to"<<portName;
+    const yarp::os::return_listConnections inputs = client.listConnectionsIn();
+    if (!inputs.ret) {
+        yError()<<"Cannot get the input connections of"<<portName;
         ping.close();
         return false;
     }
-    for(size_t i=0; i<reply.size(); i++) {
-        ConnectedPortInfo cnn;
-        cnn.port_name = reply.get(i).asString();
-        if (cnn.port_name != ping.getName()) {
+    for (const auto& name : inputs.connections) {
+        if (name != ping.getName()) {
+            ConnectedPortInfo cnn;
+            cnn.port_name = name;
             details.inputs.push_back(cnn);
         }
     }
 
     // Getting owner info
-    cmd.clear(); reply.clear();
+    Bottle cmd, reply;
     cmd.addString("info"); cmd.addString(portName);
     bool bwrite = ping.write(cmd, reply);
     if(!bwrite) {

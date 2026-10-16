@@ -26,6 +26,7 @@
 #include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/LogForwarder.h>
 #include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/PortCoreClient.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformUnistd.h>
@@ -101,6 +102,18 @@ static bool needsLookup(const Contact& contact)
     return true;
 }
 
+/**
+ * Notify the name server that a port did not respond (i.e. it is probably
+ * dead), by announcing it with activity 0.
+ * The name server can use this information to mark the port as non-live
+ * and to clean up its registration.
+ *
+ * If a local name store is available (query bypass), it is notified directly,
+ * otherwise an "announce <port> 0" message is sent to the name server.
+ *
+ * @param src the port which did not respond
+ * @return the result of the announcement (it is not used by the callers)
+ */
 static int noteDud(const Contact& src)
 {
     NameStore* store = getNameSpace().getQueryBypass();
@@ -120,6 +133,31 @@ static int noteDud(const Contact& src)
 }
 
 
+/**
+ * Connect, disconnect, or check the connection between two ports, by sending
+ * administrative commands to the port @p src, which is the one in charge of
+ * the connection (it is called by metaConnect()).
+ *
+ * The steps are:
+ * - for persistent connections, the request is forwarded to the name server
+ *   and the ports are not contacted at all;
+ * - otherwise @p src is asked (getConnectionInfoOut/getConnectionInfoIn, see
+ *   PortCoreMsgs.thrift) about the current connection with @p dest. If @p src
+ *   does not respond, it is reported to the name server as dead (noteDud());
+ * - in YARP_ENACT_EXISTS mode, the result depends only on the existence of
+ *   the connection and on its carrier (which must match @p style.carrier);
+ * - an existing connectionless connection is explicitly disconnected also
+ *   from the other side, since the other side would not notice it otherwise;
+ * - finally, an [add] or [del] command is sent to @p src.
+ *
+ * @param src the port which is asked to make/break/check the connection
+ * @param dest the port at the other end of the connection
+ * @param style the options of the connection (carrier, timeout, quiet, ...)
+ * @param mode one of YARP_ENACT_CONNECT, YARP_ENACT_DISCONNECT, YARP_ENACT_EXISTS
+ * @param reversed false if @p src is the sender of the data (push connection),
+ *        true if @p src is the receiver of the data (pull connection)
+ * @return 0 on success, 1 on failure
+ */
 static int enactConnection(const Contact& src,
                            const Contact& dest,
                            const ContactStyle& style,
@@ -160,43 +198,30 @@ static int enactConnection(const Contact& src,
         return 0;
     }
 
-    Bottle cmd;
-    Bottle reply;
-    cmd.addVocab32("list");
-    cmd.addVocab32(reversed ? "in" : "out");
-    cmd.addString(dest.getName().c_str());
-    yCDebug(NETWORK, "asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
-    bool ok = NetworkBase::write(src, cmd, reply, rpc);
-    if (!ok) {
+    PortCoreClient client(src, rpc);
+    const return_getConnectionInfo info = reversed ? client.getConnectionInfoIn(dest.getName())
+                                                   : client.getConnectionInfoOut(dest.getName());
+    if (!info.ret) {
         noteDud(src);
         return 1;
     }
-    if (reply.check("carrier")) {
-        std::string carrier = reply.find("carrier").asString();
+    if (info.found) {
         if (!style.quiet) {
             yCInfo(NETWORK,
                    "Connection found between %s and %s using carrier %s",
                    src.getName().c_str(),
                    dest.getName().c_str(),
-                   carrier.c_str());
+                   info.carrier.c_str());
         }
         if (mode == YARP_ENACT_EXISTS) {
-            return (carrier == style.carrier) ? 0 : 1;
+            return (info.carrier == style.carrier) ? 0 : 1;
         }
 
         // This is either a connect or a disconnect command, but the current
         // connection is connectionless, the other side will not know that we
         // are closing the connection and therefore will continue sending data.
         // Therefore we send an explicit disconnect here.
-        bool currentIsConnectionLess = false;
-        bool currentIsPush = true;
-        if (reply.check("push")) {
-            currentIsPush = reply.find("push").asBool();
-        }
-        if (reply.check("connectionless")) {
-            currentIsConnectionLess = reply.find("connectionless").asBool();
-        }
-        if (currentIsConnectionLess && ((reversed && currentIsPush) || (!reversed && !currentIsPush))) {
+        if (info.connectionless && ((reversed && info.push) || (!reversed && !info.push))) {
             enactConnection(dest, src, style, YARP_ENACT_DISCONNECT, !reversed);
         }
     }
@@ -209,8 +234,8 @@ static int enactConnection(const Contact& src,
     // Let's ask the destination to connect/disconnect to the source.
     // We assume the YARP carrier will reverse the connection if
     // appropriate when connecting.
-    cmd.clear();
-    reply.clear();
+    Bottle cmd;
+    Bottle reply;
     cmd.addVocab32(act);
     Contact c = dest;
     if (!style.carrier.empty()) {
@@ -228,7 +253,7 @@ static int enactConnection(const Contact& src,
     }
 
     yCDebug(NETWORK, "** asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
-    ok = NetworkBase::write(c2, cmd, reply, rpc);
+    bool ok = NetworkBase::write(c2, cmd, reply, rpc);
     if (!ok) {
         noteDud(src);
         return 1;
@@ -273,23 +298,6 @@ static std::string extractCarrierNameOnly(const std::string& carrier_name_with_p
 {
     return carrier_name_with_params.substr(0, carrier_name_with_params.find('+'));
 }
-
-/*
-
-   Connect two ports, bearing in mind that one of them may not be
-   a regular YARP port.
-
-   Normally, YARP sends a request to the source port asking it to
-   connect to the destination port.  But the source port may not
-   be capable of initiating connections, in which case we can
-   request the destination port to connect to the source (this
-   is appropriate for carriers that can reverse the initiative).
-
-   The source or destination could also be topic ports, which are
-   entirely virtual.  In that case, we just need to tell the name
-   server, and it will take care of the details.
-
-*/
 
 static bool is_log_port(const std::string& src,
                         const std::string& dest)
@@ -366,6 +374,20 @@ static void addStatsMonitorIfNeeded(const std::string& src,
     }
 }
 
+/*
+   Connect two ports, bearing in mind that one of them may not be
+   a regular YARP port.
+
+   Normally, YARP sends a request to the source port asking it to
+   connect to the destination port.  But the source port may not
+   be capable of initiating connections, in which case we can
+   request the destination port to connect to the source (this
+   is appropriate for carriers that can reverse the initiative).
+
+   The source or destination could also be topic ports, which are
+   entirely virtual.  In that case, we just need to tell the name
+   server, and it will take care of the details.
+*/
 static int metaConnect(const std::string& src,
                        const std::string& dest,
                        ContactStyle style,

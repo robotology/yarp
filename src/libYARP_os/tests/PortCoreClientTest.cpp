@@ -12,6 +12,10 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/YarpPluginSelector.h>
 
+#include <algorithm>
+#include <string>
+#include <vector>
+
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -96,6 +100,75 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         sender.close();
     }
 
+    SECTION("listConnectionsIn/Out and getConnectionInfoIn/Out")
+    {
+        Port sender;
+        BufferedPort<Bottle> receiver;
+        REQUIRE(sender.open("/send"));
+        REQUIRE(receiver.open("/recv"));
+        REQUIRE(NetworkBase::connect("/send", "/recv"));
+
+        PortCoreClient sendClient("/send");
+        PortCoreClient recvClient("/recv");
+
+        auto contains = [](const std::vector<std::string>& v, const std::string& s) {
+            return std::find(v.begin(), v.end(), s) != v.end();
+        };
+
+        // list
+        const return_listConnections outputs = sendClient.listConnectionsOut();
+        REQUIRE(outputs.ret);
+        CHECK(outputs.connections == std::vector<std::string>{"/recv"});
+
+        const return_listConnections inputs = recvClient.listConnectionsIn();
+        REQUIRE(inputs.ret);
+        CHECK(contains(inputs.connections, "/send"));
+
+        CHECK(recvClient.listConnectionsOut().ret);
+        CHECK(recvClient.listConnectionsOut().connections.empty());
+        CHECK_FALSE(contains(sendClient.listConnectionsIn().connections, "/recv"));
+
+        // details, from both sides of the connection
+        for (const return_getConnectionInfo& info : {sendClient.getConnectionInfoOut("/recv"),
+                                                     recvClient.getConnectionInfoIn("/send")}) {
+            REQUIRE(info.ret);
+            CHECK(info.found);
+            CHECK(info.from_port == "/send");
+            CHECK(info.to_port == "/recv");
+            CHECK(info.carrier == "tcp");
+            CHECK_FALSE(info.connectionless);
+            CHECK(info.push);
+        }
+
+        // details of a connection which does not exist
+        const return_getConnectionInfo missing = sendClient.getConnectionInfoOut("/nonexistent");
+        CHECK(missing.ret);
+        CHECK_FALSE(missing.found);
+        CHECK_FALSE(recvClient.getConnectionInfoOut("/send").found);
+
+        receiver.close();
+        sender.close();
+    }
+
+    SECTION("commands sent through a port already connected in admin mode")
+    {
+        BufferedPort<Bottle> p1;
+        Port ping;
+        REQUIRE(p1.open("/p1"));
+        REQUIRE(ping.open("/ping"));
+        REQUIRE(NetworkBase::connect("/ping", "/p1"));
+        ping.setAdminMode();
+
+        PortCoreClient client(ping);
+        const return_listConnections inputs = client.listConnectionsIn();
+        REQUIRE(inputs.ret);
+        CHECK(inputs.connections == std::vector<std::string>{"/ping"});
+        CHECK(client.detachPortmonitorIn());
+
+        ping.close();
+        p1.close();
+    }
+
     SECTION("all the methods fail on a non existing port")
     {
         PortCoreClient client("/nonexistent_port", 0.5);
@@ -103,6 +176,10 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         CHECK_FALSE(client.attachPortmonitorOut("(file nonexistent_file)"));
         CHECK_FALSE(client.detachPortmonitorIn());
         CHECK_FALSE(client.detachPortmonitorOut());
+        CHECK_FALSE(client.listConnectionsIn().ret);
+        CHECK_FALSE(client.listConnectionsOut().ret);
+        CHECK_FALSE(client.getConnectionInfoIn("/p1").ret);
+        CHECK_FALSE(client.getConnectionInfoOut("/p1").ret);
     }
 
     NetworkBase::setLocalMode(false);

@@ -1352,7 +1352,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         p2.close();
     }
 
-    SECTION("check port admin ver/list/set/get/attach/detach portmonitor commands")
+    SECTION("check port admin ver/set/get commands and the PortCoreMsgs commands")
     {
         // /p2 -> /p1, admin commands are sent by /p2 and processed by /p1
         const auto ok = yarp::os::createVocab32('o', 'k');
@@ -1375,28 +1375,47 @@ TEST_CASE("os::PortTest", "[yarp::os]")
             CHECK(reply.get(3).asInt32() == 4);
         }
 
-        // list in: the names of the inputs; list out: no outputs
+        // listConnectionsIn: the names of the inputs; listConnectionsOut: no outputs
+        // reply: [ok (names...)]
         {
             Bottle reply;
-            CHECK(p2.write(Bottle("list in"), reply));
+            CHECK(p2.write(Bottle("listConnectionsIn"), reply));
+            REQUIRE(reply.size() == 2);
+            CHECK(reply.get(0).asVocab32() == ok);
+            REQUIRE(reply.get(1).isList());
             bool found = false;
-            for (size_t i = 0; i < reply.size(); i++) {
-                found |= (reply.get(i).asString() == "/p2");
+            for (size_t i = 0; i < reply.get(1).asList()->size(); i++) {
+                found |= (reply.get(1).asList()->get(i).asString() == "/p2");
             }
             CHECK(found);
 
             reply.clear();
-            CHECK(p2.write(Bottle("list out"), reply));
-            CHECK(reply.size() == 0);
+            CHECK(p2.write(Bottle("listConnectionsOut"), reply));
+            REQUIRE(reply.size() == 2);
+            CHECK(reply.get(0).asVocab32() == ok);
+            REQUIRE(reply.get(1).isList());
+            CHECK(reply.get(1).asList()->size() == 0);
         }
 
-        // list in $portname: details of the connection
+        // getConnectionInfoIn/Out $portname: details of the connection
+        // reply: [ret found from_port to_port carrier connectionless push]
         {
             Bottle reply;
-            CHECK(p2.write(Bottle("list in /p2"), reply));
-            CHECK(reply.find("from").asString() == "/p2");
-            CHECK(reply.find("to").asString() == "/p1");
-            CHECK(reply.find("carrier").asString() == "tcp");
+            CHECK(p2.write(Bottle("getConnectionInfoIn /p2"), reply));
+            REQUIRE(reply.size() == 7);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == ok);
+            CHECK(reply.get(2).asString() == "/p2");
+            CHECK(reply.get(3).asString() == "/p1");
+            CHECK(reply.get(4).asString() == "tcp");
+            CHECK(reply.get(5).asVocab32() == fail);
+            CHECK(reply.get(6).asVocab32() == ok);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("getConnectionInfoOut /nonexistent"), reply));
+            REQUIRE(reply.size() == 7);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == fail);
         }
 
         // set in/out on a connection: [0 "message"] on success, [-1 "message"] if not found
