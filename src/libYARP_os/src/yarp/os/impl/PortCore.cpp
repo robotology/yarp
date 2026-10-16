@@ -1530,7 +1530,6 @@ enum class PortCoreCommand : yarp::conf::vocab32_t
 {
     Unknown = 0,
     Help = yarp::os::createVocab32('h', 'e', 'l', 'p'),
-    Ver = yarp::os::createVocab32('v', 'e', 'r'),
     Add = yarp::os::createVocab32('a', 'd', 'd'),
     Del = yarp::os::createVocab32('d', 'e', 'l'),
     Set = yarp::os::createVocab32('s', 'e', 't'),
@@ -1551,7 +1550,6 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
     auto cmd = static_cast<PortCoreCommand>(v.asVocab32());
     switch (cmd) {
     case PortCoreCommand::Help:
-    case PortCoreCommand::Ver:
     case PortCoreCommand::Add:
     case PortCoreCommand::Del:
     case PortCoreCommand::Set:
@@ -1597,7 +1595,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         // We give a list of the most useful administrative commands.
         result.addVocab32('m', 'a', 'n', 'y');
         result.addString("[help]                  # give this help");
-        result.addString("[ver]                   # report protocol version information");
+        result.addString("getAdminProtocolVersion           # report protocol version information");
         result.addString("[add] $portname         # add an output connection");
         result.addString("[add] $portname $car    # add an output with a given protocol");
         result.addString("[del] $portname         # remove an input or output connection");
@@ -1617,16 +1615,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
-    auto handleAdminVerCmd = []() {
-        // Gives a version number for the administrative commands.
-        // It is distinct from YARP library versioning.
-        Bottle result;
-        result.addVocab32("ver");
-        result.addInt32(1);
-        result.addInt32(2);
-        result.addInt32(4);
-        return result;
-    };
     auto handleAdminAddCmd = [this, id](std::string output,
                                         const std::string& carrier) {
         // Add an output to the port.
@@ -1734,6 +1722,18 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return_listConnections listConnectionsOut() override { return listConnections(false); }
         return_getConnectionInfo getConnectionInfoIn(const std::string& portname) override { return getConnectionInfo(true, portname); }
         return_getConnectionInfo getConnectionInfoOut(const std::string& portname) override { return getConnectionInfo(false, portname); }
+
+        return_getAdminProtocolVersion getAdminProtocolVersion() override
+        {
+            // Gives a version number for the administrative commands.
+            // It is distinct from YARP library versioning.
+            return_getAdminProtocolVersion result;
+            result.ret = true;
+            result.version_major = 1;
+            result.version_minor = 2;
+            result.version_patch = 4;
+            return result;
+        }
     };
 
     auto handleAdminThriftCmd = [this](const Bottle& cmd, Bottle& result) {
@@ -2246,9 +2246,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     switch (command) {
     case PortCoreCommand::Help:
         result = handleAdminHelpCmd();
-        break;
-    case PortCoreCommand::Ver:
-        result = handleAdminVerCmd();
         break;
     case PortCoreCommand::Add: {
         std::string output = cmd.get(1).asString();

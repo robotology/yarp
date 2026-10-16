@@ -591,6 +591,64 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// getAdminProtocolVersion helper class declaration
+class PortCoreMsgs_getAdminProtocolVersion_helper :
+        public yarp::os::Portable
+{
+public:
+    PortCoreMsgs_getAdminProtocolVersion_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_getAdminProtocolVersion return_helper{};
+    };
+
+    using funcptr_t = return_getAdminProtocolVersion (*)();
+    void call(PortCoreMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getAdminProtocolVersion"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{4};
+    static constexpr const char* s_prototype{"return_getAdminProtocolVersion PortCoreMsgs::getAdminProtocolVersion()"};
+    static constexpr const char* s_help{""};
+};
+
 // attachPortmonitorOut helper class implementation
 PortCoreMsgs_attachPortmonitorOut_helper::PortCoreMsgs_attachPortmonitorOut_helper(const std::string& prop) :
         cmd{prop}
@@ -1739,6 +1797,139 @@ void PortCoreMsgs_getConnectionInfoOut_helper::call(PortCoreMsgs* ptr)
     reply.return_helper = ptr->getConnectionInfoOut(cmd.portname);
 }
 
+// getAdminProtocolVersion helper class implementation
+bool PortCoreMsgs_getAdminProtocolVersion_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool PortCoreMsgs_getAdminProtocolVersion_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void PortCoreMsgs_getAdminProtocolVersion_helper::call(PortCoreMsgs* ptr)
+{
+    reply.return_helper = ptr->getAdminProtocolVersion();
+}
+
 // Constructor
 PortCoreMsgs::PortCoreMsgs()
 {
@@ -1825,6 +2016,16 @@ return_getConnectionInfo PortCoreMsgs::getConnectionInfoOut(const std::string& p
     return ok ? helper.reply.return_helper : return_getConnectionInfo{};
 }
 
+return_getAdminProtocolVersion PortCoreMsgs::getAdminProtocolVersion()
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", PortCoreMsgs_getAdminProtocolVersion_helper::s_prototype);
+    }
+    PortCoreMsgs_getAdminProtocolVersion_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_getAdminProtocolVersion{};
+}
+
 // help method
 std::vector<std::string> PortCoreMsgs::help(const std::string& functionName)
 {
@@ -1840,6 +2041,7 @@ std::vector<std::string> PortCoreMsgs::help(const std::string& functionName)
         helpString.emplace_back(PortCoreMsgs_listConnectionsOut_helper::s_tag);
         helpString.emplace_back(PortCoreMsgs_getConnectionInfoIn_helper::s_tag);
         helpString.emplace_back(PortCoreMsgs_getConnectionInfoOut_helper::s_tag);
+        helpString.emplace_back(PortCoreMsgs_getAdminProtocolVersion_helper::s_tag);
         helpString.emplace_back("help");
     } else {
         if (functionName == PortCoreMsgs_attachPortmonitorOut_helper::s_tag) {
@@ -1865,6 +2067,9 @@ std::vector<std::string> PortCoreMsgs::help(const std::string& functionName)
         }
         if (functionName == PortCoreMsgs_getConnectionInfoOut_helper::s_tag) {
             helpString.emplace_back(PortCoreMsgs_getConnectionInfoOut_helper::s_prototype);
+        }
+        if (functionName == PortCoreMsgs_getAdminProtocolVersion_helper::s_tag) {
+            helpString.emplace_back(PortCoreMsgs_getAdminProtocolVersion_helper::s_prototype);
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -2025,6 +2230,21 @@ bool PortCoreMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == PortCoreMsgs_getConnectionInfoOut_helper::s_tag) {
             PortCoreMsgs_getConnectionInfoOut_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == PortCoreMsgs_getAdminProtocolVersion_helper::s_tag) {
+            PortCoreMsgs_getAdminProtocolVersion_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }

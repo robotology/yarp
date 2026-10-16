@@ -874,22 +874,8 @@ bool NetworkBase::exists(const std::string& port, const ContactStyle& style, boo
         return true;
     }
 
-    ContactStyle style2 = style;
-    style2.admin = true;
-    Bottle cmd("[ver]");
-    Bottle resp;
-    bool ok = NetworkBase::write(Contact(port), cmd, resp, style2);
-    if (!ok) {
-        return false;
-    }
-    if (resp.get(0).toString() != "ver" && resp.get(0).toString() != "dict") {
-        // YARP nameserver responds with a version
-        // ROS nameserver responds with a dictionary of error data
-        // Treat everything else an unknown
-        return false;
-    }
-
-    return true;
+    PortCoreClient client(Contact(port), style);
+    return client.getAdminProtocolVersion().ret;
 }
 
 
