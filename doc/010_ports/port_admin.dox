@@ -88,13 +88,20 @@ yarp::os::return_getConnectionInfo. The field \c ret of the returned struct
 is \c false if the remote port could not be reached.
 
 
-\section port_admin_ver ver
+\section port_admin_ver getAdminProtocolVersion
 
 \verbatim
-[ver]
+getAdminProtocolVersion
 \endverbatim
 
-Report the version of the port protocol in operation.
+Report the version of the administrative protocol of the port. It is
+distinct from the YARP library version. The reply is
+<tt>ok major minor patch</tt>.
+
+From code, use the corresponding method of yarp::os::impl::PortCoreClient,
+which returns the struct yarp::os::return_getAdminProtocolVersion. The field
+\c ret of the returned struct is \c false if the remote port could not be
+reached.
 
 
 \section port_admin_portmonitor attachPortmonitorIn / attachPortmonitorOut / detachPortmonitorIn / detachPortmonitorOut

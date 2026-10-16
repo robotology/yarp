@@ -30,6 +30,18 @@ struct return_getConnectionInfo
     yarp.api.keyword = "YARP_os_API"
 )
 
+struct return_getAdminProtocolVersion
+{
+    1: bool ret;                // false if the request could not be processed
+    2: i32  version_major;
+    3: i32  version_minor;
+    4: i32  version_patch;
+}
+(
+    yarp.api.include = "yarp/os/api.h"
+    yarp.api.keyword = "YARP_os_API"
+)
+
 // Administrative commands handled by PortCore::adminBlock().
 service PortCoreMsgs
 {
@@ -60,6 +72,10 @@ service PortCoreMsgs
     // Give details about the output connection going to a given port
     // portname: the destination port of the connection
     return_getConnectionInfo getConnectionInfoOut(1: string portname);
+
+    // Report the version of the administrative protocol of the port.
+    // It is distinct from the YARP library version.
+    return_getAdminProtocolVersion getAdminProtocolVersion();
 }
 (
     yarp.api.include = "yarp/os/api.h"

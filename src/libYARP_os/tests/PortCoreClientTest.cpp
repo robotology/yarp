@@ -26,6 +26,21 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
 {
     NetworkBase::setLocalMode(true);
 
+    SECTION("getAdminProtocolVersion")
+    {
+        BufferedPort<Bottle> p1;
+        REQUIRE(p1.open("/p1"));
+
+        PortCoreClient client("/p1");
+        const return_getAdminProtocolVersion ver = client.getAdminProtocolVersion();
+        REQUIRE(ver.ret);
+        CHECK(ver.version_major == 1);
+        CHECK(ver.version_minor == 2);
+        CHECK(ver.version_patch == 4);
+
+        p1.close();
+    }
+
     SECTION("detachPortmonitorIn/detachPortmonitorOut on an existing port")
     {
         BufferedPort<Bottle> p1;
@@ -180,6 +195,7 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         CHECK_FALSE(client.listConnectionsOut().ret);
         CHECK_FALSE(client.getConnectionInfoIn("/p1").ret);
         CHECK_FALSE(client.getConnectionInfoOut("/p1").ret);
+        CHECK_FALSE(client.getAdminProtocolVersion().ret);
     }
 
     NetworkBase::setLocalMode(false);

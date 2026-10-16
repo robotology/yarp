@@ -1352,7 +1352,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         p2.close();
     }
 
-    SECTION("check port admin ver/set/get commands and the PortCoreMsgs commands")
+    SECTION("check port admin set/get commands and the PortCoreMsgs commands")
     {
         // /p2 -> /p1, admin commands are sent by /p2 and processed by /p1
         const auto ok = yarp::os::createVocab32('o', 'k');
@@ -1366,13 +1366,20 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/p2");
         p2.setAdminMode();
 
-        // ver: [ver] major minor patch
+        // getAdminProtocolVersion: [ok major minor patch]
         {
             Bottle reply;
-            CHECK(p2.write(Bottle("ver"), reply));
+            CHECK(p2.write(Bottle("getAdminProtocolVersion"), reply));
             REQUIRE(reply.size() == 4);
-            CHECK(reply.get(0).asString() == "ver");
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asInt32() == 1);
+            CHECK(reply.get(2).asInt32() == 2);
             CHECK(reply.get(3).asInt32() == 4);
+
+            // the old hand-written command is not supported anymore
+            reply.clear();
+            CHECK(p2.write(Bottle("ver"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
         }
 
         // listConnectionsIn: the names of the inputs; listConnectionsOut: no outputs
@@ -1896,7 +1903,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle reply;
         pout.write(cmd, reply);
         CHECK(reply.get(1).asInt32() == 5); // admin_reader was called
-        cmd.fromString("[ver]");
+        cmd.fromString("getAdminProtocolVersion");
         pout.write(cmd, reply);
         CHECK(reply.size()>=4); // yarp commands still work
     }

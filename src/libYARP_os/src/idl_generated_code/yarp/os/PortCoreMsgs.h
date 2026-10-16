@@ -16,6 +16,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
+#include <yarp/os/return_getAdminProtocolVersion.h>
 #include <yarp/os/return_getConnectionInfo.h>
 #include <yarp/os/return_listConnections.h>
 
@@ -49,6 +50,8 @@ public:
     virtual return_getConnectionInfo getConnectionInfoIn(const std::string& portname);
 
     virtual return_getConnectionInfo getConnectionInfoOut(const std::string& portname);
+
+    virtual return_getAdminProtocolVersion getAdminProtocolVersion();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
