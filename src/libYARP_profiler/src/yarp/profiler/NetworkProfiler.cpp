@@ -269,54 +269,34 @@ bool NetworkProfiler::detachPortmonitorPlugin(std::string portName) {
 }
 
 bool NetworkProfiler::setPortmonitorParams(std::string portName, yarp::os::Property& param) {
-    //e.g.,  set in "/view" (log_raw 1)"
-    yarp::os::Bottle cmd, reply;
-    cmd.addString("set");
-    cmd.addString("in");
-    cmd.addString(portName.c_str());
-    Bottle tmp;
-    tmp.fromString(param.toString());
-    cmd.add(tmp.get(0));
-    Contact srcCon = Contact::fromString(portName);
-    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, reply, true, true, 2.0);
-    if(!ret) {
-        yError()<<"Cannot write to"<<portName;
+    //e.g.,  setPortmonitorParamsIn "(log_raw 1)"
+    yarp::os::impl::PortCoreClient client(portName);
+    const yarp::os::return_setPortmonitorParams result = client.setPortmonitorParamsIn(param.toString());
+    if (!result.ret) {
+        yError() << "Cannot write to" << portName;
         return false;
     }
-    if(reply.size() > 1) {
-        if(reply.get(0).asString() == "fail") { // the server replies with a vocab
-            yError()<<reply.toString();
-            return false;
-        }
-        else if(reply.get(0).isInt32() && reply.get(0).asInt32() == -1) {
-            yError()<<reply.toString();
-            return false;
-        }
+    if (!result.success) {
+        yError() << "Cannot set the portmonitor parameters of" << portName << ":" << result.message;
+        return false;
     }
     return true;
 }
 
 bool NetworkProfiler::getPortmonitorParams(std::string portName, yarp::os::Bottle& param) {
-    //e.g.,  get in /portname"
-    yarp::os::Bottle cmd;
-    cmd.addString("get");
-    cmd.addString("in");
-    cmd.addString(portName.c_str());
-    Contact srcCon = Contact::fromString(portName);
-    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, param, true, true, 2.0);
-    if(!ret) {
-        yError()<<"Cannot write to"<<portName;
+    //e.g.,  getPortmonitorParamsIn
+    yarp::os::impl::PortCoreClient client(portName);
+    const yarp::os::return_getPortmonitorParams result = client.getPortmonitorParamsIn();
+    if (!result.ret) {
+        yError() << "Cannot write to" << portName;
         return false;
     }
-    if(param.size() > 1) {
-        if(param.get(0).asString() == "fail") { // the server replies with a vocab
-            yError()<<param.toString();
-            return false;
-        }
-        else if(param.get(0).isInt32() && param.get(0).asInt32() == -1) {
-            yError()<<param.toString();
-            return false;
-        }
+    if (!result.success) {
+        yError() << "Cannot get the portmonitor parameters of" << portName << ":" << result.message;
+        return false;
     }
+    // the parameters are returned as a single nested list
+    param.clear();
+    param.addList().fromString(result.params);
     return true;
 }

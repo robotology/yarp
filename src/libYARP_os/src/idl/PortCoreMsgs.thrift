@@ -64,6 +64,52 @@ struct return_delConnection
     yarp.api.keyword = "YARP_os_API"
 )
 
+struct return_setPortmonitorParams
+{
+    1: bool   ret;          // false if the request could not be processed
+    2: bool   success;      // false if no portmonitor is attached
+    3: string message;      // a human readable description of the error (if any)
+}
+(
+    yarp.api.include = "yarp/os/api.h"
+    yarp.api.keyword = "YARP_os_API"
+)
+
+struct return_getPortmonitorParams
+{
+    1: bool   ret;          // false if the request could not be processed
+    2: bool   success;      // false if no portmonitor is attached
+    3: string params;       // the parameters, in yarp::os::Property format, e.g. "(key1 value1) (key2 value2)"
+    4: string message;      // a human readable description of the error (if any)
+}
+(
+    yarp.api.include = "yarp/os/api.h"
+    yarp.api.keyword = "YARP_os_API"
+)
+
+struct return_setConnectionParams
+{
+    1: bool   ret;          // false if the request could not be processed
+    2: bool   success;      // false if there is no such connection
+    3: string message;      // a human readable description of the result
+}
+(
+    yarp.api.include = "yarp/os/api.h"
+    yarp.api.keyword = "YARP_os_API"
+)
+
+struct return_getConnectionParams
+{
+    1: bool   ret;          // false if the request could not be processed
+    2: bool   success;      // false if there is no such connection
+    3: string params;       // the parameters, in yarp::os::Property format, e.g. "(key1 value1) (key2 value2)"
+    4: string message;      // a human readable description of the error (if any)
+}
+(
+    yarp.api.include = "yarp/os/api.h"
+    yarp.api.keyword = "YARP_os_API"
+)
+
 // Administrative commands handled by PortCore::adminBlock().
 service PortCoreMsgs
 {
@@ -89,6 +135,38 @@ service PortCoreMsgs
 
     // Detach the portmonitor plug-in from the port's input
     bool detachPortmonitorIn();
+
+    // Set the parameters of the portmonitor plug-in attached to the port's output
+    // params: the parameters, in yarp::os::Property format, e.g. "(log_save 1)"
+    return_setPortmonitorParams setPortmonitorParamsOut(1: string params);
+
+    // Set the parameters of the portmonitor plug-in attached to the port's input
+    // params: the parameters, in yarp::os::Property format, e.g. "(log_save 1)"
+    return_setPortmonitorParams setPortmonitorParamsIn(1: string params);
+
+    // Get the parameters of the portmonitor plug-in attached to the port's output
+    return_getPortmonitorParams getPortmonitorParamsOut();
+
+    // Get the parameters of the portmonitor plug-in attached to the port's input
+    return_getPortmonitorParams getPortmonitorParamsIn();
+
+    // Set the carrier parameters of the output connection going to a given port
+    // portname: the destination port of the connection
+    // params: the parameters, in yarp::os::Property format
+    return_setConnectionParams setConnectionParamsOut(1: string portname, 2: string params);
+
+    // Set the carrier parameters of the input connection coming from a given port
+    // portname: the source port of the connection
+    // params: the parameters, in yarp::os::Property format
+    return_setConnectionParams setConnectionParamsIn(1: string portname, 2: string params);
+
+    // Get the carrier parameters of the output connection going to a given port
+    // portname: the destination port of the connection
+    return_getConnectionParams getConnectionParamsOut(1: string portname);
+
+    // Get the carrier parameters of the input connection coming from a given port
+    // portname: the source port of the connection
+    return_getConnectionParams getConnectionParamsIn(1: string portname);
 
     // List the names of the ports connected to the port's input
     return_listConnections listConnectionsIn();

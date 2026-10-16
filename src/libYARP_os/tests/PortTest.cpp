@@ -1335,24 +1335,11 @@ TEST_CASE("os::PortTest", "[yarp::os]")
             CHECK(Portable::copyPortable(Bottle(*reply.get(0).asList()), thread));
         }
 
-        // get in on a connection returns the carrier parameters as a nested list
-        // (this is the format expected by NetworkProfiler::getPortmonitorParams)
-        {
-            Bottle cmd;
-            Bottle reply;
-            cmd.addVocab32("get");
-            cmd.addVocab32("in");
-            cmd.addString("/p2");
-            CHECK(p2.write(cmd, reply));
-            REQUIRE(reply.size() == 1);
-            CHECK(reply.get(0).isList());
-        }
-
         p1.close();
         p2.close();
     }
 
-    SECTION("check port admin set/get commands and the PortCoreMsgs commands")
+    SECTION("check the PortCoreMsgs admin commands")
     {
         // /p2 -> /p1, admin commands are sent by /p2 and processed by /p1
         const auto ok = yarp::os::createVocab32('o', 'k');
@@ -1435,40 +1422,71 @@ TEST_CASE("os::PortTest", "[yarp::os]")
             CHECK(reply.get(1).asVocab32() == fail);
         }
 
-        // set in/out on a connection: [0 "message"] on success, [-1 "message"] if not found
+        // setConnectionParamsIn/Out $portname $params: [ok success "message"]
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("setConnectionParamsIn /p2 \"(key 1)\""), reply));
+            REQUIRE(reply.size() == 3);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == ok);
+            CHECK(reply.get(2).isString());
+
+            reply.clear();
+            CHECK(p2.write(Bottle("setConnectionParamsIn /nonexistent \"(key 1)\""), reply));
+            REQUIRE(reply.size() == 3);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == fail);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("setConnectionParamsOut /nonexistent \"(key 1)\""), reply));
+            REQUIRE(reply.size() == 3);
+            CHECK(reply.get(1).asVocab32() == fail);
+        }
+
+        // getConnectionParamsIn/Out $portname: [ok success "params" "message"]
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("getConnectionParamsIn /p2"), reply));
+            REQUIRE(reply.size() == 4);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == ok);
+            CHECK(reply.get(2).isString());
+
+            reply.clear();
+            CHECK(p2.write(Bottle("getConnectionParamsIn /nonexistent"), reply));
+            REQUIRE(reply.size() == 4);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == fail);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("getConnectionParamsOut /nonexistent"), reply));
+            REQUIRE(reply.size() == 4);
+            CHECK(reply.get(1).asVocab32() == fail);
+        }
+
+        // set/getPortmonitorParamsIn/Out require an attached portmonitor
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("getPortmonitorParamsIn"), reply));
+            REQUIRE(reply.size() == 4);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == fail);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("setPortmonitorParamsOut \"(key 1)\""), reply));
+            REQUIRE(reply.size() == 3);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == fail);
+        }
+
+        // the old hand-written set/get commands are not supported anymore
         {
             Bottle reply;
             CHECK(p2.write(Bottle("set in /p2 (key 1)"), reply));
-            CHECK(reply.get(0).asInt32() == 0);
-
-            reply.clear();
-            CHECK(p2.write(Bottle("set in /nonexistent (key 1)"), reply));
-            CHECK(reply.get(0).asInt32() == -1);
-
-            reply.clear();
-            CHECK(p2.write(Bottle("set out /nonexistent (key 1)"), reply));
-            CHECK(reply.get(0).asInt32() == -1);
-        }
-
-        // get in/out on a missing connection: [-1 "message"]
-        {
-            Bottle reply;
-            CHECK(p2.write(Bottle("get in /nonexistent"), reply));
-            CHECK(reply.get(0).asInt32() == -1);
-
-            reply.clear();
-            CHECK(p2.write(Bottle("get out /nonexistent"), reply));
-            CHECK(reply.get(0).asInt32() == -1);
-        }
-
-        // set/get on the port itself require an attached portmonitor
-        {
-            Bottle reply;
-            CHECK(p2.write(Bottle("get in /p1"), reply));
             CHECK(reply.get(0).asVocab32() == fail);
 
             reply.clear();
-            CHECK(p2.write(Bottle("set in /p1 (key 1)"), reply));
+            CHECK(p2.write(Bottle("get in /p2"), reply));
             CHECK(reply.get(0).asVocab32() == fail);
         }
 
