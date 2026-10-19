@@ -471,16 +471,6 @@ public:
 
     void setTimeout(float timeout);
 
-    /**
-     * @warning Must be called in the same thread as releaseProperties
-     */
-    Property* acquireProperties(bool readOnly);
-
-    /**
-     * @warning Must be called in the same thread as acquireProperties
-     */
-    void releaseProperties(Property* prop);
-
     bool setCallbackLock(std::mutex* mutex = nullptr);
 
     bool removeCallbackLock();
@@ -536,7 +526,6 @@ private:
     std::string m_envelope;///< user-defined wrapping data
     float m_timeout {-1};  ///< a timeout to apply to all network operations
     int m_counter {1};    ///< port-unique ids for connections
-    yarp::os::Property *m_prop {nullptr};  ///< optional unstructured properties associated with port
     yarp::os::Contactable *m_contactable {nullptr}; ///< user-facing object that contains this PortCore
     std::mutex* m_mutex {nullptr}; ///< callback optional access control lock
     bool m_mutexOwned {false}; ///< do we own the optional callback lock
@@ -560,7 +549,7 @@ private:
     bool setProcessSchedulingParam(int priority = -1, int policy = -1);
 
     // attach a portmonitor plugin to the port or to a specific connection
-    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::string& errMsg);
+    bool attachPortMonitor(const std::string& portmonitor_options, bool isOutput, std::string& errMsg);
 
     // detach the portmonitor from the port or specific connection
     bool detachPortMonitor(bool isOutput);

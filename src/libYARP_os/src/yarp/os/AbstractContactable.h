@@ -109,12 +109,6 @@ public:
     // Documented in Contactable
     void promiseType(const Type& typ) override;
 
-    // Documented in Contactable
-    Property* acquireProperties(bool readOnly) override;
-
-    // Documented in Contactable
-    void releaseProperties(Property* prop) override;
-
     // Documented in UnbufferedContactable
     bool write(const PortWriter& writer,
                const PortWriter* callback = nullptr) const override;

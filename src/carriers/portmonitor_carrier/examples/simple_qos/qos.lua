@@ -64,11 +64,8 @@ PortMonitor.accept = function(thing)
         if frame_rate < 28.0 then
             print(string.format("QOS low! frame rate = %d", frame_rate))
             local cmd = yarp.Bottle()
-            cmd:fromString("prop set /view (qos ((tos 16)))")
-            print(cmd:toString())
-            admin_port:write(cmd)
-            cmd:clear()
-            cmd:fromString("prop set /view (sched ((priority 10) (policy 1)))")
+            -- qos set_all (portname scheduler_priority scheduler_policy qos_tos)
+            cmd:fromString("qos set_all (/view 10 1 16)")
             print(cmd:toString())
             admin_port:write(cmd)
         end

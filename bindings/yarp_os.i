@@ -181,7 +181,6 @@
     }
 }
 
-MAKE_COMMS  (Property, Property)
 MAKE_COMMS  (Bottle, yarp::os::Bottle)
 
 //////////////////////////////////////////////////////////////////////////
@@ -189,10 +188,6 @@ MAKE_COMMS  (Bottle, yarp::os::Bottle)
 
 %extend yarp::os::Port {
     bool write(Bottle& data) {
-        return self->write(*((PortWriter*)(&data)));
-    }
-
-    bool write(Property& data) {
         return self->write(*((PortWriter*)(&data)));
     }
 
@@ -263,10 +258,6 @@ public:
 
     yarp::os::Bottle* asBottle() {
         return self->cast_as<yarp::os::Bottle>();
-    }
-
-    yarp::os::Property* asProperty() {
-        return self->cast_as<yarp::os::Property>();
     }
 
     yarp::sig::VectorOfDouble* asVector() {

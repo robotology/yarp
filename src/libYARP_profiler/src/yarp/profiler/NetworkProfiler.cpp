@@ -306,7 +306,7 @@ bool NetworkProfiler::setPortmonitorParams(std::string portName, yarp::os::Prope
         return false;
     }
     if(reply.size() > 1) {
-        if(reply.get(0).isString() && reply.get(0).asString() == "fail") {
+        if(reply.get(0).asString() == "fail") { // the server replies with a vocab
             yError()<<reply.toString();
             return false;
         }
@@ -331,7 +331,7 @@ bool NetworkProfiler::getPortmonitorParams(std::string portName, yarp::os::Bottl
         return false;
     }
     if(param.size() > 1) {
-        if(param.get(0).isString() && param.get(0).asString() == "fail") {
+        if(param.get(0).asString() == "fail") { // the server replies with a vocab
             yError()<<param.toString();
             return false;
         }

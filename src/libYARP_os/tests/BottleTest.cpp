@@ -514,22 +514,51 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
         CHECK(bot.get(3).asString() == "false"); // false can spell
     }
 
-    SECTION("test dictionary values")
+    SECTION("test nested lists values 1")
     {
         Bottle bot("1");
-        Property& p = bot.addDict();
-        p.put("test", "me");
-        p.put("hi", "there");
+        Bottle& innerlist1 = bot.addList();
+        innerlist1.addInt32(42);
+        innerlist1.addString("testkey");
+        innerlist1.addString("me");
         Bottle bot2;
         bot2 = bot;
-        CHECK(bot2.get(1).isDict()); // "dict copies ok"
-        CHECK(bot2.get(1).asDict()->find("test").asString() == "me"); // "dict content copies ok"
 
-        Bottle bot3;
-        bot3.fromString(bot.toString());
-        CHECK(bot2.get(1).asSearchable()->find("test").asString() == "me"); // "dict content serializes ok"
-        // serialization currently will convert dicts to lists,
-        // for backwards compatibility
+        std::string s = bot2.toString();
+        CHECK(s == "1 (42 testkey me)");
+
+        CHECK(bot2.get(1).isList()); // "list copies ok"
+        CHECK(bot2.get(1).asList()->get(0).asInt32() == 42);
+        CHECK(bot2.get(1).asList()->get(1).asString() == "testkey");
+
+        std::string st = bot2.get(1).asList()->find("testkey").asString();
+        CHECK( st == "me");
+    }
+
+    SECTION("test nested lists values 2")
+    {
+        Bottle bot("key1");
+        Bottle& innerlist1 = bot.addList();
+        innerlist1.addInt32(42);
+        innerlist1.addInt32(43);
+        bot.addString("key2");
+        Bottle& innerlist2 = bot.addList();
+        innerlist2.addInt32(44);
+        innerlist2.addInt32(45);
+        Bottle bot2;
+        bot2 = bot;
+
+        std::string s = bot2.toString();
+        CHECK(s == "key1 (42 43) key2 (44 45)");
+
+        CHECK(bot2.get(1).isList()); // "list copies ok"
+        CHECK(bot2.get(3).isList()); // "list copies ok"
+
+        CHECK(bot2.get(1).asList()->get(1).asInt32() == 43);
+        CHECK(bot2.get(3).asList()->get(1).asInt32() == 45);
+
+        int st = bot2.find("key2").asList()->get(1).asInt32();
+        CHECK( st == 45);
     }
 
     SECTION("test infinite loop tickled by yarpmanager + string type change")
