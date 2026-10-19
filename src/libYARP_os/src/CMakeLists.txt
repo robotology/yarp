@@ -379,7 +379,6 @@ set(YARP_os_IDL
   idl/SystemInfoData.thrift
   idl/StampData.thrift
   idl/StampWithFrameData.thrift
-  idl/ConnectionQosData.thrift
   idl/PortInfoData.thrift
   idl/ThreadInfoData.thrift
   idl/PortCoreMsgs.thrift

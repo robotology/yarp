@@ -16,5 +16,11 @@ yarp/os/return_setConnectionParams.h
 yarp/os/return_setConnectionParams.cpp
 yarp/os/return_getConnectionParams.h
 yarp/os/return_getConnectionParams.cpp
+yarp/os/return_getPortInfo.h
+yarp/os/return_getPortInfo.cpp
+yarp/os/return_getConnectionQos.h
+yarp/os/return_getConnectionQos.cpp
+yarp/os/return_setConnectionQos.h
+yarp/os/return_setConnectionQos.cpp
 yarp/os/PortCoreMsgs.h
 yarp/os/PortCoreMsgs.cpp

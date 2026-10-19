@@ -18,6 +18,9 @@
 
 namespace yarp::os {
 
+/**
+ * Reply of PortCoreMsgs::getAdminProtocolVersion().
+ */
 class YARP_os_API return_getAdminProtocolVersion :
         public yarp::os::idl::WirePortable
 {

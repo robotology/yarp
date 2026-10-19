@@ -37,14 +37,26 @@ interface:
 - \ref port_admin_portmonitor
 - \ref port_admin_portmonitor_params
 - \ref port_admin_connection_params
+- \ref port_admin_info
+- \ref port_admin_qos
 
 \section port_admin_help help
 
 \verbatim
-[help]
+help
+help $command
 \endverbatim
 
-Lists all the available administration commands.
+\c help lists all the available administration commands, while
+<tt>help $command</tt> gives the prototype and the description of the given
+command (its parameters and its reply). For instance:
+\verbatim
+echo "help addConnection" | yarp admin rpc /port_name
+\endverbatim
+
+All the administration commands are defined in the thrift service
+\c PortCoreMsgs (\c src/libYARP_os/src/idl/PortCoreMsgs.thrift), and the
+descriptions given by \c help are the documentation comments of that file.
 
 
 \section port_admin_add addConnection
@@ -204,5 +216,75 @@ if (result.ret && result.success) {
     params.fromString(result.params);
 }
 \endcode
+
+
+\section port_admin_info getPortInfo
+
+\verbatim
+getPortInfo
+\endverbatim
+
+Give information about the port itself, and about the process which owns it.
+The reply contains, in this order, the fields of:
+- yarp::os::ProcessInfoData: name, arguments, scheduling policy and priority,
+  and pid of the process;
+- yarp::os::PlatformInfoData: name, distribution, release, codename, kernel
+  and environment variables of the operating system;
+- yarp::os::ThreadInfoData: tid, priority and policy of the main thread of the
+  port;
+- yarp::os::PortInfoData: whether the port is an input, an output, an rpc
+  port, its type and its hostname.
+
+From code, use the corresponding method of yarp::os::impl::PortCoreClient,
+which returns the struct yarp::os::return_getPortInfo. The field \c ret of the
+returned struct is \c false if the remote port could not be reached.
+\code
+yarp::os::impl::PortCoreClient client("/port_name");
+yarp::os::return_getPortInfo info = client.getPortInfo();
+if (info.ret) {
+    yInfo() << info.process.name << info.process.pid << info.port.hostname;
+}
+\endcode
+
+
+\section port_admin_qos getConnectionQosIn / getConnectionQosOut / setConnectionQosIn / setConnectionQosOut / setProcessScheduling
+
+\verbatim
+getConnectionQosIn   /portname
+getConnectionQosOut  /portname
+setConnectionQosIn   /portname scheduler_priority scheduler_policy qos_tos
+setConnectionQosOut  /portname scheduler_priority scheduler_policy qos_tos
+setProcessScheduling priority policy
+\endverbatim
+
+The quality of service of a connection consists of the scheduling parameters
+(priority and policy) of the thread which handles the connection, and of the
+type of service (TOS) of the IP packets of the connection.
+See \ref channelprioritization for the meaning of the values.
+
+\c getConnectionQosIn and \c getConnectionQosOut give the qos of the
+connection coming from (or going to) the specified port. The reply is
+<tt>ok found tid scheduler_priority scheduler_policy qos_tos</tt>, where
+\c found is \c fail if there is no such connection, \c tid is the id of the
+thread which handles the connection, and \c qos_tos is -1 if it is not
+available.
+
+\c setConnectionQosIn and \c setConnectionQosOut set the qos of the connection
+coming from (or going to) the specified port. A value of -1 for both
+scheduling parameters restores the default scheduling of the thread, while a
+negative \c qos_tos leaves the type of service unchanged. The reply is
+<tt>ok success message</tt>, where \c success is \c fail if there is no such
+connection or if the qos could not be set, and \c message describes the error.
+
+\c setProcessScheduling sets the scheduling parameters of all the threads of
+the process which owns the port. The reply is \c ok on success, \c fail
+otherwise.
+
+From code, use the corresponding methods of yarp::os::impl::PortCoreClient,
+which return the structs yarp::os::return_getConnectionQos and
+yarp::os::return_setConnectionQos, or the higher level functions
+yarp::os::Network::getConnectionQos and yarp::os::Network::setConnectionQos,
+which configure both sides of a connection. The field \c ret of the returned
+struct is \c false if the remote port could not be reached.
 
 */

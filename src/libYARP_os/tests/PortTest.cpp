@@ -25,11 +25,6 @@
 #include <yarp/os/PortInfo.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/SystemInfo.h>
-#include <yarp/os/ConnectionQosData.h>
-#include <yarp/os/ProcessInfoData.h>
-#include <yarp/os/PlatformInfoData.h>
-#include <yarp/os/ThreadInfoData.h>
-#include <yarp/os/PortInfoData.h>
 
 #include <yarp/companion/impl/Companion.h>
 
@@ -1187,18 +1182,44 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/p1");
         Network::sync("/p2");
 
-        Bottle cmd("[help]");
-        Bottle reply;
         p2.setAdminMode();
-        p2.write(cmd, reply);
 
-        CHECK(reply.size()>=1); // got a reply
+        // help lists the available commands: [many] (command1 command2 ...)
+        auto contains = [](const Bottle* list, const std::string& s) {
+            for (size_t i = 0; list != nullptr && i < list->size(); i++) {
+                if (list->get(i).asString() == s) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("help"), reply));
+            REQUIRE(reply.size() == 2);
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('m', 'a', 'n', 'y'));
+            CHECK(contains(reply.get(1).asList(), "addConnection"));
+            CHECK(contains(reply.get(1).asList(), "setProcessScheduling"));
+            CHECK(contains(reply.get(1).asList(), "help"));
+        }
+
+        // help $command gives the prototype and the description of the command
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("help addConnection"), reply));
+            REQUIRE(reply.size() == 2);
+            const Bottle* lines = reply.get(1).asList();
+            REQUIRE(lines != nullptr);
+            REQUIRE(lines->size() == 2);
+            CHECK(lines->get(0).asString().find("addConnection(") != std::string::npos);
+            CHECK(lines->get(1).asString().find("@param portname") != std::string::npos);
+        }
 
         p1.close();
         p2.close();
     }
 
-    SECTION("check port admin qos/info/get commands")
+    SECTION("check the port admin qos and info commands")
     {
         // /p2 -> /p1, admin commands are sent by /p2 and processed by /p1
         BufferedPort<Bottle> p1;
@@ -1210,129 +1231,93 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/p2");
         p2.setAdminMode();
 
-        // qos get on an existing connection returns ok + ConnectionQosData
-        {
-            Bottle cmd;
-            Bottle reply;
-            cmd.addVocab32("qos");
-            cmd.addString("get");
-            cmd.addString("/p2");
-            CHECK(p2.write(cmd, reply));
-            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
-            Bottle* data = reply.get(1).asList();
-            REQUIRE(data != nullptr);
-            ConnectionQosData qos;
-            CHECK(Portable::copyPortable(Bottle(*data), qos));
-            CHECK(qos.portname == "/p2");
-        }
+        const auto ok = yarp::os::createVocab32('o', 'k');
+        const auto fail = yarp::os::createVocab32('f', 'a', 'i', 'l');
 
-        // qos get on a missing connection fails
-        {
-            Bottle cmd;
-            Bottle reply;
-            cmd.addVocab32("qos");
-            cmd.addString("get");
-            cmd.addString("/nonexistent");
-            CHECK(p2.write(cmd, reply));
-            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f', 'a', 'i', 'l'));
-        }
-
-        // qos set_all round trip
-        {
-            ConnectionQosData qos;
-            qos.portname = "/p2";
-            qos.scheduler_priority = -1;
-            qos.scheduler_policy = -1;
-            qos.qos_tos = 0;
-            Bottle cmd;
-            Bottle reply;
-            cmd.addVocab32("qos");
-            cmd.addString("set_all");
-            CHECK(Portable::copyPortable(qos, cmd.addList()));
-            CHECK(p2.write(cmd, reply));
-            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
-        }
-
-        // qos set_all/get with the textual syntax documented in doc/010_ports/channelprioritization.dox
-        {
-            Bottle cmd("qos set_all (/p2 -1 -1 0)");
-            Bottle reply;
-            CHECK(p2.write(cmd, reply));
-            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
-
-            Bottle cmd2("qos get /p2");
-            Bottle reply2;
-            CHECK(p2.write(cmd2, reply2));
-            CHECK(reply2.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
-            REQUIRE(reply2.get(1).asList() != nullptr);
-            CHECK(reply2.get(1).asList()->size() == 4);
-            CHECK(reply2.get(1).asList()->get(0).asString() == "/p2");
-        }
-
-        // qos set_process fails on a name which is not the port itself, or with missing arguments
+        // getConnectionQosIn/Out $portname: [ok found tid priority policy tos]
         {
             Bottle reply;
-            CHECK(p2.write(Bottle("qos set_process /p2 0 0"), reply));
-            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f', 'a', 'i', 'l'));
+            CHECK(p2.write(Bottle("getConnectionQosIn /p2"), reply));
+            REQUIRE(reply.size() == 6);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == ok);
+
+            // /p1 has no output connection to /p2
             reply.clear();
-            CHECK(p2.write(Bottle("qos set_process /p1"), reply));
-            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f', 'a', 'i', 'l'));
+            CHECK(p2.write(Bottle("getConnectionQosOut /p2"), reply));
+            REQUIRE(reply.size() == 6);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == fail);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("getConnectionQosIn /nonexistent"), reply));
+            REQUIRE(reply.size() == 6);
+            CHECK(reply.get(1).asVocab32() == fail);
         }
+
+        // setConnectionQosIn/Out $portname $priority $policy $tos: [ok success "message"]
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("setConnectionQosIn /p2 -1 -1 0"), reply));
+            REQUIRE(reply.size() == 3);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == ok);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("setConnectionQosOut /p2 -1 -1 0"), reply));
+            REQUIRE(reply.size() == 3);
+            CHECK(reply.get(0).asVocab32() == ok);
+            CHECK(reply.get(1).asVocab32() == fail);
+            CHECK_FALSE(reply.get(2).asString().empty());
+
+            // missing arguments
+            reply.clear();
+            CHECK(p2.write(Bottle("setConnectionQosIn /p2"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+        }
+
+        // setProcessScheduling $priority $policy: [ok] or [fail]
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("setProcessScheduling"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
 #if defined(__linux__)
-        // SCHED_OTHER with priority 0 is allowed without privileges
-        {
-            Bottle reply;
-            CHECK(p2.write(Bottle("qos set_process /p1 0 0"), reply));
-            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
-        }
+            // SCHED_OTHER with priority 0 is allowed without privileges
+            reply.clear();
+            CHECK(p2.write(Bottle("setProcessScheduling 0 0"), reply));
+            CHECK(reply.get(0).asVocab32() == ok);
 #endif
-
-        // qos set_all with a malformed payload fails
-        {
-            Bottle cmd;
-            Bottle reply;
-            cmd.addVocab32("qos");
-            cmd.addString("set_all");
-            cmd.addString("/p2");
-            CHECK(p2.write(cmd, reply));
-            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f', 'a', 'i', 'l'));
         }
 
-        // info on the port itself returns process, platform, thread and port info
+        // the old hand-written qos commands are not supported anymore
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("qos get /p2"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+
+            reply.clear();
+            CHECK(p2.write(Bottle("qos set_all (/p2 -1 -1 0)"), reply));
+            CHECK(reply.get(0).asVocab32() == fail);
+        }
+
+        // getPortInfo: [ok (ProcessInfoData) (PlatformInfoData) (ThreadInfoData) (PortInfoData)]
+        // (the fields of the structs are serialized flat: 1 + 5 + 6 + 3 + 5 values)
+        {
+            Bottle reply;
+            CHECK(p2.write(Bottle("getPortInfo"), reply));
+            REQUIRE(reply.size() == 20);
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('o', 'k'));
+            CHECK(reply.get(5).asInt32() == SystemInfo::getProcessInfo().pid);
+        }
+
+        // the old hand-written info command is not supported anymore
         {
             Bottle cmd;
             Bottle reply;
             cmd.addVocab32("info");
             cmd.addString("/p1");
             CHECK(p2.write(cmd, reply));
-            REQUIRE(reply.size() == 4);
-            ProcessInfoData proc;
-            PlatformInfoData platform;
-            ThreadInfoData thread;
-            PortInfoData port;
-            REQUIRE(reply.get(0).asList() != nullptr);
-            REQUIRE(reply.get(1).asList() != nullptr);
-            REQUIRE(reply.get(2).asList() != nullptr);
-            REQUIRE(reply.get(3).asList() != nullptr);
-            CHECK(Portable::copyPortable(Bottle(*reply.get(0).asList()), proc));
-            CHECK(Portable::copyPortable(Bottle(*reply.get(1).asList()), platform));
-            CHECK(Portable::copyPortable(Bottle(*reply.get(2).asList()), thread));
-            CHECK(Portable::copyPortable(Bottle(*reply.get(3).asList()), port));
-            CHECK(proc.pid == SystemInfo::getProcessInfo().pid);
-            CHECK(port.is_input);
-        }
-
-        // info on a connection returns thread info
-        {
-            Bottle cmd;
-            Bottle reply;
-            cmd.addVocab32("info");
-            cmd.addString("/p2");
-            CHECK(p2.write(cmd, reply));
-            REQUIRE(reply.size() == 1);
-            REQUIRE(reply.get(0).asList() != nullptr);
-            ThreadInfoData thread;
-            CHECK(Portable::copyPortable(Bottle(*reply.get(0).asList()), thread));
+            CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f', 'a', 'i', 'l'));
         }
 
         p1.close();

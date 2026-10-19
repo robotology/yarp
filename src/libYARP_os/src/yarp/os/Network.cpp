@@ -20,7 +20,6 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/YarpPlugin.h>
-#include <yarp/os/ConnectionQosData.h>
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/LogComponent.h>
@@ -1158,44 +1157,29 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
     return setConnectionQos(src, dest, style, style, quiet);
 }
 
-// Sets the Qos of the connection between `port` and `unit`, as seen from `port`.
-// request: [qos] set_all (/unit scheduler_priority scheduler_policy qos_tos)
-// reply  : [ok] or [fail] "message"
-static bool setPortQos(const std::string& port, const std::string& unit, const QosStyle& style, bool quiet)
+// Sets the Qos of the connection between `port` and `other`, as seen from `port`.
+// isOutput: true if the connection goes from `port` to `other`, false if it
+// goes from `other` to `port`.
+static bool setPortQos(const std::string& port, const std::string& other, bool isOutput, const QosStyle& style, bool quiet)
 {
     // ignore if everything left as default
     if (style.getPacketPriorityAsTOS() == -1 && style.getThreadPolicy() == -1) {
         return true;
     }
 
-    yarp::os::ConnectionQosData qoscmd;
-    qoscmd.portname = unit;
-    qoscmd.scheduler_priority = style.getThreadPriority();
-    qoscmd.scheduler_policy = style.getThreadPolicy();
-    qoscmd.qos_tos = style.getPacketPriorityAsTOS();
-
-    yarp::os::Bottle cmd;
-    yarp::os::Bottle reply;
-    cmd.addVocab32("qos");
-    cmd.addString("set_all");
-    if (!yarp::os::Portable::copyPortable(qoscmd, cmd.addList())) {
-        if (!quiet) {
-            yCError(NETWORK, "Cannot serialize qos properties for '%s'", port.c_str());
-        }
-        return false;
-    }
-
-    Contact portCon = Contact::fromString(port);
-    bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
-    if (!ret) {
+    PortCoreClient client(port);
+    const return_setConnectionQos result = isOutput
+        ? client.setConnectionQosOut(other, style.getThreadPriority(), style.getThreadPolicy(), style.getPacketPriorityAsTOS())
+        : client.setConnectionQosIn(other, style.getThreadPriority(), style.getThreadPolicy(), style.getPacketPriorityAsTOS());
+    if (!result.ret) {
         if (!quiet) {
             yCError(NETWORK, "Cannot write to '%s'", port.c_str());
         }
         return false;
     }
-    if (reply.get(0).asString() != "ok") {
+    if (!result.success) {
         if (!quiet) {
-            yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", port.c_str(), reply.toString().c_str());
+            yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", port.c_str(), result.message.c_str());
         }
         return false;
     }
@@ -1204,10 +1188,10 @@ static bool setPortQos(const std::string& port, const std::string& unit, const Q
 
 bool NetworkBase::setConnectionQos(const std::string& src, const std::string& dest, const QosStyle& srcStyle, const QosStyle& destStyle, bool quiet)
 {
-    if (!setPortQos(src, dest, srcStyle, quiet)) {
+    if (!setPortQos(src, dest, true, srcStyle, quiet)) {
         return false;
     }
-    if (!setPortQos(dest, src, destStyle, quiet)) {
+    if (!setPortQos(dest, src, false, destStyle, quiet)) {
         return false;
     }
     return true;
@@ -1269,48 +1253,41 @@ bool NetworkBase::cleanUnresponsivePorts(double timeout)
     return true;
 }
 
-// Gets the Qos of the connection between `port` and `unit`, as seen from `port`.
-// request: [qos] get /unit
-// reply  : [ok] (/unit scheduler_priority scheduler_policy qos_tos) or [fail] "message"
-static bool getPortQos(const std::string& port, const std::string& unit, QosStyle& style, bool quiet)
+// Gets the Qos of the connection between `port` and `other`, as seen from `port`.
+// isOutput: true if the connection goes from `port` to `other`, false if it
+// goes from `other` to `port`.
+static bool getPortQos(const std::string& port, const std::string& other, bool isOutput, QosStyle& style, bool quiet)
 {
-    yarp::os::Bottle cmd;
-    yarp::os::Bottle reply;
-    cmd.addVocab32("qos");
-    cmd.addString("get");
-    cmd.addString(unit);
-    Contact portCon = Contact::fromString(port);
-    bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
-    if (!ret) {
+    PortCoreClient client(port);
+    const return_getConnectionQos result = isOutput ? client.getConnectionQosOut(other)
+                                                    : client.getConnectionQosIn(other);
+    if (!result.ret) {
         if (!quiet) {
             yCError(NETWORK, "Cannot write to '%s'", port.c_str());
         }
         return false;
     }
-
-    yarp::os::ConnectionQosData qosreply;
-    // copy the sub-list to a standalone bottle, otherwise it is serialized without the list header
-    Bottle* data = reply.get(1).asList();
-    if (reply.get(0).asString() != "ok" || data == nullptr || !yarp::os::Portable::copyPortable(Bottle(*data), qosreply)) {
+    if (!result.found) {
         if (!quiet) {
-            yCError(NETWORK, "Cannot get qos properties of '%s'. (%s)", port.c_str(), reply.toString().c_str());
+            yCError(NETWORK, "Cannot get qos properties of '%s': no connection %s '%s'",
+                    port.c_str(), isOutput ? "to" : "from", other.c_str());
         }
         return false;
     }
 
-    style.setThreadPriority(qosreply.scheduler_priority);
-    style.setThreadPolicy(qosreply.scheduler_policy);
-    style.setPacketPrioritybyTOS(qosreply.qos_tos);
+    style.setThreadPriority(result.thread.priority);
+    style.setThreadPolicy(result.thread.policy);
+    style.setPacketPrioritybyTOS(result.qos_tos);
 
     return true;
 }
 
 bool NetworkBase::getConnectionQos(const std::string& src, const std::string& dest, QosStyle& srcStyle, QosStyle& destStyle, bool quiet)
 {
-    if (!getPortQos(src, dest, srcStyle, quiet)) {
+    if (!getPortQos(src, dest, true, srcStyle, quiet)) {
         return false;
     }
-    if (!getPortQos(dest, src, destStyle, quiet)) {
+    if (!getPortQos(dest, src, false, destStyle, quiet)) {
         return false;
     }
     return true;

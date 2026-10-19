@@ -18,6 +18,9 @@
 
 namespace yarp::os {
 
+/**
+ * Reply of PortCoreMsgs::setPortmonitorParamsIn() and PortCoreMsgs::setPortmonitorParamsOut().
+ */
 class YARP_os_API return_setPortmonitorParams :
         public yarp::os::idl::WirePortable
 {

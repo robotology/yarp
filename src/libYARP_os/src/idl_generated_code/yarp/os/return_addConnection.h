@@ -18,6 +18,9 @@
 
 namespace yarp::os {
 
+/**
+ * Reply of PortCoreMsgs::addConnection().
+ */
 class YARP_os_API return_addConnection :
         public yarp::os::idl::WirePortable
 {

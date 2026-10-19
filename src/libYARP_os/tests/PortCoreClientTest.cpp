@@ -10,6 +10,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/SystemInfo.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/YarpPluginSelector.h>
 
@@ -39,6 +40,35 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         CHECK(ver.version_minor == 2);
         CHECK(ver.version_patch == 4);
 
+        p1.close();
+    }
+
+    SECTION("getPortInfo")
+    {
+        BufferedPort<Bottle> p1;
+        Port readOnly;
+        readOnly.setReadOnly();
+        REQUIRE(p1.open("/p1"));
+        REQUIRE(readOnly.open("/readonly"));
+
+        PortCoreClient client("/p1");
+        const return_getPortInfo info = client.getPortInfo();
+        REQUIRE(info.ret);
+        CHECK(info.process.pid == SystemInfo::getProcessInfo().pid);
+        CHECK(info.process.name == SystemInfo::getProcessInfo().name);
+        CHECK(info.platform.name == SystemInfo::getPlatformInfo().name);
+        CHECK(info.port.is_input);
+        CHECK(info.port.is_output);
+        CHECK_FALSE(info.port.is_rpc);
+        CHECK_FALSE(info.port.hostname.empty());
+
+        // the flags reflect the configuration of the port
+        const return_getPortInfo readOnlyInfo = PortCoreClient("/readonly").getPortInfo();
+        REQUIRE(readOnlyInfo.ret);
+        CHECK(readOnlyInfo.port.is_input);
+        CHECK_FALSE(readOnlyInfo.port.is_output);
+
+        readOnly.close();
         p1.close();
     }
 
@@ -340,6 +370,89 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         sender.close();
     }
 
+    SECTION("getConnectionQosIn/Out and setConnectionQosIn/Out")
+    {
+        Port sender;
+        BufferedPort<Bottle> receiver;
+        REQUIRE(sender.open("/send"));
+        REQUIRE(receiver.open("/recv"));
+        REQUIRE(NetworkBase::connect("/send", "/recv"));
+
+        PortCoreClient sendClient("/send");
+        PortCoreClient recvClient("/recv");
+
+        // existing connections, from both sides
+        for (const return_getConnectionQos& qos : {sendClient.getConnectionQosOut("/recv"),
+                                                   recvClient.getConnectionQosIn("/send")}) {
+            REQUIRE(qos.ret);
+            CHECK(qos.found);
+        }
+        for (const return_setConnectionQos& result : {sendClient.setConnectionQosOut("/recv", -1, -1, 0),
+                                                      recvClient.setConnectionQosIn("/send", -1, -1, 0)}) {
+            REQUIRE(result.ret);
+            CHECK(result.success);
+        }
+
+        // connections which do not exist (wrong port, or wrong direction)
+        for (const return_getConnectionQos& qos : {sendClient.getConnectionQosOut("/nonexistent"),
+                                                   sendClient.getConnectionQosIn("/recv"),
+                                                   recvClient.getConnectionQosOut("/send")}) {
+            REQUIRE(qos.ret);
+            CHECK_FALSE(qos.found);
+            CHECK(qos.qos_tos == -1);
+        }
+        for (const return_setConnectionQos& result : {sendClient.setConnectionQosOut("/nonexistent", -1, -1, 0),
+                                                      sendClient.setConnectionQosIn("/recv", -1, -1, 0),
+                                                      recvClient.setConnectionQosOut("/send", -1, -1, 0)}) {
+            REQUIRE(result.ret);
+            CHECK_FALSE(result.success);
+            CHECK_FALSE(result.message.empty());
+        }
+
+        receiver.close();
+        sender.close();
+    }
+
+    SECTION("getConnectionQosIn/Out distinguish the two directions of a bidirectional connection")
+    {
+        BufferedPort<Bottle> a;
+        BufferedPort<Bottle> b;
+        REQUIRE(a.open("/a"));
+        REQUIRE(b.open("/b"));
+        REQUIRE(NetworkBase::connect("/a", "/b"));
+        REQUIRE(NetworkBase::connect("/b", "/a"));
+
+        PortCoreClient aClient("/a");
+        const return_getConnectionQos out = aClient.getConnectionQosOut("/b");
+        const return_getConnectionQos in = aClient.getConnectionQosIn("/b");
+        REQUIRE(out.found);
+        REQUIRE(in.found);
+        // the two connections are handled by two different threads
+        CHECK(out.thread.tid != in.thread.tid);
+
+#if defined(__linux__)
+        // the type of service can be read back reliably only on linux
+        REQUIRE(aClient.setConnectionQosOut("/b", -1, -1, 144).success);
+        REQUIRE(aClient.setConnectionQosIn("/b", -1, -1, 40).success);
+        CHECK(aClient.getConnectionQosOut("/b").qos_tos == 144);
+        CHECK(aClient.getConnectionQosIn("/b").qos_tos == 40);
+#endif
+
+        b.close();
+        a.close();
+    }
+
+    SECTION("setProcessScheduling")
+    {
+        BufferedPort<Bottle> p1;
+        REQUIRE(p1.open("/p1"));
+#if defined(__linux__)
+        // SCHED_OTHER with priority 0 is allowed without privileges
+        CHECK(PortCoreClient("/p1").setProcessScheduling(0, 0));
+#endif
+        p1.close();
+    }
+
     SECTION("addConnection/delConnection")
     {
         Port sender;
@@ -491,6 +604,12 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         CHECK_FALSE(client.setConnectionParamsOut("/p1", "(key 1)").ret);
         CHECK_FALSE(client.getConnectionParamsIn("/p1").ret);
         CHECK_FALSE(client.getConnectionParamsOut("/p1").ret);
+        CHECK_FALSE(client.getPortInfo().ret);
+        CHECK_FALSE(client.getConnectionQosIn("/p1").ret);
+        CHECK_FALSE(client.getConnectionQosOut("/p1").ret);
+        CHECK_FALSE(client.setConnectionQosIn("/p1", -1, -1, 0).ret);
+        CHECK_FALSE(client.setConnectionQosOut("/p1", -1, -1, 0).ret);
+        CHECK_FALSE(client.setProcessScheduling(0, 0));
     }
 
     NetworkBase::setLocalMode(false);

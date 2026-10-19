@@ -322,53 +322,24 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
     }
 
     // Getting owner info
-    Bottle cmd, reply;
-    cmd.addString("info"); cmd.addString(portName);
-    bool bwrite = ping.write(cmd, reply);
-    if(!bwrite) {
-        yError()<<"Cannot write (info "<<portName<<") to"<<portName;
+    const yarp::os::return_getPortInfo info = client.getPortInfo();
+    if (!info.ret) {
+        yError()<<"Cannot get the info of"<<portName;
         ping.close();
         return false;
     }
 
-    // reply: (ProcessInfoData) (PlatformInfoData) (ThreadInfoData) (PortInfoData)
-    if (reply.size() < 4 || !reply.get(0).isList() || !reply.get(1).isList() || !reply.get(3).isList())
-    {
-         yWarning() << "Invalid info reply from port " << portName << ":" << reply.toString();
-         ping.close();
-         return false;
-    }
+    details.owner_process.process_name = info.process.name;
+    details.owner_process.arguments = info.process.arguments;
+    details.owner_process.pid = info.process.pid;
+    details.owner_process.priority = info.process.schedPriority;
+    details.owner_process.policy = info.process.schedPolicy;
+    details.owner_process.process_fullname = details.owner_process.process_name + "(" + std::to_string(details.owner_process.pid) + ")";
 
-    // sub-lists are copied to standalone bottles, otherwise they are serialized without the list header
-    yarp::os::ProcessInfoData processinfodata;
-    if (Portable::copyPortable(Bottle(*reply.get(0).asList()), processinfodata))
-    {
-        details.owner_process.process_name = processinfodata.name;
-        details.owner_process.arguments = processinfodata.arguments;
-        details.owner_process.pid = processinfodata.pid;
-        details.owner_process.priority = processinfodata.schedPriority;
-        details.owner_process.policy = processinfodata.schedPolicy;
-        details.owner_process.process_fullname = details.owner_process.process_name + "(" + std::to_string(details.owner_process.pid) + ")";
-    } else {
-        yWarning()<<"Cannot find 'ProcessInfoData' of port "<<portName;
-    }
+    details.owner_process.owner_machine.os = info.platform.name;
 
-    yarp::os::PlatformInfoData platforminfodata;
-    if (Portable::copyPortable(Bottle(*reply.get(1).asList()), platforminfodata))
-    {
-        details.owner_process.owner_machine.os = platforminfodata.name;
-    } else {
-        yWarning()<<"Cannot find 'PlatformInfoData' of port "<<portName;
-    }
-
-    yarp::os::PortInfoData portinfodata;
-    if (Portable::copyPortable(Bottle(*reply.get(3).asList()), portinfodata))
-    {
-        details.owner_process.owner_machine.hostname = portinfodata.hostname;
-        details.owner_process.owner_machine.ip = portinfodata.hostname;
-    } else {
-        yWarning()<<"Cannot find 'PortInfoData' of port "<<portName;
-    }
+    details.owner_process.owner_machine.hostname = info.port.hostname;
+    details.owner_process.owner_machine.ip = info.port.hostname;
 
     ping.close();
     return true;

@@ -18,6 +18,9 @@
 
 namespace yarp::os {
 
+/**
+ * Reply of PortCoreMsgs::listConnectionsIn() and PortCoreMsgs::listConnectionsOut().
+ */
 class YARP_os_API return_listConnections :
         public yarp::os::idl::WirePortable
 {

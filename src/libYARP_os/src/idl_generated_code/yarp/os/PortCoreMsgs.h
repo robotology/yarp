@@ -21,13 +21,21 @@
 #include <yarp/os/return_getAdminProtocolVersion.h>
 #include <yarp/os/return_getConnectionInfo.h>
 #include <yarp/os/return_getConnectionParams.h>
+#include <yarp/os/return_getConnectionQos.h>
+#include <yarp/os/return_getPortInfo.h>
 #include <yarp/os/return_getPortmonitorParams.h>
 #include <yarp/os/return_listConnections.h>
 #include <yarp/os/return_setConnectionParams.h>
+#include <yarp/os/return_setConnectionQos.h>
 #include <yarp/os/return_setPortmonitorParams.h>
 
 namespace yarp::os {
 
+/**
+ * Administrative commands of a YARP port, handled by PortCore::adminBlock().
+ * They can be sent with "yarp admin rpc /portname", or from code using
+ * yarp::os::impl::PortCoreClient.
+ */
 class YARP_os_API PortCoreMsgs :
         public yarp::os::Wire
 {
@@ -41,43 +49,182 @@ public:
     PortCoreMsgs();
 
     //Service methods
+    /**
+     * Add an output connection from this port to another port.
+     * @param portname the destination port of the connection
+     * @param carrier the carrier of the connection, e.g. tcp, udp, fast_tcp (optional, the default carrier is used if empty)
+     * @return success: true if the connection has been added; message: a description of the result
+     */
     virtual return_addConnection addConnection(const std::string& portname, const std::string& carrier = "");
 
+    /**
+     * Remove all the input and output connections between this port and another port.
+     * @param portname the port at the other end of the connection(s)
+     * @return success: true if at least one connection has been removed; message: a description of the result
+     */
     virtual return_delConnection delConnection(const std::string& portname);
 
+    /**
+     * Attach a portmonitor plug-in to the output of this port (it replaces the one previously attached, if any).
+     * @param prop the portmonitor configuration, in yarp::os::Property format, e.g. "(type dll) (file test_numbers1)" or "(context yarpviz) (file portrate)"
+     * @return true if the portmonitor has been attached
+     */
     virtual bool attachPortmonitorOut(const std::string& prop);
 
+    /**
+     * Attach a portmonitor plug-in to the input of this port (it replaces the one previously attached, if any).
+     * @param prop the portmonitor configuration, in yarp::os::Property format, e.g. "(type dll) (file test_numbers1)" or "(context yarpviz) (file portrate)"
+     * @return true if the portmonitor has been attached
+     */
     virtual bool attachPortmonitorIn(const std::string& prop);
 
+    /**
+     * Detach the portmonitor plug-in from the output of this port.
+     * @return true (also if no portmonitor was attached)
+     */
     virtual bool detachPortmonitorOut();
 
+    /**
+     * Detach the portmonitor plug-in from the input of this port.
+     * @return true (also if no portmonitor was attached)
+     */
     virtual bool detachPortmonitorIn();
 
+    /**
+     * Set the parameters of the portmonitor plug-in attached to the output of this port.
+     * @param params the parameters, in yarp::os::Property format, e.g. "(log_save 1)"; their meaning depends on the portmonitor
+     * @return success: false if no portmonitor is attached; message: a description of the error (if any)
+     */
     virtual return_setPortmonitorParams setPortmonitorParamsOut(const std::string& params);
 
+    /**
+     * Set the parameters of the portmonitor plug-in attached to the input of this port.
+     * @param params the parameters, in yarp::os::Property format, e.g. "(log_save 1)"; their meaning depends on the portmonitor
+     * @return success: false if no portmonitor is attached; message: a description of the error (if any)
+     */
     virtual return_setPortmonitorParams setPortmonitorParamsIn(const std::string& params);
 
+    /**
+     * Get the parameters of the portmonitor plug-in attached to the output of this port.
+     * @return success: false if no portmonitor is attached; params: the parameters, in yarp::os::Property format; message: a description of the error (if any)
+     */
     virtual return_getPortmonitorParams getPortmonitorParamsOut();
 
+    /**
+     * Get the parameters of the portmonitor plug-in attached to the input of this port.
+     * @return success: false if no portmonitor is attached; params: the parameters, in yarp::os::Property format; message: a description of the error (if any)
+     */
     virtual return_getPortmonitorParams getPortmonitorParamsIn();
 
+    /**
+     * Set the carrier parameters of the output connection going from this port to another port.
+     * @param portname the destination port of the connection
+     * @param params the parameters, in yarp::os::Property format; their meaning depends on the carrier of the connection
+     * @return success: false if there is no such connection; message: a description of the result
+     */
     virtual return_setConnectionParams setConnectionParamsOut(const std::string& portname, const std::string& params);
 
+    /**
+     * Set the carrier parameters of the input connection coming from another port to this port.
+     * @param portname the source port of the connection
+     * @param params the parameters, in yarp::os::Property format; their meaning depends on the carrier of the connection
+     * @return success: false if there is no such connection; message: a description of the result
+     */
     virtual return_setConnectionParams setConnectionParamsIn(const std::string& portname, const std::string& params);
 
+    /**
+     * Get the carrier parameters of the output connection going from this port to another port.
+     * @param portname the destination port of the connection
+     * @return success: false if there is no such connection; params: the parameters, in yarp::os::Property format; message: a description of the error (if any)
+     */
     virtual return_getConnectionParams getConnectionParamsOut(const std::string& portname);
 
+    /**
+     * Get the carrier parameters of the input connection coming from another port to this port.
+     * @param portname the source port of the connection
+     * @return success: false if there is no such connection; params: the parameters, in yarp::os::Property format; message: a description of the error (if any)
+     */
     virtual return_getConnectionParams getConnectionParamsIn(const std::string& portname);
 
+    /**
+     * List the ports connected to the input of this port.
+     * @return connections: the names of the source ports of the input connections
+     */
     virtual return_listConnections listConnectionsIn();
 
+    /**
+     * List the ports connected to the output of this port.
+     * @return connections: the names of the destination ports of the output connections
+     */
     virtual return_listConnections listConnectionsOut();
 
+    /**
+     * Give details about the input connection coming from another port to this port.
+     * @param portname the source port of the connection
+     * @return found: false if there is no such connection; from_port, to_port: the ends of the connection; carrier: the carrier of the connection; connectionless: true if the carrier is connectionless (e.g. udp); push: false if the carrier is reversed (pull)
+     */
     virtual return_getConnectionInfo getConnectionInfoIn(const std::string& portname);
 
+    /**
+     * Give details about the output connection going from this port to another port.
+     * @param portname the destination port of the connection
+     * @return found: false if there is no such connection; from_port, to_port: the ends of the connection; carrier: the carrier of the connection; connectionless: true if the carrier is connectionless (e.g. udp); push: false if the carrier is reversed (pull)
+     */
     virtual return_getConnectionInfo getConnectionInfoOut(const std::string& portname);
 
+    /**
+     * Report the version of the administrative protocol of this port (it is distinct from the version of the YARP library).
+     * @return version_major, version_minor, version_patch: the version of the protocol
+     */
     virtual return_getAdminProtocolVersion getAdminProtocolVersion();
+
+    /**
+     * Give information about this port, its main thread, and the process and the platform on which it is running.
+     * @return process: name, arguments, scheduling policy and priority, pid of the process; platform: name, distribution, release, codename, kernel, environment variables of the operating system; thread: tid, priority, policy of the main thread of the port; port: is_input, is_output, is_rpc, type, hostname of the port
+     */
+    virtual return_getPortInfo getPortInfo();
+
+    /**
+     * Get the quality of service of the input connection coming from another port to this port.
+     * @param portname the source port of the connection
+     * @return found: false if there is no such connection; thread: tid, scheduling priority and policy of the thread which handles the connection; qos_tos: the type of service of the packets of the connection (-1 if not available)
+     */
+    virtual return_getConnectionQos getConnectionQosIn(const std::string& portname);
+
+    /**
+     * Get the quality of service of the output connection going from this port to another port.
+     * @param portname the destination port of the connection
+     * @return found: false if there is no such connection; thread: tid, scheduling priority and policy of the thread which handles the connection; qos_tos: the type of service of the packets of the connection (-1 if not available)
+     */
+    virtual return_getConnectionQos getConnectionQosOut(const std::string& portname);
+
+    /**
+     * Set the quality of service of the input connection coming from another port to this port.
+     * @param portname the source port of the connection
+     * @param scheduler_priority the scheduling priority of the thread which handles the connection (OS specific; -1, together with scheduler_policy -1, for the default)
+     * @param scheduler_policy the scheduling policy of the thread which handles the connection (OS specific, e.g. on Linux 0 = SCHED_OTHER, 1 = SCHED_FIFO, 2 = SCHED_RR)
+     * @param qos_tos the type of service of the packets of the connection, e.g. LOW = 40, NORMAL = 0, HIGH = 144, CRITICAL = 176 (a negative value leaves it unchanged)
+     * @return success: false if there is no such connection or if the qos could not be set; message: a description of the error (if any)
+     */
+    virtual return_setConnectionQos setConnectionQosIn(const std::string& portname, const std::int32_t scheduler_priority, const std::int32_t scheduler_policy, const std::int32_t qos_tos);
+
+    /**
+     * Set the quality of service of the output connection going from this port to another port.
+     * @param portname the destination port of the connection
+     * @param scheduler_priority the scheduling priority of the thread which handles the connection (OS specific; -1, together with scheduler_policy -1, for the default)
+     * @param scheduler_policy the scheduling policy of the thread which handles the connection (OS specific, e.g. on Linux 0 = SCHED_OTHER, 1 = SCHED_FIFO, 2 = SCHED_RR)
+     * @param qos_tos the type of service of the packets of the connection, e.g. LOW = 40, NORMAL = 0, HIGH = 144, CRITICAL = 176 (a negative value leaves it unchanged)
+     * @return success: false if there is no such connection or if the qos could not be set; message: a description of the error (if any)
+     */
+    virtual return_setConnectionQos setConnectionQosOut(const std::string& portname, const std::int32_t scheduler_priority, const std::int32_t scheduler_policy, const std::int32_t qos_tos);
+
+    /**
+     * Set the scheduling parameters of all the threads of the process which owns this port.
+     * @param priority the scheduling priority (OS specific)
+     * @param policy the scheduling policy (OS specific, e.g. on Linux 0 = SCHED_OTHER, 1 = SCHED_FIFO, 2 = SCHED_RR)
+     * @return true if the scheduling parameters have been set
+     */
+    virtual bool setProcessScheduling(const std::int32_t priority, const std::int32_t policy);
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

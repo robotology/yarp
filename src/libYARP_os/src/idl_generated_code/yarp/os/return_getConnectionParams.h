@@ -18,6 +18,9 @@
 
 namespace yarp::os {
 
+/**
+ * Reply of PortCoreMsgs::getConnectionParamsIn() and PortCoreMsgs::getConnectionParamsOut().
+ */
 class YARP_os_API return_getConnectionParams :
         public yarp::os::idl::WirePortable
 {

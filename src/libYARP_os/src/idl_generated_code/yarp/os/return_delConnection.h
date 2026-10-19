@@ -18,6 +18,9 @@
 
 namespace yarp::os {
 
+/**
+ * Reply of PortCoreMsgs::delConnection().
+ */
 class YARP_os_API return_delConnection :
         public yarp::os::idl::WirePortable
 {
