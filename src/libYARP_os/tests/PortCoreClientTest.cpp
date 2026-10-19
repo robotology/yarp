@@ -10,6 +10,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/QosStyle.h>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/YarpPluginSelector.h>
@@ -24,10 +25,30 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+// Tests of the administrative commands of the YARP ports (the thrift service
+// PortCoreMsgs, see idl/PortCoreMsgs.thrift), sent through the client
+// yarp::os::impl::PortCoreClient and handled by PortCore::adminBlock().
+//
+// Every method of the service is tested:
+// - on its normal behaviour, checking the effect on the port or on the data
+//   which travels on the connection (not just the reply);
+// - on its failure cases (no such connection, wrong direction, port which does
+//   not allow the operation, missing portmonitor);
+// - against a port which does not exist (the field "ret" of the reply is false).
+//
+// The "In" methods refer to a connection coming from the given port to the
+// queried port, the "Out" methods to a connection going from the queried port
+// to the given port.
+//
+// The sections using the test_numbers1 portmonitor (which adds a value, by
+// default 1, to each number it receives) are skipped if the plugin is not
+// available.
+
 TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
 {
     NetworkBase::setLocalMode(true);
 
+    // Version of the administrative protocol (it is distinct from the YARP version).
     SECTION("getAdminProtocolVersion")
     {
         BufferedPort<Bottle> p1;
@@ -43,6 +64,9 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         p1.close();
     }
 
+    // Information about the port, its main thread, its process and its platform:
+    // the values must match the ones of the current process, and the flags of
+    // the port must reflect its configuration.
     SECTION("getPortInfo")
     {
         BufferedPort<Bottle> p1;
@@ -72,6 +96,7 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         p1.close();
     }
 
+    // Detaching when no portmonitor is attached is not an error.
     SECTION("detachPortmonitorIn/detachPortmonitorOut on an existing port")
     {
         BufferedPort<Bottle> p1;
@@ -84,6 +109,8 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         p1.close();
     }
 
+    // A portmonitor which cannot be created is reported as a failure, and it
+    // does not leave the port in an inconsistent state.
     SECTION("attachPortmonitorIn/attachPortmonitorOut with a portmonitor which cannot be configured")
     {
         BufferedPort<Bottle> p1;
@@ -100,6 +127,9 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         p1.close();
     }
 
+    // A portmonitor attached to the input of the receiver, to the output of the
+    // sender, or to both, modifies the data which travels on the connection; after
+    // the detach the data is not modified anymore.
     SECTION("attach/detach of the test_numbers1 portmonitor (adds 1 to each value)")
     {
         YARP_REQUIRE_PLUGIN("test_numbers1", "portmonitor");
@@ -146,6 +176,8 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         sender.close();
     }
 
+    // The parameters of a portmonitor cannot be set nor read if no portmonitor is
+    // attached: success is false and the message explains why.
     SECTION("setPortmonitorParamsIn/Out and getPortmonitorParamsIn/Out without a portmonitor")
     {
         BufferedPort<Bottle> p1;
@@ -169,6 +201,9 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         p1.close();
     }
 
+    // The parameters are passed to the portmonitor attached to the port (its
+    // setparam/getparam methods): changing "increment" changes the data received,
+    // and the new value can be read back.
     SECTION("setPortmonitorParamsIn/Out and getPortmonitorParamsIn/Out with the test_numbers1 portmonitor")
     {
         YARP_REQUIRE_PLUGIN("test_numbers1", "portmonitor");
@@ -235,6 +270,9 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         sender.close();
     }
 
+    // The carrier parameters of a connection can be set and read from both its
+    // ends; a connection which does not exist, or which goes in the other
+    // direction, is reported as a failure.
     SECTION("setConnectionParamsIn/Out and getConnectionParamsIn/Out")
     {
         Port sender;
@@ -282,7 +320,11 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         sender.close();
     }
 
-    SECTION("setConnectionParamsIn/getConnectionParamsIn on a connection with the test_numbers1 portmonitor carrier")
+    // On a connection using the portmonitor carrier (recv.portmonitor on the
+    // receiver side, send.portmonitor on the sender side) the carrier parameters
+    // are forwarded to the portmonitor of the connection, and change the data
+    // received.
+    SECTION("setConnectionParamsIn/Out and getConnectionParamsIn/Out on connections with the test_numbers1 portmonitor carrier")
     {
         YARP_REQUIRE_PLUGIN("test_numbers1", "portmonitor");
 
@@ -291,7 +333,6 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         receiver.setStrict();
         REQUIRE(sender.open("/send"));
         REQUIRE(receiver.open("/recv"));
-        REQUIRE(NetworkBase::connect("/send", "/recv", "fast_tcp+recv.portmonitor+type.dll+file.test_numbers1"));
 
         auto sendAndReceive = [&](int sent) {
             sender.write(Value(sent));
@@ -300,26 +341,49 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
             return received->asInt64();
         };
 
+        auto getIncrement = [](const return_getConnectionParams& params) {
+            Property property;
+            property.fromString(params.params);
+            return property.find("increment").asInt32();
+        };
+
+        // portmonitor on the receiver side of the connection
+        REQUIRE(NetworkBase::connect("/send", "/recv", "fast_tcp+recv.portmonitor+type.dll+file.test_numbers1"));
         CHECK(sendAndReceive(1) == 2);
 
-        // the parameters are forwarded to the portmonitor carrier of the connection
         PortCoreClient recvClient("/recv");
-        const return_setConnectionParams set = recvClient.setConnectionParamsIn("/send", "(increment 3)");
-        REQUIRE(set.ret);
-        CHECK(set.success);
+        const return_setConnectionParams setIn = recvClient.setConnectionParamsIn("/send", "(increment 3)");
+        REQUIRE(setIn.ret);
+        CHECK(setIn.success);
         CHECK(sendAndReceive(1) == 4);
 
-        const return_getConnectionParams params = recvClient.getConnectionParamsIn("/send");
-        REQUIRE(params.ret);
-        REQUIRE(params.success);
-        Property property;
-        property.fromString(params.params);
-        CHECK(property.find("increment").asInt32() == 3);
+        const return_getConnectionParams paramsIn = recvClient.getConnectionParamsIn("/send");
+        REQUIRE(paramsIn.ret);
+        REQUIRE(paramsIn.success);
+        CHECK(getIncrement(paramsIn) == 3);
+
+        REQUIRE(NetworkBase::disconnect("/send", "/recv"));
+
+        // portmonitor on the sender side of the connection
+        REQUIRE(NetworkBase::connect("/send", "/recv", "fast_tcp+send.portmonitor+type.dll+file.test_numbers1"));
+        CHECK(sendAndReceive(1) == 2);
+
+        PortCoreClient sendClient("/send");
+        const return_setConnectionParams setOut = sendClient.setConnectionParamsOut("/recv", "(increment 7)");
+        REQUIRE(setOut.ret);
+        CHECK(setOut.success);
+        CHECK(sendAndReceive(1) == 8);
+
+        const return_getConnectionParams paramsOut = sendClient.getConnectionParamsOut("/recv");
+        REQUIRE(paramsOut.ret);
+        REQUIRE(paramsOut.success);
+        CHECK(getIncrement(paramsOut) == 7);
 
         receiver.close();
         sender.close();
     }
 
+    // The connections are listed, and described, from both their ends.
     SECTION("listConnectionsIn/Out and getConnectionInfoIn/Out")
     {
         Port sender;
@@ -370,6 +434,29 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         sender.close();
     }
 
+    // The details of the connection reflect the properties of its carrier.
+    SECTION("getConnectionInfoIn/Out on a connectionless carrier")
+    {
+        Port sender;
+        BufferedPort<Bottle> receiver;
+        REQUIRE(sender.open("/send"));
+        REQUIRE(receiver.open("/recv"));
+        REQUIRE(NetworkBase::connect("/send", "/recv", "udp"));
+
+        const return_getConnectionInfo info = PortCoreClient("/send").getConnectionInfoOut("/recv");
+        REQUIRE(info.ret);
+        REQUIRE(info.found);
+        CHECK(info.carrier == "udp");
+        CHECK(info.connectionless);
+        CHECK(info.push);
+
+        receiver.close();
+        sender.close();
+    }
+
+    // The qos (thread scheduling and packets type of service) of a connection
+    // can be read and set from both its ends; a connection which does not exist,
+    // or which goes in the other direction, is reported as a failure.
     SECTION("getConnectionQosIn/Out and setConnectionQosIn/Out")
     {
         Port sender;
@@ -413,6 +500,8 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         sender.close();
     }
 
+    // When two ports are connected in both directions, In and Out address two
+    // different connections (handled by two different threads).
     SECTION("getConnectionQosIn/Out distinguish the two directions of a bidirectional connection")
     {
         BufferedPort<Bottle> a;
@@ -442,6 +531,74 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         a.close();
     }
 
+    // The administrative protocol accepts only the numeric type of service: the
+    // symbolic priorities (the levels NORM, LOW, HIGH, CRIT, the DSCP classes such
+    // as AF12 or EF) are converted on the client side by yarp::os::QosStyle, as
+    // done by yarp::os::Network::setConnectionQos, yarpmanager and the
+    // "yarp priority-qos" command.
+    SECTION("setConnectionQosIn/Out with the symbolic packet priorities (NORM, LOW, HIGH, CRIT, DSCP classes)")
+    {
+        Port sender;
+        BufferedPort<Bottle> receiver;
+        REQUIRE(sender.open("/send"));
+        REQUIRE(receiver.open("/recv"));
+        REQUIRE(NetworkBase::connect("/send", "/recv"));
+
+        PortCoreClient sendClient("/send");
+
+        // QosStyle::setPacketPriority() accepts "LEVEL:<level>", "DSCP:<class>"
+        // and "TOS:<value>"; the TOS value is DSCP * 4
+        struct
+        {
+            const char* priority;
+            int tos;
+        } priorities[] = {
+            {"LEVEL:NORM", 0},    // NORMAL priority (DSCP 0)
+            {"LEVEL:LOW", 40},    // LOW priority (DSCP 10, i.e. AF11)
+            {"LEVEL:HIGH", 144},  // HIGH priority (DSCP 36, i.e. AF42)
+            {"LEVEL:CRIT", 176},  // CRITICAL priority (DSCP 44, i.e. VA)
+            {"DSCP:AF12", 48},    // assured forwarding class 1, drop precedence 2
+            {"DSCP:EF", 184},     // expedited forwarding
+            {"DSCP:CS1", 32},     // class selector 1
+            {"TOS:72", 72},       // numeric value
+        };
+
+        for (const auto& p : priorities) {
+            CAPTURE(p.priority);
+            // conversion of the symbolic priority to the numeric type of service
+            QosStyle style;
+            REQUIRE(style.setPacketPriority(p.priority));
+            REQUIRE(style.getPacketPriorityAsTOS() == p.tos);
+
+            // the numeric value is sent with the administrative command,
+            // leaving the scheduling of the thread unchanged (-1)
+            const return_setConnectionQos result = sendClient.setConnectionQosOut("/recv", -1, -1, style.getPacketPriorityAsTOS());
+            REQUIRE(result.ret);
+            CHECK(result.success);
+#if defined(__linux__)
+            // the type of service can be read back reliably only on linux
+            CHECK(sendClient.getConnectionQosOut("/recv").qos_tos == p.tos);
+#endif
+        }
+
+        // the same through the higher level API, which configures both the
+        // ends of the connection: HIGH on the sender side, NORMAL on the
+        // receiver side
+        QosStyle senderStyle;
+        QosStyle receiverStyle;
+        senderStyle.setPacketPriorityByLevel(QosStyle::PacketPriorityHigh);
+        receiverStyle.setPacketPriorityByLevel(QosStyle::PacketPriorityNormal);
+        CHECK(NetworkBase::setConnectionQos("/send", "/recv", senderStyle, receiverStyle, false));
+#if defined(__linux__)
+        CHECK(sendClient.getConnectionQosOut("/recv").qos_tos == 144);
+        CHECK(PortCoreClient("/recv").getConnectionQosIn("/send").qos_tos == 0);
+#endif
+
+        receiver.close();
+        sender.close();
+    }
+
+    // The scheduling of all the threads of the process which owns the port.
     SECTION("setProcessScheduling")
     {
         BufferedPort<Bottle> p1;
@@ -453,6 +610,9 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         p1.close();
     }
 
+    // Connections are added (with the default or with a given carrier) and
+    // removed; adding a connection to a port which does not exist, or removing a
+    // connection which does not exist, is reported as a failure.
     SECTION("addConnection/delConnection")
     {
         Port sender;
@@ -501,6 +661,8 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         sender.close();
     }
 
+    // addConnection reports the failure when the port does not accept the new
+    // output (a read only port, or an rpc client which is already connected).
     SECTION("addConnection fails when the port does not allow the connection")
     {
         BufferedPort<Bottle> recv1;
@@ -540,6 +702,8 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         recv1.close();
     }
 
+    // delConnection removes all the connections with the given port, whatever
+    // their direction.
     SECTION("delConnection removes both the input and the output connections")
     {
         BufferedPort<Bottle> a;
@@ -563,6 +727,8 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         a.close();
     }
 
+    // The client can also send the commands through an existing port in admin
+    // mode, instead of opening a new connection for each command.
     SECTION("commands sent through a port already connected in admin mode")
     {
         BufferedPort<Bottle> p1;
@@ -582,6 +748,8 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         p1.close();
     }
 
+    // If the port cannot be reached, every method reports it (ret is false, or the
+    // bool reply is false), instead of a meaningless reply.
     SECTION("all the methods fail on a non existing port")
     {
         PortCoreClient client("/nonexistent_port", 0.5);

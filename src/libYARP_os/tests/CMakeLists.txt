@@ -25,6 +25,7 @@ target_sources(harness_os PRIVATE
   PortReaderBufferTest.cpp
   PortTest.cpp
   PropertyTest.cpp
+  QosStyleTest.cpp
   ResourceFinderTest.cpp
   RFModuleTest.cpp
   RouteTest.cpp

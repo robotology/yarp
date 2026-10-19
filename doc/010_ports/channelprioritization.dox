@@ -63,10 +63,10 @@ where \c portname is the name of the port at the other end of the connection,
 \c scheduler_priority and \c scheduler_policy are the numeric (OS specific)
 scheduling parameters of the thread which serves the connection, and \c qos_tos
 is the numeric TOS value assigned to the IP packets of the connection.
-Symbolic names (e.g. SCHED_FIFO or HIGH) are not accepted: use their numeric
-values instead.
-A value of -1 for both scheduling parameters restores the default scheduling of
-the thread, while a negative \c qos_tos leaves the packet priority unchanged.
+Symbolic names (e.g. SCHED_FIFO, HIGH or AF12) are not accepted: use their
+numeric values instead (see the table below).
+A \c scheduler_priority of -1 leaves the scheduling of the thread unchanged,
+while a negative \c qos_tos leaves the packet priority unchanged.
 
 Firstly you can select the scheduling policy and priority for the thread that
 manages the communication.
@@ -94,12 +94,37 @@ by setting the TOS value of one of the predefined priority classes:
 \endverbatim
 
 This simply sets the outbound packets priority to HIGH (TOS 144) for the
-connection from /sender to /receiver, using the default thread scheduling.
+connection from /sender to /receiver, leaving the thread scheduling unchanged.
 The priority band affects the TOS/DSCP in the IP packets and the queuing policy
 used by the OS.
-The TOS values of the predefined classes are LOW = 40, NORMAL = 0, HIGH = 144
-and CRITICAL = 176 (i.e. the DSCP values 10, 0, 36 and 44 shifted left by two
-bits).
+The TOS value is the DSCP value shifted left by two bits (TOS = DSCP * 4).
+The TOS values of the predefined priority levels and of the standard DSCP
+classes are:
+
+| level / DSCP class | DSCP | TOS |
+|--------------------|------|-----|
+| NORMAL, CS0        | 0    | 0   |
+| LOW, AF11          | 10   | 40  |
+| AF12               | 12   | 48  |
+| AF13               | 14   | 56  |
+| AF21               | 18   | 72  |
+| AF22               | 20   | 80  |
+| AF23               | 22   | 88  |
+| AF31               | 26   | 104 |
+| AF32               | 28   | 112 |
+| AF33               | 30   | 120 |
+| AF41               | 34   | 136 |
+| HIGH, AF42         | 36   | 144 |
+| AF43               | 38   | 152 |
+| CRITICAL, VA       | 44   | 176 |
+| EF                 | 46   | 184 |
+| CS1 ... CS7        | 8 ... 56 (multiples of 8) | 32 ... 224 (multiples of 32) |
+
+The symbolic names are accepted by the higher level interfaces, which convert
+them to the TOS value before sending the command: yarp::os::QosStyle (e.g.
+<tt>QosStyle::setPacketPriority("DSCP:AF12")</tt>, or "LEVEL:HIGH", "TOS:48"),
+yarp::os::Network::setConnectionQos, the \c qos attribute of the yarpmanager
+applications and the \c yarp \c priority-qos companion command.
 Both settings can also be applied at once, e.g.
 <tt>setConnectionQosOut /receiver 30 1 144</tt>.
 The same connection, seen from /receiver, is configured with

@@ -270,9 +270,11 @@ thread which handles the connection, and \c qos_tos is -1 if it is not
 available.
 
 \c setConnectionQosIn and \c setConnectionQosOut set the qos of the connection
-coming from (or going to) the specified port. A value of -1 for both
-scheduling parameters restores the default scheduling of the thread, while a
-negative \c qos_tos leaves the type of service unchanged. The reply is
+coming from (or going to) the specified port. A \c scheduler_priority of
+-1 leaves the scheduling of the thread unchanged, while a negative \c qos_tos
+leaves the type of service unchanged. The values are numeric: see
+\ref channelprioritization for the TOS values of the priority levels and of
+the DSCP classes. The reply is
 <tt>ok success message</tt>, where \c success is \c fail if there is no such
 connection or if the qos could not be set, and \c message describes the error.
 

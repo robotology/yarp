@@ -62,10 +62,11 @@ bool yarp::os::QosStyle::setPacketPriority(const std::string& priority)
             return true;
         }
     } else if (key == "TOS") {
-        char* p;
-        int tos = strtol(value.c_str(), &p, 10);
-        if (p == nullptr && tos >= 0) {
-            setPacketPrioritybyTOS(tos);
+        // the whole value must be an integer in the range of the TOS byte
+        char* end = nullptr;
+        long tos = strtol(value.c_str(), &end, 10);
+        if (end != value.c_str() && *end == '\0' && tos >= 0 && tos <= 255) {
+            setPacketPrioritybyTOS(static_cast<int>(tos));
             return true;
         }
     }

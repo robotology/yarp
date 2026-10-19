@@ -201,7 +201,7 @@ public:
     /**
      * Set the quality of service of the input connection coming from another port to this port.
      * @param portname the source port of the connection
-     * @param scheduler_priority the scheduling priority of the thread which handles the connection (OS specific; -1, together with scheduler_policy -1, for the default)
+     * @param scheduler_priority the scheduling priority of the thread which handles the connection (OS specific; -1 leaves the scheduling of the thread unchanged)
      * @param scheduler_policy the scheduling policy of the thread which handles the connection (OS specific, e.g. on Linux 0 = SCHED_OTHER, 1 = SCHED_FIFO, 2 = SCHED_RR)
      * @param qos_tos the type of service of the packets of the connection, e.g. LOW = 40, NORMAL = 0, HIGH = 144, CRITICAL = 176 (a negative value leaves it unchanged)
      * @return success: false if there is no such connection or if the qos could not be set; message: a description of the error (if any)
@@ -211,7 +211,7 @@ public:
     /**
      * Set the quality of service of the output connection going from this port to another port.
      * @param portname the destination port of the connection
-     * @param scheduler_priority the scheduling priority of the thread which handles the connection (OS specific; -1, together with scheduler_policy -1, for the default)
+     * @param scheduler_priority the scheduling priority of the thread which handles the connection (OS specific; -1 leaves the scheduling of the thread unchanged)
      * @param scheduler_policy the scheduling policy of the thread which handles the connection (OS specific, e.g. on Linux 0 = SCHED_OTHER, 1 = SCHED_FIFO, 2 = SCHED_RR)
      * @param qos_tos the type of service of the packets of the connection, e.g. LOW = 40, NORMAL = 0, HIGH = 144, CRITICAL = 176 (a negative value leaves it unchanged)
      * @return success: false if there is no such connection or if the qos could not be set; message: a description of the error (if any)
