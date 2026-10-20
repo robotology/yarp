@@ -1779,7 +1779,9 @@ void t_yarp_generator::generate_deserialize_map_element(std::ostringstream& f_cp
     f_cpp_ << indent_cpp() << "reader.readListBegin(_lst, _msize);\n";
 
     t_field fkey(tmap->get_key_type(), "_key");
-    t_field fval(tmap->get_val_type(), "_val");
+    // Nested map values may refer to an outer map value in their initializer.
+    // Give each depth its own name so the new reference cannot shadow it.
+    t_field fval(tmap->get_val_type(), "_val" + std::to_string(nest_level_));
 
     f_cpp_ << indent_cpp() << declare_field(&fkey) << ";\n";
 

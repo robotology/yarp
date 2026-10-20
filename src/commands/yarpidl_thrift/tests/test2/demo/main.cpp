@@ -14,6 +14,7 @@
 #include <TestSomeMoreTypes.h>
 #include <TestSomeLists.h>
 #include <TestSomeMaps.h>
+#include <MapOfLists.h>
 #if defined(THRIFT_INCLUDE_PREFIX) && defined(THRIFT_NO_NAMESPACE_PREFIX)
 # include <sub/directory/ClockServer.h>
 #elif defined(THRIFT_INCLUDE_PREFIX)
@@ -1204,4 +1205,38 @@ int main(int argc, char* argv[])
 {
     Network yarp;
     return Catch::Session().run(argc, argv);
+}
+
+TEST_CASE("Nested map values", "[idl::thrift]")
+{
+    MapOfLists original;
+    original.nestedVectors["outer"]["first"] = {1.25, 2.5};
+    original.nestedVectors["outer"]["second"] = {-3.75};
+    original.nestedVectors["empty"] = {};
+    original.mapOfVectors["outer"] = {
+        {{"first", {4.5, 5.75}}, {"second", {-6.25}}},
+        {{"third", {7.5}}}
+    };
+    original.mapOfVectors["empty"] = {};
+
+    SECTION("Binary")
+    {
+        DummyConnector connector;
+        REQUIRE(original.write(connector.getWriter()));
+        MapOfLists restored;
+        REQUIRE(restored.read(connector.getReader()));
+        CHECK(restored.nestedVectors == original.nestedVectors);
+        CHECK(restored.mapOfVectors == original.mapOfVectors);
+    }
+
+    SECTION("Text")
+    {
+        DummyConnector connector;
+        connector.setTextMode(true);
+        REQUIRE(original.write(connector.getWriter()));
+        MapOfLists restored;
+        REQUIRE(restored.read(connector.getReader()));
+        CHECK(restored.nestedVectors == original.nestedVectors);
+        CHECK(restored.mapOfVectors == original.mapOfVectors);
+    }
 }

@@ -27,6 +27,7 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 
 * Updated thrift generator to use `yarp.api.include` also in `enums` when required.
 * Updated thrift generator to add an error message if the conversion of an enum toString() or fromString() fails.
+* Fixed code generation for nested map values: each container depth now uses its own map value name, so structures containing maps of maps or maps of lists of maps compile correctly.
 
 ### devices
 
