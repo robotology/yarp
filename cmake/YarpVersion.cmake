@@ -6,7 +6,7 @@
 
 include(GitInfo)
 
-set(YARP_SOVERSION "3")
+set(YARP_SOVERSION "${YARP_VERSION_MAJOR}")
 
 set(YARP_VERSION_SHORT ${YARP_VERSION})
 

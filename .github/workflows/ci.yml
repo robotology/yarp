@@ -1311,7 +1311,7 @@ jobs:
           }
         - {
             id: '403',
-            os: macos-14,
+            os: macos-26,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -1320,7 +1320,7 @@ jobs:
           }
         - {
             id: '404',
-            os: macos-14,
+            os: macos-26,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -1337,7 +1337,7 @@ jobs:
         ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Handle cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           .ccache
@@ -2065,7 +2065,7 @@ jobs:
         )
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: installation-${{ matrix.config.id }}
         path: install.tar
@@ -2300,7 +2300,7 @@ jobs:
     # pr-analysis.yml, which has access to the secret but never executes
     # PR code.
     - name: Upload analysis artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: codacy-clang-tidy-data
         retention-days: 1
@@ -2490,7 +2490,7 @@ jobs:
     # happens in pr-analysis.yml, which has access to the secret but never
     # executes PR code.
     - name: Upload analysis artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: codacy-coverage-data
         retention-days: 1
@@ -2734,7 +2734,7 @@ jobs:
         gcovr --version
 
     - name: Handle cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ${{ steps.init_ccache.outputs.ccache_path }}
@@ -2889,7 +2889,7 @@ jobs:
     # 'sonar-scanner' run happens in pr-analysis.yml, which has access to
     # the secrets but never executes PR code.
     - name: Upload analysis artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: sonar-data
         retention-days: 1
