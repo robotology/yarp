@@ -18,10 +18,9 @@ To send an administrative message to a port is simple.
 From the commandline, just use "yarp admin write" or
 "yarp admin rpc" instead of "yarp write" or "yarp rpc":
 \verbatim
-  echo "[list] [in]" | yarp admin rpc /port_name
+  echo "listConnectionsIn" | yarp admin rpc /port_name
 \endverbatim
-This will list all the inputs to the port /port_name.  The square
-brackets may be omitted in the current implementation of YARP.
+This will list all the inputs to the port /port_name.
 
 From code, set the "admin" flag in yarp::os::Network::write, or call
 yarp::os::Port::setAdminMode.  Messages can be read/written as regular
@@ -35,51 +34,259 @@ interface:
 - \ref port_admin_del
 - \ref port_admin_list
 - \ref port_admin_ver
+- \ref port_admin_portmonitor
+- \ref port_admin_portmonitor_params
+- \ref port_admin_connection_params
+- \ref port_admin_info
+- \ref port_admin_qos
 
 \section port_admin_help help
 
 \verbatim
-[help]
+help
+help $command
 \endverbatim
 
-Lists all the available administration commands.
+\c help lists all the available administration commands, while
+<tt>help $command</tt> gives the prototype and the description of the given
+command (its parameters and its reply). For instance:
+\verbatim
+echo "help addConnection" | yarp admin rpc /port_name
+\endverbatim
+
+All the administration commands are defined in the thrift service
+\c PortCoreMsgs (\c src/libYARP_os/src/idl/PortCoreMsgs.thrift), and the
+descriptions given by \c help are the documentation comments of that file.
 
 
-\section port_admin_add add
+\section port_admin_add addConnection
 
 \verbatim
-[add] /port/name
-[add] /port/name carrier
+addConnection /port/name
+addConnection /port/name carrier
 \endverbatim
 
-Add an output to the specified port, using a given carrier (tcp, udp, etc.)
+Add an output to the specified port, using a given carrier (tcp, udp, etc.).
+The carrier is optional.
 
 
-\section port_admin_del del
+\section port_admin_del delConnection
 
 \verbatim
-[del] /port/name
+delConnection /port/name
 \endverbatim
 
-Remove an output to the specified port.
+Remove any input or output connection involving the specified port.
+
+The reply of both commands is <tt>ok success message</tt>, where
+\c success is \c fail if the connection could not be added/removed, and
+\c message is a human readable description of the result.
+From code, use the corresponding methods of yarp::os::impl::PortCoreClient,
+which return the structs yarp::os::return_addConnection and
+yarp::os::return_delConnection. The field \c ret
+of the returned struct is \c false if the remote port could not be reached.
 
 
-\section port_admin_list list
+\section port_admin_list listConnectionsIn / listConnectionsOut / getConnectionInfoIn / getConnectionInfoOut
 
 \verbatim
-[list] [in]
-[list] [out]
+listConnectionsIn
+listConnectionsOut
+getConnectionInfoIn  /portname
+getConnectionInfoOut /portname
 \endverbatim
 
-List input or output connections.
+\c listConnectionsIn and \c listConnectionsOut list the names of the ports
+connected to the input or to the output of the port. The reply is
+<tt>ok (names...)</tt>.
+
+\c getConnectionInfoIn and \c getConnectionInfoOut give details about the
+connection coming from (or going to) the specified port. The reply is
+<tt>ret found from_port to_port carrier connectionless push</tt>, where
+\c found is \c fail if there is no such connection.
+
+From code, use the corresponding methods of yarp::os::impl::PortCoreClient,
+which return the structs yarp::os::return_listConnections and
+yarp::os::return_getConnectionInfo. The field \c ret of the returned struct
+is \c false if the remote port could not be reached.
 
 
-\section port_admin_ver ver
+\section port_admin_ver getAdminProtocolVersion
 
 \verbatim
-[ver]
+getAdminProtocolVersion
 \endverbatim
 
-Report the version of the port protocol in operation.
+Report the version of the administrative protocol of the port. It is
+distinct from the YARP library version. The reply is
+<tt>ok major minor patch</tt>.
+
+From code, use the corresponding method of yarp::os::impl::PortCoreClient,
+which returns the struct yarp::os::return_getAdminProtocolVersion. The field
+\c ret of the returned struct is \c false if the remote port could not be
+reached.
+
+
+\section port_admin_portmonitor attachPortmonitorIn / attachPortmonitorOut / detachPortmonitorIn / detachPortmonitorOut
+
+\verbatim
+attachPortmonitorIn  "(type dll) (file test_numbers1)"
+attachPortmonitorOut "(type dll) (file test_numbers1)"
+detachPortmonitorIn
+detachPortmonitorOut
+\endverbatim
+
+Attach a portmonitor plug-in to the input or to the output of the port, or
+detach it. The argument of the attach commands is a single string containing
+the portmonitor configuration, e.g. its \c type (\c dll, \c lua, ...) and its
+\c file. Attaching a new portmonitor replaces the one previously attached (if
+any). The reply is \c ok on success, \c fail otherwise.
+
+These commands are defined in the thrift service \c PortCoreMsgs
+(\c src/libYARP_os/src/idl/PortCoreMsgs.thrift). From code, they can be sent
+using the corresponding methods of yarp::os::impl::PortCoreClient:
+\code
+yarp::os::impl::PortCoreClient client("/port_name");
+client.attachPortmonitorIn("(type dll) (file test_numbers1)");
+client.detachPortmonitorIn();
+\endcode
+
+
+\section port_admin_portmonitor_params setPortmonitorParamsIn / setPortmonitorParamsOut / getPortmonitorParamsIn / getPortmonitorParamsOut
+
+\verbatim
+setPortmonitorParamsIn  "(key1 value1) (key2 value2)"
+setPortmonitorParamsOut "(key1 value1) (key2 value2)"
+getPortmonitorParamsIn
+getPortmonitorParamsOut
+\endverbatim
+
+Set or get the parameters of the portmonitor plug-in attached to the input or
+to the output of the port (see \ref port_admin_portmonitor). The parameters are
+a single string in yarp::os::Property format; their meaning depends on the
+portmonitor (they are passed to its \c setparam / \c getparam methods).
+
+The reply of the set commands is <tt>ok success message</tt>; the reply of the
+get commands is <tt>ok success params message</tt>, where \c params is a string
+in yarp::os::Property format. \c success is \c fail if no portmonitor is
+attached to the port, and in this case \c message describes the error.
+
+For example, the \c test_numbers1 portmonitor (which adds a value to each
+number it receives) accepts the parameter \c increment:
+\verbatim
+echo "setPortmonitorParamsIn \"(increment 5)\"" | yarp admin rpc /port_name
+echo "getPortmonitorParamsIn" | yarp admin rpc /port_name
+\endverbatim
+
+
+\section port_admin_connection_params setConnectionParamsIn / setConnectionParamsOut / getConnectionParamsIn / getConnectionParamsOut
+
+\verbatim
+setConnectionParamsIn  /portname "(key1 value1) (key2 value2)"
+setConnectionParamsOut /portname "(key1 value1) (key2 value2)"
+getConnectionParamsIn  /portname
+getConnectionParamsOut /portname
+\endverbatim
+
+Set or get the carrier parameters of the connection coming from (\c In) or
+going to (\c Out) the specified port. The parameters are a single string in
+yarp::os::Property format, and they are passed to the carrier of the
+connection (see yarp::os::Carrier::setCarrierParams and
+yarp::os::Carrier::getCarrierParams); their meaning depends on the carrier.
+For instance, on a connection using the portmonitor carrier
+(e.g. <tt>fast_tcp+recv.portmonitor+type.dll+file.test_numbers1</tt>) they
+are forwarded to the portmonitor of the connection.
+
+The replies have the same format of the portmonitor parameters commands:
+<tt>ok success message</tt> for the set commands, and
+<tt>ok success params message</tt> for the get commands. \c success is \c fail
+if there is no such connection.
+
+From code, use the corresponding methods of yarp::os::impl::PortCoreClient,
+which return the structs yarp::os::return_setPortmonitorParams,
+yarp::os::return_getPortmonitorParams, yarp::os::return_setConnectionParams
+and yarp::os::return_getConnectionParams. The field \c ret of the returned
+struct is \c false if the remote port could not be reached.
+\code
+yarp::os::impl::PortCoreClient client("/port_name");
+client.setPortmonitorParamsIn("(increment 5)");
+yarp::os::return_getConnectionParams result = client.getConnectionParamsIn("/other_port");
+if (result.ret && result.success) {
+    yarp::os::Property params;
+    params.fromString(result.params);
+}
+\endcode
+
+
+\section port_admin_info getPortInfo
+
+\verbatim
+getPortInfo
+\endverbatim
+
+Give information about the port itself, and about the process which owns it.
+The reply contains, in this order, the fields of:
+- yarp::os::ProcessInfoData: name, arguments, scheduling policy and priority,
+  and pid of the process;
+- yarp::os::PlatformInfoData: name, distribution, release, codename, kernel
+  and environment variables of the operating system;
+- yarp::os::ThreadInfoData: tid, priority and policy of the main thread of the
+  port;
+- yarp::os::PortInfoData: whether the port is an input, an output, an rpc
+  port, its type and its hostname.
+
+From code, use the corresponding method of yarp::os::impl::PortCoreClient,
+which returns the struct yarp::os::return_getPortInfo. The field \c ret of the
+returned struct is \c false if the remote port could not be reached.
+\code
+yarp::os::impl::PortCoreClient client("/port_name");
+yarp::os::return_getPortInfo info = client.getPortInfo();
+if (info.ret) {
+    yInfo() << info.process.name << info.process.pid << info.port.hostname;
+}
+\endcode
+
+
+\section port_admin_qos getConnectionQosIn / getConnectionQosOut / setConnectionQosIn / setConnectionQosOut / setProcessScheduling
+
+\verbatim
+getConnectionQosIn   /portname
+getConnectionQosOut  /portname
+setConnectionQosIn   /portname scheduler_priority scheduler_policy qos_tos
+setConnectionQosOut  /portname scheduler_priority scheduler_policy qos_tos
+setProcessScheduling priority policy
+\endverbatim
+
+The quality of service of a connection consists of the scheduling parameters
+(priority and policy) of the thread which handles the connection, and of the
+type of service (TOS) of the IP packets of the connection.
+See \ref channelprioritization for the meaning of the values.
+
+\c getConnectionQosIn and \c getConnectionQosOut give the qos of the
+connection coming from (or going to) the specified port. The reply is
+<tt>ok found tid scheduler_priority scheduler_policy qos_tos</tt>, where
+\c found is \c fail if there is no such connection, \c tid is the id of the
+thread which handles the connection, and \c qos_tos is -1 if it is not
+available.
+
+\c setConnectionQosIn and \c setConnectionQosOut set the qos of the connection
+coming from (or going to) the specified port. A \c scheduler_priority of
+-1 leaves the scheduling of the thread unchanged, while a negative \c qos_tos
+leaves the type of service unchanged. The values are numeric: see
+\ref channelprioritization for the TOS values of the priority levels and of
+the DSCP classes. The reply is
+<tt>ok success message</tt>, where \c success is \c fail if there is no such
+connection or if the qos could not be set, and \c message describes the error.
+
+\c setProcessScheduling sets the scheduling parameters of all the threads of
+the process which owns the port. The reply is \c ok on success, \c fail
+otherwise.
+
+From code, use the corresponding methods of yarp::os::impl::PortCoreClient,
+which return the structs yarp::os::return_getConnectionQos and
+yarp::os::return_setConnectionQos, or the higher level functions
+yarp::os::Network::getConnectionQos and yarp::os::Network::setConnectionQos,
+which configure both sides of a connection. The field \c ret of the returned
+struct is \c false if the remote port could not be reached.
 
 */

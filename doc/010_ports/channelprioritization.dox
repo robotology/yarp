@@ -50,28 +50,30 @@ Suppose you want to modify the priority of the connection between /sender and
 /receiver.
 
 Both the thread scheduling parameters and the packet priority of a connection
-are configured with the \c qos \c set_all administrative command, which takes a
-single list with four values:
+are configured with the \c setConnectionQosOut and \c setConnectionQosIn
+administrative commands (see \ref port_admin_qos), which set respectively the
+output connection going to a port and the input connection coming from a port:
 
 \verbatim
- qos set_all (<portname> <scheduler_priority> <scheduler_policy> <qos_tos>)
+ setConnectionQosOut <portname> <scheduler_priority> <scheduler_policy> <qos_tos>
+ setConnectionQosIn  <portname> <scheduler_priority> <scheduler_policy> <qos_tos>
 \endverbatim
 
 where \c portname is the name of the port at the other end of the connection,
 \c scheduler_priority and \c scheduler_policy are the numeric (OS specific)
 scheduling parameters of the thread which serves the connection, and \c qos_tos
 is the numeric TOS value assigned to the IP packets of the connection.
-Symbolic names (e.g. SCHED_FIFO or HIGH) are not accepted: use their numeric
-values instead.
-A value of -1 for both scheduling parameters restores the default scheduling of
-the thread, while a \c qos_tos of -1 leaves the packet priority unchanged.
+Symbolic names (e.g. SCHED_FIFO, HIGH or AF12) are not accepted: use their
+numeric values instead (see the table below).
+A \c scheduler_priority of -1 leaves the scheduling of the thread unchanged,
+while a negative \c qos_tos leaves the packet priority unchanged.
 
 Firstly you can select the scheduling policy and priority for the thread that
 manages the communication.
 
 \verbatim
  $ yarp admin rpc /sender
-   >> qos set_all (/receiver 30 1 -1)
+   >> setConnectionQosOut /receiver 30 1 -1
 \endverbatim
 
 The first line "yarp admin rpc" opens an administrative session with the port
@@ -88,41 +90,66 @@ by setting the TOS value of one of the predefined priority classes:
 
 \verbatim
  $ yarp admin rpc /sender
-  >> qos set_all (/receiver -1 -1 144)
+  >> setConnectionQosOut /receiver -1 -1 144
 \endverbatim
 
 This simply sets the outbound packets priority to HIGH (TOS 144) for the
-connection from /sender to /receiver, using the default thread scheduling.
+connection from /sender to /receiver, leaving the thread scheduling unchanged.
 The priority band affects the TOS/DSCP in the IP packets and the queuing policy
 used by the OS.
-The TOS values of the predefined classes are LOW = 40, NORMAL = 0, HIGH = 144
-and CRITICAL = 176 (i.e. the DSCP values 10, 0, 36 and 44 shifted left by two
-bits).
+The TOS value is the DSCP value shifted left by two bits (TOS = DSCP * 4).
+The TOS values of the predefined priority levels and of the standard DSCP
+classes are:
+
+| level / DSCP class | DSCP | TOS |
+|--------------------|------|-----|
+| NORMAL, CS0        | 0    | 0   |
+| LOW, AF11          | 10   | 40  |
+| AF12               | 12   | 48  |
+| AF13               | 14   | 56  |
+| AF21               | 18   | 72  |
+| AF22               | 20   | 80  |
+| AF23               | 22   | 88  |
+| AF31               | 26   | 104 |
+| AF32               | 28   | 112 |
+| AF33               | 30   | 120 |
+| AF41               | 34   | 136 |
+| HIGH, AF42         | 36   | 144 |
+| AF43               | 38   | 152 |
+| CRITICAL, VA       | 44   | 176 |
+| EF                 | 46   | 184 |
+| CS1 ... CS7        | 8 ... 56 (multiples of 8) | 32 ... 224 (multiples of 32) |
+
+The symbolic names are accepted by the higher level interfaces, which convert
+them to the TOS value before sending the command: yarp::os::QosStyle (e.g.
+<tt>QosStyle::setPacketPriority("DSCP:AF12")</tt>, or "LEVEL:HIGH", "TOS:48"),
+yarp::os::Network::setConnectionQos, the \c qos attribute of the yarpmanager
+applications and the \c yarp \c priority-qos companion command.
 Both settings can also be applied at once, e.g.
-<tt>qos set_all (/receiver 30 1 144)</tt>.
+<tt>setConnectionQosOut /receiver 30 1 144</tt>.
+The same connection, seen from /receiver, is configured with
+<tt>setConnectionQosIn /sender ...</tt> sent to /receiver.
 
 The current settings of a connection can be read back with:
 
 \verbatim
  $ yarp admin rpc /sender
-  >> qos get /receiver
+  >> getConnectionQosOut /receiver
 \endverbatim
 
-which replies with \c ok followed by the list
-<tt>(/receiver scheduler_priority scheduler_policy qos_tos)</tt>, or with
-\c fail and an error message if no connection to /receiver exists.
+which replies with <tt>ok found tid scheduler_priority scheduler_policy qos_tos</tt>,
+where \c found is \c fail if no connection to /receiver exists.
 
 It is also possible to set the scheduling policy and priority of all the
-threads of the process which owns a port, by addressing the port itself:
+threads of the process which owns a port:
 
 \verbatim
  $ yarp admin rpc /sender
-  >> qos set_process /sender 30 1
+  >> setProcessScheduling 30 1
 \endverbatim
 
 where the two values are respectively the scheduling priority and policy
-(30 and SCHED_FIFO on Linux, in this example). The command fails if the given
-name is not the name of the port which receives it.
+(30 and SCHED_FIFO on Linux, in this example).
 
 The \c yarp \c priority-sched and \c yarp \c priority-qos companion commands
 provide a higher level interface to the same functionality.

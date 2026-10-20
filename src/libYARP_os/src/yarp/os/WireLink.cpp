@@ -129,9 +129,11 @@ bool WireLink::write(const yarp::os::PortWriter& writer, yarp::os::PortReader& r
     if (mPriv->reader != nullptr) {
         DummyConnector con;
         writer.write(con.getWriter());
-        bool ok = mPriv->reader->read(con.getReader());
-        reader.read(con.getReader());
-        return ok;
+        if (!mPriv->reader->read(con.getReader())) {
+            return false;
+        }
+        // the reply must be decoded correctly, too
+        return reader.read(con.getReader());
     }
     if (!isValid()) {
         return false;

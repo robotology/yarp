@@ -449,11 +449,14 @@ bool PortCoreOutputUnit::isBusy()
     return sending;
 }
 
+// The carrier parameters are handled by the modifier of the outgoing data
+// (e.g. a "send.portmonitor"), as done by PortCoreInputUnit with the modifier
+// of the incoming data.
 void PortCoreOutputUnit::setCarrierParams(const yarp::os::Property& params)
 {
     std::shared_ptr<OutputProtocol> localOp = op;
     if (localOp) {
-        localOp->getConnection().setCarrierParams(params);
+        localOp->getSender().setCarrierParams(params);
     }
 }
 
@@ -461,7 +464,7 @@ void PortCoreOutputUnit::getCarrierParams(yarp::os::Property& params)
 {
     std::shared_ptr<OutputProtocol> localOp = op;
     if (localOp) {
-        localOp->getConnection().getCarrierParams(params);
+        localOp->getSender().getCarrierParams(params);
     }
 }
 

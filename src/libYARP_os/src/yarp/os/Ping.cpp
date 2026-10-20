@@ -8,6 +8,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/impl/LogComponent.h>
+#include <yarp/os/impl/PortCoreClient.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
@@ -139,10 +140,8 @@ void Ping::connect()
     ContactStyle rpc;
     rpc.admin = true;
     rpc.quiet = true;
-    Bottle cmd;
-    Bottle reply;
-    cmd.addVocab32("ver");
-    bool ok = NetworkBase::write(c, cmd, reply, rpc);
+    yarp::os::impl::PortCoreClient client(c, rpc);
+    bool ok = client.getAdminProtocolVersion().ret;
     if (!ok) {
         yCError(PING, "Port did not respond as expected");
     }

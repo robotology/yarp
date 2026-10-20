@@ -11,13 +11,13 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
+#include <yarp/os/impl/PortCoreClient.h>
 #include <yarp/companion/impl/Companion.h>
 #include <algorithm>
 
 using namespace yarp::os;
 using namespace yarp::profiler;
 using namespace yarp::profiler::graph;
-
 
 
 NetworkProfiler::ProgressCallback* NetworkProfiler::progCallback = nullptr;
@@ -249,96 +249,54 @@ bool NetworkProfiler::updateConnectionQosStatus(yarp::profiler::graph::Graph& gr
 
 bool NetworkProfiler::attachPortmonitorPlugin(std::string portName, yarp::os::Property pluginProp) {
 
-    //e.g.,  atch in "(context yarpviz) (file portrate)"
-    yarp::os::Bottle cmd, reply;
-    cmd.addString("atch");
-    cmd.addString("in");
-    cmd.addString(pluginProp.toString());
-    //Property& prop = cmd.addDict();
-    //prop.fromString(pluginProp.toString());
-    //yInfo()<<cmd.toString();
-    Contact srcCon = Contact::fromString(portName);
-    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, reply, true, true, 2.0);
-    if(!ret) {
-        yError()<<"Cannot write to"<<portName;
+    //e.g.,  attachPortmonitorIn "(context yarpviz) (file portrate)"
+    yarp::os::impl::PortCoreClient client(portName);
+    if (!client.attachPortmonitorIn(pluginProp.toString())) {
+        yError() << "Cannot attach the portmonitor plug-in to" << portName;
         return false;
     }
-    if(reply.get(0).asString() != "ok") {
-             yError()<<reply.toString();
-        return false;
-    }
-
     return true;
-
 }
 
 bool NetworkProfiler::detachPortmonitorPlugin(std::string portName) {
-    //e.g.,  dtch in
-    yarp::os::Bottle cmd, reply;
-    cmd.addString("dtch");
-    cmd.addString("in");
-    Contact srcCon = Contact::fromString(portName);
-    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, reply, true, true, 2.0);
-    if(!ret) {
-        yError()<<"Cannot write to"<<portName;
-        return false;
-    }
-    if(reply.get(0).asString() != "ok") {
-             yError()<<reply.toString();
+    //e.g.,  detachPortmonitorIn
+    yarp::os::impl::PortCoreClient client(portName);
+    if (!client.detachPortmonitorIn()) {
+        yError() << "Cannot detach the portmonitor plug-in from" << portName;
         return false;
     }
     return true;
 }
 
 bool NetworkProfiler::setPortmonitorParams(std::string portName, yarp::os::Property& param) {
-    //e.g.,  set in "/view" (log_raw 1)"
-    yarp::os::Bottle cmd, reply;
-    cmd.addString("set");
-    cmd.addString("in");
-    cmd.addString(portName.c_str());
-    Bottle tmp;
-    tmp.fromString(param.toString());
-    cmd.add(tmp.get(0));
-    Contact srcCon = Contact::fromString(portName);
-    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, reply, true, true, 2.0);
-    if(!ret) {
-        yError()<<"Cannot write to"<<portName;
+    //e.g.,  setPortmonitorParamsIn "(log_raw 1)"
+    yarp::os::impl::PortCoreClient client(portName);
+    const yarp::os::return_setPortmonitorParams result = client.setPortmonitorParamsIn(param.toString());
+    if (!result.ret) {
+        yError() << "Cannot write to" << portName;
         return false;
     }
-    if(reply.size() > 1) {
-        if(reply.get(0).asString() == "fail") { // the server replies with a vocab
-            yError()<<reply.toString();
-            return false;
-        }
-        else if(reply.get(0).isInt32() && reply.get(0).asInt32() == -1) {
-            yError()<<reply.toString();
-            return false;
-        }
+    if (!result.success) {
+        yError() << "Cannot set the portmonitor parameters of" << portName << ":" << result.message;
+        return false;
     }
     return true;
 }
 
 bool NetworkProfiler::getPortmonitorParams(std::string portName, yarp::os::Bottle& param) {
-    //e.g.,  get in /portname"
-    yarp::os::Bottle cmd;
-    cmd.addString("get");
-    cmd.addString("in");
-    cmd.addString(portName.c_str());
-    Contact srcCon = Contact::fromString(portName);
-    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, param, true, true, 2.0);
-    if(!ret) {
-        yError()<<"Cannot write to"<<portName;
+    //e.g.,  getPortmonitorParamsIn
+    yarp::os::impl::PortCoreClient client(portName);
+    const yarp::os::return_getPortmonitorParams result = client.getPortmonitorParamsIn();
+    if (!result.ret) {
+        yError() << "Cannot write to" << portName;
         return false;
     }
-    if(param.size() > 1) {
-        if(param.get(0).asString() == "fail") { // the server replies with a vocab
-            yError()<<param.toString();
-            return false;
-        }
-        else if(param.get(0).isInt32() && param.get(0).asInt32() == -1) {
-            yError()<<param.toString();
-            return false;
-        }
+    if (!result.success) {
+        yError() << "Cannot get the portmonitor parameters of" << portName << ":" << result.message;
+        return false;
     }
+    // the parameters are returned as a single nested list
+    param.clear();
+    param.addList().fromString(result.params);
     return true;
 }

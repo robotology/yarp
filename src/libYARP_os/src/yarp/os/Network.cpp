@@ -20,12 +20,12 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/YarpPlugin.h>
-#include <yarp/os/ConnectionQosData.h>
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/LogForwarder.h>
 #include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/PortCoreClient.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformUnistd.h>
@@ -101,6 +101,18 @@ static bool needsLookup(const Contact& contact)
     return true;
 }
 
+/**
+ * Notify the name server that a port did not respond (i.e. it is probably
+ * dead), by announcing it with activity 0.
+ * The name server can use this information to mark the port as non-live
+ * and to clean up its registration.
+ *
+ * If a local name store is available (query bypass), it is notified directly,
+ * otherwise an "announce <port> 0" message is sent to the name server.
+ *
+ * @param src the port which did not respond
+ * @return the result of the announcement (it is not used by the callers)
+ */
 static int noteDud(const Contact& src)
 {
     NameStore* store = getNameSpace().getQueryBypass();
@@ -120,6 +132,32 @@ static int noteDud(const Contact& src)
 }
 
 
+/**
+ * Connect, disconnect, or check the connection between two ports, by sending
+ * administrative commands to the port @p src, which is the one in charge of
+ * the connection (it is called by metaConnect()).
+ *
+ * The steps are:
+ * - for persistent connections, the request is forwarded to the name server
+ *   and the ports are not contacted at all;
+ * - otherwise @p src is asked (getConnectionInfoOut/getConnectionInfoIn, see
+ *   PortCoreMsgs.thrift) about the current connection with @p dest. If @p src
+ *   does not respond, it is reported to the name server as dead (noteDud());
+ * - in YARP_ENACT_EXISTS mode, the result depends only on the existence of
+ *   the connection and on its carrier (which must match @p style.carrier);
+ * - an existing connectionless connection is explicitly disconnected also
+ *   from the other side, since the other side would not notice it otherwise;
+ * - finally, @p src is asked to add (addConnection) or to remove
+ *   (delConnection) the connection.
+ *
+ * @param src the port which is asked to make/break/check the connection
+ * @param dest the port at the other end of the connection
+ * @param style the options of the connection (carrier, timeout, quiet, ...)
+ * @param mode one of YARP_ENACT_CONNECT, YARP_ENACT_DISCONNECT, YARP_ENACT_EXISTS
+ * @param reversed false if @p src is the sender of the data (push connection),
+ *        true if @p src is the receiver of the data (pull connection)
+ * @return 0 on success, 1 on failure
+ */
 static int enactConnection(const Contact& src,
                            const Contact& dest,
                            const ContactStyle& style,
@@ -160,43 +198,30 @@ static int enactConnection(const Contact& src,
         return 0;
     }
 
-    Bottle cmd;
-    Bottle reply;
-    cmd.addVocab32("list");
-    cmd.addVocab32(reversed ? "in" : "out");
-    cmd.addString(dest.getName().c_str());
-    yCDebug(NETWORK, "asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
-    bool ok = NetworkBase::write(src, cmd, reply, rpc);
-    if (!ok) {
+    PortCoreClient client(src, rpc);
+    const return_getConnectionInfo info = reversed ? client.getConnectionInfoIn(dest.getName())
+                                                   : client.getConnectionInfoOut(dest.getName());
+    if (!info.ret) {
         noteDud(src);
         return 1;
     }
-    if (reply.check("carrier")) {
-        std::string carrier = reply.find("carrier").asString();
+    if (info.found) {
         if (!style.quiet) {
             yCInfo(NETWORK,
                    "Connection found between %s and %s using carrier %s",
                    src.getName().c_str(),
                    dest.getName().c_str(),
-                   carrier.c_str());
+                   info.carrier.c_str());
         }
         if (mode == YARP_ENACT_EXISTS) {
-            return (carrier == style.carrier) ? 0 : 1;
+            return (info.carrier == style.carrier) ? 0 : 1;
         }
 
         // This is either a connect or a disconnect command, but the current
         // connection is connectionless, the other side will not know that we
         // are closing the connection and therefore will continue sending data.
         // Therefore we send an explicit disconnect here.
-        bool currentIsConnectionLess = false;
-        bool currentIsPush = true;
-        if (reply.check("push")) {
-            currentIsPush = reply.find("push").asBool();
-        }
-        if (reply.check("connectionless")) {
-            currentIsConnectionLess = reply.find("connectionless").asBool();
-        }
-        if (currentIsConnectionLess && ((reversed && currentIsPush) || (!reversed && !currentIsPush))) {
+        if (info.connectionless && ((reversed && info.push) || (!reversed && !info.push))) {
             enactConnection(dest, src, style, YARP_ENACT_DISCONNECT, !reversed);
         }
     }
@@ -204,22 +229,12 @@ static int enactConnection(const Contact& src,
         return 1;
     }
 
-    yarp::conf::vocab32_t act = (mode == YARP_ENACT_DISCONNECT) ? yarp::os::createVocab32('d', 'e', 'l') : yarp::os::createVocab32('a', 'd', 'd');
-
     // Let's ask the destination to connect/disconnect to the source.
     // We assume the YARP carrier will reverse the connection if
     // appropriate when connecting.
-    cmd.clear();
-    reply.clear();
-    cmd.addVocab32(act);
     Contact c = dest;
     if (!style.carrier.empty()) {
         c.setCarrier(style.carrier);
-    }
-    if (mode != YARP_ENACT_DISCONNECT) {
-        cmd.addString(c.toString());
-    } else {
-        cmd.addString(c.getName());
     }
 
     Contact c2 = src;
@@ -227,21 +242,24 @@ static int enactConnection(const Contact& src,
         c2 = NetworkBase::queryName(c2.getName());
     }
 
-    yCDebug(NETWORK, "** asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
-    ok = NetworkBase::write(c2, cmd, reply, rpc);
-    if (!ok) {
+    PortCoreClient srcClient(c2, rpc);
+    bool ret = false;
+    bool ok = false;
+    std::string msg;
+    if (mode == YARP_ENACT_DISCONNECT) {
+        const return_delConnection result = srcClient.delConnection(c.getName());
+        ret = result.ret;
+        ok = result.success;
+        msg = result.message;
+    } else {
+        const return_addConnection result = srcClient.addConnection(c.toString());
+        ret = result.ret;
+        ok = result.success;
+        msg = result.message;
+    }
+    if (!ret) {
         noteDud(src);
         return 1;
-    }
-    std::string msg;
-    if (reply.get(0).isInt32()) {
-        ok = (reply.get(0).asInt32() == 0);
-        msg = reply.get(1).asString();
-    } else {
-        // older protocol
-        // FIXME Is this protocol still in use?
-        msg = reply.get(0).asString();
-        ok = msg[0] == 'A' || msg[0] == 'R';
     }
     if (mode == YARP_ENACT_DISCONNECT && !ok) {
         msg = "no such connection";
@@ -274,23 +292,14 @@ static std::string extractCarrierNameOnly(const std::string& carrier_name_with_p
     return carrier_name_with_params.substr(0, carrier_name_with_params.find('+'));
 }
 
-/*
-
-   Connect two ports, bearing in mind that one of them may not be
-   a regular YARP port.
-
-   Normally, YARP sends a request to the source port asking it to
-   connect to the destination port.  But the source port may not
-   be capable of initiating connections, in which case we can
-   request the destination port to connect to the source (this
-   is appropriate for carriers that can reverse the initiative).
-
-   The source or destination could also be topic ports, which are
-   entirely virtual.  In that case, we just need to tell the name
-   server, and it will take care of the details.
-
-*/
-
+/**
+ * Check if the given source and destination ports are log ports.
+ * Note: /log/... ports are used by clients (the application which send the log)
+ * /logger/... ports are used by the log server (the application which receives the log)
+ * @param src the source port
+ * @param dest the destination port
+ * @return true if both ports are log ports, false otherwise
+ */
 static bool is_log_port(const std::string& src,
                         const std::string& dest)
 {
@@ -304,6 +313,14 @@ static bool is_log_port(const std::string& src,
     return false;
 }
 
+/**
+ * Check if the given source and destination ports are stats ports.#
+ * Note: /stats_monitor/... ports are used by clients (the application which send the stats)
+ * /yarpConnectionsStats/... ports are used by the stats server (the application which receives the stats)
+ * @param src the source port
+ * @param dest the destination port
+ * @return true if both ports are stats ports, false otherwise
+ */
 static bool is_stats_port(const std::string& src,
                           const std::string& dest)
 {
@@ -366,6 +383,20 @@ static void addStatsMonitorIfNeeded(const std::string& src,
     }
 }
 
+/*
+   Connect two ports, bearing in mind that one of them may not be
+   a regular YARP port.
+
+   Normally, YARP sends a request to the source port asking it to
+   connect to the destination port.  But the source port may not
+   be capable of initiating connections, in which case we can
+   request the destination port to connect to the source (this
+   is appropriate for carriers that can reverse the initiative).
+
+   The source or destination could also be topic ports, which are
+   entirely virtual.  In that case, we just need to tell the name
+   server, and it will take care of the details.
+*/
 static int metaConnect(const std::string& src,
                        const std::string& dest,
                        ContactStyle style,
@@ -852,22 +883,8 @@ bool NetworkBase::exists(const std::string& port, const ContactStyle& style, boo
         return true;
     }
 
-    ContactStyle style2 = style;
-    style2.admin = true;
-    Bottle cmd("[ver]");
-    Bottle resp;
-    bool ok = NetworkBase::write(Contact(port), cmd, resp, style2);
-    if (!ok) {
-        return false;
-    }
-    if (resp.get(0).toString() != "ver" && resp.get(0).toString() != "dict") {
-        // YARP nameserver responds with a version
-        // ROS nameserver responds with a dictionary of error data
-        // Treat everything else an unknown
-        return false;
-    }
-
-    return true;
+    PortCoreClient client(Contact(port), style);
+    return client.getAdminProtocolVersion().ret;
 }
 
 
@@ -1140,44 +1157,29 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
     return setConnectionQos(src, dest, style, style, quiet);
 }
 
-// Sets the Qos of the connection between `port` and `unit`, as seen from `port`.
-// request: [qos] set_all (/unit scheduler_priority scheduler_policy qos_tos)
-// reply  : [ok] or [fail] "message"
-static bool setPortQos(const std::string& port, const std::string& unit, const QosStyle& style, bool quiet)
+// Sets the Qos of the connection between `port` and `other`, as seen from `port`.
+// isOutput: true if the connection goes from `port` to `other`, false if it
+// goes from `other` to `port`.
+static bool setPortQos(const std::string& port, const std::string& other, bool isOutput, const QosStyle& style, bool quiet)
 {
     // ignore if everything left as default
     if (style.getPacketPriorityAsTOS() == -1 && style.getThreadPolicy() == -1) {
         return true;
     }
 
-    yarp::os::ConnectionQosData qoscmd;
-    qoscmd.portname = unit;
-    qoscmd.scheduler_priority = style.getThreadPriority();
-    qoscmd.scheduler_policy = style.getThreadPolicy();
-    qoscmd.qos_tos = style.getPacketPriorityAsTOS();
-
-    yarp::os::Bottle cmd;
-    yarp::os::Bottle reply;
-    cmd.addVocab32("qos");
-    cmd.addString("set_all");
-    if (!yarp::os::Portable::copyPortable(qoscmd, cmd.addList())) {
-        if (!quiet) {
-            yCError(NETWORK, "Cannot serialize qos properties for '%s'", port.c_str());
-        }
-        return false;
-    }
-
-    Contact portCon = Contact::fromString(port);
-    bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
-    if (!ret) {
+    PortCoreClient client(port);
+    const return_setConnectionQos result = isOutput
+        ? client.setConnectionQosOut(other, style.getThreadPriority(), style.getThreadPolicy(), style.getPacketPriorityAsTOS())
+        : client.setConnectionQosIn(other, style.getThreadPriority(), style.getThreadPolicy(), style.getPacketPriorityAsTOS());
+    if (!result.ret) {
         if (!quiet) {
             yCError(NETWORK, "Cannot write to '%s'", port.c_str());
         }
         return false;
     }
-    if (reply.get(0).asString() != "ok") {
+    if (!result.success) {
         if (!quiet) {
-            yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", port.c_str(), reply.toString().c_str());
+            yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", port.c_str(), result.message.c_str());
         }
         return false;
     }
@@ -1186,10 +1188,10 @@ static bool setPortQos(const std::string& port, const std::string& unit, const Q
 
 bool NetworkBase::setConnectionQos(const std::string& src, const std::string& dest, const QosStyle& srcStyle, const QosStyle& destStyle, bool quiet)
 {
-    if (!setPortQos(src, dest, srcStyle, quiet)) {
+    if (!setPortQos(src, dest, true, srcStyle, quiet)) {
         return false;
     }
-    if (!setPortQos(dest, src, destStyle, quiet)) {
+    if (!setPortQos(dest, src, false, destStyle, quiet)) {
         return false;
     }
     return true;
@@ -1251,48 +1253,41 @@ bool NetworkBase::cleanUnresponsivePorts(double timeout)
     return true;
 }
 
-// Gets the Qos of the connection between `port` and `unit`, as seen from `port`.
-// request: [qos] get /unit
-// reply  : [ok] (/unit scheduler_priority scheduler_policy qos_tos) or [fail] "message"
-static bool getPortQos(const std::string& port, const std::string& unit, QosStyle& style, bool quiet)
+// Gets the Qos of the connection between `port` and `other`, as seen from `port`.
+// isOutput: true if the connection goes from `port` to `other`, false if it
+// goes from `other` to `port`.
+static bool getPortQos(const std::string& port, const std::string& other, bool isOutput, QosStyle& style, bool quiet)
 {
-    yarp::os::Bottle cmd;
-    yarp::os::Bottle reply;
-    cmd.addVocab32("qos");
-    cmd.addString("get");
-    cmd.addString(unit);
-    Contact portCon = Contact::fromString(port);
-    bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
-    if (!ret) {
+    PortCoreClient client(port);
+    const return_getConnectionQos result = isOutput ? client.getConnectionQosOut(other)
+                                                    : client.getConnectionQosIn(other);
+    if (!result.ret) {
         if (!quiet) {
             yCError(NETWORK, "Cannot write to '%s'", port.c_str());
         }
         return false;
     }
-
-    yarp::os::ConnectionQosData qosreply;
-    // copy the sub-list to a standalone bottle, otherwise it is serialized without the list header
-    Bottle* data = reply.get(1).asList();
-    if (reply.get(0).asString() != "ok" || data == nullptr || !yarp::os::Portable::copyPortable(Bottle(*data), qosreply)) {
+    if (!result.found) {
         if (!quiet) {
-            yCError(NETWORK, "Cannot get qos properties of '%s'. (%s)", port.c_str(), reply.toString().c_str());
+            yCError(NETWORK, "Cannot get qos properties of '%s': no connection %s '%s'",
+                    port.c_str(), isOutput ? "to" : "from", other.c_str());
         }
         return false;
     }
 
-    style.setThreadPriority(qosreply.scheduler_priority);
-    style.setThreadPolicy(qosreply.scheduler_policy);
-    style.setPacketPrioritybyTOS(qosreply.qos_tos);
+    style.setThreadPriority(result.thread.priority);
+    style.setThreadPolicy(result.thread.policy);
+    style.setPacketPrioritybyTOS(result.qos_tos);
 
     return true;
 }
 
 bool NetworkBase::getConnectionQos(const std::string& src, const std::string& dest, QosStyle& srcStyle, QosStyle& destStyle, bool quiet)
 {
-    if (!getPortQos(src, dest, srcStyle, quiet)) {
+    if (!getPortQos(src, dest, true, srcStyle, quiet)) {
         return false;
     }
-    if (!getPortQos(dest, src, destStyle, quiet)) {
+    if (!getPortQos(dest, src, false, destStyle, quiet)) {
         return false;
     }
     return true;

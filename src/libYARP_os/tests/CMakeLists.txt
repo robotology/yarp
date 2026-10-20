@@ -21,9 +21,11 @@ target_sources(harness_os PRIVATE
   NetworkClockTest.cpp
   NetworkTest.cpp
   PeriodicThreadTest.cpp
+  PortCoreClientTest.cpp
   PortReaderBufferTest.cpp
   PortTest.cpp
   PropertyTest.cpp
+  QosStyleTest.cpp
   ResourceFinderTest.cpp
   RFModuleTest.cpp
   RouteTest.cpp
