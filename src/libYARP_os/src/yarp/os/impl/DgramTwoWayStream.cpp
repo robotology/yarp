@@ -979,16 +979,30 @@ bool DgramTwoWayStream::setTypeOfService(int tos)
 
 int DgramTwoWayStream::getTypeOfService()
 {
+    // tos is the "Type Of Service" byte of the IP header of the packets sent
+    // through this socket. Its upper 6 bits are the DSCP (Differentiated
+    // Services Code Point) used by the network to prioritize the traffic,
+    // thus tos = DSCP * 4 (e.g. NORMAL = 0, LOW = 40, HIGH = 144, CRITICAL = 176).
+    // -1 is returned if the value cannot be read.
     int tos = -1;
     if (dgram == nullptr) {
         return tos;
     }
+    // optlen is both an input and an output parameter of getsockopt():
+    // on input it must contain the size of the buffer pointed by &tos,
+    // on output it contains the number of bytes actually written.
+    // If it is not initialized, getsockopt() may write nothing (optlen == 0)
+    // or fail with EINVAL (optlen < 0), leaving tos to -1.
 #if defined(YARP_HAS_ACE)
-    int optlen;
-    dgram->get_option(IPPROTO_IP, IP_TOS, (int*)&tos, &optlen);
+    int optlen = static_cast<int>(sizeof(tos));
+    if (dgram->get_option(IPPROTO_IP, IP_TOS, (int*)&tos, &optlen) != 0) {
+        return -1;
+    }
 #else
-    socklen_t optlen;
-    getsockopt(dgram_sockfd, IPPROTO_IP, IP_TOS, (int*)&tos, &optlen);
+    socklen_t optlen = sizeof(tos);
+    if (getsockopt(dgram_sockfd, IPPROTO_IP, IP_TOS, (int*)&tos, &optlen) != 0) {
+        return -1;
+    }
 #endif
     return tos;
 }

@@ -150,8 +150,20 @@ bool SocketTwoWayStream::setTypeOfService(int tos)
 
 int SocketTwoWayStream::getTypeOfService()
 {
+    // tos is the "Type Of Service" byte of the IP header of the packets sent
+    // through this socket. Its upper 6 bits are the DSCP (Differentiated
+    // Services Code Point) used by the network to prioritize the traffic,
+    // thus tos = DSCP * 4 (e.g. NORMAL = 0, LOW = 40, HIGH = 144, CRITICAL = 176).
+    // -1 is returned if the value cannot be read.
     int tos = -1;
-    int optlen;
-    stream.get_option(IPPROTO_IP, IP_TOS, &tos, &optlen);
+    // optlen is both an input and an output parameter of getsockopt():
+    // on input it must contain the size of the buffer pointed by &tos,
+    // on output it contains the number of bytes actually written.
+    // If it is not initialized, getsockopt() may write nothing (optlen == 0)
+    // or fail with EINVAL (optlen < 0), leaving tos to -1.
+    int optlen = static_cast<int>(sizeof(tos));
+    if (stream.get_option(IPPROTO_IP, IP_TOS, &tos, &optlen) != 0) {
+        return -1;
+    }
     return tos;
 }
