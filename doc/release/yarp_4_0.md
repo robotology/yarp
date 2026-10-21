@@ -25,6 +25,11 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 * Fixed segfault due to a race condition in `RGBDSensor_StreamingMsgParser::read()`:
   the timestamps are now taken from the received data instead of calling `getEnvelope()` on the ports.
 
+#### `JoypadControl_nws_yarp`
+
+* Now `JoypadControl_nws_yarp` uses `getAllAxes()` instead of individual `getAxis()` calls when
+  periodically querying the joypad state to avoid costly per-axis queries on certain implementations.
+
 ## Build system
 
 * `YARP_SOVERSION` is now set to `${YARP_VERSION_MAJOR}` (it was previously hardcoded to 3).
@@ -32,4 +37,3 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 ## CI
 
 * Improvements to CI workflows.
-
