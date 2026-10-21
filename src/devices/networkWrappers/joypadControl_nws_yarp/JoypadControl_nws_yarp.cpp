@@ -490,13 +490,14 @@ void JoypadControl_nws_yarp::run()
         write = m_portAxes.getOutputCount()>0;
         auto& b = m_portAxes.prepare();
         b.value.clear();
-        for(size_t i = 0; i < m_numberOfAxes; ++i)
+        std::vector<double> tmp_axes;
+        if (!m_IJoypad->getAllAxes(tmp_axes) || tmp_axes.size() != m_numberOfAxes)
         {
-            if (!m_IJoypad->getAxis(i, m_curr_axes[i]))
-            {
-                write = false;
-                break;
-            }
+            write = false;
+        }
+        else
+        {
+            m_curr_axes = tmp_axes;
         }
 
         if (write)
