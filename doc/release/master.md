@@ -31,6 +31,7 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 
 ### devices
 
+* `controlBoard_nws_yarp`: exposed the `IControlMode` getters (`getControlModeOneRPC`, `getControlModeAllRPC`, `getControlModeGroupRPC`) on the RPC interface, so control modes can be read back via `yarp rpc` again (#3406).
 * `ControlBoardRemapper` and `RemoteControlBoardRemapper` refactored to support ParamParser.
 * `MultipleAnalogSensorClient` and `MultipleAnalogSensorServer` now use the new `IMultipleAnalogSensor` interfaces returning `yarp::dev::ReturnValue`
 

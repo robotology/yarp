@@ -78,6 +78,13 @@ enum ySelectableControlModeEnum {
   yarp.enumbase = "int32_t"
 )
 
+enum yControlModeEnum {
+} (
+  yarp.name = "yarp::dev::ControlModeEnum"
+  yarp.includefile = "yarp/dev/IControlMode.h"
+  yarp.enumbase = "int32_t"
+)
+
 //-------------------------------------------------
 // IJointBrake
 struct return_isJointBraked {
@@ -118,6 +125,21 @@ struct return_getAxes {
 struct return_getAvailableControlModes {
   1: yReturnValue ret;
   2: list<ySelectableControlModeEnum> avail;
+}
+
+struct return_getControlModeOne {
+  1: yReturnValue ret;
+  2: yControlModeEnum mode;
+}
+
+struct return_getControlModeGroup {
+  1: yReturnValue ret;
+  2: list<yControlModeEnum> modes;
+}
+
+struct return_getControlModeAll {
+  1: yReturnValue ret;
+  2: list<yControlModeEnum> modes;
 }
 
 //-------------------------------------------------
@@ -827,6 +849,9 @@ service ControlBoardMsgs
     return_getRefPositionAll    getRefPositionAllRPC() (yarp.qualifier = "const");
     return_getRefPositionGroup  getRefPositionGroupRPC(1: list<i32> j) (yarp.qualifier = "const");
 
+    return_getControlModeOne     getControlModeOneRPC(1:i32 j) (yarp.qualifier = "const");
+    return_getControlModeAll     getControlModeAllRPC() (yarp.qualifier = "const");
+    return_getControlModeGroup   getControlModeGroupRPC(1: list<i32> j) (yarp.qualifier = "const");
     yReturnValue               setControlModeOneRPC(1:i32 j, 2:ySelectableControlModeEnum mod);
     yReturnValue               setControlModeAllRPC(1:list<ySelectableControlModeEnum> modes);
     yReturnValue               setControlModeGroupRPC(1: list<i32> j, 2: list<ySelectableControlModeEnum> modes);

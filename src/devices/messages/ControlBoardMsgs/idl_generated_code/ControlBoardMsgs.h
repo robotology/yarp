@@ -24,6 +24,9 @@
 #include <return_getAvailablePids.h>
 #include <return_getAxes.h>
 #include <return_getAxisName.h>
+#include <return_getControlModeAll.h>
+#include <return_getControlModeGroup.h>
+#include <return_getControlModeOne.h>
 #include <return_getCurrentAll.h>
 #include <return_getCurrentImpedanceLimit.h>
 #include <return_getCurrentOne.h>
@@ -310,6 +313,12 @@ public:
     virtual return_getRefPositionAll getRefPositionAllRPC() const;
 
     virtual return_getRefPositionGroup getRefPositionGroupRPC(const std::vector<std::int32_t>& j) const;
+
+    virtual return_getControlModeOne getControlModeOneRPC(const std::int32_t j) const;
+
+    virtual return_getControlModeAll getControlModeAllRPC() const;
+
+    virtual return_getControlModeGroup getControlModeGroupRPC(const std::vector<std::int32_t>& j) const;
 
     virtual yarp::dev::ReturnValue setControlModeOneRPC(const std::int32_t j, const yarp::dev::SelectableControlModeEnum mod);
 

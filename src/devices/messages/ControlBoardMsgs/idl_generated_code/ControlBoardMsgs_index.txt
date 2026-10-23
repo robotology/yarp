@@ -16,6 +16,12 @@ return_getAxes.h
 return_getAxes.cpp
 return_getAvailableControlModes.h
 return_getAvailableControlModes.cpp
+return_getControlModeOne.h
+return_getControlModeOne.cpp
+return_getControlModeGroup.h
+return_getControlModeGroup.cpp
+return_getControlModeAll.h
+return_getControlModeAll.cpp
 return_getAvailablePids.h
 return_getAvailablePids.cpp
 return_getPid.h
