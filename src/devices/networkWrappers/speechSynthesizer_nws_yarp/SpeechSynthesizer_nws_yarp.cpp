@@ -174,6 +174,23 @@ return_get_voice ISpeechSynthesizerMsgsd::get_voice()
     return ret;
 }
 
+return_get_available_voices ISpeechSynthesizerMsgsd::get_available_voices()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return_get_available_voices ret;
+    if (m_isptr)
+    {
+        yarp::sig::VectorOfString available_voices;
+        ReturnValue b = m_isptr->getAvailableVoices(available_voices);
+        ret.ret = b;
+        ret.available_voices = available_voices;
+        return ret;
+    }
+    yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
+    ret.ret = ReturnValue::return_code::return_value_error_generic;
+    return ret;
+}
+
 return_set_pitch ISpeechSynthesizerMsgsd::set_pitch(double pitch)
 {
     std::lock_guard <std::mutex> lg(m_mutex);

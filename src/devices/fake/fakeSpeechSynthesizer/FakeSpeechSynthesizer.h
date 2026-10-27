@@ -45,6 +45,7 @@ public:
     virtual yarp::dev::ReturnValue getLanguage(std::string& language) override;
     virtual yarp::dev::ReturnValue setVoice(const std::string& voice) override;
     virtual yarp::dev::ReturnValue getVoice(std::string& voice) override;
+    virtual yarp::dev::ReturnValue getAvailableVoices(yarp::sig::VectorOfString& available_voices) override;
     virtual yarp::dev::ReturnValue setSpeed(const double speed) override;
     virtual yarp::dev::ReturnValue getSpeed(double& voice) override;
     virtual yarp::dev::ReturnValue setPitch(const double pitch) override;

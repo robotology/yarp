@@ -49,6 +49,13 @@ TEST_CASE("dev::fakeSpeechSynthesizer", "[yarp::dev]")
         CHECK(snd.getChannels()==2);
         CHECK(snd.getSamples()==100);
 
+        yarp::sig::VectorOfString available_voices;
+        CHECK(istr->getAvailableVoices(available_voices));
+        CHECK(available_voices.size() == 3);
+        CHECK(available_voices[0] == "voice1");
+        CHECK(available_voices[1] == "voice2");
+        CHECK(available_voices[2] == "voice3");
+
         //"Close all polydrivers and check"
         {
             yarp::os::Time::delay(0.1);

@@ -66,6 +66,15 @@ ReturnValue FakeSpeechSynthesizer::getVoice(std::string& voice)
     return ReturnValue_ok;
 }
 
+ReturnValue FakeSpeechSynthesizer::getAvailableVoices(yarp::sig::VectorOfString& available_voices)
+{
+    available_voices.clear();
+    available_voices.push_back("voice1");
+    available_voices.push_back("voice2");
+    available_voices.push_back("voice3");
+    return ReturnValue_ok;
+}
+
 ReturnValue FakeSpeechSynthesizer::setSpeed(const double speed)
 {
     m_speed = speed;

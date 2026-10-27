@@ -8,6 +8,7 @@
 
 #include <yarp/dev/api.h>
 #include <yarp/sig/Sound.h>
+#include <yarp/sig/Vector.h>
 #include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
@@ -51,6 +52,13 @@ public:
     virtual yarp::dev::ReturnValue getVoice(std::string& voice_name) = 0;
 
     /**
+     * Returns the list of available voices for the currently set language
+     * \param available_voices an a yarp::sig::Vector<std::string> containing the list of available voices for the currently set language.
+     * \return a ReturnValue, convertible to true/false
+     */
+    virtual yarp::dev::ReturnValue getAvailableVoices(yarp::sig::VectorOfString& available_voices) = 0;
+
+    /**
      * Sets the voice speed for speech synthesis.
      * \param speed the voice speed.
      * \return a ReturnValue, convertible to true/false
@@ -76,7 +84,7 @@ public:
      * \param pitch the current voice pitch.
      * \return a ReturnValue, convertible to true/false
      */
-    virtual yarp::dev::ReturnValue getPitch(double& voice) = 0;
+    virtual yarp::dev::ReturnValue getPitch(double& pitch) = 0;
 
     /**
      * Performs the speech synthesis.

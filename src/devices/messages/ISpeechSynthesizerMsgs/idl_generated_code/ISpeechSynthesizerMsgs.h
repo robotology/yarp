@@ -14,6 +14,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
+#include <return_get_available_voices.h>
 #include <return_get_language.h>
 #include <return_get_pitch.h>
 #include <return_get_speed.h>
@@ -41,9 +42,11 @@ public:
 
     virtual return_get_language get_language();
 
-    virtual return_set_voice set_voice(const std::string& language);
+    virtual return_set_voice set_voice(const std::string& voice);
 
     virtual return_get_voice get_voice();
+
+    virtual return_get_available_voices get_available_voices();
 
     virtual return_set_speed set_speed(const double speed);
 

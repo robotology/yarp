@@ -22,6 +22,7 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 
 * added new thrift data types `DistortionModelData`, `IntrinsicParamsData` to replace the use of `yarp::os::Property` in `IRgbVisualParams.h`, `IDepthVisualParams.h` interfaces.
 * Several methods of `MultipleAnalogSensor` interfaces migrated from returning `bool` to returning `yarp::dev::ReturnValue`
+* New method for `ISpeechSynthesizer`: `getAvailableVoices` to get a list of the available voices names for the current language
 
 ### thrift generator
 
@@ -33,6 +34,11 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 
 * `ControlBoardRemapper` and `RemoteControlBoardRemapper` refactored to support ParamParser.
 * `MultipleAnalogSensorClient` and `MultipleAnalogSensorServer` now use the new `IMultipleAnalogSensor` interfaces returning `yarp::dev::ReturnValue`
+* Updated `ISpeechSynthesizerMsgs.thrift` and correspondent generated code for the new method `getAvailableVoices`
+* Updated devices related to `yarp::dev::ISpeechSynthesizer` for the new method `getAvailableVoices`:
+  * `FakeSpeechSynthesizer`
+  * `SpeechSynthesizer_nws_yarp`
+  * `SpeechSynthesizer_nwc_yarp`
 
 ### bindings
 
