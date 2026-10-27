@@ -54,15 +54,16 @@ private:
     yarp::os::Port* m_output_port{ nullptr };
 
 public:
-    virtual return_set_language set_language(const std::string& language) override;
-    virtual return_get_language get_language() override;
-    virtual return_set_voice    set_voice(const std::string& language) override;
-    virtual return_get_voice    get_voice() override;
-    virtual return_set_speed    set_speed(double speed) override;
-    virtual return_get_speed    get_speed() override;
-    virtual return_set_pitch    set_pitch(double pitch) override;
-    virtual return_get_pitch    get_pitch() override;
-    virtual return_synthesize   synthesize(const std::string& text) override;
+    virtual return_set_language         set_language(const std::string& language) override;
+    virtual return_get_language         get_language() override;
+    virtual return_set_voice            set_voice(const std::string& language) override;
+    virtual return_get_voice            get_voice() override;
+    virtual return_set_speed            set_speed(double speed) override;
+    virtual return_get_speed            get_speed() override;
+    virtual return_set_pitch            set_pitch(double pitch) override;
+    virtual return_get_pitch            get_pitch() override;
+    virtual return_synthesize           synthesize(const std::string& text) override;
+    virtual return_get_available_voices get_available_voices() override;
 
 public:
     void setInterfaces(yarp::dev::ISpeechSynthesizer* iser) { m_isptr = iser;}

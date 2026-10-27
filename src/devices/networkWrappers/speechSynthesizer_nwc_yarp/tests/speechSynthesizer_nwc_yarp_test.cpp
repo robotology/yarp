@@ -74,6 +74,7 @@ TEST_CASE("dev::speechSynthesizer_nwc_yarp", "[yarp::dev]")
         double pitchReturned;
         double speed = 100;
         double speedReturned;
+        yarp::sig::VectorOfString available_voices;
 
         CHECK(iSpeech->setLanguage("ENG"));
         std::string getLang;
@@ -92,7 +93,14 @@ TEST_CASE("dev::speechSynthesizer_nwc_yarp", "[yarp::dev]")
         CHECK(pitch == pitchReturned);
         CHECK(iSpeech->setSpeed(speed));
         CHECK(iSpeech->getSpeed(speedReturned));
+        CHECK(speed == speedReturned);
         CHECK(voice == voiceReturned);
+
+        CHECK(iSpeech->getAvailableVoices(available_voices));
+        CHECK(available_voices.size() == 3);
+        CHECK(available_voices[0] == "voice1");
+        CHECK(available_voices[1] == "voice2");
+        CHECK(available_voices[2] == "voice3");
 
         //"Close all polydrivers and check"
         {

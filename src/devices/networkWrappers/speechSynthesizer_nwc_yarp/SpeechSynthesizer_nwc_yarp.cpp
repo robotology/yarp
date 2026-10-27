@@ -120,6 +120,20 @@ ReturnValue SpeechSynthesizer_nwc_yarp::getVoice(std::string& voice_name)
     return result.ret;
 }
 
+ReturnValue SpeechSynthesizer_nwc_yarp::getAvailableVoices(yarp::sig::VectorOfString& available_voices)
+{
+    auto result = m_thriftClient.get_available_voices();
+    if(!result.ret)
+    {
+        yCError(SPEECHSYNTH_NWC) << "Error while retrieving the list of available voices";
+        return result.ret;
+    }
+
+    available_voices = result.available_voices;
+
+    return result.ret;
+}
+
 ReturnValue SpeechSynthesizer_nwc_yarp::setSpeed(const double speed)
 {
     auto result = m_thriftClient.set_speed(speed);
