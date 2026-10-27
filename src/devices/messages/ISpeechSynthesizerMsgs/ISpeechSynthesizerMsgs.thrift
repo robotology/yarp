@@ -15,6 +15,12 @@ struct yReturnValue {
   yarp.includefile = "yarp/dev/ReturnValue.h"
 )
 
+struct yarp_sig_VectorOfString {
+} (
+  yarp.name = "yarp::sig::VectorOfString"
+  yarp.includefile = "yarp/sig/Vector.h"
+)
+
 struct return_set_language {
   1: yReturnValue ret;
 }
@@ -41,6 +47,11 @@ struct return_get_voice {
   2: string voice;
 }
 
+struct return_get_available_voices {
+  1: yReturnValue ret;
+  2: yarp_sig_VectorOfString available_voices;
+}
+
 struct return_get_speed {
   1: yReturnValue ret;
   2: double speed;
@@ -58,13 +69,14 @@ struct return_synthesize {
 
 service ISpeechSynthesizerMsgs
 {
-    return_set_language set_language (1:string language);
-    return_get_language get_language ();
-    return_set_voice    set_voice    (1:string language);
-    return_get_voice    get_voice    ();
-    return_set_speed    set_speed    (1:double speed);
-    return_get_speed    get_speed    ();
-    return_set_pitch    set_pitch    (1:double pitch);
-    return_get_pitch    get_pitch    ();
-    return_synthesize   synthesize   (1:string text);
+    return_set_language         set_language (1:string language);
+    return_get_language         get_language ();
+    return_set_voice            set_voice    (1:string voice);
+    return_get_voice            get_voice    ();
+    return_get_available_voices get_available_voices ();
+    return_set_speed            set_speed    (1:double speed);
+    return_get_speed            get_speed    ();
+    return_set_pitch            set_pitch    (1:double pitch);
+    return_get_pitch            get_pitch    ();
+    return_synthesize           synthesize   (1:string text);
 }
