@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/dev/IControlMode.h>
@@ -11,6 +10,8 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/ParametersTest.h>
+
+#include <ControlBoardMsgs.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -117,64 +118,31 @@ TEST_CASE("dev::controlBoard_nws_yarp", "[yarp::dev]")
         REQUIRE(rpc.open("/test/controlboard/rpc"));
         REQUIRE(yarp::os::Network::connect(rpc.getName(), "/controlboard/nws/rpc:i"));
 
-        const std::int32_t ok_vocab = yarp::os::createVocab32('o', 'k');
-
-        //the ret field of the reply structs is a nested yReturnValue
-        auto check_ret_ok = [&](const yarp::os::Bottle& reply) {
-            const yarp::os::Bottle* ret = reply.get(0).asList();
-            REQUIRE(ret != nullptr);
-            REQUIRE(ret->size() == 1);
-            CHECK(ret->get(0).asInt32() == ok_vocab);
-        };
-        const auto pos_direct = static_cast<std::int32_t>(yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT);
+        ControlBoardMsgs rpc_client;
+        REQUIRE(rpc_client.yarp().attachAsClient(rpc));
 
         //set a known mode on axis 0 through the existing RPC setter
-        {
-            yarp::os::Bottle cmd, reply;
-            cmd.addString("setControlModeOneRPC");
-            cmd.addInt32(0);
-            cmd.addInt32(pos_direct);
-            rpc.write(cmd, reply);
-            REQUIRE(reply.size() == 1);
-            CHECK(reply.get(0).asInt32() == ok_vocab);
-        }
+        CHECK(rpc_client.setControlModeOneRPC(0, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT) == ReturnValue_ok);
 
         //read it back through the new RPC getters
         {
-            yarp::os::Bottle cmd, reply;
-            cmd.addString("getControlModeOneRPC");
-            cmd.addInt32(0);
-            rpc.write(cmd, reply);
-            REQUIRE(reply.size() == 2);
-            check_ret_ok(reply);
-            CHECK(reply.get(1).asInt32() == pos_direct);
+            return_getControlModeOne reply = rpc_client.getControlModeOneRPC(0);
+            CHECK(reply.ret == ReturnValue_ok);
+            CHECK(reply.mode == yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT);
         }
 
         {
-            yarp::os::Bottle cmd, reply;
-            cmd.addString("getControlModeAllRPC");
-            rpc.write(cmd, reply);
-            REQUIRE(reply.size() == 2);
-            check_ret_ok(reply);
-            yarp::os::Bottle* modes = reply.get(1).asList();
-            REQUIRE(modes != nullptr);
-            CHECK(modes->size() == nAxes);
-            CHECK(modes->get(0).asInt32() == pos_direct);
+            return_getControlModeAll reply = rpc_client.getControlModeAllRPC();
+            CHECK(reply.ret == ReturnValue_ok);
+            CHECK(reply.modes.size() == nAxes);
+            CHECK(reply.modes[0] == yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT);
         }
 
         {
-            yarp::os::Bottle cmd, reply;
-            cmd.addString("getControlModeGroupRPC");
-            yarp::os::Bottle& joints = cmd.addList();
-            joints.addInt32(0);
-            joints.addInt32(1);
-            rpc.write(cmd, reply);
-            REQUIRE(reply.size() == 2);
-            check_ret_ok(reply);
-            yarp::os::Bottle* modes = reply.get(1).asList();
-            REQUIRE(modes != nullptr);
-            CHECK(modes->size() == 2);
-            CHECK(modes->get(0).asInt32() == pos_direct);
+            return_getControlModeGroup reply = rpc_client.getControlModeGroupRPC({0, 1});
+            CHECK(reply.ret == ReturnValue_ok);
+            CHECK(reply.modes.size() == 2);
+            CHECK(reply.modes[0] == yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT);
         }
 
         rpc.close();
