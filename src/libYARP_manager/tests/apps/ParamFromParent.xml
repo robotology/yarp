@@ -1,0 +1,7 @@
+<application>
+    <name>ParamFromParent</name>
+    <application>
+        <name>ParamChild</name>
+        <app-param name="status">$PAR{mode=RUNNING}</app-param>
+    </application>
+</application>

@@ -105,6 +105,13 @@ bool forEachParamText(Application* application, Func func)
         if (!visit(iapp.getPrefix(), [&iapp](const char* s) { iapp.setPrefix(s); })) {
             return false;
         }
+        // values given to the parameters of the imported application can use
+        // the parameters of this application
+        for (auto& param : iapp.getAppParameters()) {
+            if (!visit(param.second.c_str(), [&param](const char* s) { param.second = s; })) {
+                return false;
+            }
+        }
     }
 
     return true;
@@ -501,6 +508,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
                 //Adding child application as an successor to the application
                 tmpGraph.addLink(application, repapp, 0, false);
                 repapp->setOwner(application);
+                repapp->setParamOverrides(interfaceApp.getAppParameters());
                 // recursive call to make up child application
                 if (!makeupApplication(repapp)) {
                     return false;
@@ -812,6 +820,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
             //Adding child application as an successor to the application
             tmpGraph.addLink(application, repapp, 0, false);
             repapp->setOwner(application);
+            repapp->setParamOverrides(interfaceApp.getAppParameters());
             // recursive call to make up child application
             makeupApplication(repapp);
         }
@@ -1245,7 +1254,7 @@ bool KnowledgeBase::resolveAppParameters(Application* application)
     bool ok = forEachParamText(application, [&decls, &error](std::string& text) {
                   return ParamResolver::collect(text, decls, error);
               })
-           && ParamResolver::merge(decls, {}, values, error)
+           && ParamResolver::merge(decls, application->getParamOverrides(), values, error)
            && forEachParamText(application, [&values, &error](std::string& text) {
                   std::string resolved;
                   if (!ParamResolver::resolve(text, values, resolved, error)) {

@@ -1,0 +1,7 @@
+<application>
+    <name>ParamUnused</name>
+    <application>
+        <name>ParamChild</name>
+        <app-param name="robt">icub</app-param>
+    </application>
+</application>

@@ -1,0 +1,23 @@
+<application>
+    <name>ParamTwice</name>
+
+    <var name="realRobot">icub</var>
+
+    <application>
+        <name>ParamChild</name>
+        <prefix>/a</prefix>
+        <app-param name="robot">${realRobot}</app-param>
+    </application>
+
+    <application>
+        <name>ParamChild</name>
+        <prefix>/b</prefix>
+    </application>
+
+    <application>
+        <name>ParamChild</name>
+        <prefix>/c</prefix>
+        <app-param name="robot">ergocub</app-param>
+        <app-param name="status">RUNNING</app-param>
+    </application>
+</application>

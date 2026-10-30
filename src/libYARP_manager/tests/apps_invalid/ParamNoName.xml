@@ -1,0 +1,7 @@
+<application>
+    <name>ParamNoName</name>
+    <application>
+        <name>ParamChild</name>
+        <app-param>icub</app-param>
+    </application>
+</application>
