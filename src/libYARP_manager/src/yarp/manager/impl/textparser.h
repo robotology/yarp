@@ -12,6 +12,7 @@
 #include <yarp/os/LogStream.h>
 #include <iostream>
 #include <yarp/manager/utility.h>
+#include <yarp/manager/impl/paramresolver.h>
 
 namespace yarp::manager {
 
@@ -22,7 +23,19 @@ class TextParser
 
     VarMap        variables;
     ErrorLogger*  logger;
-    OSTRINGSTREAM war;
+
+    // True if text contains a '$' that does not start an application parameter
+    // placeholder ($PAR{...}), which is resolved later by ParamResolver
+    static bool hasUnknownSymbol(const std::string& text)
+    {
+        for (size_t pos = text.find('$'); pos != std::string::npos; pos = text.find('$', pos + 1)) {
+            if (text.compare(pos, ParamResolver::startKeyword.size(), ParamResolver::startKeyword) != 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 public:
     TextParser(){logger = ErrorLogger::Instance();}
 
@@ -30,6 +43,7 @@ public:
     {
         if (key.empty())
         {
+            OSTRINGSTREAM war;
             war << "TextParser: empty key on variable setting..";
             if (logger) {
                 logger->addWarning(war);
@@ -53,7 +67,7 @@ public:
             ret          = element;
             startKeyword = "$ENV{";
             endKeyword   = "}";
-            bool badSymbol    = ret.find("$") != std::string::npos;
+            bool badSymbol    = hasUnknownSymbol(ret);
             s            = ret.find(startKeyword);
             e            = ret.find(endKeyword, s);
 
@@ -85,7 +99,8 @@ public:
 
             if(badSymbol)
             {
-                war << "use of symbol '$' detected but no keyword understood.. possible use: ${foo} for internal variable or $ENV{foo} for environment variable";
+                OSTRINGSTREAM war;
+                war << "use of symbol '$' detected but no keyword understood.. possible use: ${foo} for internal variable, $ENV{foo} for environment variable or $PAR{foo=default} for application parameter";
                 if (logger) {
                     logger->addWarning(war);
                 }
