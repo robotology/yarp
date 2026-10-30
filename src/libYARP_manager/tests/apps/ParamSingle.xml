@@ -1,0 +1,42 @@
+<application>
+    <name>ParamSingle</name>
+
+    <var name="cfg">robot.ini</var>
+
+    <dependencies>
+        <port>/$PAR{robot=icubSim}/app_dep</port>
+    </dependencies>
+
+    <module>
+        <name>$PAR{device=yarpdev}</name>
+        <parameters>--robot $PAR{robot} --from $PAR{config=${cfg}}</parameters>
+        <node>$PAR{node=localhost}</node>
+        <prefix>/$PAR{robot}</prefix>
+        <workdir>$PAR{workdir=/tmp}</workdir>
+        <environment>ROBOT=$PAR{robot}</environment>
+        <dependencies>
+            <port timeout="1.0">/$PAR{robot}/mod_dep</port>
+        </dependencies>
+        <portmap>
+            <old>/old</old>
+            <new>/$PAR{robot}/new</new>
+        </portmap>
+    </module>
+
+    <module>
+        <name>plain</name>
+        <parameters>--from ${cfg} --no-params</parameters>
+        <node>localhost</node>
+    </module>
+
+    <connection>
+        <from>/$PAR{robot}/out</from>
+        <to external="true">/$PAR{robot}/in</to>
+        <protocol>$PAR{carrier=tcp}</protocol>
+    </connection>
+
+    <arbitrator>
+        <port>/$PAR{robot}/arb</port>
+        <rule connection="c1">$PAR{rule=~c2}</rule>
+    </arbitrator>
+</application>

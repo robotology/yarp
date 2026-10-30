@@ -165,6 +165,7 @@ private:
 
     bool updateModule(Module* themodule, ModuleInterface* imod);
     bool updateApplication(Application* app, ApplicationInterface* iapp);
+    bool resolveAppParameters(Application* application);
     bool reason(Graph* graph, Node* initial,
                          ApplicaitonPContainer &applications,
                          ModulePContainer &modules,

@@ -1,0 +1,12 @@
+<application>
+    <name>ParamConflict</name>
+    <module>
+        <name>yarpdev</name>
+        <parameters>--robot $PAR{robot=icub}</parameters>
+        <node>localhost</node>
+    </module>
+    <connection>
+        <from>/$PAR{robot=icubSim}/out</from>
+        <to>/in</to>
+    </connection>
+</application>

@@ -1,0 +1,8 @@
+<application>
+    <name>ParamMissing</name>
+    <module>
+        <name>yarpdev</name>
+        <parameters>--robot $PAR{robot}</parameters>
+        <node>localhost</node>
+    </module>
+</application>

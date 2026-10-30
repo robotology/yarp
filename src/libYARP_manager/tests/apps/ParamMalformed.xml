@@ -1,0 +1,8 @@
+<application>
+    <name>ParamMalformed</name>
+    <module>
+        <name>yarpdev</name>
+        <parameters>--robot $PAR{robot=icub</parameters>
+        <node>localhost</node>
+    </module>
+</application>

@@ -170,6 +170,7 @@ public:
 
     virtual ~ModuleInterface() = default;
 
+    void setName(const char* szName) { if(szName) { strName = szName; } }
     void setHost(const char* szHost) { if(szHost) { strHost = szHost; } }
     void setParam(const char* szParam) { if(szParam) { strParam = szParam; } }
     void setRank(int irank) { iRank = irank; }
