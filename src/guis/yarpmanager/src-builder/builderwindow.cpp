@@ -6,6 +6,7 @@
 #include "builderwindow.h"
 //#include "ui_builderwindow.h"
 #include <QHBoxLayout>
+#include <QMessageBox>
 #include <QSplitter>
 
 
@@ -116,6 +117,14 @@ bool BuilderWindow::save()
                 return false;
             }
         }
+    }
+
+    if (application->usesAppParameters()) {
+        QMessageBox::warning(this, "Saving application parameters",
+                             QString("%1 uses application parameters ($PAR{...}).\n"
+                                     "They will be saved with their current values; "
+                                     "the values given with app-param to the imported applications are kept.")
+                                 .arg(application->getName()));
     }
 
     m_modified = !manager.saveApplication(application->getName());
@@ -852,10 +861,14 @@ void BuilderWindow::onAddedApplication(void *app,QPointF pos)
     strPrefix += (uniqeId);
     iapp.setPrefix(strPrefix.c_str());
     Application* application  = manager.getKnowledgeBase()->addIApplicationToApplication(mainApplication, iapp);
-    if(application){
-        addApplication(application,&connectionsId);
-
+    if(!application){
+        QMessageBox::critical(this, "Error",
+                              QString("Cannot add %1:\n%2")
+                                  .arg(iapp.getName())
+                                  .arg(ErrorLogger::Instance()->getFormatedErrorString()));
+        return;
     }
+    addApplication(application,&connectionsId);
     m_modified = true;
     emit modified(true);
 }

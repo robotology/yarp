@@ -260,9 +260,12 @@ public:
 
     // values given to the application parameters ($PAR{...}) of the imported application
     bool addAppParameter(const std::string& name, const std::string& value) {
+        appParametersAsWritten.emplace(name, value);
         return appParameters.emplace(name, value).second;
     }
+    // the values can use the parameters of the importing application, and are resolved when it is put together
     std::map<std::string, std::string>& getAppParameters() { return appParameters; }
+    const std::map<std::string, std::string>& getAppParametersAsWritten() { return appParametersAsWritten; }
 
     bool operator==(const ApplicationInterface& alt) const {
         return (strName == alt.strName);
@@ -282,6 +285,7 @@ private:
     std::string strPrefix;
     GraphicModel modelBase;
     std::map<std::string, std::string> appParameters;
+    std::map<std::string, std::string> appParametersAsWritten;
 };
 
 
@@ -356,9 +360,19 @@ public:
     void setOwner(Node* owner){ appOwner = owner; }
     Node* owner() { return appOwner; }
 
-    // values given to the application parameters ($PAR{...}) by the importing application
-    void setParamOverrides(const std::map<std::string, std::string>& params) { paramOverrides = params; }
+    // values given to the application parameters ($PAR{...}) by the importing application,
+    // resolved and as written in its xml file
+    void setParamOverrides(const std::map<std::string, std::string>& params,
+                           const std::map<std::string, std::string>& paramsAsWritten) {
+        paramOverrides = params;
+        paramOverridesAsWritten = paramsAsWritten;
+    }
     const std::map<std::string, std::string>& getParamOverrides() { return paramOverrides; }
+    const std::map<std::string, std::string>& getParamOverridesAsWritten() { return paramOverridesAsWritten; }
+
+    // true if the application uses application parameters ($PAR{...})
+    void setUsesAppParameters(bool uses) { bUsesAppParameters = uses; }
+    bool usesAppParameters() { return bUsesAppParameters; }
 
     bool operator==(const Application& app) const {
         return (strName == app.strName);
@@ -375,6 +389,8 @@ public:
         connections.clear();
         arbitrators.clear();
         paramOverrides.clear();
+        paramOverridesAsWritten.clear();
+        bUsesAppParameters = false;
         strXmlFile.clear();
         Iapplications.clear();
         resources.clear();
@@ -403,6 +419,8 @@ private:
     std::string strXmlFile;
     Node* appOwner;
     std::map<std::string, std::string> paramOverrides;
+    std::map<std::string, std::string> paramOverridesAsWritten;
+    bool bUsesAppParameters {false};
 
     GraphicModel modelBase;
 

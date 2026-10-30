@@ -182,6 +182,14 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             prefix->LinkEndChild(new TiXmlText(curApp.getPrefix()));
             newApp->LinkEndChild(prefix);
 
+            for (const auto& param : curApp.getAppParametersAsWritten())
+            {
+                auto* appParam = new TiXmlElement("app-param");
+                appParam->SetAttribute("name", param.first.c_str());
+                appParam->LinkEndChild(new TiXmlText(param.second.c_str()));
+                newApp->LinkEndChild(appParam);
+            }
+
             GraphicModel model = curApp.getModelBase();
             OSTRINGSTREAM txt;
             if(model.points.size()>0)

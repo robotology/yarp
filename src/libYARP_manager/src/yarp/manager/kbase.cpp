@@ -508,7 +508,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
                 //Adding child application as an successor to the application
                 tmpGraph.addLink(application, repapp, 0, false);
                 repapp->setOwner(application);
-                repapp->setParamOverrides(interfaceApp.getAppParameters());
+                repapp->setParamOverrides(interfaceApp.getAppParameters(), interfaceApp.getAppParametersAsWritten());
                 // recursive call to make up child application
                 if (!makeupApplication(repapp)) {
                     return false;
@@ -820,9 +820,12 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
             //Adding child application as an successor to the application
             tmpGraph.addLink(application, repapp, 0, false);
             repapp->setOwner(application);
-            repapp->setParamOverrides(interfaceApp.getAppParameters());
+            repapp->setParamOverrides(interfaceApp.getAppParameters(), interfaceApp.getAppParametersAsWritten());
             // recursive call to make up child application
-            makeupApplication(repapp);
+            if (!makeupApplication(repapp)) {
+                removeIApplicationFromApplication(application, repapp->getLabel());
+                repapp = nullptr;
+            }
         }
     }
     return repapp;
@@ -1269,6 +1272,7 @@ bool KnowledgeBase::resolveAppParameters(Application* application)
         msg << "Application " << application->getName() << " (" << application->getXmlFile() << "): " << error;
         ErrorLogger::Instance()->addError(msg);
     }
+    application->setUsesAppParameters(!decls.empty());
     return ok;
 }
 
@@ -1458,6 +1462,9 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
         {
             ApplicationInterface iapp(embApp->getName());
             iapp.setPrefix(embApp->getBasePrefix());
+            for (const auto& param : embApp->getParamOverridesAsWritten()) {
+                iapp.addAppParameter(param.first, param.second);
+            }
             if (embApp->getModel()) {
                 iapp.setModelBase(*embApp->getModel());
             } else {

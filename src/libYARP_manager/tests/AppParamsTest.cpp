@@ -6,12 +6,17 @@
 #include <yarp/manager/kbase.h>
 #include <yarp/manager/utility.h>
 #include <yarp/manager/xmlapploader.h>
+#include <yarp/manager/xmlappsaver.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
+#include <filesystem>
+#include <fstream>
 #include <set>
+#include <sstream>
 #include <string>
+#include <vector>
 
 using namespace yarp::manager;
 
@@ -21,11 +26,12 @@ namespace {
 // application called name
 struct LoadedApp
 {
-    XmlAppLoader loader {MANAGER_TEST_APPS_DIR, nullptr};
+    XmlAppLoader loader;
     KnowledgeBase kb;
     bool ok {false};
 
-    explicit LoadedApp(const char* name)
+    explicit LoadedApp(const char* name, const std::string& dir = MANAGER_TEST_APPS_DIR) :
+            loader(dir.c_str(), nullptr)
     {
         ok = kb.createFrom(nullptr, &loader, nullptr) && kb.reasolveDependency(name);
     }
@@ -232,6 +238,58 @@ TEST_CASE("manager::AppParamsImportTest", "[yarp::manager]")
 
         check("ParamNoName.xml", "app-param without name");
         check("ParamDuplicate.xml", "app-param robot is set twice");
+    }
+
+    ErrorLogger::Instance()->clear();
+}
+
+TEST_CASE("manager::AppParamsSaveTest", "[yarp::manager]")
+{
+    namespace fs = std::filesystem;
+    ErrorLogger::Instance()->clear();
+
+    // Saves the application, reloads it next to the application it imports and
+    // checks that the imported modules get the same parameters
+    auto saveAndReload = [](const char* appName, bool usesParams, const std::vector<std::string>& expectedXml) {
+        LoadedApp app(appName);
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        CHECK(app.kb.getApplication()->usesAppParameters() == usesParams);
+
+        fs::path dir = fs::temp_directory_path() / ("yarp_manager_test_" + std::string(appName));
+        fs::remove_all(dir);
+        fs::create_directories(dir);
+        fs::copy_file(fs::path(MANAGER_TEST_APPS_DIR) / "ParamChild.xml", dir / "ParamChild.xml");
+        fs::path saved = dir / (std::string(appName) + ".xml");
+        XmlAppSaver saver(saved.string().c_str());
+        REQUIRE(app.kb.saveApplication(&saver, app.kb.getApplication()));
+
+        std::ifstream in(saved);
+        std::stringstream xml;
+        xml << in.rdbuf();
+        INFO(xml.str());
+        for (const auto& expected : expectedXml) {
+            CHECK(xml.str().find(expected) != std::string::npos);
+        }
+
+        LoadedApp reloaded(appName, dir.string());
+        INFO(allErrors());
+        REQUIRE(reloaded.ok);
+        CHECK(reloaded.moduleParams("child_mod") == app.moduleParams("child_mod"));
+        fs::remove_all(dir);
+    };
+
+    SECTION("Values given with app-param are saved")
+    {
+        saveAndReload("ParamTwice", false, {
+            "<app-param name=\"robot\">icub</app-param>",
+            "<app-param name=\"robot\">ergocub</app-param>",
+            "<app-param name=\"status\">RUNNING</app-param>"});
+    }
+
+    SECTION("Values given with app-param are saved as written")
+    {
+        saveAndReload("ParamFromParent", true, {"<app-param name=\"status\">$PAR{mode=RUNNING}</app-param>"});
     }
 
     ErrorLogger::Instance()->clear();
