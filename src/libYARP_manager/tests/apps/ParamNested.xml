@@ -1,0 +1,7 @@
+<application>
+    <name>ParamNested</name>
+    <application>
+        <name>ParamFromParent</name>
+        <app-param name="mode">FAILURE</app-param>
+    </application>
+</application>

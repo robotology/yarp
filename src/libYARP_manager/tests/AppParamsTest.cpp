@@ -40,6 +40,26 @@ struct LoadedApp
         return nullptr;
     }
 
+    std::multiset<std::string> moduleParams(const std::string& name)
+    {
+        std::multiset<std::string> params;
+        for (Module* mod : kb.getSelModules()) {
+            if (name == mod->getName()) {
+                params.insert(mod->getParam());
+            }
+        }
+        return params;
+    }
+
+    std::set<std::string> connectionSources()
+    {
+        std::set<std::string> sources;
+        for (Connection cnn : kb.getSelConnection()) {
+            sources.insert(cnn.from());
+        }
+        return sources;
+    }
+
     std::set<std::string> resourcePorts()
     {
         std::set<std::string> ports;
@@ -136,6 +156,82 @@ TEST_CASE("manager::AppParamsTest", "[yarp::manager]")
         check("ParamConflict", "parameter 'robot' has two different default values");
         check("ParamMalformed", "unterminated '$PAR{'");
         check("ParamChildError", "parameter 'robot' has no value");
+    }
+
+    ErrorLogger::Instance()->clear();
+}
+
+TEST_CASE("manager::AppParamsImportTest", "[yarp::manager]")
+{
+    ErrorLogger::Instance()->clear();
+
+    SECTION("An application loaded on its own uses its default values")
+    {
+        LoadedApp app("ParamChild");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        CHECK(app.moduleParams("child_mod") == std::multiset<std::string> {"--robot icubSim --status SUCCESS"});
+    }
+
+    SECTION("Each import of the same application gets its own values")
+    {
+        LoadedApp app("ParamTwice");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        CHECK(app.moduleParams("child_mod") == std::multiset<std::string> {
+            "--robot icub --status SUCCESS",
+            "--robot icubSim --status SUCCESS",
+            "--robot ergocub --status RUNNING"});
+        CHECK(app.connectionSources() == std::set<std::string> {"/a/icub/out", "/b/icubSim/out", "/c/ergocub/out"});
+    }
+
+    SECTION("Override values can use the parameters of the importing application")
+    {
+        LoadedApp app("ParamFromParent");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        CHECK(app.moduleParams("child_mod") == std::multiset<std::string> {"--robot icubSim --status RUNNING"});
+    }
+
+    SECTION("Values are passed through nested imports")
+    {
+        LoadedApp app("ParamNested");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        CHECK(app.moduleParams("child_mod") == std::multiset<std::string> {"--robot icubSim --status FAILURE"});
+    }
+
+    SECTION("A parameter without default can be given by the importing application")
+    {
+        LoadedApp app("ParamProvided");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        CHECK(app.moduleParams("yarpdev") == std::multiset<std::string> {"--robot icub"});
+    }
+
+    SECTION("Overriding a parameter that the imported application never uses is an error")
+    {
+        LoadedApp app("ParamUnused");
+        CHECK_FALSE(app.ok);
+        std::string errors = allErrors();
+        INFO(errors);
+        CHECK(errors.find("parameter 'robt' is overridden but never used") != std::string::npos);
+    }
+
+    SECTION("Malformed app-param tags prevent the file from loading")
+    {
+        auto check = [](const char* file, const std::string& expected) {
+            ErrorLogger::Instance()->clear();
+            XmlAppLoader loader((std::string(MANAGER_TEST_INVALID_APPS_DIR) + "/" + file).c_str());
+            REQUIRE(loader.init());
+            CHECK(loader.getNextApplication() == nullptr);
+            std::string errors = allErrors();
+            INFO(errors);
+            CHECK(errors.find(expected) != std::string::npos);
+        };
+
+        check("ParamNoName.xml", "app-param without name");
+        check("ParamDuplicate.xml", "app-param robot is set twice");
     }
 
     ErrorLogger::Instance()->clear();

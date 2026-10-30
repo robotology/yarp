@@ -504,6 +504,25 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 if ((prefix = (TiXmlElement*)embApp->FirstChild("prefix"))) {
                     IApp.setPrefix(parser->parseText(prefix->GetText()).c_str());
                 }
+                for(TiXmlElement* param = embApp->FirstChildElement("app-param"); param;
+                        param = param->NextSiblingElement("app-param"))
+                {
+                    const char* paramName = param->Attribute("name");
+                    OSTRINGSTREAM err;
+                    if(!paramName || !strlen(paramName))
+                    {
+                        err<<"app-param without name in "<<szFile<<" at line "<<param->Row()<<".";
+                    }
+                    else if(!IApp.addAppParameter(paramName, parser->parseText(param->GetText())))
+                    {
+                        err<<"app-param "<<paramName<<" is set twice in "<<szFile<<" at line "<<param->Row()<<".";
+                    }
+                    if(!err.str().empty())
+                    {
+                        logger->addError(err);
+                        return nullptr;
+                    }
+                }
 #ifdef WITH_GEOMETRY
                 auto* element = (TiXmlElement*) embApp->FirstChild("geometry");
                 if(element && element->GetText())

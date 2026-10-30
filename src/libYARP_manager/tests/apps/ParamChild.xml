@@ -1,0 +1,12 @@
+<application>
+    <name>ParamChild</name>
+    <module>
+        <name>child_mod</name>
+        <parameters>--robot $PAR{robot=icubSim} --status $PAR{status=SUCCESS}</parameters>
+        <node>localhost</node>
+    </module>
+    <connection>
+        <from>/$PAR{robot}/out</from>
+        <to>/in</to>
+    </connection>
+</application>

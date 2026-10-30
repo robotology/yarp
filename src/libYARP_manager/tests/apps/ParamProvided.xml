@@ -1,0 +1,7 @@
+<application>
+    <name>ParamProvided</name>
+    <application>
+        <name>ParamMissing</name>
+        <app-param name="robot">icub</app-param>
+    </application>
+</application>

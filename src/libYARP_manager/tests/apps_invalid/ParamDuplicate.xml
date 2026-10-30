@@ -1,0 +1,8 @@
+<application>
+    <name>ParamDuplicate</name>
+    <application>
+        <name>ParamChild</name>
+        <app-param name="robot">icub</app-param>
+        <app-param name="robot">icubSim</app-param>
+    </application>
+</application>

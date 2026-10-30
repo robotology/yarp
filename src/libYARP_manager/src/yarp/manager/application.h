@@ -257,6 +257,13 @@ public:
     void setPrefix(const char* szPrefix) { if(szPrefix) { strPrefix = szPrefix; } }
     const char* getName() { return strName.c_str(); }
     const char* getPrefix() { return strPrefix.c_str(); }
+
+    // values given to the application parameters ($PAR{...}) of the imported application
+    bool addAppParameter(const std::string& name, const std::string& value) {
+        return appParameters.emplace(name, value).second;
+    }
+    std::map<std::string, std::string>& getAppParameters() { return appParameters; }
+
     bool operator==(const ApplicationInterface& alt) const {
         return (strName == alt.strName);
     }
@@ -274,6 +281,7 @@ private:
     std::string strName;
     std::string strPrefix;
     GraphicModel modelBase;
+    std::map<std::string, std::string> appParameters;
 };
 
 
@@ -348,6 +356,9 @@ public:
     void setOwner(Node* owner){ appOwner = owner; }
     Node* owner() { return appOwner; }
 
+    // values given to the application parameters ($PAR{...}) by the importing application
+    void setParamOverrides(const std::map<std::string, std::string>& params) { paramOverrides = params; }
+    const std::map<std::string, std::string>& getParamOverrides() { return paramOverrides; }
 
     bool operator==(const Application& app) const {
         return (strName == app.strName);
@@ -363,6 +374,7 @@ public:
         Imodules.clear();
         connections.clear();
         arbitrators.clear();
+        paramOverrides.clear();
         strXmlFile.clear();
         Iapplications.clear();
         resources.clear();
@@ -390,6 +402,7 @@ private:
     std::string strBasePrefix;
     std::string strXmlFile;
     Node* appOwner;
+    std::map<std::string, std::string> paramOverrides;
 
     GraphicModel modelBase;
 
