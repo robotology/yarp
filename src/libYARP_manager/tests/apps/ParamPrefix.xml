@@ -1,0 +1,7 @@
+<application>
+    <name>ParamPrefix</name>
+    <application>
+        <name>PlainChild</name>
+        <prefix>/$PAR{ns=robot}</prefix>
+    </application>
+</application>

@@ -1,0 +1,11 @@
+<application>
+    <name>PlainChild</name>
+    <module>
+        <name>yarpview</name>
+        <node>localhost</node>
+    </module>
+    <connection>
+        <from>/out</from>
+        <to>/in</to>
+    </connection>
+</application>
