@@ -103,6 +103,8 @@ Application::Application(const Application &app) : Node(app)
     strBasePrefix = app.strBasePrefix;
     appOwner = app.appOwner;
     paramOverrides = app.paramOverrides;
+    paramOverridesAsWritten = app.paramOverridesAsWritten;
+    bUsesAppParameters = app.bUsesAppParameters;
 }
 
 
