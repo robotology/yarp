@@ -361,6 +361,7 @@ public:
         authors.clear();
         Imodules.clear();
         connections.clear();
+        arbitrators.clear();
         strXmlFile.clear();
         Iapplications.clear();
         resources.clear();
