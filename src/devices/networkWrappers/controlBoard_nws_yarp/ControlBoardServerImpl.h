@@ -59,6 +59,9 @@ class ControlBoardRPCd : public ControlBoardMsgs
 
     //IControlMode
     return_getAvailableControlModes getAvailableControlModesRPC(const std::int16_t j)  const override;
+    return_getControlModeOne getControlModeOneRPC(const std::int32_t j) const override;
+    return_getControlModeAll getControlModeAllRPC() const override;
+    return_getControlModeGroup getControlModeGroupRPC(const std::vector<std::int32_t>& j) const override;
     yarp::dev::ReturnValue setControlModeOneRPC(const std::int32_t j, const yarp::dev::SelectableControlModeEnum mod) override;
     yarp::dev::ReturnValue setControlModeAllRPC(const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
     yarp::dev::ReturnValue setControlModeGroupRPC(const std::vector<std::int32_t>& j, const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;

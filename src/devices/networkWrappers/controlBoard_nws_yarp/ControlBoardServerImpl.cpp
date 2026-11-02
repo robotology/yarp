@@ -45,6 +45,65 @@ return_getAvailableControlModes ControlBoardRPCd::getAvailableControlModesRPC(co
     return ret;
 }
 
+return_getControlModeOne ControlBoardRPCd::getControlModeOneRPC(const std::int32_t j) const
+{
+    LOCKMUTEXSERVER
+    return_getControlModeOne ret;
+    if (!m_allInterfaces.iControlMode)
+    {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret.ret = m_allInterfaces.iControlMode->getControlMode(j, ret.mode);
+    if (!ret.ret)
+    {
+        yCError(CB_RPC, "getControlMode() failed");
+    }
+    return ret;
+}
+
+return_getControlModeAll ControlBoardRPCd::getControlModeAllRPC() const
+{
+    LOCKMUTEXSERVER
+    return_getControlModeAll ret;
+    if (!m_allInterfaces.iControlMode)
+    {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret.modes.resize(m_njoints);
+    ret.ret = m_allInterfaces.iControlMode->getControlModes(ret.modes);
+    if (!ret.ret)
+    {
+        yCError(CB_RPC, "getControlModes() failed");
+    }
+    return ret;
+}
+
+return_getControlModeGroup ControlBoardRPCd::getControlModeGroupRPC(const std::vector<std::int32_t>& j) const
+{
+    LOCKMUTEXSERVER
+    return_getControlModeGroup ret;
+    if (!m_allInterfaces.iControlMode)
+    {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret.modes.resize(j.size());
+    ret.ret = m_allInterfaces.iControlMode->getControlModes(j, ret.modes);
+    if (!ret.ret)
+    {
+        yCError(CB_RPC, "getControlModes() failed");
+    }
+    return ret;
+}
+
 ReturnValue ControlBoardRPCd::setControlModeOneRPC(const std::int32_t j, const yarp::dev::SelectableControlModeEnum mod)
 {
     LOCKMUTEXSERVER
