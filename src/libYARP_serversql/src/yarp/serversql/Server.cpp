@@ -74,7 +74,6 @@ int yarp::serversql::Server::run(int argc, char** argv)
         yCInfo(SERVER, "  --socket NNNNN           Set port number of server.\n");
         yCInfo(SERVER, "  --web dir                Serve web resources from given directory.\n");
         yCInfo(SERVER, "  --no-web-cache           Reload pages from file for each request.\n");
-        yCInfo(SERVER, "  --ros                    Delegate pub/sub to ROS name server.\n");
         yCInfo(SERVER, "  --silent                 Start in silent mode.\n");
         //this->stop();
 
@@ -92,7 +91,6 @@ int yarp::serversql::Server::run(int argc, char** argv)
     NameServerManager name(nc);
     BootstrapServer fallback(name);
     Port server;
-    Contact alt;
     Bottle cmd;
     Bottle reply;
     double messageCounter(0);
@@ -115,12 +113,6 @@ int yarp::serversql::Server::run(int argc, char** argv)
     yCInfo(SERVER, "Registering name server with itself");
     nc.preregister(nc.where());
     nc.preregister(fallback.where());
-
-    alt = nc.whereDelegate();
-
-    if (alt.isValid()) {
-        nc.preregister(alt);
-    }
     nc.goPublic();
 
     //Setting nameserver property

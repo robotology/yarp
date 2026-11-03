@@ -24,7 +24,6 @@
 
 
 using yarp::os::Contact;
-using yarp::os::NameSpace;
 using yarp::os::Searchable;
 using yarp::os::NetworkBase;
 using yarp::os::Network;
@@ -45,23 +44,11 @@ YARP_SERVERSQL_LOG_COMPONENT(NAMESERVERCONTAINER, "yarp.serversql.impl.NameServe
 NameServerContainer::~NameServerContainer()
 {
     subscriber.clear();
-    if (space) {
-        delete space;
-        space = nullptr;
-    }
 }
 
 const Contact& NameServerContainer::where()
 {
     return contact;
-}
-
-Contact NameServerContainer::whereDelegate()
-{
-    if (!space) {
-        return Contact();
-    }
-    return space->getNameServerContact();
 }
 
 void NameServerContainer::preregister(const Contact& c)

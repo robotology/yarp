@@ -31,14 +31,12 @@ private:
     NameServiceOnTriples ns;
     StyleNameService style;
     ComposedNameService combo1;
-    yarp::os::NameSpace *space{nullptr};
 public:
     using ComposedNameService::open;
 
     ~NameServerContainer() override;
 
     const yarp::os::Contact& where();
-    yarp::os::Contact whereDelegate();
     void preregister(const yarp::os::Contact& c);
     bool open(yarp::os::Searchable& options);
 };

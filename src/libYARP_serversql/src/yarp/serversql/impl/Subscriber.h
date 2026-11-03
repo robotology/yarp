@@ -26,8 +26,7 @@ class Subscriber :
 {
 public:
     Subscriber() :
-            store(nullptr),
-            delegate(nullptr)
+            store(nullptr)
     {
     }
 
@@ -98,20 +97,9 @@ public:
                     : yarp::os::createVocab32('f', 'a', 'i', 'l');
     }
 
-    void setDelegate(yarp::os::NameSpace *delegate)
-    {
-        this->delegate = delegate;
-    }
-
-    yarp::os::NameSpace *getDelegate()
-    {
-        return delegate;
-    }
-
 private:
     yarp::os::NameStore *store;
     ConnectManager manager;
-    yarp::os::NameSpace *delegate;
 };
 
 } // namespace yarp::serversql::impl

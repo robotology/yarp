@@ -93,9 +93,6 @@ Contact NameServiceOnTriples::query(const std::string& portName,
     if (!nested) {
         unlock();
     }
-    if (delegate && !nested) {
-        return delegate->queryName(portName);
-    }
     return Contact();
 }
 

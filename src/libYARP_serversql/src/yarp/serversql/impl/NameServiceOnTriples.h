@@ -63,7 +63,6 @@ private:
     yarp::os::Semaphore access;
     bool gonePublic;
     bool silent;
-    yarp::os::NameSpace *delegate;
 public:
     NameServiceOnTriples() :
             db(nullptr),
@@ -73,8 +72,7 @@ public:
             mutex(),
             access(1),
             gonePublic(false),
-            silent(false),
-            delegate(nullptr)
+            silent(false)
     {
     }
 
@@ -141,16 +139,6 @@ public:
     void lock() override;
 
     void unlock() override;
-
-    void setDelegate(yarp::os::NameSpace *delegate)
-    {
-        this->delegate = delegate;
-    }
-
-    yarp::os::NameSpace *getDelegate()
-    {
-        return delegate;
-    }
 };
 
 } // namespace yarp::serversql::impl
