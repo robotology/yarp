@@ -256,25 +256,6 @@ bool SubscriberOnSql::removeSubscription(const std::string& src,
 bool SubscriberOnSql::welcome(const std::string& port, int activity) {
     mutex.lock();
 
-    NameSpace *ns = getDelegate();
-    if (ns) {
-        NestedContact nc(port);
-        if (nc.getNestedName().size()>0) {
-            NameStore *store = getStore();
-            if (store != nullptr) {
-                Contact node = store->query(nc.getNodeName());
-                Contact me = store->query(port);
-                if (node.isValid() && me.isValid()) {
-                    if (activity>0) {
-                        ns->registerAdvanced(me,store);
-                    } else {
-                        ns->unregisterAdvanced(port,store);
-                    }
-                }
-            }
-        }
-    }
-
     char *msg = nullptr;
     char *query;
     if (activity>0) {
@@ -314,12 +295,6 @@ bool SubscriberOnSql::welcome(const std::string& port, int activity) {
 }
 
 bool SubscriberOnSql::hookup(const std::string& port) {
-    if (getDelegate()) {
-        NestedContact nc(port);
-        if (nc.getNestedName().size()>0) {
-            return false;
-        }
-    }
     mutex.lock();
     sqlite3_stmt *statement = nullptr;
     char *query = nullptr;
@@ -352,12 +327,6 @@ bool SubscriberOnSql::hookup(const std::string& port) {
 
 
 bool SubscriberOnSql::breakdown(const std::string& port) {
-    if (getDelegate()) {
-        NestedContact nc(port);
-        if (nc.getNestedName().size()>0) {
-            return false;
-        }
-    }
     mutex.lock();
     sqlite3_stmt *statement = nullptr;
     char *query = nullptr;
@@ -392,15 +361,6 @@ bool SubscriberOnSql::checkSubscription(const std::string& src,const std::string
                                         const std::string& srcFull,
                                         const std::string& destFull,
                                         const std::string& mode) {
-    if (getDelegate()) {
-        NestedContact nc(src);
-        if (nc.getNestedName().size()>0) {
-            NestedContact nc(dest);
-            if (nc.getNestedName().size()>0) {
-                return false;
-            }
-        }
-    }
     yCDebug(SUBSCRIBERONSQL,
             "+++ Checking %s %s / %s %s",
             src.c_str(),
@@ -445,15 +405,6 @@ bool SubscriberOnSql::breakSubscription(const std::string& dropper,
                                         const std::string& srcFull,
                                         const std::string& destFull,
                                         const std::string& mode) {
-    if (getDelegate()) {
-        NestedContact nc(src);
-        if (nc.getNestedName().size()>0) {
-            NestedContact nc(dest);
-            if (nc.getNestedName().size()>0) {
-                return false;
-            }
-        }
-    }
     yCDebug(SUBSCRIBERONSQL,
             "--- Checking %s %s / %s %s",
             src.c_str(),

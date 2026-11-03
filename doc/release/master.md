@@ -83,6 +83,12 @@ Important Changes
 * Several methods of `MultipleAnalogSensor` interfaces migrated from returning `bool` to returning `yarp::dev::ReturnValue`
 * New method for `ISpeechSynthesizer`: `getAvailableVoices` to get a list of the available voices names for the current language
 
+### libYARP_serversql
+
+* Removed the `--ros` option of `yarpserver` (delegation of pub/sub to the ROS name server) and all
+  the related delegate code (`NameServerContainer::whereDelegate()`, `setDelegate()`/`getDelegate()`
+  in `Subscriber` and `NameServiceOnTriples`). The option had no effect since the removal of `RosNameSpace`.
+
 ### thrift generator
 
 * Updated thrift generator to use `yarp.api.include` also in `enums` when required.
