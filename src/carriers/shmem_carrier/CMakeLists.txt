@@ -7,7 +7,6 @@ yarp_prepare_plugin(shmem
   INCLUDE ShmemCarrier.h
   EXTRA_CONFIG
     CODE=\\\"YA\\\"\ 0xE3\ 0x1E\ 0\ 0\ \\\"RP\\\"
-  DEPENDS "YARP_HAS_ACE"
   DEFAULT ON
 )
 
@@ -26,15 +25,19 @@ if(NOT SKIP_shmem)
       ShmemLogComponent.h
       ShmemOutputStream.cpp
       ShmemOutputStream.h
+      ShmemPlatform.cpp
+      ShmemPlatform.h
       ShmemTypes.h
   )
 
   target_link_libraries(yarp_shmem PRIVATE YARP::YARP_os)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
-  target_compile_definitions(yarp_shmem PRIVATE YARP_HAS_ACE)
-  target_link_libraries(yarp_shmem PRIVATE ACE::ACE)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ACE)
+  if(WIN32)
+    target_link_libraries(yarp_shmem PRIVATE ws2_32)
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_libraries(yarp_shmem PRIVATE pthread rt)
+  endif()
 
   yarp_install(
     TARGETS yarp_shmem

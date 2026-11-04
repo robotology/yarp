@@ -69,14 +69,14 @@ private:
 
     yarp::os::Contact m_LocalAddress;
     yarp::os::Contact m_RemoteAddress;
-    ACE_SOCK_Stream m_SockStream;
-    ACE_SOCK_Acceptor m_Acceptor;
+    shmem::Socket m_Socket;
+    shmem::Socket m_Acceptor;
 
     ShmemInputStreamImpl in;
     ShmemOutputStreamImpl out;
 
     // FUNCTIONS
-    int connect(const ACE_INET_Addr& ace_address);
+    int connect(const yarp::os::Contact& address);
 };
 
 #endif // YARP_SHMEM_SHMEMHYBRIDSTREAM_H

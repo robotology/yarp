@@ -113,9 +113,14 @@ Important Changes
 
 ### carriers
 
-* `shmem`: fixed a hang on Windows when closing a connection with replies (e.g. rpc).
-* `shmem`: fixed the access mutex not being released when writing to a closed stream.
-* `shmem`: added tests for CI.
+#### shmem
+* fixed a hang on Windows when closing a connection with replies (e.g. rpc).
+* fixed the access mutex not being released when writing to a closed stream.
+* fixed the connection not being removed (and the port hanging on close) when the process on the
+  other side of the connection dies.
+* added tests for CI, including tests with the two sides of the connection in different processes.
+* the carrier does not depend on ACE anymore. Shared memory, semaphores and sockets are now implemented using the native Win32 and POSIX APIs
+  (POSIX shared memory and named semaphores replace SysV shared memory on Linux and macOS).
 
 ### Commands
 

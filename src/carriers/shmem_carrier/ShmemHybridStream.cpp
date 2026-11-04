@@ -7,6 +7,15 @@
 #include "ShmemHybridStream.h"
 #include "ShmemLogComponent.h"
 
+#include <yarp/os/Log.h>
+
+namespace {
+yarp::os::Contact toContact(bool ok, const std::string& host, int port)
+{
+    return ok ? yarp::os::Contact(host, port) : yarp::os::Contact();
+}
+} // namespace
+
 ShmemHybridStream::ShmemHybridStream() :
         m_bLinked(false)
 {
@@ -21,29 +30,23 @@ int ShmemHybridStream::open(const yarp::os::Contact& yarp_address, bool sender)
 {
     m_bLinked = false;
 
-    ACE_INET_Addr ace_address(yarp_address.getPort(), yarp_address.getHost().c_str());
-
     if (sender) {
-        return connect(ace_address);
-    } else {
-        ACE_INET_Addr ace_server_addr(ace_address.get_port_number());
-
-        int result = m_Acceptor.open(ace_server_addr);
-
-        if (result < 0) {
-            yCError(SHMEMCARRIER, "ShmemHybridStream open result %d", result);
-            return result;
-        }
-
-        m_Acceptor.get_local_addr(ace_server_addr);
-
-        m_LocalAddress = yarp::os::Contact(ace_server_addr.get_host_addr(), ace_server_addr.get_port_number());
-        m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
-
-        return result;
+        return connect(yarp_address);
     }
 
-    return 1;
+    // The receiver listens on any interface
+    if (!m_Acceptor.listen(yarp_address.getPort())) {
+        yCError(SHMEMCARRIER, "ShmemHybridStream can't listen on port %d", yarp_address.getPort());
+        return -1;
+    }
+
+    std::string host;
+    int port = 0;
+    bool ok = m_Acceptor.getLocalAddress(host, port);
+    m_LocalAddress = toContact(ok, host, port);
+    m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
+
+    return 0;
 }
 
 int ShmemHybridStream::accept()
@@ -52,30 +55,32 @@ int ShmemHybridStream::accept()
         return -1;
     }
 
-    yarp::conf::ssize_t result = m_Acceptor.accept(m_SockStream);
+    bool ok = m_Acceptor.accept(m_Socket);
+    // Only one connection is accepted
+    m_Acceptor.close();
 
-    if (result < 0) {
-        yCError(SHMEMCARRIER, "ShmemHybridStream server returned %zd", result);
+    if (!ok) {
+        yCError(SHMEMCARRIER, "ShmemHybridStream accept failed");
         close();
         return -1;
     }
 
-    ACE_INET_Addr local, remote;
-    m_SockStream.get_local_addr(local);
-    m_SockStream.get_remote_addr(remote);
-    m_LocalAddress = yarp::os::Contact(local.get_host_addr(), local.get_port_number());
-    m_RemoteAddress = yarp::os::Contact(remote.get_host_addr(), remote.get_port_number());
+    std::string host;
+    int port = 0;
+    ok = m_Socket.getLocalAddress(host, port);
+    m_LocalAddress = toContact(ok, host, port);
+    ok = m_Socket.getRemoteAddress(host, port);
+    m_RemoteAddress = toContact(ok, host, port);
 
     ShmemPacket_t recv_conn_data;
-    result = m_SockStream.recv_n(&recv_conn_data, sizeof recv_conn_data);
-    if (result <= 0) {
-        yCError(SHMEMCARRIER, "Socket returned %zd", result);
+    if (!m_Socket.recvAll(&recv_conn_data, sizeof recv_conn_data)) {
+        yCError(SHMEMCARRIER, "ShmemHybridStream socket reading error");
         close();
         return -1;
     }
 
-    if (!in.open(m_RemoteAddress.getPort(), &m_SockStream)) {
-        yCError(SHMEMCARRIER, "ShmemHybridStream can't create shared memory");
+    if (!in.open(m_RemoteAddress.getPort(), &m_Socket)) {
+        yCError(SHMEMCARRIER, "ShmemHybridStream can't open shared memory");
         close();
         return -1;
     }
@@ -88,7 +93,8 @@ int ShmemHybridStream::accept()
 
     ShmemPacket_t send_conn_data;
     send_conn_data.command = ACKNOWLEDGE;
-    if (m_SockStream.send_n(&send_conn_data, sizeof send_conn_data) <= 0) {
+    send_conn_data.size = 0;
+    if (!m_Socket.sendAll(&send_conn_data, sizeof send_conn_data)) {
         yCError(SHMEMCARRIER, "ShmemHybridStream socket writing error");
         close();
         return -1;
@@ -96,56 +102,61 @@ int ShmemHybridStream::accept()
 
     m_bLinked = true;
 
-    m_SockStream.enable(ACE_NONBLOCK);
+    m_Socket.setNonBlocking();
 
     return 0;
 }
 
-int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
+int ShmemHybridStream::connect(const yarp::os::Contact& address)
 {
     if (m_bLinked) {
         return -1;
     }
 
-    ACE_SOCK_Connector connector;
-    yarp::conf::ssize_t result = connector.connect(m_SockStream, ace_address);
-    if (result < 0) {
-        yCError(SHMEMCARRIER, "ShmemHybridStream client returned %zd", result);
+    if (!m_Socket.connect(address.getHost(), address.getPort())) {
+        yCError(SHMEMCARRIER, "ShmemHybridStream can't connect to %s:%d", address.getHost().c_str(), address.getPort());
         close();
         return -1;
     }
 
-    ACE_INET_Addr local, remote;
-    m_SockStream.get_local_addr(local);
-    m_SockStream.get_remote_addr(remote);
-    m_LocalAddress = yarp::os::Contact(local.get_host_addr(), local.get_port_number());
-    m_RemoteAddress = yarp::os::Contact(remote.get_host_addr(), remote.get_port_number());
+    std::string host;
+    int port = 0;
+    bool ok = m_Socket.getLocalAddress(host, port);
+    m_LocalAddress = toContact(ok, host, port);
+    ok = m_Socket.getRemoteAddress(host, port);
+    m_RemoteAddress = toContact(ok, host, port);
 
-    out.open(m_LocalAddress.getPort());
+    if (!out.open(m_LocalAddress.getPort())) {
+        yCError(SHMEMCARRIER, "ShmemHybridStream can't create shared memory");
+        close();
+        return -1;
+    }
 
     ShmemPacket_t send_conn_data;
     send_conn_data.command = CONNECT;
     send_conn_data.size = SHMEM_DEFAULT_SIZE;
-    result = m_SockStream.send_n(&send_conn_data, sizeof send_conn_data);
-    if (result <= 0) {
-        yCError(SHMEMCARRIER, "Socket returned %zd", result);
+    if (!m_Socket.sendAll(&send_conn_data, sizeof send_conn_data)) {
+        yCError(SHMEMCARRIER, "ShmemHybridStream socket writing error");
         close();
         return -1;
     }
 
     ShmemPacket_t recv_conn_data;
-    result = m_SockStream.recv_n(&recv_conn_data, sizeof recv_conn_data);
-    if (result <= 0) {
-        yCError(SHMEMCARRIER, "Socket returned %zd", result);
+    if (!m_Socket.recvAll(&recv_conn_data, sizeof recv_conn_data)) {
+        yCError(SHMEMCARRIER, "ShmemHybridStream socket reading error");
         close();
         return -1;
     }
 
-    in.open(m_RemoteAddress.getPort(), &m_SockStream);
+    if (!in.open(m_RemoteAddress.getPort(), &m_Socket)) {
+        yCError(SHMEMCARRIER, "ShmemHybridStream can't open shared memory");
+        close();
+        return -1;
+    }
 
     m_bLinked = true;
 
-    m_SockStream.enable(ACE_NONBLOCK);
+    m_Socket.setNonBlocking();
 
     return 0;
 }
@@ -155,6 +166,8 @@ void ShmemHybridStream::close()
     m_bLinked = false;
     in.close();
     out.close();
+    m_Socket.close();
+    m_Acceptor.close();
 }
 
 void ShmemHybridStream::interrupt()

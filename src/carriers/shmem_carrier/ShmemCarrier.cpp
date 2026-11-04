@@ -70,9 +70,9 @@ bool ShmemCarrier::becomeShmemVersionHybridStream(yarp::os::ConnectionState& pro
     bool ok = true;
 
     if (!sender) {
-        ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
-        base = yarp::os::Contact(anywhere.get_host_addr(), anywhere.get_port_number());
-        bool ok = stream->open(base, sender) == 0;
+        // Listen on any interface, on any free port
+        base = yarp::os::Contact("0.0.0.0", 0);
+        ok = stream->open(base, sender) == 0;
         if (ok) {
             int myPort = stream->getLocalAddress().getPort();
             writeYarpInt(myPort, proto);

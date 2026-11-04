@@ -13,6 +13,9 @@ struct ShmemHeader_t
 {
     bool resize;
     bool close;
+    // Set by the reader once it has mapped this segment. When set, the
+    // writer can release the previous (smaller) segments.
+    bool attached;
 
     int size;
     int newsize;
