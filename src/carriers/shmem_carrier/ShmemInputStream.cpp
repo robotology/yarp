@@ -23,7 +23,7 @@ ShmemInputStreamImpl::ShmemInputStreamImpl() :
         m_ResizeNum(0),
         m_Port(-1),
         m_pAccessMutex(nullptr),
-        m_pWaitDataMutex(nullptr),
+        m_pWaitDataSem(nullptr),
         m_pMap(nullptr),
         m_pData(nullptr),
         m_pHeader(nullptr),
@@ -47,7 +47,8 @@ bool ShmemInputStreamImpl::open(int port, ACE_SOCK_Stream* pSock, int size)
 
     m_pSock = pSock;
 
-    m_pAccessMutex = m_pWaitDataMutex = nullptr;
+    m_pAccessMutex = nullptr;
+    m_pWaitDataSem = nullptr;
     m_pMap = nullptr;
     m_pData = nullptr;
     m_pHeader = nullptr;
@@ -86,16 +87,12 @@ bool ShmemInputStreamImpl::open(int port, ACE_SOCK_Stream* pSock, int size)
 #ifdef _ACE_USE_SV_SEM
     snprintf(obj_name, 2048, "%sSHMEM_ACCESS_MUTEX_%d", temp_dir_path, port);
     m_pAccessMutex = new ACE_Mutex(USYNC_PROCESS, obj_name);
-    snprintf(obj_name, 2048, "%sSHMEM_WAITDATA_MUTEX_%d", temp_dir_path, port);
-    m_pWaitDataMutex = new ACE_Mutex(USYNC_PROCESS, obj_name);
 #else
     snprintf(obj_name, 2048, "SHMEM_ACCESS_MUTEX_%d", port);
     m_pAccessMutex = new ACE_Process_Mutex(obj_name);
-    snprintf(obj_name, 2048, "SHMEM_WAITDATA_MUTEX_%d", port);
-    m_pWaitDataMutex = new ACE_Process_Mutex(obj_name);
 #endif
-
-    m_pWaitDataMutex->acquire();
+    snprintf(obj_name, 2048, "SHMEM_WAITDATA_SEM_%d", port);
+    m_pWaitDataSem = new ACE_Semaphore(0, USYNC_PROCESS, obj_name);
 
     m_bOpen = true;
 
@@ -214,14 +211,10 @@ yarp::conf::ssize_t ShmemInputStreamImpl::read(yarp::os::Bytes& b)
     yarp::conf::ssize_t ret;
 
     while (!(ret = read(data, (int)len))) {
-#ifdef _ACE_USE_SV_SEM
-        yarp::os::impl::YARP_timeval tv = ACE_OS::gettimeofday();
-        tv.sec(tv.sec() + 1);
-#else
-        yarp::os::impl::YARP_timeval tv(1);
-#endif
+        // The timeout is an absolute time
+        ACE_Time_Value tv = ACE_OS::gettimeofday() + ACE_Time_Value(1);
 
-        m_pWaitDataMutex->acquire(tv);
+        m_pWaitDataSem->acquire(tv);
 
         if (!m_pSock->recv(&buf, 1)) {
             yCDebug(SHMEMCARRIER, "STREAM IS BROKEN");
@@ -249,7 +242,7 @@ void ShmemInputStreamImpl::close()
     m_pAccessMutex->acquire();
     while (m_pHeader->waiting > 0) {
         --m_pHeader->waiting;
-        m_pWaitDataMutex->release();
+        m_pWaitDataSem->release();
     }
     m_pHeader->close = true;
     m_pAccessMutex->release();
@@ -258,9 +251,9 @@ void ShmemInputStreamImpl::close()
     delete m_pAccessMutex;
     m_pAccessMutex = nullptr;
 
-    m_pWaitDataMutex->remove();
-    delete m_pWaitDataMutex;
-    m_pWaitDataMutex = nullptr;
+    m_pWaitDataSem->remove();
+    delete m_pWaitDataSem;
+    m_pWaitDataSem = nullptr;
 
     m_pMap->close();
     delete m_pMap;

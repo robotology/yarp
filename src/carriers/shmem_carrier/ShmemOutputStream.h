@@ -18,6 +18,7 @@
 #include <ace/config.h>
 #include <ace/Mutex.h>
 #include <ace/Process_Mutex.h>
+#include <ace/Semaphore.h>
 #include <ace/SOCK_Stream.h>
 #include <ace/SOCK_Acceptor.h>
 #include <ace/SOCK_Connector.h>
@@ -54,11 +55,13 @@ protected:
 
 #if defined(_ACE_USE_SV_SEM)
     ACE_Mutex* m_pAccessMutex;
-    ACE_Mutex* m_pWaitDataMutex;
 #else
     ACE_Process_Mutex* m_pAccessMutex;
-    ACE_Process_Mutex* m_pWaitDataMutex;
 #endif
+    // Signalled by the writer when new data is available. It must be a
+    // semaphore and not a mutex, since it is released by a different
+    // process (and thread) than the one waiting on it.
+    ACE_Semaphore* m_pWaitDataSem;
 
     ACE_Shared_Memory* m_pMap;
     char* m_pData;
