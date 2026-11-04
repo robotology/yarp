@@ -104,6 +104,12 @@ Important Changes
   * `SpeechSynthesizer_nwc_yarp`
 * `frameGrabber_nws_yarp`, `frameGrabber_nwc_yarp`, `frameGrabberCropper`, `fakeFrameGrabber` updated to use the new thrift data types.
 
+### carriers
+
+* `shmem`: fixed a hang on Windows when closing a connection with replies (e.g. rpc).
+* `shmem`: fixed the access mutex not being released when writing to a closed stream.
+* `shmem`: added tests for CI.
+
 ### Commands
 
 * Removed `yarp pray` command.

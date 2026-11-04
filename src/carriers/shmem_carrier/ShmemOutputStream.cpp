@@ -22,7 +22,7 @@ ShmemOutputStreamImpl::ShmemOutputStreamImpl() :
         m_ResizeNum(0),
         m_Port(0),
         m_pAccessMutex(nullptr),
-        m_pWaitDataMutex(nullptr),
+        m_pWaitDataSem(nullptr),
         m_pMap(nullptr),
         m_pData(nullptr),
         m_pHeader(nullptr)
@@ -41,7 +41,8 @@ bool ShmemOutputStreamImpl::isOk() const
 
 bool ShmemOutputStreamImpl::open(int port, int size)
 {
-    m_pAccessMutex = m_pWaitDataMutex = nullptr;
+    m_pAccessMutex = nullptr;
+    m_pWaitDataSem = nullptr;
     m_pMap = nullptr;
     m_pData = nullptr;
     m_pHeader = nullptr;
@@ -79,14 +80,12 @@ bool ShmemOutputStreamImpl::open(int port, int size)
 #ifdef _ACE_USE_SV_SEM
     snprintf(obj_name, 2048, "%sSHMEM_ACCESS_MUTEX_%d", temp_dir_path, port);
     m_pAccessMutex = new ACE_Mutex(USYNC_PROCESS, obj_name);
-    snprintf(obj_name, 2048, "%sSHMEM_WAITDATA_MUTEX_%d", temp_dir_path, port);
-    m_pWaitDataMutex = new ACE_Mutex(USYNC_PROCESS, obj_name);
 #else
     snprintf(obj_name, 2048, "SHMEM_ACCESS_MUTEX_%d", port);
     m_pAccessMutex = new ACE_Process_Mutex(obj_name);
-    snprintf(obj_name, 2048, "SHMEM_WAITDATA_MUTEX_%d", port);
-    m_pWaitDataMutex = new ACE_Process_Mutex(obj_name);
 #endif
+    snprintf(obj_name, 2048, "SHMEM_WAITDATA_SEM_%d", port);
+    m_pWaitDataSem = new ACE_Semaphore(0, USYNC_PROCESS, obj_name);
 
     m_pAccessMutex->acquire();
 
@@ -190,6 +189,7 @@ bool ShmemOutputStreamImpl::write(const yarp::os::Bytes& b)
     m_pAccessMutex->acquire();
 
     if (!m_bOpen) {
+        m_pAccessMutex->release();
         return false;
     }
 
@@ -218,7 +218,7 @@ bool ShmemOutputStreamImpl::write(const yarp::os::Bytes& b)
 
     while (m_pHeader->waiting > 0) {
         --m_pHeader->waiting;
-        m_pWaitDataMutex->release();
+        m_pWaitDataSem->release();
     }
 
     m_pAccessMutex->release();
@@ -237,7 +237,7 @@ void ShmemOutputStreamImpl::close()
     m_pAccessMutex->acquire();
     while (m_pHeader->waiting > 0) {
         --m_pHeader->waiting;
-        m_pWaitDataMutex->release();
+        m_pWaitDataSem->release();
     }
     m_pHeader->close = true;
     m_pAccessMutex->release();
@@ -246,9 +246,9 @@ void ShmemOutputStreamImpl::close()
     delete m_pAccessMutex;
     m_pAccessMutex = nullptr;
 
-    m_pWaitDataMutex->remove();
-    delete m_pWaitDataMutex;
-    m_pWaitDataMutex = nullptr;
+    m_pWaitDataSem->remove();
+    delete m_pWaitDataSem;
+    m_pWaitDataSem = nullptr;
 
     m_pMap->close();
     delete m_pMap;
