@@ -1463,6 +1463,28 @@ jobs:
           7z x ccache.tar.xz
           7z x -ttar ccache.tar
 
+    - name: Patch Qt5 headers for MSVC STL >= 14.50 [Windows]
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+          # Qt < 5.15.17 uses stdext::make_(un)checked_array_iterator, removed from
+          # the MSVC STL shipped with Visual Studio 2026. Apply the same guard used
+          # upstream since Qt 5.15.17 (the macros then fall back to plain pointers).
+          # TODO: remove this step once the vcpkg archive ships Qt >= 5.15.17.
+          $file = "C:/robotology/vcpkg/installed/x64-windows/include/qt5/QtCore/qcompilerdetection.h"
+          $content = Get-Content -Raw -Path $file
+          if ($content -match '_MSC_VER < 1938') {
+            Write-Host "Qt headers already patched, nothing to do"
+            exit 0
+          }
+          $pattern = '(?m)^(#\s*define QT_MAKE_UNCHECKED_ARRAY_ITERATOR\(x\) stdext::[^\r\n]*\r?\n#\s*define QT_MAKE_CHECKED_ARRAY_ITERATOR\(x, N\) stdext::[^\r\n]*\r?\n)'
+          if ($content -notmatch $pattern) {
+            throw "Unable to find the QT_MAKE_(UN)CHECKED_ARRAY_ITERATOR definitions in $file"
+          }
+          $content = [regex]::Replace($content, $pattern, "#  if _MSC_VER < 1938`n`$1#  endif`n")
+          Set-Content -NoNewline -Path $file -Value $content
+          Write-Host "Patched $file"
+
     - name: Dependencies [macOS]
       if: runner.os == 'macOS'
       run: |
@@ -1533,10 +1555,37 @@ jobs:
         endif()
 
         if("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
+          # Pass the script path as a separate argument (CMake quotes it
+          # without backslash-escaping, which cmd.exe does not understand)
+          # and use "call" so that cmd.exe does not strip the quotes.
+          set(_vcvars_path "${{ matrix.config.environment_script }}")
+          if(NOT EXISTS "${_vcvars_path}")
+            # The Visual Studio install location may change between runner
+            # images: look for it using vswhere
+            message(STATUS "Environment script not found: ${_vcvars_path}. Searching with vswhere...")
+            execute_process(
+                COMMAND "C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe"
+                        -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64
+                        -property installationPath
+                OUTPUT_VARIABLE _vs_install_path
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+            file(TO_CMAKE_PATH "${_vs_install_path}" _vs_install_path)
+            set(_vcvars_path "${_vs_install_path}/VC/Auxiliary/Build/vcvars64.bat")
+            if("${_vs_install_path}" STREQUAL "" OR NOT EXISTS "${_vcvars_path}")
+              message(FATAL_ERROR "Environment script not found: ${_vcvars_path}")
+            endif()
+          endif()
+          message(STATUS "Using environment script: ${_vcvars_path}")
+          file(TO_NATIVE_PATH "${_vcvars_path}" _vcvars_script)
           execute_process(
-              COMMAND cmd.exe /C "\"${{ matrix.config.environment_script }}\" && set"
+              COMMAND cmd.exe /C call ${_vcvars_script} && set
               OUTPUT_FILE environment_script_output.txt
+              RESULT_VARIABLE _vcvars_result
           )
+          if(NOT _vcvars_result EQUAL 0)
+            message(FATAL_ERROR "Environment script failed with result ${_vcvars_result}")
+          endif()
           file(STRINGS environment_script_output.txt output_lines)
 
           foreach(line IN LISTS output_lines)
