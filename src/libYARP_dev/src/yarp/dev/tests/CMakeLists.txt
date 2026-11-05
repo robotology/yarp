@@ -115,7 +115,7 @@ target_sources(YARP_dev_tests
     ${YARP_dev_test_HDRS}
 )
 
-target_compile_definitions(YARP_dev_tests PUBLIC YARP_dev_EXPORTS=1)
+target_compile_definitions(YARP_dev_tests PRIVATE YARP_dev_EXPORTS=1)
 
 target_link_libraries (YARP_dev_tests
   PRIVATE

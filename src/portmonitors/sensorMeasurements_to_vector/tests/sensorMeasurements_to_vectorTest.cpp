@@ -8,6 +8,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/BufferedPort.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/SensorStreamingData.h>
 
@@ -26,6 +27,9 @@ TEST_CASE("pm::sensorMeasurements_to_vectorTest", "[yarp::pm]")
     yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
     yarp::os::NetworkBase::setLocalMode(true);
+
+    REQUIRE(yarp::os::Carriers::getCarrierTemplate("portmonitor") != nullptr);
+
     yarp::os::Time::delay(1.0);
 
     struct TestCase {
