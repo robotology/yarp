@@ -31,6 +31,12 @@
 #include <mutex>
 #include <condition_variable>
 
+#if !defined(_WIN32)
+#  include <sys/types.h>
+#  include <sys/wait.h>
+#  include <unistd.h>
+#endif
+
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
@@ -2271,3 +2277,35 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     NetworkBase::setLocalMode(false);
 }
+
+#if !defined(_WIN32)
+// Opening a port must not change how the process handles its children: the
+// application must still be able to collect the exit status of a child process
+// with waitpid() (this is what std::system() and popen() rely on).
+TEST_CASE("os::PortTest::children exit status", "[yarp::os]")
+{
+    NetworkBase::setLocalMode(true);
+
+    Port port;
+    REQUIRE(port.open("/test/port/children"));
+
+    pid_t pid = fork();
+    REQUIRE(pid >= 0);
+    if (pid == 0) {
+        _exit(3);
+    }
+
+    // Give the child the time to exit and SIGCHLD the time to be delivered
+    Time::delay(0.5);
+
+    int status = 0;
+    pid_t ret = waitpid(pid, &status, 0);
+    CHECK(ret == pid);
+    CHECK(WIFEXITED(status));
+    CHECK(WEXITSTATUS(status) == 3);
+
+    port.close();
+
+    NetworkBase::setLocalMode(false);
+}
+#endif
