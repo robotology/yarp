@@ -83,7 +83,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
         if (p.check("nframes") == false)
         {  yCError(COMPANION) << "Missing mandatory parameter nframes. See available options with yarp latency-test";  return -1; }
         int frames = p.find("nframes").asInt32();
-        if (frames == 0) { yCError(COMPANION, "nframes cannot be 0!"); return false; }
+        if (frames == 0) { yCError(COMPANION, "nframes cannot be 0!"); return -1; }
 
         double client_wait = 0;
         if (p.check("client_wait")) {

@@ -119,6 +119,9 @@ Important Changes
 ### Commands
 
 * Removed `yarp pray` command.
+* Fixed exit codes of several `yarp` companion commands, which returned a non-zero value on success
+  (or zero on failure) because a `bool` was returned as process exit code.
+  The following commands are affected: `yarp wait`, `yarp ping`, `yarp latency-test`.
 
 ### GUIs
 
