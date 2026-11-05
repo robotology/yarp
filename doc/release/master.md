@@ -55,6 +55,7 @@ Important Changes
 * Improved serialization of `yarp::os::SystemInfo` using thrift (`SystemInfoData.thrift`). `SystemInfoSerializer.h` has been removed.
 * Fixed bug in `PortCoreInputUnit` and use of an uninitialized variable (`optlen`).
 * Fixed possible memory leak in `DgramTwoWayStream`.
+* Bugfix: When YARP is compiled without ACE, opening a port no longer installs a process-wide `SIGCHLD` handler. It's useless and dangerous.
 
 ### libYARP_sig
 

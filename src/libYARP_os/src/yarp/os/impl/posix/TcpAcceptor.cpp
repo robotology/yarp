@@ -10,9 +10,9 @@
 // General files
 
 #include <yarp/os/impl/TcpAcceptor.h>
-#include <yarp/os/impl/PlatformSysWait.h>
-#include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/LogComponent.h>
+
+#include <cerrno>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -22,15 +22,6 @@ using namespace yarp::os;
 namespace {
 YARP_OS_LOG_COMPONENT(TCPACCEPTOR_POSIX, "yarp.os.impl.TcpAcceptor.posix")
 }
-
-/**
- * An error handler that reaps the zombies.
- */
-void sigchld_handler(int /*s*/)
-{
-    while(waitpid(-1, nullptr, WNOHANG) > 0) {}
-}
-
 
 /* **************************************************************************************
  * Implementation of TcpAcceptor
@@ -74,15 +65,6 @@ int TcpAcceptor::shared_open(const Contact& address)
 
     if (listen(get_handle(), BACKLOG) < 0) {
         yCError(TCPACCEPTOR_POSIX, "At listen(sockfd) there was an error: %d, %s", errno, strerror(errno));
-        return -1;
-    }
-
-    struct sigaction sa;
-    sa.sa_handler = sigchld_handler;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_RESTART;
-    if (sigaction(SIGCHLD, &sa, nullptr) < 0) {
-        yCError(TCPACCEPTOR_POSIX, "At sigaction(address) there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
 
