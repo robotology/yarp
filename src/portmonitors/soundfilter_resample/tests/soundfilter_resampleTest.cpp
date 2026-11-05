@@ -8,6 +8,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/BufferedPort.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundUtils.h>
 
@@ -27,6 +28,8 @@ TEST_CASE("pm::soundfilter_resampleTest", "[yarp::pm]")
 
     yarp::os::NetworkBase::setLocalMode(true);
     yarp::os::Time::delay(1.0);
+
+    REQUIRE(yarp::os::Carriers::getCarrierTemplate("portmonitor") != nullptr);
 
     struct TestCase {
         std::string carrier;

@@ -33,6 +33,12 @@
 
 #include <mainwindow.h>
 
+// The MSVC CRT provides popen/pclose only with a leading underscore
+#if defined(_MSC_VER)
+#  define popen _popen
+#  define pclose _pclose
+#endif
+
 using namespace yarp::os;
 using namespace yarp::manager;
 

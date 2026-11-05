@@ -9,6 +9,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Carriers.h>
 
 #include <yarp/conf/environment.h>
 
@@ -26,6 +27,9 @@ TEST_CASE("pm::throttleDownTest", "[yarp::pm]")
     yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
     yarp::os::NetworkBase::setLocalMode(true);
+
+    REQUIRE(yarp::os::Carriers::getCarrierTemplate("portmonitor") != nullptr);
+
     yarp::os::Time::delay(0.5);
 
     struct TestCase {
