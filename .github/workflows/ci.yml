@@ -1485,6 +1485,20 @@ jobs:
           Set-Content -NoNewline -Path $file -Value $content
           Write-Host "Patched $file"
 
+    # On Windows, FindPython looks in the registry first and picks the most
+    # recent Python available in the runner toolcache, which is not
+    # necessarily the one in the PATH. Plugins linked to that Python (e.g.
+    # yarp_portmonitor) then fail to load at test time because the
+    # corresponding python3XX.dll cannot be found.
+    # Pin a Python version, add it to the PATH, and pass it explicitly to CMake.
+    # This step must run before "Prepare Environment Script", which captures
+    # the PATH.
+    - name: Setup Python [Windows]
+      if: runner.os == 'Windows'
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14'
+
     - name: Dependencies [macOS]
       if: runner.os == 'macOS'
       run: |
@@ -1818,6 +1832,17 @@ jobs:
                                        -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
         endif()
 
+        # Use the Python installed by actions/setup-python (see "Setup Python [Windows]")
+        set(_python_options)
+        if("${{ runner.os }}" STREQUAL "Windows")
+          if("$ENV{pythonLocation}" STREQUAL "")
+            message(FATAL_ERROR "pythonLocation is not set: did the 'Setup Python [Windows]' step run?")
+          endif()
+          file(TO_CMAKE_PATH "$ENV{pythonLocation}" _python_root_dir)
+          message(STATUS "Using Python from: ${_python_root_dir}")
+          set(_python_options -D Python_ROOT_DIR=${_python_root_dir})
+        endif()
+
         set(_cmake_extra_options)
         if(NOT "${{ matrix.config.cmake_extra_options }}" STREQUAL "")
           set(_cmake_extra_options ${{ matrix.config.cmake_extra_options }})
@@ -1841,6 +1866,7 @@ jobs:
             ${_build_type}
             ${_install_prefix}
             ${_cmake_compiler_lauchers}
+            ${_python_options}
             ${_cmake_extra_options}
             ${_swig_extra_options}
           RESULT_VARIABLE _result

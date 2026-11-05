@@ -11,6 +11,7 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Carriers.h>
 
 #include <yarp/conf/environment.h>
 
@@ -27,6 +28,9 @@ TEST_CASE("pm::rpc_monitorTest", "[yarp::pm]")
     yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
     yarp::os::NetworkBase::setLocalMode(true);
+
+    REQUIRE(yarp::os::Carriers::getCarrierTemplate("portmonitor") != nullptr);
+
     yarp::os::Time::delay(1.0);
 
     struct TestCase {
