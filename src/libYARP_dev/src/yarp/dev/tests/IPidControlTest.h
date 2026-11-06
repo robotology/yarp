@@ -191,27 +191,33 @@ namespace yarp::dev::tests
         }
 
         //PidOutput
+        //There is no setPidOutput(): the fake device returns the PID offset as PID output,
+        //so the offset is set first and then read back through getPidOutput().
+        //This keeps the test independent from any joint remapping.
+        auto setpidouts = std::vector<double>(ax);
+        yarp::dev::tests::set_vector_crescent(setpidouts, 1.1);
         {
+            for (size_t j=0; j<ax; j++)
+            {
+                b = ipid->setPidOffset(pp, j, setpidouts[j]);
+                CHECK(b);
+            }
+            wait_safe(); // Allow some time for the command to take effect
             double getpidout=0;
             for (size_t j=0; j<ax; j++)
             {
                 b = ipid->getPidOutput(pp, j, &getpidout);
                 CHECK(b);
-                CHECK(getpidout ==  1.1 + j * 10);
+                CHECK(getpidout == setpidouts[j]);
             }
         }
 
         //PidOutputs
         {
-            auto checkpidouts = std::vector<double>(ax);
             auto pidouts = std::vector<double>(ax);
-            for (size_t j=0; j<ax; j++)
-            {
-                checkpidouts[j] = 1.1 + j * 10;
-            }
             b = ipid->getPidOutputs(pp, pidouts.data());
             CHECK(b);
-            CHECK(checkpidouts == pidouts);
+            CHECK(setpidouts == pidouts);
         }
 
         // PidReference

@@ -1750,48 +1750,11 @@ ReturnValue FakeMotionControl::isPidEnabledRaw(const PidControlTypeEnum& pidtype
 
 ReturnValue FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j, double *out)
 {
-    size_t index = PidControlTypeEnum2Index(pidtype);
-    switch (pidtype)
-    {
-        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
-            *out=1.1 + j * 10;
-        break;
-        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_1:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_2:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_3:
-            *out=1.1 + j * 10;
-        break;
-        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
-            *out=1.2 + j * 10;
-        break;
-        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_1:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_2:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
-            *out=1.2 + j * 10;
-        break;
-        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
-            *out=1.2 + j * 10;
-        break;
-        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
-            *out=1.3 + j * 10;
-        break;
-        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
-        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
-            *out=1.4 + j * 10;
-        break;
-        default:
-            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
-            return ReturnValue::return_code::return_value_error_method_failed;
-        break;
+    // The fake device has no real control loop: the PID output is simulated
+    // as the PID offset, so that tests can set a value (setPidOffset) and read it back.
+    ReturnValue ret = getPidOffsetRaw(pidtype, j, *out);
+    if (!ret) {
+        return ret;
     }
     yCDebug(FAKEMOTIONCONTROL) << "getPidOutputRaw" << (yarp::conf::vocab32_t)(pidtype) << j << *out;
     return ReturnValue_ok;
