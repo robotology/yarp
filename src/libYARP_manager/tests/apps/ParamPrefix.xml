@@ -7,8 +7,10 @@
 
 <application>
     <name>ParamPrefix</name>
+
+    <def-param-value name="ns">robot</def-param-value>
     <application>
         <name>PlainChild</name>
-        <prefix>/$PAR{ns=robot}</prefix>
+        <prefix>/$PAR{ns}</prefix>
     </application>
 </application>

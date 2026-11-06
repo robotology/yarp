@@ -370,6 +370,13 @@ public:
     const std::map<std::string, std::string>& getParamOverrides() { return paramOverrides; }
     const std::map<std::string, std::string>& getParamOverridesAsWritten() { return paramOverridesAsWritten; }
 
+    // default values of the application parameters ($PAR{...}) used by the application,
+    // declared with <def-param-value>
+    bool addParamDefault(const std::string& name, const std::string& value) {
+        return paramDefaults.emplace(name, value).second;
+    }
+    const std::map<std::string, std::string>& getParamDefaults() { return paramDefaults; }
+
     // true if the application uses application parameters ($PAR{...})
     void setUsesAppParameters(bool uses) { bUsesAppParameters = uses; }
     bool usesAppParameters() { return bUsesAppParameters; }
@@ -388,6 +395,7 @@ public:
         Imodules.clear();
         connections.clear();
         arbitrators.clear();
+        paramDefaults.clear();
         paramOverrides.clear();
         paramOverridesAsWritten.clear();
         bUsesAppParameters = false;
@@ -418,6 +426,7 @@ private:
     std::string strBasePrefix;
     std::string strXmlFile;
     Node* appOwner;
+    std::map<std::string, std::string> paramDefaults;
     std::map<std::string, std::string> paramOverrides;
     std::map<std::string, std::string> paramOverridesAsWritten;
     bool bUsesAppParameters {false};

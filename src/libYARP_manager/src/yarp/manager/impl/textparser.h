@@ -100,7 +100,7 @@ public:
             if(badSymbol)
             {
                 OSTRINGSTREAM war;
-                war << "use of symbol '$' detected but no keyword understood.. possible use: ${foo} for internal variable, $ENV{foo} for environment variable or $PAR{foo=default} for application parameter";
+                war << "use of symbol '$' detected but no keyword understood.. possible use: ${foo} for internal variable, $ENV{foo} for environment variable or $PAR{foo} for application parameter";
                 if (logger) {
                     logger->addWarning(war);
                 }

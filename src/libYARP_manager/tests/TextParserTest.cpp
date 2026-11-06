@@ -21,16 +21,16 @@ TEST_CASE("manager::TextParserTest", "[yarp::manager]")
 
     SECTION("Application parameters are kept verbatim without warnings")
     {
-        CHECK(parser.parseText("--status $PAR{status=SUCCESS} $PAR{x}") == "--status $PAR{status=SUCCESS} $PAR{x}");
+        CHECK(parser.parseText("--status $PAR{status} $PAR{x}") == "--status $PAR{status} $PAR{x}");
         CHECK(logger->warningCount() == 0);
     }
 
-    SECTION("Variables and environment variables are expanded inside default values")
+    SECTION("Variables and environment variables are expanded next to application parameters")
     {
         yarp::conf::environment::set_string("YARP_MANAGER_TEST_DIR", "/some/dir");
         parser.addVariable("robot", "icub");
-        CHECK(parser.parseText("$PAR{dir=$ENV{YARP_MANAGER_TEST_DIR}/conf} $PAR{robot=${robot}}")
-              == "$PAR{dir=/some/dir/conf} $PAR{robot=icub}");
+        CHECK(parser.parseText("$ENV{YARP_MANAGER_TEST_DIR}/$PAR{dir} ${robot}$PAR{suffix}")
+              == "/some/dir/$PAR{dir} icub$PAR{suffix}");
         CHECK(logger->warningCount() == 0);
     }
 
@@ -44,7 +44,7 @@ TEST_CASE("manager::TextParserTest", "[yarp::manager]")
         size_t pos = last.find(message);
         REQUIRE(pos != std::string::npos);
         CHECK(last.find(message, pos + 1) == std::string::npos);
-        CHECK(last.find("$PAR{foo=default}") != std::string::npos);
+        CHECK(last.find("$PAR{foo}") != std::string::npos);
     }
 
     logger->clear();

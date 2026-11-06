@@ -7,6 +7,7 @@
 #define YARP_MANAGER_PARAMRESOLVER_H
 
 #include <map>
+#include <set>
 #include <string>
 
 namespace yarp::manager {
@@ -14,9 +15,11 @@ namespace yarp::manager {
 /**
  * Application parameters handling.
  *
- * An application can contain placeholders written as $PAR{name} or
- * $PAR{name=default}. An application importing it can override their values
- * with <app-param name="name">value</app-param> in its <application> block.
+ * An application can contain placeholders written as $PAR{name}. Their
+ * default values are declared once in the application with
+ * <def-param-value name="name">default</def-param-value>, and an application
+ * importing it can override them with <app-param name="name">value</app-param>
+ * in its <application> block.
  * Placeholders are kept verbatim while loading the xml files and are replaced
  * once per application instance, when the application is put together.
  */
@@ -25,29 +28,28 @@ class ParamResolver
 public:
     typedef std::map<std::string, std::string> ParamMap;
 
-    struct Declaration
-    {
-        bool hasDefault {false};
-        std::string defaultValue;
-    };
-    typedef std::map<std::string, Declaration> DeclMap;
+    typedef std::set<std::string> NameSet;
 
     static const std::string startKeyword;
     static const std::string endKeyword;
 
     /**
-     * Adds to decls the parameters used in text.
-     * Fails on a malformed placeholder or if a parameter gets two different
-     * default values.
+     * Adds to used the parameters used in text.
+     * Fails on a malformed placeholder.
      */
-    static bool collect(const std::string& text, DeclMap& decls, std::string& error);
+    static bool collect(const std::string& text, NameSet& used, std::string& error);
 
     /**
-     * Computes the value of each declared parameter: the override if present,
+     * Computes the value of each parameter: the override if present,
      * otherwise the default. Parameters with neither are left out of values.
-     * Fails if overrides contains a parameter that is not declared.
+     * Fails if overrides contains a parameter that is neither used nor has
+     * a default value.
      */
-    static bool merge(const DeclMap& decls, const ParamMap& overrides, ParamMap& values, std::string& error);
+    static bool merge(const NameSet& used,
+                      const ParamMap& defaults,
+                      const ParamMap& overrides,
+                      ParamMap& values,
+                      std::string& error);
 
     /**
      * Replaces each placeholder in text with its value. Replaced values are
@@ -62,7 +64,6 @@ private:
         size_t begin {0};
         size_t end {0};
         std::string name;
-        Declaration decl;
     };
 
     /**
