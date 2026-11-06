@@ -10,7 +10,6 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/TerminatorMsgs.h>
 #include <yarp/os/impl/LogComponent.h>
-#include <yarp/os/impl/PortCommand.h>
 
 
 using namespace yarp::os::impl;
@@ -51,14 +50,6 @@ bool Terminator::terminateByName(const char* name)
     }
 
     std::string s(name);
-
-    if (s.find("/quit") == std::string::npos) {
-        // name doesn't include /quit
-        // old mechanism won't work, let's try new
-        PortCommand pc('\0', "i");
-        NetworkBase::sendMessage(s, pc, true);
-        return true;
-    }
 
     if (name[0] != '/') {
         s.clear();
