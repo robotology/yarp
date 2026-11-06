@@ -317,12 +317,15 @@ bool Manager::switchBroker(size_t id)
 
 bool Manager::prepare(bool silent)
 {
-    knowledge.reasolveDependency(strAppName.c_str(), bAutoDependancy, silent);
-
     clearExecutables();
     connections.clear();
     modules.clear();
     resources.clear();
+
+    if (!knowledge.reasolveDependency(strAppName.c_str(), bAutoDependancy, silent)) {
+        return false;
+    }
+
     connections = knowledge.getSelConnection();
     modules = knowledge.getSelModules();
     resources = knowledge.getSelResources();
