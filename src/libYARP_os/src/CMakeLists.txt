@@ -382,6 +382,7 @@ set(YARP_os_IDL
   idl/PortInfoData.thrift
   idl/ThreadInfoData.thrift
   idl/PortCoreMsgs.thrift
+  idl/TerminatorMsgs.thrift
 )
 
 yarp_choose_idl(YARP_os_idl ${YARP_os_IDL})

@@ -4,15 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <yarp/os/Terminator.h>
+
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/Terminator.h>
-#include <yarp/os/Vocab.h>
+#include <yarp/os/TerminatorMsgs.h>
 #include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PortCommand.h>
-#include <yarp/os/impl/SocketTwoWayStream.h>
-
-#include <cstdio>
 
 
 using namespace yarp::os::impl;
@@ -20,7 +18,30 @@ using namespace yarp::os;
 
 namespace {
 YARP_OS_LOG_COMPONENT(TERMINATOR, "yarp.os.Terminator")
-}
+
+/*
+ * Server side of the TerminatorMsgs thrift service.
+ */
+class TerminatorServer :
+        public yarp::os::TerminatorMsgs
+{
+public:
+    explicit TerminatorServer(volatile bool& quitFlag) :
+            m_quit(quitFlag)
+    {
+    }
+
+    bool quit() override
+    {
+        m_quit = true;
+        return true;
+    }
+
+private:
+    volatile bool& m_quit;
+};
+
+} // namespace
 
 
 bool Terminator::terminateByName(const char* name)
@@ -45,18 +66,30 @@ bool Terminator::terminateByName(const char* name)
         s += name;
     }
 
-    Bottle cmd("quit");
-    Bottle reply;
     Contact c = NetworkBase::queryName(s);
     if (!c.isValid()) {
         yCError(TERMINATOR, "Terminator port not found");
         return false;
     }
-    ContactStyle style;
-    style.quiet = false;
-    style.carrier = "text_ack";
-    style.expectReply = true;
-    NetworkBase::write(c, cmd, reply, style);
+    c.setCarrier("tcp");
+
+    // Client side of the TerminatorMsgs thrift service: the commands are
+    // sent through a (not registered) port connected to the Terminee port.
+    Port port;
+    if (!port.openFake("terminator")) {
+        yCError(TERMINATOR, "Cannot open the terminator client port");
+        return false;
+    }
+    if (!port.addOutput(c)) {
+        yCError(TERMINATOR, "Cannot connect to %s", s.c_str());
+        return false;
+    }
+    TerminatorMsgs client;
+    client.yarp().attachAsClient(port);
+    if (!client.quit()) {
+        yCError(TERMINATOR, "The quit request has not been accepted by %s", s.c_str());
+        return false;
+    }
 
     return true;
 }
@@ -119,20 +152,11 @@ Terminee::~Terminee()
 void Terminee::run()
 {
     TermineeHelper& helper = HELPER(implementation);
+    TerminatorServer server(quit);
     while (!isStopping() && !quit) {
-        Bottle cmd;
-        Bottle reply;
-        bool ok = helper.read(cmd, true);
-        if (!ok) {
-            continue;
-        }
-        if (cmd.get(0).asString() == "quit") {
-            quit = true;
-            reply.addVocab32('o', 'k');
-        } else {
-            reply.addVocab32('h', 'u', 'h', '?');
-        }
-        helper.reply(reply);
+        // The thrift service reads the command and writes the reply
+        // (including the errors, e.g. for unknown commands).
+        helper.read(server);
     }
 }
 

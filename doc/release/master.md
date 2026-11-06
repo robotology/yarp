@@ -56,6 +56,14 @@ Important Changes
 * Fixed bug in `PortCoreInputUnit` and use of an uninitialized variable (`optlen`).
 * Fixed possible memory leak in `DgramTwoWayStream`.
 * Bugfix: When YARP is compiled without ACE, opening a port no longer installs a process-wide `SIGCHLD` handler. It's useless and dangerous.
+* `yarp::os::Terminator` and `yarp::os::Terminee` now use the thrift service `TerminatorMsgs`
+  (`TerminatorMsgs.thrift`, command `quit`) instead of hand-written `yarp::os::Bottle` messages.
+  `Terminator::terminateByName()` now connects with the `tcp` carrier (instead of `text_ack`) and returns
+  `false` if the quit request is not accepted. Unknown commands are now answered by thrift with `[fail]`
+  (instead of `[huh?]`), and the `help` command is supported.
+* Fixed thrift messages (or any object requiring `convertTextMode()`) sent over textual carriers (e.g. `text_ack`):
+  * `BufferedConnectionWriter`: fixed a crash (out-of-bounds access) when the text conversion is applied after a header has been added to the message.
+  * `StreamConnectionReader`: after the text conversion the size of the message is now updated, so that the receiver does not hang waiting for non-existent data.
 
 ### libYARP_sig
 

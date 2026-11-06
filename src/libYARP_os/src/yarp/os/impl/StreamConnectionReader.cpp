@@ -269,6 +269,9 @@ bool StreamConnectionReader::convertTextMode()
             std::string s = writer.toString();
             altStream.reset(s);
             in = &altStream;
+            // From now on, the message is the binary version of the text
+            // just read, therefore its size is known.
+            messageLen = s.length();
             convertedTextMode = true;
         }
     }
