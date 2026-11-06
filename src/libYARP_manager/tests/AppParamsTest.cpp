@@ -159,7 +159,7 @@ TEST_CASE("manager::AppParamsTest", "[yarp::manager]")
         };
 
         check("ParamMissing", "parameter 'robot' has no value");
-        check("ParamConflict", "parameter 'robot' has two different default values");
+        check("ParamInlineDefault", "default values are declared with <def-param-value name=\"robot\">icub</def-param-value>");
         check("ParamMalformed", "unterminated '$PAR{'");
         check("ParamChildError", "parameter 'robot' has no value");
     }
@@ -215,6 +215,14 @@ TEST_CASE("manager::AppParamsImportTest", "[yarp::manager]")
         CHECK(app.moduleParams("yarpdev") == std::multiset<std::string> {"--robot icub"});
     }
 
+    SECTION("A parameter with a default can be overridden even if the imported application does not use it")
+    {
+        LoadedApp app("ParamDefaultOnly");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        CHECK(app.moduleParams("child_mod") == std::multiset<std::string> {"--robot icubSim --status SUCCESS"});
+    }
+
     SECTION("Overriding a parameter that the imported application never uses is an error")
     {
         LoadedApp app("ParamUnused");
@@ -224,7 +232,7 @@ TEST_CASE("manager::AppParamsImportTest", "[yarp::manager]")
         CHECK(errors.find("parameter 'robt' is overridden but never used") != std::string::npos);
     }
 
-    SECTION("Malformed app-param tags prevent the file from loading")
+    SECTION("Malformed app-param and def-param-value tags prevent the file from loading")
     {
         auto check = [](const char* file, const std::string& expected) {
             ErrorLogger::Instance()->clear();
@@ -238,6 +246,9 @@ TEST_CASE("manager::AppParamsImportTest", "[yarp::manager]")
 
         check("ParamNoName.xml", "app-param without name");
         check("ParamDuplicate.xml", "app-param robot is set twice");
+        check("DefParamNoName.xml", "def-param-value without name");
+        check("DefParamDuplicate.xml", "def-param-value robot is declared twice");
+        check("DefParamUsesParam.xml", "def-param-value robot cannot use application parameters");
     }
 
     ErrorLogger::Instance()->clear();
@@ -289,7 +300,9 @@ TEST_CASE("manager::AppParamsSaveTest", "[yarp::manager]")
 
     SECTION("Values given with app-param are saved as written")
     {
-        saveAndReload("ParamFromParent", true, {"<app-param name=\"status\">$PAR{mode=RUNNING}</app-param>"});
+        saveAndReload("ParamFromParent", true, {
+            "<def-param-value name=\"mode\">RUNNING</def-param-value>",
+            "<app-param name=\"status\">$PAR{mode}</app-param>"});
     }
 
     ErrorLogger::Instance()->clear();

@@ -7,9 +7,13 @@
 
 <application>
     <name>ParamChild</name>
+
+    <def-param-value name="robot">icubSim</def-param-value>
+    <def-param-value name="status">SUCCESS</def-param-value>
+    <def-param-value name="unusedParam">nothing</def-param-value>
     <module>
         <name>child_mod</name>
-        <parameters>--robot $PAR{robot=icubSim} --status $PAR{status=SUCCESS}</parameters>
+        <parameters>--robot $PAR{robot} --status $PAR{status}</parameters>
         <node>localhost</node>
     </module>
     <connection>

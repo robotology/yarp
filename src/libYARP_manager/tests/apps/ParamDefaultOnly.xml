@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+
+<application>
+    <name>ParamDefaultOnly</name>
+    <application>
+        <name>ParamChild</name>
+        <app-param name="unusedParam">value</app-param>
+    </application>
+</application>

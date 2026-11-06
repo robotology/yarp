@@ -29,62 +29,50 @@ bool ParamResolver::findNext(const std::string& text, size_t pos, Placeholder& p
         error = "nested '" + startKeyword + "' in \"" + text + "\"";
         return false;
     }
-    size_t eq = content.find('=');
-    placeholder.begin = s;
-    placeholder.end = e + endKeyword.size();
-    placeholder.name = content.substr(0, eq);
-    placeholder.decl = Declaration();
-    if (eq != std::string::npos) {
-        placeholder.decl.hasDefault = true;
-        placeholder.decl.defaultValue = content.substr(eq + 1);
-    }
-
-    if (placeholder.name.empty()) {
+    if (content.empty()) {
         error = "parameter with empty name in \"" + text + "\"";
         return false;
     }
+    size_t eq = content.find('=');
+    if (eq != std::string::npos) {
+        std::string name = content.substr(0, eq);
+        error = "invalid parameter name '" + content + "' in \"" + text + "\": default values are declared with "
+                + "<def-param-value name=\"" + name + "\">" + content.substr(eq + 1) + "</def-param-value>";
+        return false;
+    }
+    placeholder.begin = s;
+    placeholder.end = e + endKeyword.size();
+    placeholder.name = content;
     return true;
 }
 
-bool ParamResolver::collect(const std::string& text, DeclMap& decls, std::string& error)
+bool ParamResolver::collect(const std::string& text, NameSet& used, std::string& error)
 {
     Placeholder ph;
     size_t pos = 0;
     while (findNext(text, pos, ph, error)) {
-        auto it = decls.find(ph.name);
-        if (it == decls.end()) {
-            decls[ph.name] = ph.decl;
-        } else if (ph.decl.hasDefault) {
-            if (!it->second.hasDefault) {
-                it->second = ph.decl;
-            } else if (it->second.defaultValue != ph.decl.defaultValue) {
-                error = "parameter '" + ph.name + "' has two different default values: '"
-                        + it->second.defaultValue + "' and '" + ph.decl.defaultValue + "'";
-                return false;
-            }
-        }
+        used.insert(ph.name);
         pos = ph.end;
     }
     return error.empty();
 }
 
-bool ParamResolver::merge(const DeclMap& decls, const ParamMap& overrides, ParamMap& values, std::string& error)
+bool ParamResolver::merge(const NameSet& used,
+                          const ParamMap& defaults,
+                          const ParamMap& overrides,
+                          ParamMap& values,
+                          std::string& error)
 {
     error.clear();
-    values.clear();
     for (const auto& ov : overrides) {
-        if (decls.find(ov.first) == decls.end()) {
+        if (used.find(ov.first) == used.end() && defaults.find(ov.first) == defaults.end()) {
             error = "parameter '" + ov.first + "' is overridden but never used";
             return false;
         }
     }
-    for (const auto& decl : decls) {
-        auto ov = overrides.find(decl.first);
-        if (ov != overrides.end()) {
-            values[decl.first] = ov->second;
-        } else if (decl.second.hasDefault) {
-            values[decl.first] = decl.second.defaultValue;
-        }
+    values = defaults;
+    for (const auto& ov : overrides) {
+        values[ov.first] = ov.second;
     }
     return true;
 }

@@ -277,6 +277,10 @@ Here is an example of application description file in XML format:
   <description>Template Application</description>
   <version></version>
 
+  <!-- Default values of the application parameters ($PAR{}) -->
+  <def-param-value name=""></def-param-value>
+  ...
+
   <authors>
       <author email=""> first author.name </author>
       <author email=""> second author.name </author>
@@ -348,14 +352,17 @@ Here is an example of application description file in XML format:
 
 \subsection yarpmanager_app_params Application parameters
 An application can be written once and embedded several times by other applications with different values, using application parameters.
-In the embedded application, a parameter is written as `$PAR{name}` or `$PAR{name=default}`:
+In the embedded application, a parameter is written as `$PAR{name}`. Its default value, if any, is declared once at the beginning of the application with \<def-param-value\>:
 \code{.xml}
 <application>
   <name>RobotDriver</name>
+  <def-param-value name="config">icub_sim.xml</def-param-value>
+  <def-param-value name="node">localhost</def-param-value>
+
   <module>
       <name>yarprobotinterface</name>
-      <parameters>--config $PAR{config=icub_sim.xml}</parameters>
-      <node>$PAR{node=localhost}</node>
+      <parameters>--config $PAR{config}</parameters>
+      <node>$PAR{node}</node>
   </module>
   <connection>
       <from>/$PAR{robot}/state</from>
@@ -385,11 +392,12 @@ The application that embeds it gives the values with \<app-param\> tags:
 </application>
 \endcode
  - Parameters can be used in every text field of modules (name, parameters, node, prefix, workdir, environment, deployer, display, stdio, port map, dependencies), connections (from, to, protocol, qos, id), dependencies of the application, arbitrators and in the \<prefix\> and \<app-param\> of an embedded application. The \<name\> of an embedded application cannot use parameters. Numeric fields (e.g. \<wait\>, the timeout of a dependency, \<geometry\>) cannot use parameters either.
- - Each embedded copy gets its own values: the value given with \<app-param\> is used when present, otherwise the default. An application opened on its own uses its defaults.
- - The value of an \<app-param\> can use the parameters of the embedding application, e.g. `<app-param name="robot">$PAR{robot=icub}</app-param>`, so values can be passed down through several levels. Defaults cannot contain `$PAR{}` or the `}` character.
- - Variables defined with \<var\> (`${name}`) and environment variables (`$ENV{name}`) are replaced when the file is read, before the parameters are. A variable can therefore be used as a default shared by several parameters, e.g. `$PAR{protocol=${default_protocol}}`.
- - The application is not loaded, and an error is reported, when: a parameter without a default has no value; the same parameter has two different defaults; an \<app-param\> sets a parameter that the embedded application does not use; an \<app-param\> has no name or is set twice.
- - When an application is saved from the builder, the \<app-param\> tags of the embedded applications are saved as they were written, while the `$PAR{}` of the saved application itself are replaced by their current values (as it happens for `${}` and `$ENV{}`). The builder shows a warning before saving an application that uses parameters.
+ - Each embedded copy gets its own values: the value given with \<app-param\> is used when present, otherwise the default declared with \<def-param-value\>. An application opened on its own uses its defaults.
+ - Default values cannot be written inside the placeholder: `$PAR{name=value}` is an error.
+ - The value of an \<app-param\> can use the parameters of the embedding application, e.g. `<app-param name="robot">$PAR{robot}</app-param>`, so values can be passed down through several levels. Default values cannot use `$PAR{}`.
+ - Variables defined with \<var\> (`${name}`) and environment variables (`$ENV{name}`) are replaced when the file is read, before the parameters are. They can be used in default values, e.g. `<def-param-value name="protocol">${default_protocol}</def-param-value>`.
+ - The application is not loaded, and an error is reported, when: a parameter without a default has no value; a placeholder is malformed or contains a default value; a \<def-param-value\> has no name, is declared twice or uses `$PAR{}`; an \<app-param\> sets a parameter that the embedded application neither uses nor declares with \<def-param-value\>; an \<app-param\> has no name or is set twice.
+ - When an application is saved from the builder, its \<def-param-value\> tags are kept and the \<app-param\> tags of the embedded applications are saved as they were written, while the `$PAR{}` of the saved application itself are replaced by their current values (as it happens for `${}` and `$ENV{}`). The builder shows a warning before saving an application that uses parameters.
 
 \section yarpmanager_resource Resource description file
 The resource description file can be used to provide a general information of the machines that are part of the cluster. In very simple form, the resource description file is a list of the names of machines in the cluster.

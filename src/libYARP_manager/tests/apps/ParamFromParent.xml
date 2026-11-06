@@ -7,8 +7,10 @@
 
 <application>
     <name>ParamFromParent</name>
+
+    <def-param-value name="mode">RUNNING</def-param-value>
     <application>
         <name>ParamChild</name>
-        <app-param name="status">$PAR{mode=RUNNING}</app-param>
+        <app-param name="status">$PAR{mode}</app-param>
     </application>
 </application>

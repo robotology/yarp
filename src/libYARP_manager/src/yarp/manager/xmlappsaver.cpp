@@ -67,6 +67,14 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
 
     }
 
+    for (const auto& def : app->getParamDefaults())
+    {
+        auto* defParam = new TiXmlElement("def-param-value");
+        defParam->SetAttribute("name", def.first.c_str());
+        defParam->LinkEndChild(new TiXmlText(def.second.c_str()));
+        root->LinkEndChild(defParam);
+    }
+
     /*
      * TODO: setting prefix of the main application is inactivated.
      * Check this should be supported in future or not!

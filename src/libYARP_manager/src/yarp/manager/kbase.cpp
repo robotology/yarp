@@ -1250,14 +1250,14 @@ bool KnowledgeBase::resolveAppParameters(Application* application)
 {
     __CHECK_NULLPTR(application);
 
-    ParamResolver::DeclMap decls;
+    ParamResolver::NameSet used;
     ParamResolver::ParamMap values;
     std::string error;
 
-    bool ok = forEachParamText(application, [&decls, &error](std::string& text) {
-                  return ParamResolver::collect(text, decls, error);
+    bool ok = forEachParamText(application, [&used, &error](std::string& text) {
+                  return ParamResolver::collect(text, used, error);
               })
-           && ParamResolver::merge(decls, application->getParamOverrides(), values, error)
+           && ParamResolver::merge(used, application->getParamDefaults(), application->getParamOverrides(), values, error)
            && forEachParamText(application, [&values, &error](std::string& text) {
                   std::string resolved;
                   if (!ParamResolver::resolve(text, values, resolved, error)) {
@@ -1272,7 +1272,7 @@ bool KnowledgeBase::resolveAppParameters(Application* application)
         msg << "Application " << application->getName() << " (" << application->getXmlFile() << "): " << error;
         ErrorLogger::Instance()->addError(msg);
     }
-    application->setUsesAppParameters(!decls.empty());
+    application->setUsesAppParameters(!used.empty() || !application->getParamDefaults().empty());
     return ok;
 }
 

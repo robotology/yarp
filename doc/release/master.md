@@ -103,7 +103,8 @@ Important Changes
 
 ### libYARP_manager
 
-* Added application parameters: an application can use `$PAR{name}` or `$PAR{name=default}` placeholders and the applications
+* Added application parameters: an application can use `$PAR{name}` placeholders, declare their default values with
+  `<def-param-value name="name">default</def-param-value>`, and the applications
   embedding it can set their values with `<app-param name="name">value</app-param>`, so the same application can be embedded
   several times with different values. See the yarpmanager documentation for details.
 * Fixed `Application::clear()` not clearing the arbitrators, which leaked from one application file to the next when loading a directory.
