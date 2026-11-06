@@ -6,6 +6,7 @@
 #include <yarp/manager/kbase.h>
 #include <yarp/manager/utility.h>
 #include <yarp/manager/resource.h>
+#include <yarp/manager/impl/paramresolver.h>
 
 #include <cstdio>
 #include <cctype>
@@ -14,6 +15,109 @@
 
 
 using namespace yarp::manager;
+
+namespace {
+
+/**
+ * Calls func on each text of the application that can contain application
+ * parameters ($PAR{...}) and stores the text back when func changes it.
+ * Stops at the first text for which func returns false.
+ */
+template <typename Func>
+bool forEachParamText(Application* application, Func func)
+{
+    auto visit = [&func](const char* value, auto&& store) {
+        std::string text = value ? value : "";
+        const std::string original = text;
+        if (!func(text)) {
+            return false;
+        }
+        if (text != original) {
+            store(text.c_str());
+        }
+        return true;
+    };
+
+    auto visitResource = [&visit](ResYarpPort& res) {
+        return visit(res.getName(), [&res](const char* s) { res.setName(s); })
+            && visit(res.getPort(), [&res](const char* s) { res.setPort(s); })
+            && visit(res.getRequest(), [&res](const char* s) { res.setRequest(s); })
+            && visit(res.getReply(), [&res](const char* s) { res.setReply(s); });
+    };
+
+    for (int i = 0; i < application->resourcesCount(); i++) {
+        if (!visitResource(application->getResourceAt(i))) {
+            return false;
+        }
+    }
+
+    for (int i = 0; i < application->imoduleCount(); i++) {
+        ModuleInterface& mod = application->getImoduleAt(i);
+        bool ok = visit(mod.getName(), [&mod](const char* s) { mod.setName(s); })
+               && visit(mod.getHost(), [&mod](const char* s) { mod.setHost(s); })
+               && visit(mod.getParam(), [&mod](const char* s) { mod.setParam(s); })
+               && visit(mod.getWorkDir(), [&mod](const char* s) { mod.setWorkDir(s); })
+               && visit(mod.getStdio(), [&mod](const char* s) { mod.setStdio(s); })
+               && visit(mod.getBroker(), [&mod](const char* s) { mod.setBroker(s); })
+               && visit(mod.getPrefix(), [&mod](const char* s) { mod.setPrefix(s); })
+               && visit(mod.getEnvironment(), [&mod](const char* s) { mod.setEnvironment(s); })
+               && visit(mod.getDisplay(), [&mod](const char* s) { mod.setDisplay(s); });
+        for (int j = 0; ok && j < mod.portmapCount(); j++) {
+            Portmap& portmap = mod.getPortmapAt(j);
+            ok = visit(portmap.oldPort(), [&portmap](const char* s) { portmap = Portmap(s, portmap.newPort()); })
+              && visit(portmap.newPort(), [&portmap](const char* s) { portmap = Portmap(portmap.oldPort(), s); });
+        }
+        for (auto itr = mod.getResources().begin(); ok && itr != mod.getResources().end(); itr++) {
+            ok = visitResource(*itr);
+        }
+        if (!ok) {
+            return false;
+        }
+    }
+
+    for (int i = 0; i < application->connectionCount(); i++) {
+        Connection& cnn = application->getConnectionAt(i);
+        bool ok = visit(cnn.from(), [&cnn](const char* s) { cnn.setFrom(s); })
+               && visit(cnn.to(), [&cnn](const char* s) { cnn.setTo(s); })
+               && visit(cnn.carrier(), [&cnn](const char* s) { cnn.setCarrier(s); })
+               && visit(cnn.qosFrom(), [&cnn](const char* s) { cnn.setQosFrom(s); })
+               && visit(cnn.qosTo(), [&cnn](const char* s) { cnn.setQosTo(s); })
+               && visit(cnn.getId(), [&cnn](const char* s) { cnn.setId(s); });
+        if (!ok) {
+            return false;
+        }
+    }
+
+    for (int i = 0; i < application->arbitratorCount(); i++) {
+        Arbitrator& arb = application->getArbitratorAt(i);
+        if (!visit(arb.getPort(), [&arb](const char* s) { arb.setPort(s); })) {
+            return false;
+        }
+        for (auto& rule : arb.getRuleMap()) {
+            if (!visit(rule.second.c_str(), [&rule](const char* s) { rule.second = s; })) {
+                return false;
+            }
+        }
+    }
+
+    for (int i = 0; i < application->iapplicationCount(); i++) {
+        ApplicationInterface& iapp = application->getIapplicationAt(i);
+        if (!visit(iapp.getPrefix(), [&iapp](const char* s) { iapp.setPrefix(s); })) {
+            return false;
+        }
+        // values given to the parameters of the imported application can use
+        // the parameters of this application
+        for (auto& param : iapp.getAppParameters()) {
+            if (!visit(param.second.c_str(), [&param](const char* s) { param.second = s; })) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+} // namespace
 
 
 bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
@@ -348,6 +452,11 @@ bool KnowledgeBase::makeupApplication(Application* application)
     if (!application) {
         return false;
     }
+
+    if (!resolveAppParameters(application)) {
+        return false;
+    }
+
     /**
      * we need to load all child  applications first
      */
@@ -399,8 +508,11 @@ bool KnowledgeBase::makeupApplication(Application* application)
                 //Adding child application as an successor to the application
                 tmpGraph.addLink(application, repapp, 0, false);
                 repapp->setOwner(application);
+                repapp->setParamOverrides(interfaceApp.getAppParameters(), interfaceApp.getAppParametersAsWritten());
                 // recursive call to make up child application
-                makeupApplication(repapp);
+                if (!makeupApplication(repapp)) {
+                    return false;
+                }
             }
         }
     }
@@ -708,8 +820,12 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
             //Adding child application as an successor to the application
             tmpGraph.addLink(application, repapp, 0, false);
             repapp->setOwner(application);
+            repapp->setParamOverrides(interfaceApp.getAppParameters(), interfaceApp.getAppParametersAsWritten());
             // recursive call to make up child application
-            makeupApplication(repapp);
+            if (!makeupApplication(repapp)) {
+                removeIApplicationFromApplication(application, repapp->getLabel());
+                repapp = nullptr;
+            }
         }
     }
     return repapp;
@@ -805,28 +921,42 @@ bool KnowledgeBase::removeIApplicationFromApplication(Application* application, 
         return false;
     }
 
+    std::vector<Application*> nestedApps;
+
     // removing all nested applications recursively
     for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
     {
         auto* nestedApp = dynamic_cast<Application*>(*itr);
         if (nestedApp && (nestedApp->owner() == app)) {
-            removeIApplicationFromApplication(app, nestedApp->getLabel());
+            nestedApps.push_back(nestedApp);
         }
     }
+    for (auto* nestedApp : nestedApps) {
+        removeIApplicationFromApplication(app, nestedApp->getLabel());
+    }
+
+    std::vector<Module*> nestedModules;
+    std::vector<MultiResource*> nestedResources;
 
     for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
     {
         auto* mod = dynamic_cast<Module*>(*itr);
         if (mod && (mod->owner() == app)) {
-            removeModuleFromGraph(tmpGraph, mod);
+            nestedModules.push_back(mod);
         } else {
             auto* res = dynamic_cast<MultiResource*>(*itr);
             if(res && (res->owner() == app))
             {
-                tmpGraph.removeLink(app, res);
-                tmpGraph.removeNode(res);
+                nestedResources.push_back(res);
             }
         }
+    }
+    for (auto* nestedModule : nestedModules) {
+        removeModuleFromGraph(tmpGraph, nestedModule);
+    }
+    for (auto* nestedResource : nestedResources) {
+        tmpGraph.removeLink(app, nestedResource);
+        tmpGraph.removeNode(nestedResource);
     }
 
     for(int i=0; i<application->iapplicationCount(); i++)
@@ -923,6 +1053,13 @@ bool KnowledgeBase::reasolveDependency(Application* app,
     }
 
     tmpGraph.clear();
+
+    // removing double nodes
+    selconnections.clear();
+    selmodules.clear();
+    selapplications.clear();
+    selresources.clear();
+
     // Adding application to tmpGraph
     mainApplication = replicateApplication(tmpGraph,
                                             app,
@@ -962,12 +1099,6 @@ bool KnowledgeBase::reasolveDependency(Application* app,
     bool ret = reason(&tmpGraph, mainApplication,
                       applications, modules, resources, connections,
                       bAutoDependancy, bSilent);
-
-    // removing double nodes
-    selconnections.clear();
-    selmodules.clear();
-    selapplications.clear();
-    selresources.clear();
 
     for(auto& resource : resources)
     {
@@ -1124,6 +1255,40 @@ bool KnowledgeBase::updateApplication(Application* app,
     }
     app->setModelBase(iapp->getModelBase());
     return true;
+}
+
+/**
+ * Replaces the application parameters ($PAR{...}) used by the application
+ * with their values
+ */
+bool KnowledgeBase::resolveAppParameters(Application* application)
+{
+    __CHECK_NULLPTR(application);
+
+    ParamResolver::NameSet used;
+    ParamResolver::ParamMap values;
+    std::string error;
+
+    bool ok = forEachParamText(application, [&used, &error](std::string& text) {
+                  return ParamResolver::collect(text, used, error);
+              })
+           && ParamResolver::merge(used, application->getParamDefaults(), application->getParamOverrides(), values, error)
+           && forEachParamText(application, [&values, &error](std::string& text) {
+                  std::string resolved;
+                  if (!ParamResolver::resolve(text, values, resolved, error)) {
+                      return false;
+                  }
+                  text = resolved;
+                  return true;
+              });
+
+    if (!ok) {
+        OSTRINGSTREAM msg;
+        msg << "Application " << application->getName() << " (" << application->getXmlFile() << "): " << error;
+        ErrorLogger::Instance()->addError(msg);
+    }
+    application->setUsesAppParameters(!used.empty() || !application->getParamDefaults().empty());
+    return ok;
 }
 
 bool KnowledgeBase::updateModule(Module* themodule, ModuleInterface* imod )
@@ -1312,6 +1477,9 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
         {
             ApplicationInterface iapp(embApp->getName());
             iapp.setPrefix(embApp->getBasePrefix());
+            for (const auto& param : embApp->getParamOverridesAsWritten()) {
+                iapp.addAppParameter(param.first, param.second);
+            }
             if (embApp->getModel()) {
                 iapp.setModelBase(*embApp->getModel());
             } else {

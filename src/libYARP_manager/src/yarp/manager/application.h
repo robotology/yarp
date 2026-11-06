@@ -170,6 +170,7 @@ public:
 
     virtual ~ModuleInterface() = default;
 
+    void setName(const char* szName) { if(szName) { strName = szName; } }
     void setHost(const char* szHost) { if(szHost) { strHost = szHost; } }
     void setParam(const char* szParam) { if(szParam) { strParam = szParam; } }
     void setRank(int irank) { iRank = irank; }
@@ -256,6 +257,16 @@ public:
     void setPrefix(const char* szPrefix) { if(szPrefix) { strPrefix = szPrefix; } }
     const char* getName() { return strName.c_str(); }
     const char* getPrefix() { return strPrefix.c_str(); }
+
+    // values given to the application parameters ($PAR{...}) of the imported application
+    bool addAppParameter(const std::string& name, const std::string& value) {
+        appParametersAsWritten.emplace(name, value);
+        return appParameters.emplace(name, value).second;
+    }
+    // the values can use the parameters of the importing application, and are resolved when it is put together
+    std::map<std::string, std::string>& getAppParameters() { return appParameters; }
+    const std::map<std::string, std::string>& getAppParametersAsWritten() { return appParametersAsWritten; }
+
     bool operator==(const ApplicationInterface& alt) const {
         return (strName == alt.strName);
     }
@@ -273,6 +284,8 @@ private:
     std::string strName;
     std::string strPrefix;
     GraphicModel modelBase;
+    std::map<std::string, std::string> appParameters;
+    std::map<std::string, std::string> appParametersAsWritten;
 };
 
 
@@ -347,6 +360,26 @@ public:
     void setOwner(Node* owner){ appOwner = owner; }
     Node* owner() { return appOwner; }
 
+    // values given to the application parameters ($PAR{...}) by the importing application,
+    // resolved and as written in its xml file
+    void setParamOverrides(const std::map<std::string, std::string>& params,
+                           const std::map<std::string, std::string>& paramsAsWritten) {
+        paramOverrides = params;
+        paramOverridesAsWritten = paramsAsWritten;
+    }
+    const std::map<std::string, std::string>& getParamOverrides() { return paramOverrides; }
+    const std::map<std::string, std::string>& getParamOverridesAsWritten() { return paramOverridesAsWritten; }
+
+    // default values of the application parameters ($PAR{...}) used by the application,
+    // declared with <def-param-value>
+    bool addParamDefault(const std::string& name, const std::string& value) {
+        return paramDefaults.emplace(name, value).second;
+    }
+    const std::map<std::string, std::string>& getParamDefaults() { return paramDefaults; }
+
+    // true if the application uses application parameters ($PAR{...})
+    void setUsesAppParameters(bool uses) { bUsesAppParameters = uses; }
+    bool usesAppParameters() { return bUsesAppParameters; }
 
     bool operator==(const Application& app) const {
         return (strName == app.strName);
@@ -361,6 +394,11 @@ public:
         authors.clear();
         Imodules.clear();
         connections.clear();
+        arbitrators.clear();
+        paramDefaults.clear();
+        paramOverrides.clear();
+        paramOverridesAsWritten.clear();
+        bUsesAppParameters = false;
         strXmlFile.clear();
         Iapplications.clear();
         resources.clear();
@@ -388,6 +426,10 @@ private:
     std::string strBasePrefix;
     std::string strXmlFile;
     Node* appOwner;
+    std::map<std::string, std::string> paramDefaults;
+    std::map<std::string, std::string> paramOverrides;
+    std::map<std::string, std::string> paramOverridesAsWritten;
+    bool bUsesAppParameters {false};
 
     GraphicModel modelBase;
 

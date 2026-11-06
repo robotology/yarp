@@ -41,6 +41,7 @@ set(YARP_manager_HDRS
 )
 
 set(YARP_manager_IMPL_HDRS
+  yarp/manager/impl/paramresolver.h
   yarp/manager/impl/textparser.h
 )
 
@@ -53,6 +54,7 @@ set(YARP_manager_SRCS
   yarp/manager/execstate.cpp
   yarp/manager/executable.cpp
   yarp/manager/graph.cpp
+  yarp/manager/impl/paramresolver.cpp
   yarp/manager/kbase.cpp
   yarp/manager/localbroker.cpp
   yarp/manager/logicresource.cpp

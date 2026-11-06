@@ -67,6 +67,14 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
 
     }
 
+    for (const auto& def : app->getParamDefaults())
+    {
+        auto* defParam = new TiXmlElement("def-param-value");
+        defParam->SetAttribute("name", def.first.c_str());
+        defParam->LinkEndChild(new TiXmlText(def.second.c_str()));
+        root->LinkEndChild(defParam);
+    }
+
     /*
      * TODO: setting prefix of the main application is inactivated.
      * Check this should be supported in future or not!
@@ -181,6 +189,14 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             auto* prefix=new TiXmlElement("prefix");
             prefix->LinkEndChild(new TiXmlText(curApp.getPrefix()));
             newApp->LinkEndChild(prefix);
+
+            for (const auto& param : curApp.getAppParametersAsWritten())
+            {
+                auto* appParam = new TiXmlElement("app-param");
+                appParam->SetAttribute("name", param.first.c_str());
+                appParam->LinkEndChild(new TiXmlText(param.second.c_str()));
+                newApp->LinkEndChild(appParam);
+            }
 
             GraphicModel model = curApp.getModelBase();
             OSTRINGSTREAM txt;
