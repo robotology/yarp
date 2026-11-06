@@ -254,6 +254,65 @@ TEST_CASE("manager::AppParamsImportTest", "[yarp::manager]")
     ErrorLogger::Instance()->clear();
 }
 
+TEST_CASE("manager::AppParamsFailureTest", "[yarp::manager]")
+{
+    namespace fs = std::filesystem;
+    ErrorLogger::Instance()->clear();
+
+    SECTION("A failed load does not keep the selections of the previous load")
+    {
+        LoadedApp app("ParamSingle");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        REQUIRE_FALSE(app.kb.getSelModules().empty());
+        REQUIRE_FALSE(app.kb.getSelConnection().empty());
+
+        // the nodes of the previous load are deleted, nothing may point to them
+        CHECK_FALSE(app.kb.reasolveDependency("ParamMissing"));
+        CHECK(app.kb.getApplication() == nullptr);
+        CHECK(app.kb.getSelModules().empty());
+        CHECK(app.kb.getSelConnection().empty());
+        CHECK(app.kb.getSelResources().empty());
+        CHECK(app.kb.getSelApplications().empty());
+    }
+
+    SECTION("Adding an application that fails leaves the opened application unchanged")
+    {
+        // dumps the graph of the opened application
+        auto appGraph = [](KnowledgeBase& kb) {
+            fs::path file = fs::temp_directory_path() / "yarp_manager_test_rollback.dot";
+            REQUIRE(kb.exportAppGraph(file.string().c_str()));
+            std::ifstream in(file);
+            std::stringstream dot;
+            dot << in.rdbuf();
+            fs::remove(file);
+            return dot.str();
+        };
+
+        LoadedApp app("ParamChild");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        Application* opened = app.kb.getApplication();
+        const std::string before = appGraph(app.kb);
+        const size_t importsBefore = app.kb.getApplications(opened).size();
+
+        // ParamChildError fails in its imported application; ParamRollback
+        // fails after two imported applications with modules and dependencies
+        // were added, which must be removed as well
+        for (const char* name : {"ParamChildError", "ParamRollback"}) {
+            INFO(name);
+            ErrorLogger::Instance()->clear();
+            ApplicationInterface iapp(name);
+            CHECK(app.kb.addIApplicationToApplication(opened, iapp) == nullptr);
+            CHECK(allErrors().find("parameter 'robot' has no value") != std::string::npos);
+            CHECK(app.kb.getApplications(opened).size() == importsBefore);
+            CHECK(appGraph(app.kb) == before);
+        }
+    }
+
+    ErrorLogger::Instance()->clear();
+}
+
 TEST_CASE("manager::AppParamsSaveTest", "[yarp::manager]")
 {
     namespace fs = std::filesystem;
