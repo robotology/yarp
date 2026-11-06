@@ -921,28 +921,42 @@ bool KnowledgeBase::removeIApplicationFromApplication(Application* application, 
         return false;
     }
 
+    std::vector<Application*> nestedApps;
+
     // removing all nested applications recursively
     for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
     {
         auto* nestedApp = dynamic_cast<Application*>(*itr);
         if (nestedApp && (nestedApp->owner() == app)) {
-            removeIApplicationFromApplication(app, nestedApp->getLabel());
+            nestedApps.push_back(nestedApp);
         }
     }
+    for (auto* nestedApp : nestedApps) {
+        removeIApplicationFromApplication(app, nestedApp->getLabel());
+    }
+
+    std::vector<Module*> nestedModules;
+    std::vector<MultiResource*> nestedResources;
 
     for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
     {
         auto* mod = dynamic_cast<Module*>(*itr);
         if (mod && (mod->owner() == app)) {
-            removeModuleFromGraph(tmpGraph, mod);
+            nestedModules.push_back(mod);
         } else {
             auto* res = dynamic_cast<MultiResource*>(*itr);
             if(res && (res->owner() == app))
             {
-                tmpGraph.removeLink(app, res);
-                tmpGraph.removeNode(res);
+                nestedResources.push_back(res);
             }
         }
+    }
+    for (auto* nestedModule : nestedModules) {
+        removeModuleFromGraph(tmpGraph, nestedModule);
+    }
+    for (auto* nestedResource : nestedResources) {
+        tmpGraph.removeLink(app, nestedResource);
+        tmpGraph.removeNode(nestedResource);
     }
 
     for(int i=0; i<application->iapplicationCount(); i++)
@@ -1039,6 +1053,13 @@ bool KnowledgeBase::reasolveDependency(Application* app,
     }
 
     tmpGraph.clear();
+
+    // removing double nodes
+    selconnections.clear();
+    selmodules.clear();
+    selapplications.clear();
+    selresources.clear();
+
     // Adding application to tmpGraph
     mainApplication = replicateApplication(tmpGraph,
                                             app,
@@ -1078,12 +1099,6 @@ bool KnowledgeBase::reasolveDependency(Application* app,
     bool ret = reason(&tmpGraph, mainApplication,
                       applications, modules, resources, connections,
                       bAutoDependancy, bSilent);
-
-    // removing double nodes
-    selconnections.clear();
-    selmodules.clear();
-    selapplications.clear();
-    selresources.clear();
 
     for(auto& resource : resources)
     {
