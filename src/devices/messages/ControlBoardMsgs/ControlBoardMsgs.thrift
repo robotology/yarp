@@ -791,7 +791,7 @@ service ControlBoardMsgs
 
     yReturnValue                     resetEncoderOneRPC(1: i32 j);
     yReturnValue                     resetEncoderAllRPC();
-    yReturnValue                     setEncoderOneRPC(1: i32 j, 2: i32 val);
+    yReturnValue                     setEncoderOneRPC(1: i32 j, 2: double val);
     yReturnValue                     setEncoderAllRPC(1: list<double> vals);
     return_getEncoderOne             getEncoderOneRPC(1: i32 j) (yarp.qualifier = "const");
     return_getEncoderTimedOne        getEncoderTimedOneRPC(1: i32 j) (yarp.qualifier = "const");

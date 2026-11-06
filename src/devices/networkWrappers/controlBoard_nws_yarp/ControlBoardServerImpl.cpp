@@ -460,7 +460,7 @@ return_getPidExtraInfo ControlBoardRPCd::getPidExtraInfoRPC(const yarp::dev::Pid
     ret.ret = m_allInterfaces.iPidControl->getPidExtraInfo(pidtype, j, ret.info);
     if (!ret.ret)
     {
-        yCError(CB_RPC, "Unable to getPidRPC");
+        yCError(CB_RPC, "Unable to getPidExtraInfo");
     }
     return ret;
 }
@@ -480,7 +480,7 @@ return_getPidExtraInfos ControlBoardRPCd::getPidExtraInfosRPC(const yarp::dev::P
     ret.ret = m_allInterfaces.iPidControl->getPidExtraInfos(pidtype, ret.info);
     if (!ret.ret)
     {
-        yCError(CB_RPC, "Unable to getPidsRPC");
+        yCError(CB_RPC, "Unable to getPidExtraInfos");
     }
     return ret;
 }
@@ -499,7 +499,7 @@ return_getPidOffset ControlBoardRPCd::getPidOffsetRPC(const yarp::dev::PidContro
     ret.ret = m_allInterfaces.iPidControl->getPidOffset(pidtype, j, ret.offset);
     if (!ret.ret)
     {
-        yCError(CB_RPC, "Unable to getPidRPC");
+        yCError(CB_RPC, "Unable to getPidOffset");
     }
     return ret;
 }
@@ -518,7 +518,7 @@ return_getPidFeedforward ControlBoardRPCd::getPidFeedforwardRPC(const yarp::dev:
     ret.ret = m_allInterfaces.iPidControl->getPidFeedforward(pidtype, j, ret.feedforward);
     if (!ret.ret)
     {
-        yCError(CB_RPC, "Unable to getPidRPC");
+        yCError(CB_RPC, "Unable to getPidFeedforward");
     }
     return ret;
 }
@@ -588,7 +588,7 @@ return_isPidEnabled ControlBoardRPCd::isPidEnabledRPC(const yarp::dev::PidContro
     ret.ret = m_allInterfaces.iPidControl->isPidEnabled(pidtype, j, ret.isEnabled);
     if (!ret.ret)
     {
-        yCError(CB_RPC, "Unable to getPidRPC");
+        yCError(CB_RPC, "Unable to isPidEnabled");
     }
     return ret;
 }
@@ -690,7 +690,7 @@ ReturnValue ControlBoardRPCd::setPidReferencesRPC(const yarp::dev::PidControlTyp
 
     ret = m_allInterfaces.iPidControl->setPidReferences(pidtype, refs.data());
     if (!ret) {
-        yCError(CB_RPC, "Unable to setPidRPC");
+        yCError(CB_RPC, "Unable to setPidReferences");
     }
     return ret;
 }
@@ -823,7 +823,7 @@ return_getPidOutput ControlBoardRPCd::getPidOutputRPC(const yarp::dev::PidContro
         return ret;
     }
 
-    ret.ret = m_allInterfaces.iPidControl->getPidReference(pidtype, j, &ret.out);
+    ret.ret = m_allInterfaces.iPidControl->getPidOutput(pidtype, j, &ret.out);
     if (!ret.ret)
     {
         yCError(CB_RPC, "Unable to getPidOutputRPC");
@@ -843,7 +843,7 @@ return_getPidOutputs ControlBoardRPCd::getPidOutputsRPC(const yarp::dev::PidCont
     }
 
     ret.outs.resize(m_njoints);
-    ret.ret = m_allInterfaces.iPidControl->getPidReferences(pidtype, ret.outs.data());
+    ret.ret = m_allInterfaces.iPidControl->getPidOutputs(pidtype, ret.outs.data());
     if (!ret.ret)
     {
         yCError(CB_RPC, "Unable to getPidOutputsRPC");
@@ -905,7 +905,7 @@ ReturnValue ControlBoardRPCd::setPosLimitsRPC(const std::int16_t j, const double
 
     ret = m_allInterfaces.iControlLimits->setPosLimits(j, min,max);
     if (!ret) {
-        yCError(CB_RPC, "Unable to setPidReferenceRPC");
+        yCError(CB_RPC, "Unable to setPosLimits");
     }
     return ret;
 }
@@ -922,7 +922,7 @@ ReturnValue ControlBoardRPCd::setVelLimitsRPC(const std::int16_t j, const double
 
     ret = m_allInterfaces.iControlLimits->setVelLimits(j, min,max);
     if (!ret) {
-        yCError(CB_RPC, "Unable to setPidReferenceRPC");
+        yCError(CB_RPC, "Unable to setVelLimits");
     }
     return ret;
 }
@@ -1272,7 +1272,7 @@ return_getMaxCurrent ControlBoardRPCd::getMaxCurrentRPC(const std::int32_t m) co
     ret.ret = m_allInterfaces.iAmplifierControl->getMaxCurrent(m, &ret.val);
     if (!ret.ret)
     {
-        yCError(CB_RPC, "Unable to getPeakCurrent");
+        yCError(CB_RPC, "Unable to getMaxCurrent");
     }
     return ret;
 }
@@ -1783,11 +1783,15 @@ return_getRemoteVariablesList ControlBoardRPCd::getRemoteVariablesListRPC() cons
         return ret;
     }
 
-    ret.ret = m_allInterfaces.iRemoteVariables->getRemoteVariablesList(ret.listOfKeys.data());
+    yarp::os::Bottle listOfKeys;
+    ret.ret = m_allInterfaces.iRemoteVariables->getRemoteVariablesList(&listOfKeys);
     if (!ret.ret)
     {
         yCError(CB_RPC, "Unable to getRemoteVariablesList");
+        return ret;
     }
+    ret.listOfKeys.clear();
+    ret.listOfKeys.push_back(listOfKeys);
     return ret;
 }
 
@@ -1891,9 +1895,9 @@ return_getCurrentAll ControlBoardRPCd::getCurrentAllRPC() const
         return ret;
     }
     ret.currs.resize(m_njoints);
-    ret.ret = m_allInterfaces.iCurrentControl->getRefCurrents(ret.currs.data());
+    ret.ret = m_allInterfaces.iCurrentControl->getCurrents(ret.currs.data());
     if (!ret.ret) {
-        yCError(CB_RPC, "getRefCurrents() failed");
+        yCError(CB_RPC, "getCurrents() failed");
     }
     return ret;
 }
@@ -1945,7 +1949,7 @@ return_getCurrentRangeAll ControlBoardRPCd::getCurrentRangeAllRPC() const
     ret.maxs.resize(m_njoints);
     ret.ret = m_allInterfaces.iCurrentControl->getCurrentRanges(ret.mins.data(), ret.maxs.data());
     if (!ret.ret) {
-        yCError(CB_RPC, "getRefCurrents() failed");
+        yCError(CB_RPC, "getCurrentRanges() failed");
     }
     return ret;
 }
@@ -2018,7 +2022,7 @@ return_getRefDutyCycleAll ControlBoardRPCd::getRefDutyCycleAllRPC() const
     ret.val.resize(m_njoints);
     ret.ret = m_allInterfaces.iPWMControl->getRefDutyCycles(ret.val.data());
     if (!ret.ret) {
-        yCError(CB_RPC, "Unable to getRefDutyCycle");
+        yCError(CB_RPC, "Unable to getRefDutyCycles");
     }
     return ret;
 }
@@ -2096,7 +2100,7 @@ yarp::dev::ReturnValue ControlBoardRPCd::resetEncoderAllRPC()
     return ret;
 }
 
-yarp::dev::ReturnValue ControlBoardRPCd::setEncoderOneRPC(const std::int32_t j, const std::int32_t val)
+yarp::dev::ReturnValue ControlBoardRPCd::setEncoderOneRPC(const std::int32_t j, const double val)
 {
     LOCKMUTEXSERVER
     ReturnValue ret;
@@ -2198,7 +2202,7 @@ return_getEncoderTimedAll ControlBoardRPCd::getEncoderTimedAllRPC() const
     ret.time.resize(m_njoints);
     ret.ret = m_allInterfaces.iEncodersTimed->getEncodersTimed(ret.val.data(), ret.time.data());
     if (!ret.ret) {
-        yCError(CB_RPC, "Unable to getEncoderTimed");
+        yCError(CB_RPC, "Unable to getEncodersTimed");
     }
     return ret;
 }
@@ -2398,7 +2402,25 @@ return_getMotorEncoderOne ControlBoardRPCd::getMotorEncoderOneRPC(const std::int
 
 return_getMotorEncoderAll ControlBoardRPCd::getMotorEncoderAllRPC() const
 {
+    LOCKMUTEXSERVER
     return_getMotorEncoderAll ret;
+    if (!m_allInterfaces.iMotorEncoders) {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    int nmotors = 0;
+    ret.ret = m_allInterfaces.iMotorEncoders->getNumberOfMotorEncoders(&nmotors);
+    if (!ret.ret) {
+        yCError(CB_RPC, "Unable to getNumberOfMotorEncoders");
+        return ret;
+    }
+    ret.val.resize(nmotors);
+    ret.ret = m_allInterfaces.iMotorEncoders->getMotorEncoders(ret.val.data());
+    if (!ret.ret) {
+        yCError(CB_RPC, "Unable to getMotorEncoders");
+    }
     return ret;
 }
 
@@ -2421,7 +2443,26 @@ return_getMotorEncoderTimedOne ControlBoardRPCd::getMotorEncoderTimedOneRPC(cons
 
 return_getMotorEncoderTimedAll ControlBoardRPCd::getMotorEncodersTimedAllRPC() const
 {
+    LOCKMUTEXSERVER
     return_getMotorEncoderTimedAll ret;
+    if (!m_allInterfaces.iMotorEncoders) {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    int nmotors = 0;
+    ret.ret = m_allInterfaces.iMotorEncoders->getNumberOfMotorEncoders(&nmotors);
+    if (!ret.ret) {
+        yCError(CB_RPC, "Unable to getNumberOfMotorEncoders");
+        return ret;
+    }
+    ret.val.resize(nmotors);
+    ret.time.resize(nmotors);
+    ret.ret = m_allInterfaces.iMotorEncoders->getMotorEncodersTimed(ret.val.data(), ret.time.data());
+    if (!ret.ret) {
+        yCError(CB_RPC, "Unable to getMotorEncodersTimed");
+    }
     return ret;
 }
 
@@ -2452,7 +2493,13 @@ return_getMotorEncoderSpeedAll ControlBoardRPCd::getMotorEncoderSpeedAllRPC() co
         return ret;
     }
 
-    ret.val.resize(m_njoints);
+    int nmotors = 0;
+    ret.ret = m_allInterfaces.iMotorEncoders->getNumberOfMotorEncoders(&nmotors);
+    if (!ret.ret) {
+        yCError(CB_RPC, "Unable to getNumberOfMotorEncoders");
+        return ret;
+    }
+    ret.val.resize(nmotors);
     ret.ret = m_allInterfaces.iMotorEncoders->getMotorEncoderSpeeds(ret.val.data());
     if (!ret.ret) {
         yCError(CB_RPC, "Unable to getMotorEncoderSpeeds");
@@ -2487,7 +2534,13 @@ return_getMotorEncoderAccelerationAll ControlBoardRPCd::getMotorEncoderAccelerat
         return ret;
     }
 
-    ret.val.resize(m_njoints);
+    int nmotors = 0;
+    ret.ret = m_allInterfaces.iMotorEncoders->getNumberOfMotorEncoders(&nmotors);
+    if (!ret.ret) {
+        yCError(CB_RPC, "Unable to getNumberOfMotorEncoders");
+        return ret;
+    }
+    ret.val.resize(nmotors);
     ret.ret = m_allInterfaces.iMotorEncoders->getMotorEncoderAccelerations(ret.val.data());
     if (!ret.ret) {
         yCError(CB_RPC, "Unable to getMotorEncoderAccelerations");
@@ -2612,11 +2665,7 @@ return_getRefTorqueGroup ControlBoardRPCd::getRefTorqueGroupRPC(const std::vecto
 
     ret.val.resize(j.size());
     //iTorqueControl interface does not have a group method
-    ret.ret=ReturnValue_error_not_implemented_by_device;
-    //ret.ret = m_allInterfaces.iTorqueControl->getRefTorques(j.size(),j.data(),ret.val.data());
-    if (!ret.ret) {
-        yCError(CB_RPC, "Unable to getRefTorques");
-    }
+    ret.ret = ReturnValue_error_not_implemented_by_device;
     return ret;
 }
 
@@ -2687,7 +2736,7 @@ yarp::dev::ReturnValue    ControlBoardRPCd::setRefPositionAllRPC(const std::vect
 
     ret = m_allInterfaces.iPositionDirect->setPositions(refs.data());
     if (!ret) {
-        yCError(CB_RPC, "Unable to setPosition");
+        yCError(CB_RPC, "Unable to setPositions");
     }
     return ret;
 }
@@ -3172,7 +3221,7 @@ return_getTrajSpeedsAll ControlBoardRPCd::getTrajSpeedsAllRPC() const
 {
     LOCKMUTEXSERVER
     return_getTrajSpeedsAll ret;
-    if (!m_allInterfaces.iCurrentControl) {
+    if (!m_allInterfaces.iPositionControl) {
         yCError(CB_RPC, "Invalid iPositionControl interface");
         ret.ret = yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
         return ret;
@@ -3197,7 +3246,7 @@ return_getTrajAccelerationOne ControlBoardRPCd::getTrajAccelerationOneRPC(const 
 
     ret.ret = m_allInterfaces.iPositionControl->getTrajAcceleration(j, &ret.val);
     if (!ret.ret) {
-        yCError(CB_RPC, "Unable to getTrajSpeed");
+        yCError(CB_RPC, "Unable to getTrajAcceleration");
     }
     return ret;
 }
@@ -3332,7 +3381,13 @@ return_getTemperatureAll ControlBoardRPCd::getTemperatureAllRPC() const
         ret.ret = yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
-    ret.val.resize(m_njoints);
+    int nmotors = 0;
+    ret.ret = m_allInterfaces.iMotor->getNumberOfMotors(&nmotors);
+    if (!ret.ret) {
+        yCError(CB_RPC, "Unable to getNumberOfMotors");
+        return ret;
+    }
+    ret.val.resize(nmotors);
     ret.ret = m_allInterfaces.iMotor->getTemperatures(ret.val.data());
     if (!ret.ret) {
         yCError(CB_RPC, "getTemperatures() failed");
@@ -3431,7 +3486,7 @@ yarp::dev::ReturnValue ControlBoardRPCd::setMotorTorqueParamsRPC(const std::int3
     params.viscousPos = yparams.viscousPos;
     ret = m_allInterfaces.iTorqueControl->setMotorTorqueParams(j, params);
     if (!ret) {
-        yCError(CB_RPC, "Unable to setTemperatureLimit");
+        yCError(CB_RPC, "Unable to setMotorTorqueParams");
     }
     return ret;
 }
@@ -3450,6 +3505,7 @@ return_getMotorTorqueParams ControlBoardRPCd::getMotorTorqueParamsRPC(const std:
     ret.ret = m_allInterfaces.iTorqueControl->getMotorTorqueParams(j,&params);
     if (!ret.ret) {
         yCError(CB_RPC, "Unable to getMotorTorqueParams");
+        return ret;
     }
     ret.params.bemf = params.bemf;
     ret.params.bemf_scale = params.bemf_scale;

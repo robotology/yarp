@@ -25,6 +25,22 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 * Fixed segfault due to a race condition in `RGBDSensor_StreamingMsgParser::read()`:
   the timestamps are now taken from the received data instead of calling `getEnvelope()` on the ports.
 
+#### `controlBoard_nws_yarp`
+
+* Fixed possible segfault in `getTrajSpeedsAllRPC()`: it was checking `ICurrentControl` instead of `IPositionControl`.
+* Fixed `getPidOutputRPC()` / `getPidOutputsRPC()`: they were returning the PID references instead of the PID outputs.
+* Fixed `getCurrentAllRPC()`: it was returning the reference currents instead of the measured currents.
+* Fixed `getRemoteVariablesListRPC()`: it was writing into an empty vector (undefined behaviour).
+* Implemented `getMotorEncoderAllRPC()` and `getMotorEncodersTimedAllRPC()`, which were returning empty data.
+* `getMotorEncoderSpeedAllRPC()`, `getMotorEncoderAccelerationAllRPC()` and `getTemperatureAllRPC()` now size
+  their output using the number of motors instead of the number of joints.
+* `getMotorTorqueParamsRPC()` no longer copies the parameters when the call fails.
+* Fixed several copy-pasted error messages.
+
+#### `ControlBoardMsgs`
+
+* `setEncoderOneRPC()` now takes the encoder value as `double` instead of `i32` (the value was truncated).
+
 ## Build system
 
 * `YARP_SOVERSION` is now set to `${YARP_VERSION_MAJOR}` (it was previously hardcoded to 3).
