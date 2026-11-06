@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+
+<application>
+    <name>ParamRollback</name>
+    <!-- loaded successfully, with modules and dependencies, before the next one fails -->
+    <application>
+        <name>ParamSingle</name>
+    </application>
+    <application>
+        <name>PlainChild</name>
+    </application>
+    <application>
+        <name>ParamMissing</name>
+    </application>
+</application>
