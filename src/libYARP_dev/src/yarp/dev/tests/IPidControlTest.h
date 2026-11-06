@@ -156,7 +156,6 @@ namespace yarp::dev::tests
             b = ipid->setPidFeedforward(pp,0,43);
             CHECK(b);
             wait_safe(); // Allow some time for the command to take effect
-
             b = ipid->getPidFeedforward(pp,0,pidffd);
             CHECK(b);
             CHECK(pidffd == 43);
@@ -170,12 +169,52 @@ namespace yarp::dev::tests
             CHECK(getpidref == 0.0);
             b = ipid->setPidReference(pp, 0, 10.5);
             CHECK(b);
+            wait_safe(); // Allow some time for the command to take effect
             b = ipid->getPidReference(pp, 0, &getpidref);
             CHECK(b);
             CHECK(getpidref ==  10.5);
         }
 
         //PidReferences
+        {
+            auto setpidrefs = std::vector<double>(ax);
+            yarp::dev::tests::set_vector_crescent(setpidrefs, 11.1);
+            auto pidrefs = std::vector<double>(ax);
+            b = ipid->getPidReferences(pp, pidrefs.data());
+            CHECK(b);
+            b = ipid->setPidReferences(vv, setpidrefs.data());
+            CHECK(b);
+            wait_safe(); // Allow some time for the command to take effect
+            b = ipid->getPidReferences(vv, pidrefs.data());
+            CHECK(b);
+            CHECK(setpidrefs == pidrefs);
+        }
+
+        //PidOutput
+        {
+            double getpidout=0;
+            for (size_t j=0; j<ax; j++)
+            {
+                b = ipid->getPidOutput(pp, j, &getpidout);
+                CHECK(b);
+                CHECK(getpidout ==  1.1 + j * 10);
+            }
+        }
+
+        //PidOutputs
+        {
+            auto checkpidouts = std::vector<double>(ax);
+            auto pidouts = std::vector<double>(ax);
+            for (size_t j=0; j<ax; j++)
+            {
+                checkpidouts[j] = 1.1 + j * 10;
+            }
+            b = ipid->getPidOutputs(pp, pidouts.data());
+            CHECK(b);
+            CHECK(checkpidouts == pidouts);
+        }
+
+        // PidReference
         {
             auto setpidrefs = std::vector<double>(ax);
             yarp::dev::tests::set_vector_crescent(setpidrefs, 11.1);
