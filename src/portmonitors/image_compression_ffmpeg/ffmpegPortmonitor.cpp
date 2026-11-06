@@ -85,7 +85,21 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
         return false;
     }
 
-    if (!codec->pix_fmts)
+    // FFmpeg 8 (libavcodec 62) removed AVCodec::pix_fmts; since FFmpeg 7.1
+    // (libavcodec 61.13.100) avcodec_get_supported_config() must be used instead.
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 13, 100)
+    const AVPixelFormat* pix_fmts = nullptr;
+    {
+        const void* out = nullptr;
+        if (avcodec_get_supported_config(codecContext, codec, AV_CODEC_CONFIG_PIX_FORMAT, 0, &out, nullptr) >= 0) {
+            pix_fmts = static_cast<const AVPixelFormat*>(out);
+        }
+    }
+#else
+    const AVPixelFormat* pix_fmts = codec->pix_fmts;
+#endif
+
+    if (!pix_fmts)
     {
         yCWarning(FFMPEGMONITOR, "The specified codec (%s) has unknown available pixel formats. There might be visualization issues.", codec->name);
     }
@@ -94,7 +108,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
         std::stringstream pixelFormatList;
         bool found = false;
         size_t i = 0;
-        AVPixelFormat test = codec->pix_fmts[i];
+        AVPixelFormat test = pix_fmts[i];
 
         if (test == AV_PIX_FMT_NONE)
         {
@@ -111,7 +125,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
                 break;
             }
             ++i;
-            test = codec->pix_fmts[i];
+            test = pix_fmts[i];
 
             if (test != AV_PIX_FMT_NONE)
             {
@@ -121,7 +135,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
         if (!found)
         {
-            AVPixelFormat suggestedFormat = avcodec_default_get_format(codecContext, codec->pix_fmts);
+            AVPixelFormat suggestedFormat = avcodec_default_get_format(codecContext, pix_fmts);
 
             if (pixelFormat == FFMPEGPORTMONITOR_DEFAULT_PIXEL_FORMAT)
             {
