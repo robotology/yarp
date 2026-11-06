@@ -158,7 +158,7 @@ class ControlBoardRPCd : public ControlBoardMsgs
     //IEncoders
     yarp::dev::ReturnValue resetEncoderOneRPC(const std::int32_t j) override;
     yarp::dev::ReturnValue resetEncoderAllRPC() override;
-    yarp::dev::ReturnValue setEncoderOneRPC(const std::int32_t j, const std::int32_t val) override;
+    yarp::dev::ReturnValue setEncoderOneRPC(const std::int32_t j, const double val) override;
     yarp::dev::ReturnValue setEncoderAllRPC(const std::vector<double>& vals) override;
     return_getEncoderOne getEncoderOneRPC(const std::int32_t j) const override;
     return_getEncoderTimedOne getEncoderTimedOneRPC(const std::int32_t j) const override;

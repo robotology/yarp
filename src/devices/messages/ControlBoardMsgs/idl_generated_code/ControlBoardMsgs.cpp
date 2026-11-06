@@ -2281,7 +2281,7 @@ class ControlBoardMsgs_setEncoderOneRPC_helper :
 {
 public:
     ControlBoardMsgs_setEncoderOneRPC_helper() = default;
-    ControlBoardMsgs_setEncoderOneRPC_helper(const std::int32_t j, const std::int32_t val);
+    ControlBoardMsgs_setEncoderOneRPC_helper(const std::int32_t j, const double val);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -2290,7 +2290,7 @@ public:
     {
     public:
         Command() = default;
-        Command(const std::int32_t j, const std::int32_t val);
+        Command(const std::int32_t j, const double val);
 
         ~Command() override = default;
 
@@ -2306,7 +2306,7 @@ public:
         bool readArgs(yarp::os::idl::WireReader& reader);
 
         std::int32_t j{0};
-        std::int32_t val{0};
+        double val{0.0};
     };
 
     class Reply :
@@ -2325,7 +2325,7 @@ public:
         yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = yarp::dev::ReturnValue (*)(const std::int32_t, const std::int32_t);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::int32_t, const double);
     void call(ControlBoardMsgs* ptr);
 
     Command cmd;
@@ -2335,7 +2335,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ControlBoardMsgs::setEncoderOneRPC(const std::int32_t j, const std::int32_t val)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ControlBoardMsgs::setEncoderOneRPC(const std::int32_t j, const double val)"};
     static constexpr const char* s_help{""};
 };
 
@@ -17559,7 +17559,7 @@ void ControlBoardMsgs_resetEncoderAllRPC_helper::call(ControlBoardMsgs* ptr)
 }
 
 // setEncoderOneRPC helper class implementation
-ControlBoardMsgs_setEncoderOneRPC_helper::ControlBoardMsgs_setEncoderOneRPC_helper(const std::int32_t j, const std::int32_t val) :
+ControlBoardMsgs_setEncoderOneRPC_helper::ControlBoardMsgs_setEncoderOneRPC_helper(const std::int32_t j, const double val) :
         cmd{j, val}
 {
 }
@@ -17574,7 +17574,7 @@ bool ControlBoardMsgs_setEncoderOneRPC_helper::read(yarp::os::ConnectionReader& 
     return reply.read(connection);
 }
 
-ControlBoardMsgs_setEncoderOneRPC_helper::Command::Command(const std::int32_t j, const std::int32_t val) :
+ControlBoardMsgs_setEncoderOneRPC_helper::Command::Command(const std::int32_t j, const double val) :
         j{j},
         val{val}
 {
@@ -17623,7 +17623,7 @@ bool ControlBoardMsgs_setEncoderOneRPC_helper::Command::writeArgs(const yarp::os
     if (!writer.writeI32(j)) {
         return false;
     }
-    if (!writer.writeI32(val)) {
+    if (!writer.writeFloat64(val)) {
         return false;
     }
     return true;
@@ -17667,7 +17667,7 @@ bool ControlBoardMsgs_setEncoderOneRPC_helper::Command::readArgs(yarp::os::idl::
         reader.fail();
         return false;
     }
-    if (!reader.readI32(val)) {
+    if (!reader.readFloat64(val)) {
         reader.fail();
         return false;
     }
@@ -42719,7 +42719,7 @@ yarp::dev::ReturnValue ControlBoardMsgs::resetEncoderAllRPC()
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-yarp::dev::ReturnValue ControlBoardMsgs::setEncoderOneRPC(const std::int32_t j, const std::int32_t val)
+yarp::dev::ReturnValue ControlBoardMsgs::setEncoderOneRPC(const std::int32_t j, const double val)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ControlBoardMsgs_setEncoderOneRPC_helper::s_prototype);
