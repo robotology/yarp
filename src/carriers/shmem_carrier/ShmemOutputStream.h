@@ -7,31 +7,13 @@
 #ifndef YARP_SHMEM_SHMEMOUTPUTSTREAM_H
 #define YARP_SHMEM_SHMEMOUTPUTSTREAM_H
 
-
+#include "ShmemPlatform.h"
 #include "ShmemTypes.h"
 
-#include <yarp/os/OutputStream.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Thread.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/Bytes.h>
 
-#include <ace/config.h>
-#include <ace/Mutex.h>
-#include <ace/Process_Mutex.h>
-#include <ace/Semaphore.h>
-#include <ace/SOCK_Stream.h>
-#include <ace/SOCK_Acceptor.h>
-#include <ace/SOCK_Connector.h>
-#include <ace/Log_Msg.h>
-#if defined(ACE_LACKS_SYSV_SHMEM)
-#include <ace/Shared_Memory_MM.h>
-#else
-#include <ace/Shared_Memory_SV.h>
-#endif
-// In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#include <memory>
+#include <vector>
 
 
 class ShmemOutputStreamImpl
@@ -47,23 +29,27 @@ public:
 
 protected:
     bool Resize(int newsize);
+    void unlinkAll();
 
     bool m_bOpen;
 
     int m_ResizeNum;
     int m_Port;
 
-#if defined(_ACE_USE_SV_SEM)
-    ACE_Mutex* m_pAccessMutex;
-#else
-    ACE_Process_Mutex* m_pAccessMutex;
-#endif
+    // Protects the shared buffer. A semaphore (used as a binary mutex) is
+    // used instead of a mutex, since it can be released by any thread.
+    shmem::NamedSemaphore m_AccessMutex;
+
     // Signalled by the writer when new data is available. It must be a
     // semaphore and not a mutex, since it is released by a different
     // process (and thread) than the one waiting on it.
-    ACE_Semaphore* m_pWaitDataSem;
+    shmem::NamedSemaphore m_WaitDataSem;
 
-    ACE_Shared_Memory* m_pMap;
+    std::unique_ptr<shmem::SharedMemory> m_pMap;
+    // Segments replaced by a resize, kept alive until the reader has mapped
+    // the new segment (on Windows a segment is destroyed when the last handle
+    // is closed).
+    std::vector<std::unique_ptr<shmem::SharedMemory>> m_OldMaps;
     char* m_pData;
     ShmemHeader_t* m_pHeader;
 };

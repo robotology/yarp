@@ -11,7 +11,14 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Time.h>
 
+#include <chrono>
+#include <cstdlib>
+#include <future>
 #include <string>
+
+#if !defined(_WIN32)
+#  include <sys/wait.h>
+#endif
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -51,6 +58,27 @@ bool waitConnection(const std::string& src, const std::string& dest, bool connec
         Time::delay(0.1);
     }
     return false;
+}
+
+// Run the shmem_peer helper in a different process, asynchronously.
+// The result is the exit code of the helper.
+std::future<int> runPeer(const std::string& mode, const Contact& rpc, const Contact& stream)
+{
+    std::string cmd = std::string("\"") + SHMEM_PEER_PATH + "\" " + mode + " " + rpc.getHost() + " "
+                      + std::to_string(rpc.getPort()) + " " + std::to_string(stream.getPort());
+#if defined(_WIN32)
+    // cmd.exe strips the outer quotes
+    cmd = "\"" + cmd + "\"";
+#endif
+    return std::async(std::launch::async, [cmd]() {
+        int ret = std::system(cmd.c_str());
+#if !defined(_WIN32)
+        if (ret != -1 && WIFEXITED(ret)) {
+            ret = WEXITSTATUS(ret);
+        }
+#endif
+        return ret;
+    });
 }
 
 } // namespace
@@ -206,6 +234,90 @@ TEST_CASE("carriers::shmem::rpc", "[carriers]")
 
     client.close();
     server.close();
+
+    Network::setLocalMode(false);
+}
+
+// The tests above run both sides of the connection in the same process. These
+// ones run the other side in a different process (see shmem_peer.cpp), so
+// that the inter-process objects (shared memory, semaphores) are really shared
+// between two processes.
+TEST_CASE("carriers::shmem::multiprocess", "[carriers]")
+{
+    YARP_REQUIRE_PLUGIN("shmem", "carrier");
+
+    // The peer addresses the ports directly by host and port number, it does
+    // not need to access the name server
+    Network::setLocalMode(true);
+
+    SECTION("rpc and streaming with another process")
+    {
+        Port server;
+        EchoReader echo;
+        server.setReader(echo);
+        BufferedPort<Bottle> in;
+        in.setStrict();
+
+        REQUIRE(server.open("/shmem/xproc/server"));
+        REQUIRE(in.open("/shmem/xproc/in"));
+
+        auto peer = runPeer("normal", server.where(), in.where());
+
+        // The peer performs the rpc calls (checking the replies) and then
+        // streams 200 messages
+        int received = 0;
+        size_t bytes = 0;
+        bool order_ok = true;
+        double start = Time::now();
+        while (received < 200 && Time::now() - start < 60.0) {
+            Bottle* b = in.read(false);
+            if (b == nullptr) {
+                if (peer.wait_for(std::chrono::seconds(0)) == std::future_status::ready && in.getPendingReads() == 0) {
+                    break;
+                }
+                Time::delay(0.01);
+                continue;
+            }
+            if (b->get(0).asInt32() != received) {
+                order_ok = false;
+            }
+            bytes += b->get(1).asString().size();
+            ++received;
+        }
+
+        CHECK(peer.get() == 0);
+        CHECK(received == 200);
+        CHECK(order_ok);
+        CHECK(bytes == 196 * 100 + 4 * 500000);
+
+        in.close();
+        server.close();
+    }
+
+    SECTION("the other process crashes")
+    {
+        BufferedPort<Bottle> in;
+        in.setStrict();
+        REQUIRE(in.open("/shmem/xproc/in"));
+
+        auto peer = runPeer("crash", in.where(), in.where());
+
+        Bottle* b = in.read();
+        REQUIRE(b != nullptr);
+        CHECK(b->get(0).asString() == "bye");
+        CHECK(peer.get() == 0);
+
+        // The peer exited without closing the connection, this must be
+        // detected and the connection removed
+        bool removed = false;
+        for (int i = 0; i < 100 && !removed; ++i) {
+            removed = (in.getInputCount() == 0);
+            Time::delay(0.1);
+        }
+        CHECK(removed);
+
+        in.close();
+    }
 
     Network::setLocalMode(false);
 }

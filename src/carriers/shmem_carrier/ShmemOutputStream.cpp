@@ -8,22 +8,16 @@
 #include "ShmemLogComponent.h"
 
 #include <yarp/conf/numeric.h>
-#include <yarp/os/Bytes.h>
-#include <ace/Lib_Find.h>
-// In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#include <yarp/os/Log.h>
 
+#include <climits>
+#include <cstring>
 
 
 ShmemOutputStreamImpl::ShmemOutputStreamImpl() :
         m_bOpen(false),
         m_ResizeNum(0),
         m_Port(0),
-        m_pAccessMutex(nullptr),
-        m_pWaitDataSem(nullptr),
-        m_pMap(nullptr),
         m_pData(nullptr),
         m_pHeader(nullptr)
 {
@@ -39,66 +33,58 @@ bool ShmemOutputStreamImpl::isOk() const
     return m_bOpen;
 }
 
+void ShmemOutputStreamImpl::unlinkAll()
+{
+    // Remove the names of all the objects created by this writer, they are
+    // no longer needed (the objects survive until all the users close them)
+    for (int i = 0; i <= m_ResizeNum; ++i) {
+        shmem::SharedMemory::unlink(shmem::objectName("data", m_Port, i));
+    }
+    shmem::NamedSemaphore::unlink(shmem::objectName("mtx", m_Port));
+    shmem::NamedSemaphore::unlink(shmem::objectName("sem", m_Port));
+}
+
 bool ShmemOutputStreamImpl::open(int port, int size)
 {
-    m_pAccessMutex = nullptr;
-    m_pWaitDataSem = nullptr;
-    m_pMap = nullptr;
     m_pData = nullptr;
     m_pHeader = nullptr;
     m_ResizeNum = 0;
     m_Port = port;
+    m_OldMaps.clear();
 
-    char obj_name[2048];
-    char temp_dir_path[1024];
-
-    if (ACE::get_temp_dir(temp_dir_path, 1024) == -1) {
-        yCError(SHMEMCARRIER, "ShmemHybridStream: no temp directory found.");
+    auto map = std::make_unique<shmem::SharedMemory>();
+    if (!map->create(shmem::objectName("data", port, 0), size + sizeof(ShmemHeader_t))) {
+        yCError(SHMEMCARRIER, "ShmemOutputStream can't create shared memory");
         return false;
     }
 
-#ifdef ACE_LACKS_SYSV_SHMEM
+    if (!m_AccessMutex.create(shmem::objectName("mtx", port), 1, 1)
+        || !m_WaitDataSem.create(shmem::objectName("sem", port), 0, INT_MAX)) {
+        yCError(SHMEMCARRIER, "ShmemOutputStream can't create semaphores");
+        m_AccessMutex.close();
+        m_WaitDataSem.close();
+        unlinkAll();
+        return false;
+    }
 
-    snprintf(obj_name, 2048, "%sSHMEM_FILE_%d_0", temp_dir_path, port);
+    m_pMap = std::move(map);
+    m_pHeader = static_cast<ShmemHeader_t*>(m_pMap->data());
+    m_pData = reinterpret_cast<char*>(m_pHeader + 1);
 
-    m_pMap = new ACE_Shared_Memory_MM(obj_name, //const ACE_TCHAR *filename,
-                                      size + sizeof(ShmemHeader_t), //int len = -1,
-                                      O_RDWR | O_CREAT, //int flags = O_RDWR | O_CREAT,
-                                      ACE_DEFAULT_FILE_PERMS, //int mode = ACE_DEFAULT_FILE_PERMS,
-                                      PROT_RDWR, //int prot = PROT_RDWR,
-                                      ACE_MAP_SHARED); //int share = ACE_MAP_PRIVATE,
-
-#else
-
-    m_pMap = new ACE_Shared_Memory_SV(port, size + sizeof(ShmemHeader_t), ACE_Shared_Memory_SV::ACE_CREATE);
-
-#endif
-
-    m_pHeader = (ShmemHeader_t*)m_pMap->malloc();
-    m_pData = (char*)(m_pHeader + 1);
-
-#ifdef _ACE_USE_SV_SEM
-    snprintf(obj_name, 2048, "%sSHMEM_ACCESS_MUTEX_%d", temp_dir_path, port);
-    m_pAccessMutex = new ACE_Mutex(USYNC_PROCESS, obj_name);
-#else
-    snprintf(obj_name, 2048, "SHMEM_ACCESS_MUTEX_%d", port);
-    m_pAccessMutex = new ACE_Process_Mutex(obj_name);
-#endif
-    snprintf(obj_name, 2048, "SHMEM_WAITDATA_SEM_%d", port);
-    m_pWaitDataSem = new ACE_Semaphore(0, USYNC_PROCESS, obj_name);
-
-    m_pAccessMutex->acquire();
+    m_AccessMutex.wait();
 
     m_pHeader->resize = false;
     m_pHeader->close = false;
+    m_pHeader->attached = false;
 
     m_pHeader->avail = 0;
     m_pHeader->head = 0;
     m_pHeader->size = size;
+    m_pHeader->newsize = size;
     m_pHeader->tail = 0;
     m_pHeader->waiting = 0;
 
-    m_pAccessMutex->release();
+    m_AccessMutex.post();
 
     m_bOpen = true;
 
@@ -107,53 +93,23 @@ bool ShmemOutputStreamImpl::open(int port, int size)
 
 bool ShmemOutputStreamImpl::Resize(int newsize)
 {
-    ++m_ResizeNum;
+    yCDebug(SHMEMCARRIER, "output stream resize %d to %d", m_ResizeNum + 1, newsize);
 
-    yCDebug(SHMEMCARRIER, "output stream resize %d to %d\n", m_ResizeNum, newsize);
-
-    ACE_Shared_Memory* pNewMap;
-
-    m_pHeader->resize = true;
-    m_pHeader->newsize = newsize;
-
-#ifdef ACE_LACKS_SYSV_SHMEM
-
-    char file_path[1024];
-
-    if (ACE::get_temp_dir(file_path, 1024) == -1) {
-        yCError(SHMEMCARRIER, "ShmemHybridStream: no temp directory found.");
-        return false;
-    }
-
-    char file_name[2048];
-    snprintf(file_name, 2048, "%sSHMEM_FILE_%d_%d", file_path, m_Port, m_ResizeNum);
-
-    pNewMap = new ACE_Shared_Memory_MM(file_name, //const ACE_TCHAR *filename,
-                                       newsize + sizeof(ShmemHeader_t), //int len = -1,
-                                       O_RDWR | O_CREAT, //int flags = O_RDWR | O_CREAT,
-                                       ACE_DEFAULT_FILE_PERMS, //int mode = ACE_DEFAULT_FILE_PERMS,
-                                       PROT_RDWR, //int prot = PROT_RDWR,
-                                       ACE_MAP_SHARED); //int share = ACE_MAP_PRIVATE,
-
-#else
-
-    int shmemkey = (m_ResizeNum << 16) + m_Port;
-
-    pNewMap = new ACE_Shared_Memory_SV(shmemkey, newsize + sizeof(ShmemHeader_t), ACE_Shared_Memory_SV::ACE_CREATE);
-
-#endif
-
-    if (!pNewMap) {
+    auto newMap = std::make_unique<shmem::SharedMemory>();
+    if (!newMap->create(shmem::objectName("data", m_Port, m_ResizeNum + 1), newsize + sizeof(ShmemHeader_t))) {
         yCError(SHMEMCARRIER, "ShmemOutputStream can't create shared memory");
         return false;
     }
+    ++m_ResizeNum;
 
-    auto* pNewHeader = (ShmemHeader_t*)pNewMap->malloc();
-    char* pNewData = (char*)(pNewHeader + 1);
+    auto* pNewHeader = static_cast<ShmemHeader_t*>(newMap->data());
+    char* pNewData = reinterpret_cast<char*>(pNewHeader + 1);
 
     pNewHeader->size = newsize;
+    pNewHeader->newsize = newsize;
     pNewHeader->resize = false;
     pNewHeader->close = m_pHeader->close;
+    pNewHeader->attached = false;
 
     pNewHeader->tail = 0;
     pNewHeader->head = pNewHeader->avail = m_pHeader->avail;
@@ -170,9 +126,12 @@ bool ShmemOutputStreamImpl::Resize(int newsize)
         }
     }
 
-    m_pMap->close();
-    delete m_pMap;
-    m_pMap = pNewMap;
+    // Tell the reader to move to the new segment
+    m_pHeader->newsize = newsize;
+    m_pHeader->resize = true;
+
+    m_OldMaps.push_back(std::move(m_pMap));
+    m_pMap = std::move(newMap);
 
     m_pHeader = pNewHeader;
     m_pData = pNewData;
@@ -186,22 +145,34 @@ bool ShmemOutputStreamImpl::write(const yarp::os::Bytes& b)
         return false;
     }
 
-    m_pAccessMutex->acquire();
+    if (!m_AccessMutex.wait()) {
+        return false;
+    }
 
     if (!m_bOpen) {
-        m_pAccessMutex->release();
+        m_AccessMutex.post();
         return false;
     }
 
     if (m_pHeader->close) {
-        m_pAccessMutex->release();
+        m_AccessMutex.post();
         close();
         return false;
     }
 
+    // The reader has moved to the current segment, the old ones are no
+    // longer needed
+    if (m_pHeader->attached && !m_OldMaps.empty()) {
+        m_OldMaps.clear();
+    }
+
     if ((int)m_pHeader->size - (int)m_pHeader->avail < (int)b.length()) {
         yarp::conf::ssize_t required = m_pHeader->size + 2 * b.length();
-        Resize((int)required);
+        if (!Resize((int)required)) {
+            m_AccessMutex.post();
+            close();
+            return false;
+        }
     }
 
     if ((int)m_pHeader->head + (int)b.length() <= (int)m_pHeader->size) {
@@ -218,10 +189,10 @@ bool ShmemOutputStreamImpl::write(const yarp::os::Bytes& b)
 
     while (m_pHeader->waiting > 0) {
         --m_pHeader->waiting;
-        m_pWaitDataSem->release();
+        m_WaitDataSem.post();
     }
 
-    m_pAccessMutex->release();
+    m_AccessMutex.post();
 
     return true;
 }
@@ -234,23 +205,21 @@ void ShmemOutputStreamImpl::close()
 
     m_bOpen = false;
 
-    m_pAccessMutex->acquire();
+    m_AccessMutex.wait();
     while (m_pHeader->waiting > 0) {
         --m_pHeader->waiting;
-        m_pWaitDataSem->release();
+        m_WaitDataSem.post();
     }
     m_pHeader->close = true;
-    m_pAccessMutex->release();
+    m_AccessMutex.post();
 
-    m_pAccessMutex->remove();
-    delete m_pAccessMutex;
-    m_pAccessMutex = nullptr;
+    m_AccessMutex.close();
+    m_WaitDataSem.close();
 
-    m_pWaitDataSem->remove();
-    delete m_pWaitDataSem;
-    m_pWaitDataSem = nullptr;
+    m_OldMaps.clear();
+    m_pMap.reset();
+    m_pHeader = nullptr;
+    m_pData = nullptr;
 
-    m_pMap->close();
-    delete m_pMap;
-    m_pMap = nullptr;
+    unlinkAll();
 }

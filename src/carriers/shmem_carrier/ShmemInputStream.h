@@ -7,32 +7,15 @@
 #ifndef YARP_SHMEM_SHMEMINPUTSTREAM_H
 #define YARP_SHMEM_SHMEMINPUTSTREAM_H
 
+#include "ShmemPlatform.h"
 #include "ShmemTypes.h"
 
-#include <yarp/os/InputStream.h>
-#include <yarp/os/Thread.h>
-#include <yarp/os/Time.h>
+#include <yarp/conf/numeric.h>
+#include <yarp/os/Bytes.h>
 
+#include <atomic>
+#include <memory>
 #include <mutex>
-
-#include <ace/config.h>
-#include <ace/Mutex.h>
-#include <ace/Process_Mutex.h>
-#include <ace/Semaphore.h>
-#include <ace/SOCK_Stream.h>
-#include <ace/SOCK_Acceptor.h>
-#include <ace/SOCK_Connector.h>
-#include <ace/Log_Msg.h>
-#if defined(ACE_LACKS_SYSV_SHMEM)
-#include <ace/Shared_Memory_MM.h>
-#else
-#include <ace/Shared_Memory_SV.h>
-#endif
-// In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
-
 
 
 class ShmemInputStreamImpl
@@ -42,7 +25,7 @@ public:
     ~ShmemInputStreamImpl();
 
     bool isOk() const;
-    bool open(int port, ACE_SOCK_Stream* pSock, int size = SHMEM_DEFAULT_SIZE);
+    bool open(int port, shmem::Socket* pSock);
     yarp::conf::ssize_t read(yarp::os::Bytes& b);
     void close();
 
@@ -51,29 +34,32 @@ protected:
     bool Resize();
     bool m_bOpen;
 
+    // Set by close() before waiting for a pending read to finish, so that a
+    // read waiting for data can give up
+    std::atomic<bool> m_bInterrupt;
+
     int m_ResizeNum;
     int m_Port;
 
-#if defined(_ACE_USE_SV_SEM)
-    ACE_Mutex* m_pAccessMutex;
-#else
-    ACE_Process_Mutex* m_pAccessMutex;
-#endif
+    // Protects the shared buffer. A semaphore (used as a binary mutex) is
+    // used instead of a mutex, since it can be released by any thread.
+    shmem::NamedSemaphore m_AccessMutex;
+
     // Signalled by the writer when new data is available. It must be a
     // semaphore and not a mutex, since it is released by a different
     // process (and thread) than the one waiting on it.
-    ACE_Semaphore* m_pWaitDataSem;
+    shmem::NamedSemaphore m_WaitDataSem;
 
     std::mutex m_ReadSerializerMutex;
 
     // Mutex for the whole class, to avoid concurrent close and read
     std::recursive_mutex m_generalMutex;
 
-    ACE_Shared_Memory* m_pMap;
+    std::unique_ptr<shmem::SharedMemory> m_pMap;
     char* m_pData;
     ShmemHeader_t* m_pHeader;
 
-    ACE_SOCK_Stream* m_pSock;
+    shmem::Socket* m_pSock;
 };
 
 #endif
