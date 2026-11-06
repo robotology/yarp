@@ -209,7 +209,7 @@ public:
 
     virtual yarp::dev::ReturnValue resetEncoderAllRPC();
 
-    virtual yarp::dev::ReturnValue setEncoderOneRPC(const std::int32_t j, const std::int32_t val);
+    virtual yarp::dev::ReturnValue setEncoderOneRPC(const std::int32_t j, const double val);
 
     virtual yarp::dev::ReturnValue setEncoderAllRPC(const std::vector<double>& vals);
 
