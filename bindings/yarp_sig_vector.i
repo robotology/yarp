@@ -3,40 +3,45 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
-// SWIG wrapping for yarp::sig::Vector and yarp::sig::VectorInt.
+// SWIG wrapping for some yarp::sig::VectorBase subtypes.
 //
 // This file is not a standalone module: it is meant to be included by
-// yarp.i, after the std::vector<double> and std::vector<int> templates
-// (DVector, IVector) have been instantiated.
+// yarp.i, after the std::vector<(double|int|std::string)>  templates
+// (DVector, IVector, SVector) have been instantiated.
 
 // yarp::sig::VectorOf<T> is an alias template (not supported by SWIG) which selects
 // one of the concrete classes yarp::sig::VectorOfDouble, yarp::sig::VectorOfInt, etc.
-// Only the double and int versions are wrapped, with the names Vector and VectorInt.
-// Their methods come from the CRTP base class yarp::sig::VectorBase, which is
-// instantiated with %template before including Vector.h (see below).
+// Only the double, int and std::string versions are wrapped, with the names Vector,
+// VectorInt and VectorString. Their methods come from the CRTP base class
+// yarp::sig::VectorBase, which is instantiated with %template before including
+// Vector.h (see below).
 %ignore vector_selector;
 %ignore yarp::sig::VectorOfFloat;
-%ignore yarp::sig::VectorOfString;
 %ignore yarp::sig::VectorOfSizet;
 %rename(Vector) yarp::sig::VectorOfDouble;
 %rename(VectorInt) yarp::sig::VectorOfInt;
+%rename(VectorString) yarp::sig::VectorOfString;
 
-// Vector.h must be included after the std::vector<double> and std::vector<int> templates,
-// so that the constructors Vector(const std::vector<double>&) and VectorInt(const std::vector<int>&)
-// (defined below with %extend) can accept native lists.
-// VectorBase is a CRTP base class: it must not be instantiated directly
+// Vector.h must be included after the corresponding std::vector<T> templates, so that the
+// constructors Vector(const std::vector<double>&), VectorInt(const std::vector<int>&)
+// and VectorString(const std::vector<std::string>&) (defined below with %extend) can accept
+// native lists. VectorBase is a CRTP base class: it must not be instantiated directly.
 %ignore yarp::sig::VectorBase::VectorBase;
 %include <yarp/sig/VectorBase.h>
 %template(VectorBaseDouble) yarp::sig::VectorBase<yarp::sig::VectorOfDouble, double>;
 %template(VectorBaseInt) yarp::sig::VectorBase<yarp::sig::VectorOfInt, int>;
+%template(VectorBaseString) yarp::sig::VectorBase<yarp::sig::VectorOfString, std::string>;
 %include <yarp/sig/Vector.h>
 
 typedef yarp::sig::VectorOfDouble Vector;
 typedef yarp::sig::VectorOfInt VectorInt;
+typedef yarp::sig::VectorOfString VectorString;
+
 
 %{
 typedef yarp::sig::VectorOf<double> Vector;
 typedef yarp::sig::VectorOf<int> VectorInt;
+typedef yarp::sig::VectorOf<std::string> VectorString;
 %}
 
 #if SWIG_VERSION < 0x030012
@@ -44,40 +49,43 @@ typedef yarp::sig::VectorOf<int> VectorInt;
 %rename(VectorConstIterator) yarp::sig::VectorOfDouble::const_iterator;
 #endif
 
-MAKE_COMMS  (Vector, yarp::sig::VectorOfDouble)
-MAKE_COMMS  (VectorInt, yarp::sig::VectorOfInt)
+MAKE_COMMS(Vector, yarp::sig::VectorOfDouble)
+MAKE_COMMS(VectorInt, yarp::sig::VectorOfInt)
+MAKE_COMMS(VectorString, yarp::sig::VectorOfString)
 
-%extend yarp::sig::VectorOfDouble {
+%define EXTEND_VECTOR_SUBTYPE(name, type)
+
+%extend yarp::sig::VectorOf ## name {
 
     // SWIG does not handle the constructors inherited from yarp::sig::VectorBase
     // (using VectorBase::VectorBase), so they are re-declared here.
     // All the other methods are inherited from VectorBase.
 
-    VectorOfDouble()
+    VectorOf ## name()
     {
-        return new yarp::sig::VectorOfDouble();
+        return new yarp::sig::VectorOf ## name();
     }
 
-    VectorOfDouble(size_t size)
+    VectorOf ## name(size_t size)
     {
-        return new yarp::sig::VectorOfDouble(size);
+        return new yarp::sig::VectorOf ## name(size);
     }
 
-    VectorOfDouble(size_t size, double def)
+    VectorOf ## name(size_t size, const type& def)
     {
-        return new yarp::sig::VectorOfDouble(size, def);
+        return new yarp::sig::VectorOf ## name(size, def);
     }
 
-    VectorOfDouble(const yarp::sig::VectorOfDouble& other)
+    VectorOf ## name(const yarp::sig::VectorOf ## name& other)
     {
-        return new yarp::sig::VectorOfDouble(other);
+        return new yarp::sig::VectorOf ## name(other);
     }
 
-    // This in not a real constructor actually, it is converted by swig to a function returning a pointer.
+    // This is not a real constructor actually, it is converted by swig to a function returning a pointer.
     // See: http://www.swig.org/Doc3.0/CPlusPlus11.html#CPlusPlus11_initializer_lists
-    VectorOfDouble(const std::vector<double>& values)
+    VectorOf ## name(const std::vector<type>& values)
     {
-        yarp::sig::VectorOfDouble* newVec = new yarp::sig::VectorOfDouble();
+        yarp::sig::VectorOf ## name* newVec = new yarp::sig::VectorOf ## name();
         newVec->reserve(values.size());
         for (const auto& element : values) {
             newVec->push_back(element);
@@ -92,27 +100,27 @@ MAKE_COMMS  (VectorInt, yarp::sig::VectorOfInt)
         return self->toString();
     }
 
-    bool isEqual(const yarp::sig::VectorOfDouble& other) const
+    bool isEqual(const yarp::sig::VectorOf ## name& other) const
     {
         return *self == other;
     }
 
-    double get(int j)
+    const type& get(int j)
     {
         return self->operator [](j);
     }
 
-    void set(int j, double v)
+    void set(int j, const type& v)
     {
         self->operator [](j) = v;
     }
 
 #ifdef SWIGPYTHON
-    void __setitem__(int key, double value) {
+    void __setitem__(int key, const type& value) {
         self->operator[](key) = value;
     }
 
-    double __getitem__(int key) {
+    const type& __getitem__(int key) {
         return self->operator[](key);
     }
 
@@ -122,77 +130,8 @@ MAKE_COMMS  (VectorInt, yarp::sig::VectorOfInt)
 #endif
 }
 
-%extend yarp::sig::VectorOfInt {
+%enddef
 
-    // SWIG does not handle the constructors inherited from yarp::sig::VectorBase
-    // (using VectorBase::VectorBase), so they are re-declared here.
-    // All the other methods are inherited from VectorBase.
-
-    VectorOfInt()
-    {
-        return new yarp::sig::VectorOfInt();
-    }
-
-    VectorOfInt(size_t size)
-    {
-        return new yarp::sig::VectorOfInt(size);
-    }
-
-    VectorOfInt(size_t size, int def)
-    {
-        return new yarp::sig::VectorOfInt(size, def);
-    }
-
-    VectorOfInt(const yarp::sig::VectorOfInt& other)
-    {
-        return new yarp::sig::VectorOfInt(other);
-    }
-
-    // This in not a real constructor actually, it is converted by swig to a function returning a pointer.
-    // See: http://www.swig.org/Doc3.0/CPlusPlus11.html#CPlusPlus11_initializer_lists
-    VectorOfInt(const std::vector<int>& values)
-    {
-        yarp::sig::VectorOfInt* newVec = new yarp::sig::VectorOfInt();
-        newVec->reserve(values.size());
-        for (const auto& element : values) {
-            newVec->push_back(element);
-        }
-        return newVec;
-    }
-
-    // toString() comes from VectorOf*Data and operator== is a friend function of VectorBase:
-    // neither is visible to SWIG.
-    std::string toString()
-    {
-        return self->toString();
-    }
-
-    bool isEqual(const yarp::sig::VectorOfInt& other) const
-    {
-        return *self == other;
-    }
-
-    int get(int j)
-    {
-        return self->operator [](j);
-    }
-
-    void set(int j, int v)
-    {
-        self->operator [](j) = v;
-    }
-
-#ifdef SWIGPYTHON
-    void __setitem__(int key, int value) {
-        self->operator[](key) = value;
-    }
-
-    int __getitem__(int key) {
-        return self->operator[](key);
-    }
-
-    size_t __len__() {
-        return self->size();
-    }
-#endif
-}
+EXTEND_VECTOR_SUBTYPE(Double, double)
+EXTEND_VECTOR_SUBTYPE(Int, int)
+EXTEND_VECTOR_SUBTYPE(String, std::string)

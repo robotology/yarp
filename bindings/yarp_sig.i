@@ -7,8 +7,8 @@
 //
 // This file is not a standalone module: it is meant to be included by
 // yarp.i, after YARP_os has been wrapped and before YARP_dev.
-// yarp::sig::Vector and yarp::sig::VectorInt are wrapped separately in
-// yarp_sig_vector.i (see the comments in that file).
+// yarp::sig::Vector, yarp::sig::VectorInt and yarp::sig::VectorString are
+// wrapped separately in yarp_sig_vector.i (see the comments in that file).
 
 // YARP_sig
 %{
