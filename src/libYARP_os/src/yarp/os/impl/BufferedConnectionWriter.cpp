@@ -518,6 +518,7 @@ bool BufferedConnectionWriter::applyConvertTextMode()
         }
         lst_used = 0;
         target = &lst;
+        target_used = &lst_used;
         lst.clear();
         stopPool();
         Bytes data(const_cast<char*>(replacement.c_str()), replacement.length());

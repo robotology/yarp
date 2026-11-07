@@ -22,7 +22,7 @@ namespace yarp::os {
  * a graceful quit procedure. The receiving process must
  * collaborate and take appropriate action after receiving the
  * message. The Terminator/Terminee class pair starts a tcp socket on the
- * server side listening for incoming connections and the magic word "quit"
+ * server side listening for incoming connections and the "quit" command
  * (all lowercase). The ip-port pair is registered with a symbolic name
  * on the YARP name server and can be queried by the client to send the
  * termination message.
