@@ -113,9 +113,47 @@ bool decode(AVCodecContext* dec_ctx, AVPacket* pkt, AVFrame* frame, Sound& sound
     return true;
 }
 
+// FFmpeg >= 7.1 (libavcodec 61.13.100) provides avcodec_get_supported_config(),
+// and FFmpeg 8 (libavcodec 62) removed the AVCodec::sample_fmts,
+// AVCodec::supported_samplerates and AVCodec::ch_layouts fields.
+// These helpers return the same terminated lists (or nullptr if unknown/any).
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 13, 100)
+#define YARP_FFMPEG_HAS_GET_SUPPORTED_CONFIG
+template <typename T>
+static const T* get_supported_config(const AVCodec* codec, enum AVCodecConfig config)
+{
+    const void* out = nullptr;
+    if (avcodec_get_supported_config(nullptr, codec, config, 0, &out, nullptr) < 0) {
+        return nullptr;
+    }
+    return static_cast<const T*>(out);
+}
+#endif
+
+static const enum AVSampleFormat* codec_sample_fmts(const AVCodec* codec)
+{
+#ifdef YARP_FFMPEG_HAS_GET_SUPPORTED_CONFIG
+    return get_supported_config<enum AVSampleFormat>(codec, AV_CODEC_CONFIG_SAMPLE_FORMAT);
+#else
+    return codec->sample_fmts;
+#endif
+}
+
+static const int* codec_supported_samplerates(const AVCodec* codec)
+{
+#ifdef YARP_FFMPEG_HAS_GET_SUPPORTED_CONFIG
+    return get_supported_config<int>(codec, AV_CODEC_CONFIG_SAMPLE_RATE);
+#else
+    return codec->supported_samplerates;
+#endif
+}
+
 int check_sample_fmt(const AVCodec * codec, enum AVSampleFormat sample_fmt)
 {
-    const enum AVSampleFormat* p = codec->sample_fmts;
+    const enum AVSampleFormat* p = codec_sample_fmts(codec);
+    if (!p) {
+        return 1; // all sample formats are supported (or unknown)
+    }
 
     while (*p != AV_SAMPLE_FMT_NONE)
     {
@@ -132,11 +170,11 @@ int select_sample_rate(const AVCodec* codec, int desired_rate)
     const int* p;
     int best_samplerate = 0;
 
-    if (!codec->supported_samplerates) {
+    p = codec_supported_samplerates(codec);
+    if (!p) {
         return desired_rate; // Use the desired rate if codec doesn't specify
     }
 
-    p = codec->supported_samplerates;
     while (*p)
     {
         // Find the closest supported rate to the desired rate
@@ -188,13 +226,17 @@ static int select_channel_layout(const AVCodec *codec, AVChannelLayout *dst)
     const AVChannelLayout *p, *best_ch_layout=nullptr;
     int best_nb_channels   = 0;
 
-    if (!codec->ch_layouts)
+#ifdef YARP_FFMPEG_HAS_GET_SUPPORTED_CONFIG
+    p = get_supported_config<AVChannelLayout>(codec, AV_CODEC_CONFIG_CHANNEL_LAYOUT);
+#else
+    p = codec->ch_layouts;
+#endif
+    if (!p)
     {
         AVChannelLayout layout_stereo = AV_CHANNEL_LAYOUT_STEREO;
         return av_channel_layout_copy(dst, &layout_stereo);
     }
 
-    p = codec->ch_layouts;
     while (p->nb_channels)
     {
         int nb_channels = p->nb_channels;

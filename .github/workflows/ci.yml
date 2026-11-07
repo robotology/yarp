@@ -1529,9 +1529,9 @@ jobs:
           brew install sqlite tinyxml2 libedit libpng eigen graphviz libsoxr
           brew install opencv
           #Unlink qt5 to avoid conflicts with qt6 (opencv)
-          brew unlink qtbase qtdeclarative qtsvg
-          brew install qt5
-          brew link --overwrite qtbase qtdeclarative qtsvg
+          #brew unlink qtbase qtdeclarative qtsvg
+          #brew install qt5
+          #brew link --overwrite qtbase qtdeclarative qtsvg
 
     - name: Install SWIG [Linux]
       if: runner.os == 'Linux'

@@ -32,4 +32,4 @@ set(ENABLE_yarpmod_controlboard_nws_yarp ON CACHE BOOL "")
 set(ENABLE_yarpmod_controlboardremapper ON CACHE BOOL "")
 set(ENABLE_yarpcar_websocket ON CACHE BOOL "")
 
-set(Qt5_DIR "/usr/local/opt/qt5/lib/cmake/Qt5")
+#set(Qt5_DIR "/usr/local/opt/qt5/lib/cmake/Qt5")
