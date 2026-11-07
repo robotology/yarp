@@ -35,6 +35,7 @@ public:
     void terminate();
 public:
     ThreadedPort();
+    ~ThreadedPort() override;
 };
 
 //----------------------------------------------------------------
