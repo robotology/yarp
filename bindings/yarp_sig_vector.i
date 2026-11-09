@@ -53,39 +53,39 @@ MAKE_COMMS(Vector, yarp::sig::VectorOfDouble)
 MAKE_COMMS(VectorInt, yarp::sig::VectorOfInt)
 MAKE_COMMS(VectorString, yarp::sig::VectorOfString)
 
-%define EXTEND_VECTOR_SUBTYPE(name, type)
+%define EXTEND_VECTOR_SUBTYPE(classname, type)
 
-%extend yarp::sig::VectorOf ## name {
+%extend yarp::sig::classname {
 
     // SWIG does not handle the constructors inherited from yarp::sig::VectorBase
     // (using VectorBase::VectorBase), so they are re-declared here.
     // All the other methods are inherited from VectorBase.
 
-    VectorOf ## name()
+    classname()
     {
-        return new yarp::sig::VectorOf ## name();
+        return new yarp::sig::classname();
     }
 
-    VectorOf ## name(size_t size)
+    classname(size_t size)
     {
-        return new yarp::sig::VectorOf ## name(size);
+        return new yarp::sig::classname(size);
     }
 
-    VectorOf ## name(size_t size, const type& def)
+    classname(size_t size, const type& def)
     {
-        return new yarp::sig::VectorOf ## name(size, def);
+        return new yarp::sig::classname(size, def);
     }
 
-    VectorOf ## name(const yarp::sig::VectorOf ## name& other)
+    classname(const yarp::sig::classname& other)
     {
-        return new yarp::sig::VectorOf ## name(other);
+        return new yarp::sig::classname(other);
     }
 
     // This is not a real constructor actually, it is converted by swig to a function returning a pointer.
     // See: http://www.swig.org/Doc3.0/CPlusPlus11.html#CPlusPlus11_initializer_lists
-    VectorOf ## name(const std::vector<type>& values)
+    classname(const std::vector<type>& values)
     {
-        yarp::sig::VectorOf ## name* newVec = new yarp::sig::VectorOf ## name();
+        yarp::sig::classname* newVec = new yarp::sig::classname();
         newVec->reserve(values.size());
         for (const auto& element : values) {
             newVec->push_back(element);
@@ -100,31 +100,31 @@ MAKE_COMMS(VectorString, yarp::sig::VectorOfString)
         return self->toString();
     }
 
-    bool isEqual(const yarp::sig::VectorOf ## name& other) const
+    bool isEqual(const yarp::sig::classname& other) const
     {
         return *self == other;
     }
 
-    const type& get(int j)
+    type get(int j) const
     {
         return self->operator [](j);
     }
 
-    void set(int j, const type& v)
+    void set(int j, type v)
     {
         self->operator [](j) = v;
     }
 
 #ifdef SWIGPYTHON
-    void __setitem__(int key, const type& value) {
+    void __setitem__(int key, type value) {
         self->operator[](key) = value;
     }
 
-    const type& __getitem__(int key) {
+    type __getitem__(int key) const {
         return self->operator[](key);
     }
 
-    size_t __len__() {
+    size_t __len__() const {
         return self->size();
     }
 #endif
@@ -132,6 +132,6 @@ MAKE_COMMS(VectorString, yarp::sig::VectorOfString)
 
 %enddef
 
-EXTEND_VECTOR_SUBTYPE(Double, double)
-EXTEND_VECTOR_SUBTYPE(Int, int)
-EXTEND_VECTOR_SUBTYPE(String, std::string)
+EXTEND_VECTOR_SUBTYPE(VectorOfDouble, double)
+EXTEND_VECTOR_SUBTYPE(VectorOfInt, int)
+EXTEND_VECTOR_SUBTYPE(VectorOfString, std::string)
