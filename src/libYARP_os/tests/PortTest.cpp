@@ -2292,7 +2292,14 @@ TEST_CASE("os::PortTest::children exit status", "[yarp::os]")
     pid_t pid = fork();
     REQUIRE(pid >= 0);
     if (pid == 0) {
-        _exit(3);
+        // Replace the process image instead of calling _exit() directly:
+        // when the test runs under valgrind, the forked child is still
+        // instrumented, and at _exit() valgrind runs the leak check on the
+        // copy of the parent's heap (whose threads do not exist in the child)
+        // and overrides the exit status with --error-exitcode.
+        // This is also what std::system() and popen() do.
+        execl("/bin/sh", "sh", "-c", "exit 3", static_cast<char*>(nullptr));
+        _exit(127);
     }
 
     // Give the child the time to exit and SIGCHLD the time to be delivered

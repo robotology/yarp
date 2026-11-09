@@ -74,9 +74,12 @@ private:
 
     yarp::os::BufferedPort<yarp::sig::Vector> outputPositionStatePort; // Port /state:o streaming out the encoder positions
     yarp::os::BufferedPort<yarp::dev::CommandMessageData> inputStreamingPort;         // Input streaming port for high frequency commands
+    // NOTE: extendedOutputState_buffer must be declared BEFORE extendedOutputStatePort.
+    // Members are destroyed in reverse order: the port must be destroyed first, because
+    // its PortCore may still hold (not yet completed) packets whose callbacks belong to the buffer.
+    yarp::os::PortWriterBuffer<yarp::dev::JointStateData> extendedOutputState_buffer; // Buffer associated to the extendedOutputStatePort port
     yarp::os::Port extendedOutputStatePort;                            // Port /stateExt:o streaming out the struct with the robot data
 
-    yarp::os::PortWriterBuffer<yarp::dev::JointStateData> extendedOutputState_buffer; // Buffer associated to the extendedOutputStatePort port
     yarp::os::PortReaderBuffer<yarp::os::Bottle> inputRPC_buffer;                      // Buffer associated to the inputRPCPort port
 
  //   RPCMessagesParser RPC_parser;             // Message parser associated to the inputRPCPort port

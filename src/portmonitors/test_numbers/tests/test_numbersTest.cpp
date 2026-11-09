@@ -18,7 +18,7 @@
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
-TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
+TEST_CASE("pm::test_numbersTest", "[yarp::pm]")
 {
     YARP_REQUIRE_PLUGIN("test_numbers1", "portmonitor")
     YARP_REQUIRE_PLUGIN("test_numbers2", "portmonitor")

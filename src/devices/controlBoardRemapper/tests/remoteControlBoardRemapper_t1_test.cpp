@@ -111,14 +111,22 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     yarp::dev::tests::wait_safe();
 
     // Check that the read control mode is actually position direct
-    // Let's try 10 times because if the remapper is using some controlBoard_nwc_yarp,
+    // Let's try multiple times because if the remapper is using some controlBoard_nwc_yarp,
     // it is possible that this return false if it is called before the first message
     // has been received from the controlboard_nws_yarp
+    // The control modes are read from the streaming port of the controlBoard_nws_yarp,
+    // hence they may be not yet updated (e.g. when running under valgrind).
+    // Poll until the expected values are received (or a timeout expires).
     bool getControlModesOk = false;
-    for(int wait=0; wait < 20 && !getControlModesOk; wait++)
+    for(int wait=0; wait < 300; wait++)
     {
         getControlModesOk = ctrlmode->getControlModes(readedControlMode);
-        yarp::os::Time::delay(0.005);
+        bool match = getControlModesOk;
+        for (size_t i = 0; match && i < nrOfRemappedAxes; i++) {
+            match = (settedControlMode[i] == (yarp::dev::SelectableControlModeEnum)readedControlMode[i]);
+        }
+        if (match) { break; }
+        yarp::os::Time::delay(0.01);
     }
     CHECK(getControlModesOk); // getControlModes correctly called
 
@@ -151,7 +159,17 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
 
     // Do a similar test for the encoders
     // in fakeMotionControl their value is the one setted with setPosition
-    CHECK(encs->getEncoders(readedEncoders.data())); // getEncoders correctly called
+    // The encoders are read from the streaming port of the controlBoard_nws_yarp,
+    // hence they may be not yet updated (e.g. when running under valgrind).
+    // Poll until the expected values are received (or a timeout expires).
+    bool getEncodersOk = false;
+    for(int wait=0; wait < 300; wait++)
+    {
+        getEncodersOk = encs->getEncoders(readedEncoders.data());
+        if (getEncodersOk && setPosition == readedEncoders) { break; }
+        yarp::os::Time::delay(0.01);
+    }
+    CHECK(getEncodersOk); // getEncoders correctly called
 
     // Check that the two vector match
     for(size_t i=0; i < nrOfRemappedAxes; i++)

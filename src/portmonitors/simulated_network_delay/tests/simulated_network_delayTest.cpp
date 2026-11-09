@@ -18,7 +18,7 @@
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
-TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
+TEST_CASE("pm::simulated_network_delayTest", "[yarp::pm]")
 {
     YARP_REQUIRE_PLUGIN("simulated_network_delay", "portmonitor")
 

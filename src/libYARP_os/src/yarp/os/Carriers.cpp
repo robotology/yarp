@@ -99,7 +99,7 @@ Carrier* Carriers::Private::chooseCarrier(const std::string& name,
         // let's try to register it, and see if a dll is found.
         if (NetworkBase::registerCarrier(name.c_str(), nullptr)) {
             // We made progress, let's try again...
-            return Carriers::Private::chooseCarrier(name, false);
+            return Carriers::Private::chooseCarrier(name, false, return_template);
         }
     }
 
