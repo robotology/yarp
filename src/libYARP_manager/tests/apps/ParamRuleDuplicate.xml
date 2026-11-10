@@ -4,6 +4,7 @@
   SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
   SPDX-License-Identifier: BSD-3-Clause
 -->
+
 <application>
     <name>ParamRuleDuplicate</name>
     <def-param-value name="id">c1</def-param-value>

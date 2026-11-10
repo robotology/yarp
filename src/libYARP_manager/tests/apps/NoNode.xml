@@ -4,6 +4,7 @@
   SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
   SPDX-License-Identifier: BSD-3-Clause
 -->
+
 <application>
     <name>NoNode</name>
     <!-- a module without node: its dependencies cannot be satisfied, but the application loads -->
