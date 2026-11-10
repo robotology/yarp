@@ -55,17 +55,31 @@ const char *fmcC_file_content_micro   =  "device fakeMotionControlMicro\n"
                                   "\n"
                                   "AxisName (\"axisC1\" \"axisC2\" \"axisC3\" \"axisC4\")  \n";
 
+// NOTE: under valgrind the period of the controlBoard_nws_yarp is increased.
+// The state is streamed over tcp: if the receiver (the controlBoard_nwc_yarp)
+// cannot keep up with the sender (e.g. under valgrind, with three boards at 100Hz),
+// the messages pile up in the socket buffers and the data read by the client
+// becomes older and older (several seconds), even if it is still considered
+// valid because it has just arrived.
+// In local measurements under valgrind the receivers kept up with the three
+// boards up to ~30Hz each: 10Hz (0.1s) leaves a good margin for slower CI machines.
+#ifdef WITH_VALGRIND
+#    define REMAPPER_TEST_NWS_PERIOD "0.1"
+#else
+#    define REMAPPER_TEST_NWS_PERIOD "0.01"
+#endif
+
 const char *wrapperA_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/a\n"
-                                      "period 0.01\n";
+                                      "period " REMAPPER_TEST_NWS_PERIOD "\n";
 
 const char *wrapperB_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/b\n"
-                                      "period 0.01\n";
+                                      "period " REMAPPER_TEST_NWS_PERIOD "\n";
 
 const char *wrapperC_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/c\n"
-                                      "period 0.01\n";
+                                      "period " REMAPPER_TEST_NWS_PERIOD "\n";
 
 
 static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t nrOfRemappedAxes)
@@ -111,14 +125,22 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     yarp::dev::tests::wait_safe();
 
     // Check that the read control mode is actually position direct
-    // Let's try 10 times because if the remapper is using some controlBoard_nwc_yarp,
+    // Let's try multiple times because if the remapper is using some controlBoard_nwc_yarp,
     // it is possible that this return false if it is called before the first message
     // has been received from the controlboard_nws_yarp
+    // The control modes are read from the streaming port of the controlBoard_nws_yarp,
+    // hence they may be not yet updated (e.g. when running under valgrind).
+    // Poll until the expected values are received (or a timeout expires).
     bool getControlModesOk = false;
-    for(int wait=0; wait < 20 && !getControlModesOk; wait++)
+    for(int wait=0; wait < 300; wait++)
     {
         getControlModesOk = ctrlmode->getControlModes(readedControlMode);
-        yarp::os::Time::delay(0.005);
+        bool match = getControlModesOk;
+        for (size_t i = 0; match && i < nrOfRemappedAxes; i++) {
+            match = (settedControlMode[i] == (yarp::dev::SelectableControlModeEnum)readedControlMode[i]);
+        }
+        if (match) { break; }
+        yarp::os::Time::delay(0.01);
     }
     CHECK(getControlModesOk); // getControlModes correctly called
 
@@ -151,7 +173,17 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
 
     // Do a similar test for the encoders
     // in fakeMotionControl their value is the one setted with setPosition
-    CHECK(encs->getEncoders(readedEncoders.data())); // getEncoders correctly called
+    // The encoders are read from the streaming port of the controlBoard_nws_yarp,
+    // hence they may be not yet updated (e.g. when running under valgrind).
+    // Poll until the expected values are received (or a timeout expires).
+    bool getEncodersOk = false;
+    for(int wait=0; wait < 300; wait++)
+    {
+        getEncodersOk = encs->getEncoders(readedEncoders.data());
+        if (getEncodersOk && setPosition == readedEncoders) { break; }
+        yarp::os::Time::delay(0.01);
+    }
+    CHECK(getEncodersOk); // getEncoders correctly called
 
     // Check that the two vector match
     for(size_t i=0; i < nrOfRemappedAxes; i++)

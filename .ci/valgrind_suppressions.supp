@@ -28,3 +28,22 @@
    fun:_dl_init
    ...
 }
+
+# glibc (ld.so) false positive.
+# When a dlopen()ed library gets a new scope array (resize_scopes) in a
+# multi-threaded process, the old array is not freed immediately but queued in
+# GL(dl_scope_free_list) (see _dl_scope_free). The queue is flushed only by
+# _dl_close_worker(), which is never executed for NODELETE objects (e.g. YARP
+# plugins containing STB_GNU_UNIQUE symbols). At exit __libc_freeres() drops
+# the queue, and valgrind reports the pending arrays as "definitely lost".
+# Seen in os::ListPluginsAndOpenTest.
+{
+   glibc_dlopen_resize_scopes_deferred_free
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:resize_scopes
+   ...
+   fun:_dl_open
+}

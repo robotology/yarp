@@ -18,7 +18,7 @@
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
-TEST_CASE("pm::stats_monitorTest", "[yarp::pm]")
+TEST_CASE("pm::bottle_compression_zlibTest", "[yarp::pm]")
 {
     YARP_REQUIRE_PLUGIN("bottle_compression_zlib", "portmonitor")
 

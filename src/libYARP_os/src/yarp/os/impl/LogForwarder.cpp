@@ -24,6 +24,11 @@ yarp::os::impl::ThreadedPort::ThreadedPort() : yarp::os::PeriodicThread(0.005)
     this->start();
 }
 
+yarp::os::impl::ThreadedPort::~ThreadedPort()
+{
+    terminate();
+}
+
 void yarp::os::impl::ThreadedPort::ThreadedPort::run()
 {
     size_t size=0;
