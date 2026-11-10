@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+<application>
+    <name>ParamRuleDuplicate</name>
+    <def-param-value name="id">c1</def-param-value>
+    <arbitrator>
+        <port>/arb/in</port>
+        <rule connection="$PAR{id}">~c2</rule>
+        <rule connection="c1">~c2</rule>
+    </arbitrator>
+</application>

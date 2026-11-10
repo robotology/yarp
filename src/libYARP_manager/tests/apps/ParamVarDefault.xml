@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+<application>
+    <name>ParamVarDefault</name>
+    <var name="robot">legacyRobot</var>
+    <def-param-value name="robot">icubSim</def-param-value>
+    <module>
+        <name>yarpdev</name>
+        <parameters>--legacy ${robot} --robot $PAR{robot}</parameters>
+        <node>localhost</node>
+    </module>
+</application>
