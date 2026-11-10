@@ -215,7 +215,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         //return NULL;
     }
 
-    for(TiXmlElement* var = root->FirstChildElement("var"); var; var = var->NextSiblingElement())
+    for(TiXmlElement* var = root->FirstChildElement("var"); var; var = var->NextSiblingElement("var"))
     {
         if(var->Attribute("name") && var->GetText())
         {
