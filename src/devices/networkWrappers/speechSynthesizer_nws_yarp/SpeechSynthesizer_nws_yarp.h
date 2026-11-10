@@ -94,12 +94,11 @@ class SpeechSynthesizer_nws_yarp :
 {
 private:
     yarp::dev::ISpeechSynthesizer* m_isptr{ nullptr };
-    yarp::os::Port            m_inputPort;
+    yarp::os::BufferedPort<yarp::os::Bottle> m_inputPort;
     yarp::os::Port            m_outputPort;
     yarp::os::Port            m_rpcPort;
     ISpeechSynthesizerMsgsd   m_rpc;
 
-    yarp::os::PortReaderBuffer <yarp::os::Bottle> input_buffer;
     std::unique_ptr<SpeechSynthesizer_CallbackHelper> callback_impl;
 
     // yarp::dev::IWrapper

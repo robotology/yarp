@@ -19,8 +19,7 @@ class TypedReader;
  *
  * If you want to get your data while leaving the port free to read more in the
  * background, you can create a callback that implements this interface, and
- * tell the port about it using BufferedPort::useCallback(callback) or
- * PortReaderBuffer::useCallback(callback)
+ * tell the port about it using BufferedPort::useCallback(callback).
  */
 template <typename T>
 class TypedReaderCallback

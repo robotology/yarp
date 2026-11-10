@@ -13,8 +13,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Carriers.h>
 #include <yarp/os/ModifyingCarrier.h>
-#include <yarp/os/PortReaderBuffer.h>
-#include <yarp/os/PortWriterBuffer.h>
+#include <yarp/os/impl/PortReaderBuffer.h>
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/BufferedPort.h>
@@ -518,20 +517,17 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     SECTION("checking read buffering")
     {
         Bottle bot1;
-        PortReaderBuffer<Bottle> buf;
-        buf.setStrict(true);
 
         bot1.fromString("1 2 3");
         for (int i=0; i<10000; i++) {
             bot1.addInt32(i);
         }
 
-        Port input, output;
+        BufferedPort<Bottle> input;
+        Port output;
+        input.setStrict();
         input.open("/in");
         output.open("/out");
-
-        buf.setStrict();
-        buf.attach(input);
 
         output.addOutput(Contact("/in", "udp"));
         //Time::delay(duration_200ms);
@@ -541,11 +537,11 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         output.write(bot1);
         output.write(bot1);
         INFO("reading...");
-        Bottle *result = buf.read();
+        Bottle *result = input.read();
 
         for (int j=0; j<3; j++) {
             if (j!=0) {
-                result = buf.read();
+                result = input.read();
             }
             REQUIRE(result!=nullptr); // got something check
             CHECK(bot1.size() == result->size()); // size check
@@ -560,20 +556,17 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     SECTION("checking udp")
     {
         Bottle bot1;
-        PortReaderBuffer<Bottle> buf;
 
         bot1.fromString("1 2 3");
         for (int i=0; i<10000; i++) {
             bot1.addInt32(i);
         }
 
-        Port input;
+        BufferedPort<Bottle> input;
         Port output;
+        input.setStrict();
         input.open("/in");
         output.open("/out");
-
-        buf.setStrict();
-        buf.attach(input);
 
         output.addOutput(Contact("/in", "udp"));
         //Time::delay(duration_200ms);
@@ -582,9 +575,9 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         INFO("checking for whatever got through...");
         int ct = 0;
-        while (buf.check()) {
+        while (input.getPendingReads() > 0) {
             ct++;
-            Bottle *result = buf.read();
+            Bottle *result = input.read();
             REQUIRE(result!=nullptr); // got something check
             CHECK(bot1.size() == result->size()); // size check
             INFO("size is in fact " << result->size());
@@ -601,19 +594,17 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     SECTION("checking heavy udp")
     {
         Bottle bot1;
-        PortReaderBuffer<Bottle> buf;
 
         bot1.fromString("1 2 3");
         for (int i=0; i<100000; i++) {
             bot1.addInt32(i);
         }
 
-        Port input, output;
+        BufferedPort<Bottle> input;
+        Port output;
+        input.setStrict();
         input.open("/in");
         output.open("/out");
-
-        buf.setStrict();
-        buf.attach(input);
 
         output.addOutput(Contact("/in", "udp"));
         //Time::delay(duration_200ms);
@@ -625,9 +616,9 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         INFO("checking for whatever got through...");
         int ct = 0;
-        while (buf.check()) {
+        while (input.getPendingReads() > 0) {
             ct++;
-            Bottle *result = buf.read();
+            Bottle *result = input.read();
             REQUIRE(result!=nullptr); // got something check
             CHECK(bot1.size() == result->size()); // size check
             INFO("size is in fact " << result->size());
@@ -706,7 +697,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     SECTION("testing write buffering")
     {
         Port input;
-        Port output;
+        BufferedPort<BinPortable<int>> output;
         Port altInput;
         input.open("/in");
         altInput.open("/in2");
@@ -716,20 +707,18 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         INFO("beginning...");
 
         BinPortable<int> bin;
-        PortWriterBuffer<BinPortable<int> > binOut;
-        binOut.attach(output);
 
         int val1 = 15;
         int val2 = 30;
 
-        BinPortable<int>& active = binOut.get();
+        BinPortable<int>& active = output.prepare();
         active.content() = val1;
-        binOut.write();
+        output.write();
 
         output.addOutput("/in2");
-        BinPortable<int>& active2 = binOut.get();
+        BinPortable<int>& active2 = output.prepare();
         active2.content() = val2;
-        binOut.write();
+        output.write();
 
         input.read(bin);
         CHECK(val1 == bin.content()); // successful transmit
@@ -825,7 +814,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         out.open("/out");
         in.open("/in");
         Network::connect("/out", "/in");
-        PortReaderBuffer<Bottle> reader;
+        yarp::os::impl::PortReaderBuffer<Bottle> reader;
         reader.setStrict();
         reader.attach(in);
         reader.useCallback(callback);
@@ -859,7 +848,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         Port in;
         DelegatedCallback callback;
-        PortReaderBuffer<Bottle> reader;
+        yarp::os::impl::PortReaderBuffer<Bottle> reader;
         reader.setStrict();
         reader.attach(in);
         reader.useCallback(callback);
@@ -871,7 +860,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         Port in;
         DelegatedCallback callback;
-        PortReaderBuffer<Bottle> reader;
+        yarp::os::impl::PortReaderBuffer<Bottle> reader;
         reader.setStrict();
         reader.attach(in);
         reader.useCallback(callback);
@@ -882,7 +871,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         Port in;
         DelegatedCallback callback;
-        PortReaderBuffer<Bottle> reader;
+        yarp::os::impl::PortReaderBuffer<Bottle> reader;
         reader.setStrict();
         reader.attach(in);
         reader.useCallback(callback);
@@ -894,7 +883,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         INFO( "test 4");
         Port in;
         DelegatedCallback callback;
-        PortReaderBuffer<Bottle> reader;
+        yarp::os::impl::PortReaderBuffer<Bottle> reader;
         reader.setStrict();
         reader.attach(in);
         reader.useCallback(callback);
@@ -1616,7 +1605,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     SECTION("checking interrupt")
     {
-        PortReaderBuffer<Bottle> buf;
+        yarp::os::impl::PortReaderBuffer<Bottle> buf;
 
         Port input;
         Port output;
@@ -1688,7 +1677,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     SECTION("checking interrupt on input side")
     {
-        PortReaderBuffer<Bottle> buf;
+        yarp::os::impl::PortReaderBuffer<Bottle> buf;
         buf.setStrict(true);
 
         Port input;

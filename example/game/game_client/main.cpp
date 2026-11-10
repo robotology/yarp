@@ -49,9 +49,9 @@ public:
 
 class UpdateThread : public Thread {
 public:
-    Port p;
+    Port p;                          // commands to the game (with responses)
+    BufferedPort<Bottle> broadcastIn; // messages broadcast from the game
     String name;
-    PortReaderBuffer<Bottle> reader;
     std::mutex mutex;
 
     UpdateThread() : mutex() {
@@ -62,13 +62,13 @@ public:
     }
 
     void connect() {
-        reader.attach(p);
-        reader.useCallback(handler);
+        broadcastIn.useCallback(handler);
 
         if (name[0]!='.') {
             name = String("/player/") + name;
         }
         p.open(name.c_str());
+        broadcastIn.open((name + "/broadcast:i").c_str());
 
         printf("Connecting...\n");
 
@@ -78,7 +78,7 @@ public:
         Network::connect(p.getName(),"/game");
 
         // there are occasional messages broadcast from the game to us
-        Network::connect("/game",p.getName(),"mcast");
+        Network::connect("/game",broadcastIn.getName(),"mcast");
 
     }
 
@@ -158,6 +158,7 @@ public:
             show();
         }
         mutex.lock();
+        broadcastIn.close();
         p.close();
         mutex.unlock();
     }

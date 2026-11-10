@@ -34,7 +34,7 @@ namespace yarp::os {
  * if you use an unreliable protocol like UDP).
  *
  * @sa For help sending and receiving data in the background and decouple
- *     timing, see BufferedPort, or PortReaderBuffer and PortWriterBuffer.
+ *     timing, see BufferedPort.
  *
  * For examples and help, see:
  * @li @ref what_is_a_port

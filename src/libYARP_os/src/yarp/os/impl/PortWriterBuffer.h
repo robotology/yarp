@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_OS_PORTWRITERBUFFER_H
-#define YARP_OS_PORTWRITERBUFFER_H
+#ifndef YARP_OS_IMPL_PORTWRITERBUFFER_H
+#define YARP_OS_IMPL_PORTWRITERBUFFER_H
 
+#include <yarp/os/Port.h>
 #include <yarp/os/Portable.h>
-#include <yarp/os/PortWriterBufferBase.h>
+#include <yarp/os/impl/PortWriterBufferBase.h>
 
-namespace yarp::os {
+namespace yarp::os::impl {
 
-class Port;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -146,6 +146,6 @@ public:
     }
 };
 
-} // namespace yarp::os
+} // namespace yarp::os::impl
 
-#endif // YARP_OS_PORTWRITERBUFFER_H
+#endif // YARP_OS_IMPL_PORTWRITERBUFFER_H

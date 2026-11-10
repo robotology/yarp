@@ -9,7 +9,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/ReturnValue.h>
 

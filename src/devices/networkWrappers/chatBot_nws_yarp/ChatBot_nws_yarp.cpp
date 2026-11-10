@@ -27,7 +27,6 @@ bool ChatBot_nws_yarp::open(Searchable& config)
 {
     if (!parseParams(config)) { return false; }
 
-    m_inputBuffer.attach(m_inputPort);
     if(!m_inputPort.open(m_name+"/text:i"))
     {
         yCError(CHATBOT_NWS_YARP) << "Could not open port" << m_name +"/text:i";
@@ -70,7 +69,7 @@ bool  ChatBot_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach)
         yCError(CHATBOT_NWS_YARP) << "Error setting ChatBot_CallbackHelper object interfaces";
         return false;
     }
-    m_inputBuffer.useCallback(*m_cbkHelper);
+    m_inputPort.useCallback(*m_cbkHelper);
     if(!m_msgsImpl.setInterfaces(m_iChatBot))
     {
         yCError(CHATBOT_NWS_YARP) << "Error setting IChatBotMsgsImpl object interfaces";
@@ -89,7 +88,7 @@ bool  ChatBot_nws_yarp::detach()
 bool ChatBot_nws_yarp::closeMain()
 {
     //close the port connection here
-    m_inputBuffer.disableCallback();
+    m_inputPort.disableCallback();
     m_inputPort.close();
     m_outputPort.close();
     m_thriftServerPort.close();

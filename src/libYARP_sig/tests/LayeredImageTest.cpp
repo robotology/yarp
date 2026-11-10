@@ -7,7 +7,6 @@
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/sig/LayeredImage.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>

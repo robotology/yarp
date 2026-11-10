@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/os/PortReaderBufferBase.h>
+#include <yarp/os/impl/PortReaderBufferBase.h>
 
 #include <yarp/os/Os.h>
-#include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/impl/PortReaderBuffer.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/StringInputStream.h>

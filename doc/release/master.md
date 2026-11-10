@@ -29,6 +29,9 @@ Important Changes
   (see the list below). Data exchanged with YARP 4.0 may not be compatible.
 * Ruby SWIG bindings have been removed.
 * Several methods of `IMultipleAnalogSensor` interfaces now return `yarp::dev::ReturnValue` instead of `bool`.
+* `yarp::os::PortReaderBuffer` and `yarp::os::PortWriterBuffer` are no longer part of the public API:
+  the headers `<yarp/os/PortReaderBuffer.h>` and `<yarp/os/PortWriterBuffer.h>` have been removed.
+  Use `yarp::os::BufferedPort` instead.
 
 ### libYARP_profiler
 
@@ -67,6 +70,11 @@ Important Changes
 * Fixed thrift messages (or any object requiring `convertTextMode()`) sent over textual carriers (e.g. `text_ack`):
   * `BufferedConnectionWriter`: fixed a crash (out-of-bounds access) when the text conversion is applied after a header has been added to the message.
   * `StreamConnectionReader`: after the text conversion the size of the message is now updated, so that the receiver does not hang waiting for non-existent data.
+* `yarp::os::PortReaderBuffer`, `yarp::os::PortWriterBuffer` and their base classes (`PortReaderBufferBase`,
+  `PortReaderBufferBaseCreator`, `PortWriterBufferBase`) have been moved to the `yarp::os::impl` namespace
+  (`yarp/os/impl/PortReaderBuffer.h`, `yarp/os/impl/PortWriterBuffer.h`, ...) and are now an implementation detail
+  of `yarp::os::BufferedPort`. The `impl` headers are still installed only because they are required by `BufferedPort.h`:
+  they are not part of the public API and must not be used outside YARP.
 
 ### libYARP_sig
 
@@ -121,6 +129,10 @@ Important Changes
   * `SpeechSynthesizer_nws_yarp`
   * `SpeechSynthesizer_nwc_yarp`
 * `frameGrabber_nws_yarp`, `frameGrabber_nwc_yarp`, `frameGrabberCropper`, `fakeFrameGrabber` updated to use the new thrift data types.
+* `chatBot_nws_yarp`, `controlBoard_nwc_yarp`, `controlBoard_nws_yarp`, `frameGrabber_nwc_yarp`, `serialPort_nws_yarp`,
+  `speechSynthesizer_nws_yarp` and `speechTranscription_nws_yarp` now use `yarp::os::BufferedPort` instead of
+  `yarp::os::Port` + `PortReaderBuffer`/`PortWriterBuffer`.
+* `frameGrabber_nwc_yarp`: fixed a possible null pointer dereference when an image is requested before the first frame is received.
 
 ### carriers
 

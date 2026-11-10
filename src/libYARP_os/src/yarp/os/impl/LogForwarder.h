@@ -9,7 +9,6 @@
 #include <yarp/os/api.h>
 
 #include <yarp/os/Port.h>
-#include <yarp/os/PortWriterBuffer.h>
 
 #include <mutex>
 #include <string>

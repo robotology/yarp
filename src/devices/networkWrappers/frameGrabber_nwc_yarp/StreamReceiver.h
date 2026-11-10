@@ -7,7 +7,7 @@
 #define YARP_FRAMEGRABBER_NWC_YARP_STREAM_RECEIVER_H
 
 #include <yarp/os/Port.h>
-#include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/ReturnValue.h>
 
@@ -31,8 +31,7 @@ public:
     bool close();
 
 private:
-    yarp::os::PortReaderBuffer<yarp::sig::FlexImage> reader;
-    yarp::os::Port port;
+    yarp::os::BufferedPort<yarp::sig::FlexImage> port;
 
     std::mutex m_mutex;
     yarp::os::Stamp m_lastStamp {0, 0.0};

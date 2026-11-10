@@ -477,18 +477,17 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
             snd1.set((Sound::audio_sample)(i-snd1.getSamples()/2),i);
         }
 
-        PortReaderBuffer<Sound> buf;
-        Port input, output;
+        BufferedPort<Sound> input;
+        Port output;
+        input.setStrict();
         input.open("/in");
         output.open("/out");
-        buf.setStrict();
-        buf.attach(input);
         Network::connect("/out","/in");
 
         INFO("writing...");
         output.write(snd1);
         INFO("reading...");
-        Sound *result = buf.read();
+        Sound *result = input.read();
 
         CHECK(result!=nullptr); // "got something check")
         if (result!=nullptr) {

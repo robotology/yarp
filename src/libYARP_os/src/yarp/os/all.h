@@ -39,10 +39,8 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/PortInfo.h>
 #include <yarp/os/PortReader.h>
-#include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/PortReaderCreator.h>
 #include <yarp/os/PortWriter.h>
-#include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/RFModule.h>

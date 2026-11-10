@@ -77,15 +77,9 @@ set(YARP_os_HDRS
   yarp/os/Portable.h
   yarp/os/Port.h
   yarp/os/PortInfo.h
-  yarp/os/PortReaderBuffer.h
-  yarp/os/PortReaderBuffer-inl.h
-  yarp/os/PortReaderBufferBase.h
-  yarp/os/PortReaderBufferBaseCreator.h
   yarp/os/PortReaderCreator.h
   yarp/os/PortReader.h
   yarp/os/PortReport.h
-  yarp/os/PortWriterBuffer.h
-  yarp/os/PortWriterBufferBase.h
   yarp/os/PortWriter.h
   yarp/os/Property.h
   yarp/os/Random.h
@@ -190,12 +184,9 @@ set(YARP_os_SRCS
   yarp/os/Portable.cpp
   yarp/os/Port.cpp
   yarp/os/PortInfo.cpp
-  yarp/os/PortReaderBufferBase.cpp
-  yarp/os/PortReaderBufferBaseCreator.cpp
   yarp/os/PortReader.cpp
   yarp/os/PortReaderCreator.cpp
   yarp/os/PortReport.cpp
-  yarp/os/PortWriterBufferBase.cpp
   yarp/os/PortWriter.cpp
   yarp/os/Property.cpp
   yarp/os/Random.cpp
@@ -313,6 +304,18 @@ set(YARP_os_IMPL_HDRS
   yarp/os/impl/UdpCarrier.h
 )
 
+# Implementation headers that are required by public template headers (e.g. BufferedPort.h).
+# They are NOT part of the public API (namespace yarp::os::impl) and must not be
+# used outside YARP, but they must be installed for BufferedPort.h to compile.
+set(YARP_os_IMPL_PUBLIC_HDRS
+  yarp/os/impl/PortReaderBuffer.h
+  yarp/os/impl/PortReaderBuffer-inl.h
+  yarp/os/impl/PortReaderBufferBase.h
+  yarp/os/impl/PortReaderBufferBaseCreator.h
+  yarp/os/impl/PortWriterBuffer.h
+  yarp/os/impl/PortWriterBufferBase.h
+)
+
 set(YARP_os_IMPL_SRCS
   yarp/os/impl/AuthHMAC.cpp
   yarp/os/impl/BottleImpl.cpp
@@ -340,6 +343,9 @@ set(YARP_os_IMPL_SRCS
   yarp/os/impl/PortCoreInputUnit.cpp
   yarp/os/impl/PortCoreOutputUnit.cpp
   yarp/os/impl/PortCorePackets.cpp
+  yarp/os/impl/PortReaderBufferBase.cpp
+  yarp/os/impl/PortReaderBufferBaseCreator.cpp
+  yarp/os/impl/PortWriterBufferBase.cpp
   yarp/os/impl/Protocol.cpp
   yarp/os/impl/RFModuleFactory.cpp
   yarp/os/impl/SocketTwoWayStream.cpp
@@ -419,6 +425,7 @@ source_group(
     ${YARP_os_HDRS}
     ${YARP_os_WIREIDL_HDRS}
     ${YARP_os_IMPL_HDRS}
+    ${YARP_os_IMPL_PUBLIC_HDRS}
     ${YARP_os_IMPL_POSIX_HDRS}
     ${YARP_os_IMPL_MACOS_HDRS}
 )
@@ -437,6 +444,7 @@ target_sources(YARP_os
     ${YARP_os_WIREIDL_HDRS}
     ${YARP_os_IMPL_SRCS}
     ${YARP_os_IMPL_HDRS}
+    ${YARP_os_IMPL_PUBLIC_HDRS}
     ${YARP_os_idl_GEN_FILES}
 )
 
@@ -535,6 +543,11 @@ install(
   PRIVATE_HEADER
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl"
     COMPONENT YARP_os-priv-dev
+)
+install(
+  FILES ${YARP_os_IMPL_PUBLIC_HDRS}
+  COMPONENT YARP_os-dev
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl
 )
 # PUBLIC_HEADER and PRIVATE_HEADER do not support sub-directories
 # See https://gitlab.kitware.com/cmake/cmake/issues/7941

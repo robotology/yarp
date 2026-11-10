@@ -11,7 +11,6 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Time.h>
 #include <yarp/sig/Image.h>
 

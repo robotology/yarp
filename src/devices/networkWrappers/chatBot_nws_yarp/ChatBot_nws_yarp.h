@@ -84,12 +84,11 @@ class ChatBot_nws_yarp :
 {
 private:
     yarp::dev::IChatBot* m_iChatBot{ nullptr };
-    yarp::os::Port       m_inputPort;
+    yarp::os::BufferedPort<yarp::os::Bottle> m_inputPort;
     yarp::os::Port       m_outputPort;
     yarp::os::RpcServer  m_thriftServerPort;
     IChatBotMsgsImpl     m_msgsImpl;
 
-    yarp::os::PortReaderBuffer <yarp::os::Bottle> m_inputBuffer;
     std::unique_ptr<ChatBotRPC_CallbackHelper>    m_cbkHelper;
 
     // yarp::dev::IWrapper

@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_OS_PORTREADERBUFFERBASECREATOR_H
-#define YARP_OS_PORTREADERBUFFERBASECREATOR_H
+#ifndef YARP_OS_IMPL_PORTREADERBUFFERBASECREATOR_H
+#define YARP_OS_IMPL_PORTREADERBUFFERBASECREATOR_H
 
 #include <yarp/os/api.h>
+#include <yarp/os/PortReader.h>
 
-namespace yarp::os {
+namespace yarp::os::impl {
 
-class PortReader;
 
 class YARP_os_API PortReaderBufferBaseCreator
 {
@@ -21,6 +21,6 @@ public:
     virtual yarp::os::PortReader* create() const = 0;
 };
 
-} // namespace yarp::os
+} // namespace yarp::os::impl
 
-#endif // YARP_OS_PORTREADERBUFFERBASECREATOR_H
+#endif // YARP_OS_IMPL_PORTREADERBUFFERBASECREATOR_H

@@ -450,7 +450,7 @@ bool RFModule::respond(const Bottle& command, Bottle& reply)
 
 /**
 * Attach this object to a source of messages.
-* @param source a BufferedPort or PortReaderBuffer that
+* @param source a Port that
 * receives data.
 */
 bool RFModule::attach(yarp::os::Port& source)

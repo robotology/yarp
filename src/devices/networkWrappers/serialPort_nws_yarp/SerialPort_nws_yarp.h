@@ -83,13 +83,11 @@ class SerialPort_nws_yarp :
 {
 private:
     yarp::dev::ISerialDevice* m_iserial{ nullptr };
-    yarp::os::Port            toDevice;
-    yarp::os::Port            fromDevice;
+    yarp::os::BufferedPort<yarp::os::Bottle> toDevice;
+    yarp::os::BufferedPort<yarp::os::Bottle> fromDevice;
     yarp::os::Port            m_rpcPort;
     ISerialMsgsd              m_rpc;
 
-    yarp::os::PortWriterBuffer <yarp::os::Bottle> reply_buffer;
-    yarp::os::PortReaderBuffer <yarp::os::Bottle> command_buffer;
     std::unique_ptr<SerialPort_CallbackHelper> callback_impl;
 
     // yarp::dev::IWrapper
