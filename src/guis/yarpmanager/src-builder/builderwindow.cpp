@@ -66,7 +66,7 @@ void BuilderWindow::init()
     connect(zoomOut,SIGNAL(triggered(bool)),this,SLOT(onZoomOut()));
 
     if(editingMode){
-       prepareManagerFrom(lazyManager,app->getName());
+       m_loaded = prepareManagerFrom(lazyManager,app->getName());
     }
 
 
@@ -74,7 +74,9 @@ void BuilderWindow::init()
     if(editingMode){
         propertiesTab = new PropertiesTable(&manager);
         connect(propertiesTab,SIGNAL(modified()),this,SLOT(onModified()));
-        propertiesTab->showApplicationTab(manager.getKnowledgeBase()->getApplication());
+        if (Application* application = manager.getKnowledgeBase()->getApplication()) {
+            propertiesTab->showApplicationTab(application);
+        }
         splitter = new QSplitter;
         splitter->addWidget(view);
         splitter->addWidget(propertiesTab);
@@ -165,7 +167,7 @@ void BuilderWindow::setAppName(QString appName)
     return;
 }
 
-void BuilderWindow::prepareManagerFrom(Manager* lazy,
+bool BuilderWindow::prepareManagerFrom(Manager* lazy,
                                            const char* szAppName)
 {
 
@@ -188,7 +190,7 @@ void BuilderWindow::prepareManagerFrom(Manager* lazy,
     }
 
     // loading application
-    manager.loadApplication(szAppName);
+    return manager.loadApplication(szAppName);
 
 
 }
@@ -363,6 +365,13 @@ void BuilderWindow::load(bool refresh)
             connections = manager.getKnowledgeBase()->getConnections(mainApplication);
             applications = manager.getKnowledgeBase()->getApplications(mainApplication);
             modules = manager.getKnowledgeBase()->getModules(mainApplication);
+        }
+
+        // the application could not be loaded: nothing to show (with a null
+        // application the knowledge base would return the items of all the
+        // applications)
+        if (!mainApplication) {
+            return;
         }
 
         //ModulePContainer modules = safeManager->getKnowledgeBase()->getModules(mainApplication);
@@ -1031,9 +1040,9 @@ void BuilderWindow::initApplicationTab()
         return;
     }
 
-    propertiesTab->showApplicationTab(manager.getKnowledgeBase()->getApplication());
-
-
+    if (Application* application = manager.getKnowledgeBase()->getApplication()) {
+        propertiesTab->showApplicationTab(application);
+    }
 }
 
 void BuilderWindow::initModuleTab(ModuleItem *it)
