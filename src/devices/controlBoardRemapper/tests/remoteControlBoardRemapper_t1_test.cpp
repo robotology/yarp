@@ -55,17 +55,31 @@ const char *fmcC_file_content_micro   =  "device fakeMotionControlMicro\n"
                                   "\n"
                                   "AxisName (\"axisC1\" \"axisC2\" \"axisC3\" \"axisC4\")  \n";
 
+// NOTE: under valgrind the period of the controlBoard_nws_yarp is increased.
+// The state is streamed over tcp: if the receiver (the controlBoard_nwc_yarp)
+// cannot keep up with the sender (e.g. under valgrind, with three boards at 100Hz),
+// the messages pile up in the socket buffers and the data read by the client
+// becomes older and older (several seconds), even if it is still considered
+// valid because it has just arrived.
+// In local measurements under valgrind the receivers kept up with the three
+// boards up to ~30Hz each: 10Hz (0.1s) leaves a good margin for slower CI machines.
+#ifdef WITH_VALGRIND
+#    define REMAPPER_TEST_NWS_PERIOD "0.1"
+#else
+#    define REMAPPER_TEST_NWS_PERIOD "0.01"
+#endif
+
 const char *wrapperA_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/a\n"
-                                      "period 0.01\n";
+                                      "period " REMAPPER_TEST_NWS_PERIOD "\n";
 
 const char *wrapperB_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/b\n"
-                                      "period 0.01\n";
+                                      "period " REMAPPER_TEST_NWS_PERIOD "\n";
 
 const char *wrapperC_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/c\n"
-                                      "period 0.01\n";
+                                      "period " REMAPPER_TEST_NWS_PERIOD "\n";
 
 
 static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t nrOfRemappedAxes)

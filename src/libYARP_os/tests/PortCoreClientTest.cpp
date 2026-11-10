@@ -44,6 +44,14 @@ using namespace yarp::os::impl;
 // default 1, to each number it receives) are skipped if the plugin is not
 // available.
 
+namespace {
+// Attaching a portmonitor makes the port scan all the plugin manifests and load
+// the portmonitor library. Under valgrind, with all the plugins compiled, this
+// takes longer than the default timeout of PortCoreClient (2 seconds), and the
+// client would report a failure even if the portmonitor is attached.
+constexpr double portmonitor_attach_timeout = 30.0;
+} // namespace
+
 TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
 {
     NetworkBase::setLocalMode(true);
@@ -153,14 +161,14 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         CHECK(sendAndReceive(1) == 1);
 
         // receiver side
-        PortCoreClient recvClient("/recv");
+        PortCoreClient recvClient("/recv", portmonitor_attach_timeout);
         REQUIRE(recvClient.attachPortmonitorIn(pm_options));
         CHECK(sendAndReceive(1) == 2);
         REQUIRE(recvClient.detachPortmonitorIn());
         CHECK(sendAndReceive(1) == 1);
 
         // sender side
-        PortCoreClient sendClient("/send");
+        PortCoreClient sendClient("/send", portmonitor_attach_timeout);
         REQUIRE(sendClient.attachPortmonitorOut(pm_options));
         CHECK(sendAndReceive(1) == 2);
 
@@ -231,7 +239,7 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         };
 
         // receiver side
-        PortCoreClient recvClient("/recv");
+        PortCoreClient recvClient("/recv", portmonitor_attach_timeout);
         REQUIRE(recvClient.attachPortmonitorIn(pm_options));
         CHECK(sendAndReceive(1) == 2);
 
@@ -253,7 +261,7 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         REQUIRE(recvClient.detachPortmonitorIn());
 
         // sender side
-        PortCoreClient sendClient("/send");
+        PortCoreClient sendClient("/send", portmonitor_attach_timeout);
         REQUIRE(sendClient.attachPortmonitorOut(pm_options));
         CHECK(sendClient.setPortmonitorParamsOut("(increment 10)").success);
         CHECK(sendAndReceive(1) == 11);
