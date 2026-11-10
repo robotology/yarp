@@ -108,11 +108,14 @@ Important Changes
   embedding it can set their values with `<app-param name="name">value</app-param>`, so the same application can be embedded
   several times with different values. See the yarpmanager documentation for details.
 * Fixed `Application::clear()` not clearing the arbitrators, which leaked from one application file to the next when loading a directory.
+* Fixed the application loader reading as `<var>` variables all the top-level elements after the first `<var>` that have a `name` attribute.
 
 ### yarpmanager
 
 * The builder warns before saving an application that uses application parameters, and shows an error when an embedded
   application cannot be added.
+* An application that cannot be loaded (e.g. because of a missing application parameter) is not opened, and the errors
+  are shown, instead of opening an empty or broken tab.
 
 ### thrift generator
 
