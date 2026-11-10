@@ -634,6 +634,15 @@ void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMod
     }
 
     auto* w = new ApplicationViewWidget(app,&lazyManager,&config,editingMode,ui->mainTabs);
+    if (!w->isLoaded()) {
+        for (const auto& err : w->loadErrors()) {
+            onLogError(QString("(%1) %2").arg(app->getName()).arg(err));
+        }
+        QMessageBox::critical(this, "Error",
+                              QString("Cannot open %1:\n%2").arg(app->getName()).arg(w->loadErrors().join("\n")));
+        delete w;
+        return;
+    }
     connect(w,SIGNAL(logError(QString)),this,SLOT(onLogError(QString)));
     connect(w,SIGNAL(logWarning(QString)),this,SLOT(onLogWarning(QString)));
     connect(w,SIGNAL(modified(bool)),this,SLOT(onModified(bool)));
