@@ -12,6 +12,9 @@
 #include <cctype>
 #include <string>
 #include <cstring>
+#include <set>
+#include <utility>
+#include <vector>
 
 
 using namespace yarp::manager;
@@ -21,10 +24,11 @@ namespace {
 /**
  * Calls func on each text of the application that can contain application
  * parameters ($PAR{...}) and stores the text back when func changes it.
- * Stops at the first text for which func returns false.
+ * Stops at the first text for which func returns false, or when the changed
+ * texts are not consistent (error is then set).
  */
 template <typename Func>
-bool forEachParamText(Application* application, Func func)
+bool forEachParamText(Application* application, Func func, std::string& error)
 {
     auto visit = [&func](const char* value, auto&& store) {
         std::string text = value ? value : "";
@@ -93,9 +97,37 @@ bool forEachParamText(Application* application, Func func)
         if (!visit(arb.getPort(), [&arb](const char* s) { arb.setPort(s); })) {
             return false;
         }
-        for (auto& rule : arb.getRuleMap()) {
-            if (!visit(rule.second.c_str(), [&rule](const char* s) { rule.second = s; })) {
+        // the connection a rule refers to is the key of the rule map, so the
+        // rules are added again when it changes
+        std::vector<std::pair<std::string, std::string>> rules;
+        bool changed = false;
+        for (const auto& rule : arb.getRuleMap()) {
+            std::string con = rule.first;
+            std::string expr = rule.second;
+            if (!visit(con.c_str(), [&con](const char* s) { con = s; })
+                || !visit(expr.c_str(), [&expr](const char* s) { expr = s; })) {
                 return false;
+            }
+            changed = changed || con != rule.first || expr != rule.second;
+            rules.emplace_back(con, expr);
+        }
+        if (changed) {
+            std::set<std::string> cons;
+            for (const auto& rule : rules) {
+                if (!cons.insert(rule.first).second) {
+                    error = "arbitrator " + std::string(arb.getPort()) + " has two rules for connection '" + rule.first + "'";
+                    return false;
+                }
+            }
+            std::vector<std::string> oldCons;
+            for (const auto& rule : arb.getRuleMap()) {
+                oldCons.push_back(rule.first);
+            }
+            for (const auto& con : oldCons) {
+                arb.removeRule(con.c_str());
+            }
+            for (const auto& rule : rules) {
+                arb.addRule(rule.first.c_str(), rule.second.c_str());
             }
         }
     }
@@ -1271,7 +1303,7 @@ bool KnowledgeBase::resolveAppParameters(Application* application)
 
     bool ok = forEachParamText(application, [&used, &error](std::string& text) {
                   return ParamResolver::collect(text, used, error);
-              })
+              }, error)
            && ParamResolver::merge(used, application->getParamDefaults(), application->getParamOverrides(), values, error)
            && forEachParamText(application, [&values, &error](std::string& text) {
                   std::string resolved;
@@ -1280,7 +1312,25 @@ bool KnowledgeBase::resolveAppParameters(Application* application)
                   }
                   text = resolved;
                   return true;
-              });
+              }, error);
+
+    if (ok && !used.empty()) {
+        // as done when loading the application, connections whose ports are
+        // dependencies of the application are external (i.e. not prefixed):
+        // ports that match only once resolved are checked here
+        for (int i = 0; i < application->connectionCount(); i++) {
+            Connection& cnn = application->getConnectionAt(i);
+            for (int j = 0; j < application->resourcesCount(); j++) {
+                ResYarpPort& res = application->getResourceAt(j);
+                if (compareString(res.getPort(), cnn.from())) {
+                    cnn.setFromExternal(true);
+                }
+                if (compareString(res.getPort(), cnn.to())) {
+                    cnn.setToExternal(true);
+                }
+            }
+        }
+    }
 
     if (!ok) {
         OSTRINGSTREAM msg;
