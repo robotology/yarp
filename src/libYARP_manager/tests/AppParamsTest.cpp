@@ -4,6 +4,7 @@
  */
 
 #include <yarp/manager/kbase.h>
+#include <yarp/manager/manager.h>
 #include <yarp/manager/utility.h>
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/xmlappsaver.h>
@@ -134,6 +135,41 @@ TEST_CASE("manager::AppParamsTest", "[yarp::manager]")
         CHECK(std::string(arb.getRule("c1")) == "~c2");
     }
 
+    SECTION("Variables are not changed by parameter defaults with the same name")
+    {
+        LoadedApp app("ParamVarDefault");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        CHECK(app.moduleParams("yarpdev") == std::multiset<std::string> {"--legacy legacyRobot --robot icubSim"});
+    }
+
+    SECTION("Arbitrator rules can refer to connections through parameters")
+    {
+        LoadedApp app("ParamRules");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        REQUIRE(app.kb.getApplication()->arbitratorCount() == 1);
+        Arbitrator& arb = app.kb.getApplication()->getArbitratorAt(0);
+        CHECK(arb.ruleCount() == 2);
+        REQUIRE(arb.getRule("c1"));
+        CHECK(std::string(arb.getRule("c1")) == "~c2");
+        REQUIRE(arb.getRule("c2"));
+        CHECK(std::string(arb.getRule("c2")) == "~c1");
+        CHECK(arb.getRuleMap().count("$PAR{id}") == 0);
+    }
+
+    SECTION("Connections become external when their ports match a dependency once resolved")
+    {
+        LoadedApp app("ParamExternalParent");
+        INFO(allErrors());
+        REQUIRE(app.ok);
+        const CnnContainer& cnns = app.kb.getSelConnection();
+        REQUIRE(cnns.size() == 1);
+        Connection cnn = cnns[0];
+        CHECK(std::string(cnn.from()) == "/icubSim/out");
+        CHECK(std::string(cnn.to()) == "/a/in");
+    }
+
     SECTION("The prefix of an imported application can use parameters")
     {
         LoadedApp app("ParamPrefix");
@@ -162,6 +198,7 @@ TEST_CASE("manager::AppParamsTest", "[yarp::manager]")
         check("ParamInlineDefault", "default values are declared with <def-param-value name=\"robot\">icub</def-param-value>");
         check("ParamMalformed", "unterminated '$PAR{'");
         check("ParamChildError", "parameter 'robot' has no value");
+        check("ParamRuleDuplicate", "arbitrator /arb/in has two rules for connection 'c1'");
     }
 
     ErrorLogger::Instance()->clear();
@@ -274,6 +311,21 @@ TEST_CASE("manager::AppParamsFailureTest", "[yarp::manager]")
         CHECK(app.kb.getSelConnection().empty());
         CHECK(app.kb.getSelResources().empty());
         CHECK(app.kb.getSelApplications().empty());
+    }
+
+    SECTION("The manager loads applications whose dependencies are not satisfied, but not broken ones")
+    {
+        Manager manager(MANAGER_TEST_APPS_DIR, MANAGER_TEST_APPS_DIR, MANAGER_TEST_APPS_DIR);
+
+        // the module has no node, which the manager lets the user assign
+        CHECK(manager.loadApplication("NoNode"));
+        CHECK(manager.getKnowledgeBase()->getApplication() != nullptr);
+        CHECK(manager.getExecutables().size() == 1);
+
+        ErrorLogger::Instance()->clear();
+        CHECK_FALSE(manager.loadApplication("ParamMissing"));
+        CHECK(manager.getExecutables().empty());
+        CHECK(allErrors().find("parameter 'robot' has no value") != std::string::npos);
     }
 
     SECTION("Adding an application that fails leaves the opened application unchanged")
