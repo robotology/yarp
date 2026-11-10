@@ -129,6 +129,10 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
     builderWidget = new QDockWidget("YARP Builder",builderWindowContainer);
     builderWindowContainer->addDockWidget(Qt::TopDockWidgetArea,builderWidget);
     builder = YarpBuilderLib::getBuilder(this->app,lazyManager,&safeManager,editingMode);
+    if (editingMode && !builder->isLoaded()) {
+        m_loaded = false;
+        collectLoadErrors();
+    }
     builderWidget->setWidget(builder);
     //builderWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
     builderWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
@@ -486,9 +490,21 @@ void ApplicationViewWidget::prepareManagerFrom(yarp::manager::Manager* lazy)
     // loading application
     if (safeManager.loadApplication(app->getName())) {
        updateApplicationWindow();
+    } else {
+        m_loaded = false;
+        collectLoadErrors();
     }
 
     reportErrors();
+}
+
+void ApplicationViewWidget::collectLoadErrors()
+{
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
+    const char* err;
+    while ((err = logger->getLastError())) {
+        m_loadErrors.prepend(QString(err));
+    }
 }
 
 void ApplicationViewWidget::onRefreshApplication()
