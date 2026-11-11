@@ -121,6 +121,10 @@ target_sources(yarpidl_thrift
     ${yarpidl_thrift_YARP_SRCS}
 )
 
+# YARP_conf (header only) provides yarp/conf/version.h, used to print the YARP
+# version in the header of the generated files
+target_link_libraries(yarpidl_thrift PRIVATE YARP::YARP_conf)
+
 yarp_enable_windows_longpath_support(yarpidl_thrift)
 
 install(

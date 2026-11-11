@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GENERATION is ON.
 
-// Generated on: Thu Oct 15 17:20:08 2026
+// Generated on: Wed Nov 11 17:36:28 2026
 
 
 #ifndef TESTDEVICEWGP2_PARAMSPARSER_H

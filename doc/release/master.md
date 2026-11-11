@@ -117,6 +117,9 @@ Important Changes
 * `yarp.api.keyword` can now be used also on services, and not only on data types.
 * Added support for protected/private data members (default: public).
 * Fixed handling of `float32` and `size_t` data types.
+* Fixed thrift generator in order to return `return_value_error_nws_nwc_communication_error` when a communication error occurs,
+  instead of `return_value_uninitialized`. This applies both to methods returning `yarp::dev::ReturnValue` and to methods
+  returning a struct containing `yarp::dev::ReturnValue` fields.
 
 ### devices
 

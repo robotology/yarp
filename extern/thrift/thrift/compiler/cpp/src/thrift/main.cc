@@ -652,11 +652,14 @@ void error_unsupported_namespace_decl(const char* old_form, const char* new_form
   failure("Unsupported declaration '%s%s'. Use 'namespace %s' instead.", old_form, remainder, new_form);
 }
 
+// YARP: defined in t_yarp_generator.cc, prints yarpidl_thrift, thrift and protocol version
+void yarp_generator_version();
+
 /**
  * Prints the version number
  */
 void version() {
-  printf("Thrift version %s\n", THRIFT_VERSION);
+  yarp_generator_version();
 }
 
 /**
