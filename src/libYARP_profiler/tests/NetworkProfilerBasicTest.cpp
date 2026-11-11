@@ -17,6 +17,14 @@
 
 using namespace yarp::profiler;
 
+namespace {
+// getPortDetails queries the owner of each port (getPortInfo), and the port
+// collects the information about its process and its platform (this runs
+// `lsb_release`). Under valgrind this can take longer than the default timeout
+// (2 seconds), therefore a longer timeout is used.
+constexpr double port_details_timeout = 30.0;
+} // namespace
+
 // A minimal thread to run the YARP server in-process
 class YarpServerThread : public yarp::os::Thread
 {
@@ -89,12 +97,12 @@ TEST_CASE("profiler::NetworkProfilerBasicTest", "[yarp::profiler]")
         {
             bool b;
             NetworkProfilerBasic::PortDetails info;
-            b =  NetworkProfilerBasic::getPortDetails("/testPort/p1", info);
+            b =  NetworkProfilerBasic::getPortDetails("/testPort/p1", info, port_details_timeout);
             CHECK(b);
             CHECK(info.info.name == "/testPort/p1");
             CHECK(info.outputs.size()==1);
             CHECK(info.inputs.size()==0);
-            b =  NetworkProfilerBasic::getPortDetails("/testPort/p2", info);
+            b =  NetworkProfilerBasic::getPortDetails("/testPort/p2", info, port_details_timeout);
             CHECK(b);
             CHECK(info.info.name == "/testPort/p2");
             CHECK(info.inputs.size()==1);
@@ -131,11 +139,11 @@ TEST_CASE("profiler::NetworkProfilerBasicTest", "[yarp::profiler]")
         {
             bool b;
             NetworkProfilerBasic::ports_detail_set ports;
-            b = NetworkProfilerBasic::getPortsDetailedList(ports, false);
+            b = NetworkProfilerBasic::getPortsDetailedList(ports, false, port_details_timeout);
             CHECK(b);
             REQUIRE(ports.size() == 2);  //p1, p2
 
-            b = NetworkProfilerBasic::getPortsDetailedList(ports, true);
+            b = NetworkProfilerBasic::getPortsDetailedList(ports, true, port_details_timeout);
             CHECK(b);
             REQUIRE(ports.size() == 3);  //p1, p2, root
 

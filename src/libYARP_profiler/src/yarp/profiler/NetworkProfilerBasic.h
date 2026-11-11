@@ -95,13 +95,20 @@ public:
     typedef  std::vector<std::string> processes_list;
 
 public:
-    static bool getPortDetails(const std::string& portName, PortDetails& info);
+    /**
+     * Get the details (connections, owner process and machine) of a port.
+     * @param portName the name of the port
+     * @param info the details of the port
+     * @param timeout timeout (in seconds) of the connection used to query the port
+     * @return true on success
+     */
+    static bool getPortDetails(const std::string& portName, PortDetails& info, double timeout = 2.0);
 
     static bool getMachinesList(const ports_detail_set& ports, machines_list& l);
     static bool getProcessesList(const ports_detail_set& ports, processes_list& l);
 
     static bool getPortsList(ports_name_set& ports, bool complete = false);
-    static bool getPortsDetailedList(ports_detail_set& ports, bool complete = false);
+    static bool getPortsDetailedList(ports_detail_set& ports, bool complete = false, double timeout = 2.0);
     static bool getConnectionsList(connections_set& connections);
     static bool getPortInfo(const std::string& name, const ports_name_set& ports, PortInfo& p);
 

@@ -50,6 +50,12 @@ namespace {
 // takes longer than the default timeout of PortCoreClient (2 seconds), and the
 // client would report a failure even if the portmonitor is attached.
 constexpr double portmonitor_attach_timeout = 30.0;
+
+// getPortInfo makes the port collect the information about its process and its
+// platform (SystemInfo::getProcessInfo() and SystemInfo::getPlatformInfo(), the
+// latter runs `lsb_release`). Under valgrind this can take longer than the
+// default timeout of PortCoreClient (2 seconds).
+constexpr double port_info_timeout = 30.0;
 } // namespace
 
 TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
@@ -83,7 +89,7 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         REQUIRE(p1.open("/p1"));
         REQUIRE(readOnly.open("/readonly"));
 
-        PortCoreClient client("/p1");
+        PortCoreClient client("/p1", port_info_timeout);
         const return_getPortInfo info = client.getPortInfo();
         REQUIRE(info.ret);
         CHECK(info.process.pid == SystemInfo::getProcessInfo().pid);
@@ -95,7 +101,7 @@ TEST_CASE("os::PortCoreClientTest", "[yarp::os]")
         CHECK_FALSE(info.port.hostname.empty());
 
         // the flags reflect the configuration of the port
-        const return_getPortInfo readOnlyInfo = PortCoreClient("/readonly").getPortInfo();
+        const return_getPortInfo readOnlyInfo = PortCoreClient("/readonly", port_info_timeout).getPortInfo();
         REQUIRE(readOnlyInfo.ret);
         CHECK(readOnlyInfo.port.is_input);
         CHECK_FALSE(readOnlyInfo.port.is_output);

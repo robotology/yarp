@@ -53,7 +53,7 @@ bool NetworkProfilerBasic::getProcessesList(const ports_detail_set& ports, proce
     return true;
 }
 
-bool NetworkProfilerBasic::getPortsDetailedList(ports_detail_set& ports, bool complete)
+bool NetworkProfilerBasic::getPortsDetailedList(ports_detail_set& ports, bool complete, double timeout)
 {
     ports.clear(); //clear the output
 
@@ -65,7 +65,7 @@ bool NetworkProfilerBasic::getPortsDetailedList(ports_detail_set& ports, bool co
     for (auto it = port_names.begin(); it != port_names.end(); it++)
     {
         PortDetails details;
-        r = getPortDetails(it->name, details);
+        r = getPortDetails(it->name, details, timeout);
         if (!r) { yError() << "getPortDetails of `" << it->name << "`failed"; }
         ports.push_back(details);
     }
@@ -270,7 +270,7 @@ bool NetworkProfilerBasic::getPortsList(ports_name_set &ports, bool complete)
     return true;
 }
 
-bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetails& details)
+bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetails& details, double timeout)
  {
     details = PortDetails(); //clear the output
 
@@ -278,7 +278,7 @@ bool NetworkProfilerBasic::getPortDetails(const std::string& portName, PortDetai
     Port ping;
     ping.open("...");
     ping.setAdminMode(true);
-    ping.setTimeout(2.0);
+    ping.setTimeout(timeout);
     if(!NetworkBase::connect(ping.getName(), portName)) {
         yWarning()<<"Cannot connect to"<<portName;
         ping.close();
