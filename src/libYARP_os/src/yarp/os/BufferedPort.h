@@ -9,8 +9,8 @@
 
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/PortReaderBuffer.h>
-#include <yarp/os/PortWriterBuffer.h>
+#include <yarp/os/impl/PortReaderBuffer.h>
+#include <yarp/os/impl/PortWriterBuffer.h>
 
 
 namespace yarp::os {
@@ -285,9 +285,9 @@ public:
     void unlockCallback() override;
 
 private:
-    PortWriterBuffer<T> writer;
+    yarp::os::impl::PortWriterBuffer<T> writer;
     Port port;
-    PortReaderBuffer<T> reader;
+    yarp::os::impl::PortReaderBuffer<T> reader;
     bool interrupted;
     bool attached;
 

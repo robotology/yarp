@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_OS_PORTREADERBUFFER_INL_H
-#define YARP_OS_PORTREADERBUFFER_INL_H
+#ifndef YARP_OS_IMPL_PORTREADERBUFFER_INL_H
+#define YARP_OS_IMPL_PORTREADERBUFFER_INL_H
 
 
 template <typename T>
-yarp::os::PortReaderBuffer<T>::PortReaderBuffer(unsigned int maxBuffer) :
+yarp::os::impl::PortReaderBuffer<T>::PortReaderBuffer(unsigned int maxBuffer) :
         implementation(maxBuffer),
         autoDiscard(true),
         last(nullptr),
@@ -21,13 +21,13 @@ yarp::os::PortReaderBuffer<T>::PortReaderBuffer(unsigned int maxBuffer) :
 }
 
 template <typename T>
-yarp::os::PortReaderBuffer<T>::~PortReaderBuffer()
+yarp::os::impl::PortReaderBuffer<T>::~PortReaderBuffer()
 {
     detach();
 }
 
 template <typename T>
-void yarp::os::PortReaderBuffer<T>::detach()
+void yarp::os::impl::PortReaderBuffer<T>::detach()
 {
     // it would also help to close the port, so
     // that incoming inputs are interrupted
@@ -45,7 +45,7 @@ void yarp::os::PortReaderBuffer<T>::detach()
 }
 
 template <typename T>
-void yarp::os::PortReaderBuffer<T>::setStrict(bool strict)
+void yarp::os::impl::PortReaderBuffer<T>::setStrict(bool strict)
 {
     autoDiscard = !strict;
     // do discard at earliest time possible
@@ -53,20 +53,20 @@ void yarp::os::PortReaderBuffer<T>::setStrict(bool strict)
 }
 
 template <typename T>
-bool yarp::os::PortReaderBuffer<T>::check()
+bool yarp::os::impl::PortReaderBuffer<T>::check()
 {
     return implementation.check() > 0;
 }
 
 template <typename T>
-int yarp::os::PortReaderBuffer<T>::getPendingReads()
+int yarp::os::impl::PortReaderBuffer<T>::getPendingReads()
 {
     return implementation.check();
 }
 
 
 template <typename T>
-T* yarp::os::PortReaderBuffer<T>::read(bool shouldWait)
+T* yarp::os::impl::PortReaderBuffer<T>::read(bool shouldWait)
 {
     if (!shouldWait) {
         if (!check()) {
@@ -101,26 +101,26 @@ T* yarp::os::PortReaderBuffer<T>::read(bool shouldWait)
 }
 
 template <typename T>
-void yarp::os::PortReaderBuffer<T>::interrupt()
+void yarp::os::impl::PortReaderBuffer<T>::interrupt()
 {
     implementation.interrupt();
 }
 
 template <typename T>
-T* yarp::os::PortReaderBuffer<T>::lastRead()
+T* yarp::os::impl::PortReaderBuffer<T>::lastRead()
 {
     return last;
 }
 
 template <typename T>
-void yarp::os::PortReaderBuffer<T>::attach(Port& port)
+void yarp::os::impl::PortReaderBuffer<T>::attach(Port& port)
 {
     // port.setReader(*this);
     implementation.attachBase(port);
 }
 
 template <typename T>
-void yarp::os::PortReaderBuffer<T>::useCallback(TypedReaderCallback<T>& callback)
+void yarp::os::impl::PortReaderBuffer<T>::useCallback(TypedReaderCallback<T>& callback)
 {
     if (reader != nullptr) {
         reader->stop();
@@ -131,7 +131,7 @@ void yarp::os::PortReaderBuffer<T>::useCallback(TypedReaderCallback<T>& callback
 }
 
 template <typename T>
-void yarp::os::PortReaderBuffer<T>::disableCallback()
+void yarp::os::impl::PortReaderBuffer<T>::disableCallback()
 {
     if (reader != nullptr) {
         reader->stop();
@@ -141,70 +141,70 @@ void yarp::os::PortReaderBuffer<T>::disableCallback()
 }
 
 template <typename T>
-bool yarp::os::PortReaderBuffer<T>::read(ConnectionReader& connection)
+bool yarp::os::impl::PortReaderBuffer<T>::read(ConnectionReader& connection)
 {
     return implementation.read(connection);
 }
 
 template <typename T>
-yarp::os::PortReader* yarp::os::PortReaderBuffer<T>::create() const
+yarp::os::PortReader* yarp::os::impl::PortReaderBuffer<T>::create() const
 {
     return new T;
 }
 
 template <typename T>
-void yarp::os::PortReaderBuffer<T>::setReplier(PortReader& reader)
+void yarp::os::impl::PortReaderBuffer<T>::setReplier(PortReader& reader)
 {
     implementation.setReplier(reader);
 }
 
 template <typename T>
-bool yarp::os::PortReaderBuffer<T>::getEnvelope(PortReader& envelope)
+bool yarp::os::impl::PortReaderBuffer<T>::getEnvelope(PortReader& envelope)
 {
     return implementation.getEnvelope(envelope);
 }
 
 template <typename T>
-bool yarp::os::PortReaderBuffer<T>::isClosed()
+bool yarp::os::impl::PortReaderBuffer<T>::isClosed()
 {
     return implementation.isClosed();
 }
 
 template <typename T>
-std::string yarp::os::PortReaderBuffer<T>::getName() const
+std::string yarp::os::impl::PortReaderBuffer<T>::getName() const
 {
     return implementation.getName();
 }
 
 template <typename T>
-bool yarp::os::PortReaderBuffer<T>::acceptObject(T* obj, PortWriter* wrapper)
+bool yarp::os::impl::PortReaderBuffer<T>::acceptObject(T* obj, PortWriter* wrapper)
 {
     return implementation.acceptObjectBase(obj, wrapper);
 }
 
 template <typename T>
-bool yarp::os::PortReaderBuffer<T>::forgetObject(T* obj, yarp::os::PortWriter* wrapper)
+bool yarp::os::impl::PortReaderBuffer<T>::forgetObject(T* obj, yarp::os::PortWriter* wrapper)
 {
     return implementation.forgetObjectBase(obj, wrapper);
 }
 
 template <typename T>
-void* yarp::os::PortReaderBuffer<T>::acquire()
+void* yarp::os::impl::PortReaderBuffer<T>::acquire()
 {
     return implementation.acquire();
 }
 
 template <typename T>
-void yarp::os::PortReaderBuffer<T>::release(void* handle)
+void yarp::os::impl::PortReaderBuffer<T>::release(void* handle)
 {
     implementation.release(handle);
 }
 
 template <typename T>
-void yarp::os::PortReaderBuffer<T>::setTargetPeriod(double period)
+void yarp::os::impl::PortReaderBuffer<T>::setTargetPeriod(double period)
 {
     implementation.setTargetPeriod(period);
 }
 
 
-#endif // YARP_OS_PORTREADERBUFFER_INL_H
+#endif // YARP_OS_IMPL_PORTREADERBUFFER_INL_H

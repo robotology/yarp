@@ -88,12 +88,11 @@ class SpeechTranscription_nws_yarp :
 {
 private:
     yarp::dev::ISpeechTranscription* m_isptr{ nullptr };
-    yarp::os::Port            m_inputPort;
+    yarp::os::BufferedPort<yarp::sig::Sound> m_inputPort;
     yarp::os::Port            m_outputPort;
     yarp::os::Port            m_rpcPort;
     ISpeechTranscriptionMsgsd m_rpc;
 
-    yarp::os::PortReaderBuffer <yarp::sig::Sound> input_buffer;
     std::unique_ptr<SpeechTranscription_CallbackHelper> callback_impl;
 
     // yarp::dev::IWrapper

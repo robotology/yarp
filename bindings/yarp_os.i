@@ -54,7 +54,6 @@
 %ignore yarp::os::RpcClient::open;
 
 // These methods do not get translated well
-%ignore yarp::PortReaderBuffer;
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
 
@@ -95,8 +94,6 @@
 %include <yarp/os/TypedReader.h>
 %include <yarp/os/TypedReaderCallback.h>
 %include <yarp/os/TypedReaderThread.h>
-%include <yarp/os/PortReaderBuffer.h>
-%include <yarp/os/PortWriterBuffer.h>
 %include <yarp/os/Random.h>
 %include <yarp/os/Searchable.h>
 %include <yarp/os/Semaphore.h>

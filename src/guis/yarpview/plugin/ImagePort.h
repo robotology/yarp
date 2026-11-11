@@ -9,7 +9,6 @@
 
 #include <yarp/sig/Image.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Time.h>
 #include <yarp/conf/numeric.h>
 

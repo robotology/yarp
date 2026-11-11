@@ -38,16 +38,19 @@ bool StreamReceiver::lastImage(ImageType& image)
     std::lock_guard<std::mutex> lock(m_mutex);
 
     bool ret {false};
-    if (!port.isOpen()) {
+    if (port.isClosed()) {
         image.zero();
         ret = false;
-    } else if (reader.check()) {
-        ret = image.copy(*(reader.read(true)));
-        reader.getEnvelope(m_lastStamp);
-        m_lastHeight = image.height();
-        m_lastWidth = image.width();
-    } else {
-        ret = image.copy(*(reader.lastRead()));
+    } else if (port.getPendingReads() > 0) {
+        yarp::sig::FlexImage* received = port.read(true);
+        if (received != nullptr) {
+            ret = image.copy(*received);
+            port.getEnvelope(m_lastStamp);
+            m_lastHeight = image.height();
+            m_lastWidth = image.width();
+        }
+    } else if (yarp::sig::FlexImage* last = port.lastRead(); last != nullptr) {
+        ret = image.copy(*last);
     }
 
     return ret;
@@ -73,8 +76,6 @@ bool StreamReceiver::open(const std::string& local,
         yCInfo(FRAMEGRABBER_NWC_YARP) << "No remote specified. Waiting for connection";
     }
 
-    reader.attach(port);
-
     return true;
 }
 
@@ -86,7 +87,7 @@ bool StreamReceiver::close()
     m_lastHeight = 0;
     m_lastWidth = 0;
 
-    if (!port.isOpen()) {
+    if (port.isClosed()) {
         return true;
     }
     port.interrupt();

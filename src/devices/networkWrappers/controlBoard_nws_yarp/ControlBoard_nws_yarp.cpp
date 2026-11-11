@@ -92,7 +92,6 @@ bool ControlBoard_nws_yarp::open(Searchable& config)
         closePorts();
         return false;
     }
-    extendedOutputState_buffer.attach(extendedOutputStatePort);
 
     // In case attach is not deferred and the controlboard already owns a valid device
     // we can start the thread. Otherwise this will happen when attachAll is called
@@ -348,7 +347,7 @@ void ControlBoard_nws_yarp::run()
         yCIWarning(CONTROLBOARD, id()) << "Number of streaming input messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
     }
     // handle stateExt first
-    JointStateData& data = extendedOutputState_buffer.get();
+    JointStateData& data = extendedOutputStatePort.prepare();
 
     data.jointPosition.resize(subdevice_joints);
     data.jointVelocity.resize(subdevice_joints);
@@ -461,9 +460,8 @@ void ControlBoard_nws_yarp::run()
     time.update(std::accumulate(times.begin(), times.end(), 0.0) / subdevice_joints);
     yarp::os::Stamp averageTime = time;
 
-    extendedOutputStatePort.enableBackgroundWrite(true);
     extendedOutputStatePort.setEnvelope(averageTime);
-    extendedOutputState_buffer.write();
+    extendedOutputStatePort.write();
 
     // handle state:o
     yarp::sig::Vector& v = outputPositionStatePort.prepare();

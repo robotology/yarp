@@ -28,8 +28,6 @@ bool SerialPort_nws_yarp::open(Searchable& config)
 
     std::string rootName = m_name;
 
-    command_buffer.attach(toDevice);
-    reply_buffer.attach(fromDevice);
 
     toDevice.open(rootName+"/in");
     fromDevice.open(rootName+"/out");
@@ -53,11 +51,11 @@ void SerialPort_nws_yarp::run()
     while (!isStopping())
     {
         //before = SystemClock::nowSystem();
-        Bottle& b = reply_buffer.get();
+        Bottle& b = fromDevice.prepare();
         b.clear();
         receive( b );
         /*if(b.size() > 0)*/ /* this line was creating a memory leak !! */
-        reply_buffer.write();
+        fromDevice.write();
         //now = SystemClock::nowSystem();
         // give other threads the chance to run
         yarp::os::SystemClock::delaySystem(0.010);
@@ -81,7 +79,7 @@ bool  SerialPort_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach)
     yCInfo(SERIAL_NWS, "Attach done");
 
     callback_impl = std::make_unique<SerialPort_CallbackHelper>(m_iserial);
-    command_buffer.useCallback(*callback_impl);
+    toDevice.useCallback(*callback_impl);
     m_rpc.setInterfaces(m_iserial);
 
     start();
@@ -125,7 +123,7 @@ bool SerialPort_nws_yarp::closeMain()
         Thread::stop();
     }
     //close the port connection here
-    command_buffer.disableCallback();
+    toDevice.disableCallback();
     toDevice.close();
     fromDevice.close();
     m_rpcPort.close();

@@ -10,7 +10,7 @@
 #include <yarp/sig/ImageDraw.h>
 #include <yarp/sig/ImageUtils.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
@@ -352,12 +352,10 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
             }
         }
 
-        PortReaderBuffer< ImageOf<PixelRgb> > buf;
+        BufferedPort<ImageOf<PixelRgb>> input;
+        Port output;
 
-        Port input, output;
-
-        buf.setStrict();
-        buf.attach(input);
+        input.setStrict();
 
         input.open("/in");
         output.open("/out");
@@ -370,7 +368,7 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
         output.write(img1);
         output.write(img1);
         INFO("reading...");
-        ImageOf<PixelRgb> *result = buf.read();
+        ImageOf<PixelRgb> *result = input.read();
 
         CHECK(result!=nullptr); // got something check
         if (result!=nullptr) {

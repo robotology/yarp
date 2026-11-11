@@ -71,11 +71,11 @@ the object.
 Keeping objects around until they have been transmitted is actually
 quite complicated to do, especially when there are multiple receivers
 operating at different rates.  YARP supplies the
-yarp::os::PortWriterBuffer class to manage these details.  There is a
-similar class for reducing timing dependencies during reading, called
-yarp::os::PortReaderBuffer.  These two kinds of buffering are bundled
-with the yarp::os::Port class in yarp::os::BufferedPort.  For
-streaming communication, this class offers many advantages.
+yarp::os::BufferedPort class to manage these details: it bundles a
+yarp::os::Port with an output buffer (which keeps the objects alive
+until they are transmitted) and an input buffer (which reduces timing
+dependencies during reading).  For streaming communication, this class
+offers many advantages.
 We can rewrite our previous example like this -- the receiver:
 \code
 BufferedPort<Bottle> p; // Create a port.

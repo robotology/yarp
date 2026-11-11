@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/os/PortWriterBuffer.h>
+#include <yarp/os/impl/PortWriterBuffer.h>
 
 #include <yarp/os/Port.h>
 #include <yarp/os/Semaphore.h>
@@ -81,7 +81,7 @@ public:
         if (packet->getContent() == nullptr) {
             yCDebug(PORTWRITERBUFFERBASE, "creating a writer buffer");
             //packet->setContent(owner.create(*this, packet), true);
-            yarp::os::PortWriterWrapper* wrapper = owner.create(*this, packet);
+            yarp::os::impl::PortWriterWrapper* wrapper = owner.create(*this, packet);
             //packet->setContent(wrapper, true);
             packet->setContent(wrapper->getInternal(), false, wrapper, true);
         }

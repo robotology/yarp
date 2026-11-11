@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_OS_PORTREADERBUFFER_H
-#define YARP_OS_PORTREADERBUFFER_H
+#ifndef YARP_OS_IMPL_PORTREADERBUFFER_H
+#define YARP_OS_IMPL_PORTREADERBUFFER_H
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/LocalReader.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/PortReader.h>
-#include <yarp/os/PortReaderBufferBase.h>
-#include <yarp/os/PortReaderBufferBaseCreator.h>
+#include <yarp/os/impl/PortReaderBufferBase.h>
+#include <yarp/os/impl/PortReaderBufferBaseCreator.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/TypedReader.h>
 #include <yarp/os/TypedReaderCallback.h>
@@ -21,7 +21,7 @@
 #include <cstdio>
 #include <string>
 
-namespace yarp::os {
+namespace yarp::os::impl {
 
 /**
  * Buffer incoming data to a port.
@@ -35,7 +35,7 @@ template <typename T>
 class PortReaderBuffer :
         public yarp::os::TypedReader<T>,
         public yarp::os::LocalReader<T>,
-        public yarp::os::PortReaderBufferBaseCreator
+        public yarp::os::impl::PortReaderBufferBaseCreator
 {
 public:
     /**
@@ -136,15 +136,15 @@ public:
     void setTargetPeriod(double period) override;
 
 private:
-    yarp::os::PortReaderBufferBase implementation;
+    yarp::os::impl::PortReaderBufferBase implementation;
     bool autoDiscard;
     T* last;
     T* default_value;
     TypedReaderThread<T>* reader;
 };
 
-} // namespace yarp::os
+} // namespace yarp::os::impl
 
-#include <yarp/os/PortReaderBuffer-inl.h>
+#include <yarp/os/impl/PortReaderBuffer-inl.h>
 
-#endif // YARP_OS_PORTREADERBUFFER_H
+#endif // YARP_OS_IMPL_PORTREADERBUFFER_H

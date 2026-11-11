@@ -15,7 +15,7 @@ namespace yarp::os {
 
 /**
  * A base class for sources of typed data.  This could be a
- * BufferedPort or a PortReaderBuffer.
+ * BufferedPort.
  */
 template <class T>
 class TypedReader

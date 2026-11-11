@@ -81,11 +81,10 @@ class ControlBoard_nwc_yarp :
         public ControlBoard_nwc_yarp_ParamsParser
 {
 protected:
-    yarp::os::Port command_p;
+    yarp::os::BufferedPort<yarp::dev::CommandMessageData> command_p;
     DiagnosticThread *diagnosticThread{nullptr};
     yarp::os::Port m_rpcPort;
 
-    yarp::os::PortWriterBuffer<yarp::dev::CommandMessageData> command_buffer;
     bool writeStrict_singleJoint{true};
     bool writeStrict_moreJoints{false};
 

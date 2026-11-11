@@ -27,7 +27,6 @@ bool SpeechSynthesizer_nws_yarp::open(Searchable& config)
 {
     if (!parseParams(config)) { return false; }
 
-    input_buffer.attach(m_inputPort);
     m_inputPort.open(m_name +"/text:i");
     m_outputPort.open(m_name + "/sound:o");
     if (!m_rpcPort.open(m_name +"/rpc"))
@@ -70,7 +69,7 @@ bool  SpeechSynthesizer_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach)
     yCInfo(SPEECHSYNTH_NWS, "Attach done");
 
     callback_impl = std::make_unique<SpeechSynthesizer_CallbackHelper>(m_isptr,&m_outputPort);
-    input_buffer.useCallback(*callback_impl);
+    m_inputPort.useCallback(*callback_impl);
     m_rpc.setInterfaces(m_isptr);
     m_rpc.setOutputPort(&m_outputPort);
 
@@ -90,7 +89,7 @@ bool SpeechSynthesizer_nws_yarp::closeMain()
         Thread::stop();
     }
     //close the port connection here
-    input_buffer.disableCallback();
+    m_inputPort.disableCallback();
     m_inputPort.close();
     m_outputPort.close();
     m_rpcPort.close();

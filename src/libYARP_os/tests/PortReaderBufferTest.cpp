@@ -5,7 +5,7 @@
  */
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/impl/PortReaderBuffer.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
@@ -43,7 +43,7 @@ TEST_CASE("os::PortReaderBufferTest", "[yarp::os]")
 
     SECTION("checking direct object accept")
     {
-        PortReaderBuffer<Bottle> buffer;
+        yarp::os::impl::PortReaderBuffer<Bottle> buffer;
         Bottle dummy;
         Bottle data("hello");
         Bottle data2("there");

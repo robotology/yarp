@@ -235,7 +235,6 @@ bool ControlBoard_nwc_yarp::open(Searchable& config)
         return false;
     }
 
-    command_buffer.attach(command_p);
 
     // open rpc port
     std::string local_rpc_portname = m_local + "/nwc/rpc:o";
@@ -346,7 +345,6 @@ bool ControlBoard_nwc_yarp::close()
         delete diagnosticThread;
     }
 
-    command_buffer.detach(); //TBC
 
     m_rpcPort.interrupt(); // TBC
     command_p.interrupt(); // TBC
@@ -633,7 +631,7 @@ ReturnValue ControlBoard_nwc_yarp::setPidOffset(const PidControlTypeEnum& pidtyp
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_PIDCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_PIDCONTROL_SET_OFFSET);
@@ -641,7 +639,7 @@ ReturnValue ControlBoard_nwc_yarp::setPidOffset(const PidControlTypeEnum& pidtyp
         c.head.addInt32(j);
         c.body.resize(1);
         c.body[0] = v;
-        command_buffer.write(writeStrict_singleJoint);
+        command_p.write(writeStrict_singleJoint);
         return ReturnValue_ok;
     }
     else
@@ -664,7 +662,7 @@ ReturnValue ControlBoard_nwc_yarp::setPidFeedforward(const PidControlTypeEnum& p
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_PIDCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_PIDCONTROL_SET_FEEDFORWARD);
@@ -672,7 +670,7 @@ ReturnValue ControlBoard_nwc_yarp::setPidFeedforward(const PidControlTypeEnum& p
         c.head.addInt32(j);
         c.body.resize(1);
         c.body[0] = v;
-        command_buffer.write(writeStrict_singleJoint);
+        command_p.write(writeStrict_singleJoint);
         return ReturnValue_ok;
     }
     else
@@ -1521,14 +1519,14 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(int j, double v)
         if (!isLive()) {
            return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_MOVE);
         c.head.addInt32(j);
         c.body.resize(1);
         memcpy(&(c.body[0]), &v, sizeof(double));
-        command_buffer.write(writeStrict_singleJoint);
+        command_p.write(writeStrict_singleJoint);
         return ReturnValue_ok;
     }
     else
@@ -1551,13 +1549,13 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(const double *v)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_MOVES);
         c.body.resize(m_nj);
         memcpy(&(c.body[0]), v, sizeof(double)*m_nj);
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -1940,7 +1938,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorques(const double *t)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_TORQUECONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_TORQUES_DIRECTS);
@@ -1949,7 +1947,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorques(const double *t)
 
         memcpy(c.body.data(), t, sizeof(double) * m_nj);
 
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -1973,7 +1971,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorque(int j, double v)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_TORQUECONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_TORQUES_DIRECT);
@@ -1982,7 +1980,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorque(int j, double v)
         c.body.clear();
         c.body.resize(1);
         c.body[0] = v;
-        command_buffer.write(writeStrict_singleJoint);
+        command_p.write(writeStrict_singleJoint);
         return ReturnValue_ok;
     }
     else
@@ -2005,7 +2003,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorques(const int n_joint, c
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_TORQUECONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_TORQUES_DIRECT_GROUP);
@@ -2016,7 +2014,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefTorques(const int n_joint, c
         }
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), t, sizeof(double)*n_joint);
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -2293,14 +2291,14 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPosition(int j, double ref)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_POSITIONDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_POSITION_DIRECT);
         c.head.addInt32(j);
         c.body.resize(1);
         memcpy(&(c.body[0]), &ref, sizeof(double));
-        command_buffer.write(writeStrict_singleJoint);
+        command_p.write(writeStrict_singleJoint);
         return ReturnValue_ok;
     }
     else
@@ -2323,7 +2321,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPositions(const int n_joint, co
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_POSITIONDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_POSITION_DIRECT_GROUP);
@@ -2334,7 +2332,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPositions(const int n_joint, co
         }
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -2359,13 +2357,13 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setPositions(const double *refs)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_POSITIONDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_POSITION_DIRECTS);
         c.body.resize(m_nj);
         memcpy(&(c.body[0]), refs, sizeof(double)*m_nj);
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -2430,7 +2428,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(const int n_joint, co
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_MOVE_GROUP);
@@ -2441,7 +2439,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::velocityMove(const int n_joint, co
         }
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), spds, sizeof(double)*n_joint);
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -2717,13 +2715,13 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefCurrents(const double *refs)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_CURRENTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_CURRENT_REFS);
         c.body.resize(m_nj);
         memcpy(&(c.body[0]), refs, sizeof(double)*m_nj);
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -2758,7 +2756,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefCurrents(const int n_joint, 
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_CURRENTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_CURRENT_REF_GROUP);
@@ -2769,7 +2767,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefCurrents(const int n_joint, 
         }
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -2888,7 +2886,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefDutyCycles(const double *v)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_PWMCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_PWMCONTROL_REF_PWMS);
@@ -2897,7 +2895,7 @@ yarp::dev::ReturnValue ControlBoard_nwc_yarp::setRefDutyCycles(const double *v)
 
         memcpy(&(c.body[0]), v, sizeof(double)*m_nj);
 
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -3025,14 +3023,14 @@ ReturnValue ControlBoard_nwc_yarp::setRefVelocity(int jnt, double vel)
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_ONE);
         c.head.addInt32(jnt);
         c.body.resize(1);
         c.body[0] = vel;
-        command_buffer.write(writeStrict_singleJoint);
+        command_p.write(writeStrict_singleJoint);
         return ReturnValue_ok;
     }
     else
@@ -3055,7 +3053,7 @@ ReturnValue ControlBoard_nwc_yarp::setRefVelocity(const std::vector<double>& vel
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_ALL);
@@ -3063,7 +3061,7 @@ ReturnValue ControlBoard_nwc_yarp::setRefVelocity(const std::vector<double>& vel
         for (size_t i = 0; i < vels.size(); i++) {
             c.body[i]=vels[i];
         }
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else
@@ -3086,7 +3084,7 @@ ReturnValue ControlBoard_nwc_yarp::setRefVelocity(const std::vector<int>& jnts, 
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
-        CommandMessageData& c = command_buffer.get();
+        CommandMessageData& c = command_p.prepare();
         c.head.clear();
         c.head.addVocab32(VOCAB_VELOCITYDIRECTCONTROL_INTERFACE);
         c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_GROUP);
@@ -3099,7 +3097,7 @@ ReturnValue ControlBoard_nwc_yarp::setRefVelocity(const std::vector<int>& jnts, 
         for (size_t i = 0; i < jnts.size(); i++) {
             c.body[i]=vels[i];
         }
-        command_buffer.write(writeStrict_moreJoints);
+        command_p.write(writeStrict_moreJoints);
         return ReturnValue_ok;
     }
     else

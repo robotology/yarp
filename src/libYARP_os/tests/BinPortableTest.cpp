@@ -9,7 +9,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/BufferedPort.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -43,19 +43,18 @@ TEST_CASE("os::BinPortableTest", "[yarp::os]")
         BinPortable<int> i;
         i.content() = 5;
 
-        PortReaderBuffer<BinPortable<int>> buf;
-        Port input, output;
+        BufferedPort<BinPortable<int>> input;
+        Port output;
         bool ok1 = input.open("/in");
         bool ok2 = output.open("/out");
         REQUIRE(ok1);
         REQUIRE(ok2); // "ports opened ok"
 
-        buf.attach(input);
         output.addOutput(Contact("/in", "tcp"));
         INFO("writing...");
         output.write(i);
         INFO("reading...");
-        BinPortable<int> *result = buf.read();
+        BinPortable<int> *result = input.read();
         REQUIRE(result != nullptr); // "got something check"
         CHECK(result->content() == 5); // "value preserved"
         output.close();
