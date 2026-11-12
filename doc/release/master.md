@@ -137,6 +137,11 @@ Important Changes
   `yarp::os::Port` + `PortReaderBuffer`/`PortWriterBuffer`.
 * `frameGrabber_nwc_yarp`: fixed a possible null pointer dereference when an image is requested before the first frame is received.
 
+#### `JoypadControl_nws_yarp`
+
+* Now `JoypadControl_nws_yarp` uses `getAllAxes()` instead of individual `getAxis()` calls when
+  periodically querying the joypad state to avoid costly per-axis queries on certain implementations.
+  
 ### carriers
 
 #### shmem
