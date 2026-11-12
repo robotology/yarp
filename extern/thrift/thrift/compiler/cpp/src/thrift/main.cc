@@ -652,11 +652,23 @@ void error_unsupported_namespace_decl(const char* old_form, const char* new_form
   failure("Unsupported declaration '%s%s'. Use 'namespace %s' instead.", old_form, remainder, new_form);
 }
 
+#ifdef YARPIDL_THRIFT
+// YARP: defined in t_yarp_generator.cc, prints yarpidl_thrift, thrift and protocol version.
+// YARPIDL_THRIFT is defined only when building yarpidl_thrift, so that the
+// standalone thrift compiler (which does not include t_yarp_generator.cc)
+// keeps the original behaviour.
+void yarp_generator_version();
+#endif
+
 /**
  * Prints the version number
  */
 void version() {
+#ifdef YARPIDL_THRIFT
+  yarp_generator_version();
+#else
   printf("Thrift version %s\n", THRIFT_VERSION);
+#endif
 }
 
 /**
