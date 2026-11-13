@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+
+<application>
+    <name>ParamRules</name>
+    <def-param-value name="id">c1</def-param-value>
+    <def-param-value name="other">c2</def-param-value>
+    <connection id="$PAR{id}">
+        <from>/a/out</from>
+        <to>/arb/in</to>
+    </connection>
+    <connection id="c2">
+        <from>/b/out</from>
+        <to>/arb/in</to>
+    </connection>
+    <arbitrator>
+        <port>/arb/in</port>
+        <rule connection="$PAR{id}">~$PAR{other}</rule>
+        <rule connection="c2">~c1</rule>
+    </arbitrator>
+</application>

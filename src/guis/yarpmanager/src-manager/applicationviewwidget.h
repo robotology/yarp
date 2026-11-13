@@ -78,7 +78,12 @@ public:
 
     bool isEditingMode();
 
+    // false if the application could not be loaded; the errors are in loadErrors()
+    bool isLoaded() const { return m_loaded; }
+    const QStringList& loadErrors() const { return m_loadErrors; }
+
 private:
+    void collectLoadErrors();
     bool getConRowByID(int id, int *row);
     bool getResRowByID(int id, int *row);
     QTreeWidgetItem *getModRowByID(int id, QTreeWidgetItem *parent = NULL);
@@ -169,6 +174,8 @@ private:
     QList <StdoutWindow*> stdoutWinList;
 
     bool editingMode;
+    bool m_loaded{true};
+    QStringList m_loadErrors;
     bool m_firstRefresh{true}; // flag to perform host enumeration only at the first refresh
     int m_resourcesNumber{0}; // number of hosts
 

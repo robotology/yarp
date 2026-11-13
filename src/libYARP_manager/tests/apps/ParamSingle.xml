@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+
+<application>
+    <name>ParamSingle</name>
+
+    <def-param-value name="robot">icubSim</def-param-value>
+    <def-param-value name="device">yarpdev</def-param-value>
+    <def-param-value name="config">${cfg}</def-param-value>
+    <def-param-value name="node">localhost</def-param-value>
+    <def-param-value name="workdir">/tmp</def-param-value>
+    <def-param-value name="carrier">tcp</def-param-value>
+    <def-param-value name="rule">~c2</def-param-value>
+
+    <var name="cfg">robot.ini</var>
+
+    <dependencies>
+        <port>/$PAR{robot}/app_dep</port>
+    </dependencies>
+
+    <module>
+        <name>$PAR{device}</name>
+        <parameters>--robot $PAR{robot} --from $PAR{config}</parameters>
+        <node>$PAR{node}</node>
+        <prefix>/$PAR{robot}</prefix>
+        <workdir>$PAR{workdir}</workdir>
+        <environment>ROBOT=$PAR{robot}</environment>
+        <dependencies>
+            <port timeout="1.0">/$PAR{robot}/mod_dep</port>
+        </dependencies>
+        <portmap>
+            <old>/old</old>
+            <new>/$PAR{robot}/new</new>
+        </portmap>
+    </module>
+
+    <module>
+        <name>plain</name>
+        <parameters>--from ${cfg} --no-params</parameters>
+        <node>localhost</node>
+    </module>
+
+    <connection>
+        <from>/$PAR{robot}/out</from>
+        <to external="true">/$PAR{robot}/in</to>
+        <protocol>$PAR{carrier}</protocol>
+    </connection>
+
+    <arbitrator>
+        <port>/$PAR{robot}/arb</port>
+        <rule connection="c1">$PAR{rule}</rule>
+    </arbitrator>
+</application>

@@ -215,7 +215,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         //return NULL;
     }
 
-    for(TiXmlElement* var = root->FirstChildElement("var"); var; var = var->NextSiblingElement())
+    for(TiXmlElement* var = root->FirstChildElement("var"); var; var = var->NextSiblingElement("var"))
     {
         if(var->Attribute("name") && var->GetText())
         {
@@ -258,6 +258,32 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     if((pref = (TiXmlElement*) root->FirstChild("prefix")))
         app.setPrefix(pref->GetText());
     */
+
+    /* retrieving default values of the application parameters */
+    for(TiXmlElement* def = root->FirstChildElement("def-param-value"); def;
+            def = def->NextSiblingElement("def-param-value"))
+    {
+        const char* paramName = def->Attribute("name");
+        std::string value = parser->parseText(def->GetText() ? def->GetText() : "");
+        OSTRINGSTREAM err;
+        if(!paramName || !strlen(paramName))
+        {
+            err<<"def-param-value without name in "<<szFile<<" at line "<<def->Row()<<".";
+        }
+        else if(value.find(ParamResolver::startKeyword) != std::string::npos)
+        {
+            err<<"def-param-value "<<paramName<<" cannot use application parameters in "<<szFile<<" at line "<<def->Row()<<".";
+        }
+        else if(!app.addParamDefault(paramName, value))
+        {
+            err<<"def-param-value "<<paramName<<" is declared twice in "<<szFile<<" at line "<<def->Row()<<".";
+        }
+        if(!err.str().empty())
+        {
+            logger->addError(err);
+            return nullptr;
+        }
+    }
 
     /* retrieving authors information*/
     TiXmlElement* authors;
@@ -503,6 +529,25 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 ApplicationInterface IApp(parser->parseText(name->GetText()).c_str());
                 if ((prefix = (TiXmlElement*)embApp->FirstChild("prefix"))) {
                     IApp.setPrefix(parser->parseText(prefix->GetText()).c_str());
+                }
+                for(TiXmlElement* param = embApp->FirstChildElement("app-param"); param;
+                        param = param->NextSiblingElement("app-param"))
+                {
+                    const char* paramName = param->Attribute("name");
+                    OSTRINGSTREAM err;
+                    if(!paramName || !strlen(paramName))
+                    {
+                        err<<"app-param without name in "<<szFile<<" at line "<<param->Row()<<".";
+                    }
+                    else if(!IApp.addAppParameter(paramName, parser->parseText(param->GetText())))
+                    {
+                        err<<"app-param "<<paramName<<" is set twice in "<<szFile<<" at line "<<param->Row()<<".";
+                    }
+                    if(!err.str().empty())
+                    {
+                        logger->addError(err);
+                        return nullptr;
+                    }
                 }
 #ifdef WITH_GEOMETRY
                 auto* element = (TiXmlElement*) embApp->FirstChild("geometry");

@@ -75,8 +75,11 @@ public:
     void addConnectionsAction(QAction*);
     QRectF itemsBoundingRect();
 
+    // false if the application could not be loaded (editing mode only)
+    bool isLoaded() const { return m_loaded; }
+
 private:
-    void prepareManagerFrom(Manager* lazy,
+    bool prepareManagerFrom(Manager* lazy,
                             const char* szAppName);
     void init();
     bool isApplicationPresent(Application *application);
@@ -107,6 +110,7 @@ protected:
     //QList <QGraphicsItem*> itemsList;
     bool editingMode;
     bool m_modified;
+    bool m_loaded {true};
     int connectionsId;
 
     QString editingAppName;

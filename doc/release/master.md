@@ -109,6 +109,22 @@ Important Changes
   the related delegate code (`NameServerContainer::whereDelegate()`, `setDelegate()`/`getDelegate()`
   in `Subscriber` and `NameServiceOnTriples`). The option had no effect since the removal of `RosNameSpace`.
 
+### libYARP_manager
+
+* Added application parameters: an application can use `$PAR{name}` placeholders, declare their default values with
+  `<def-param-value name="name">default</def-param-value>`, and the applications
+  embedding it can set their values with `<app-param name="name">value</app-param>`, so the same application can be embedded
+  several times with different values. See the yarpmanager documentation for details.
+* Fixed `Application::clear()` not clearing the arbitrators, which leaked from one application file to the next when loading a directory.
+* Fixed the application loader reading as `<var>` variables all the top-level elements after the first `<var>` that have a `name` attribute.
+
+### yarpmanager
+
+* The builder warns before saving an application that uses application parameters, and shows an error when an embedded
+  application cannot be added.
+* An application that cannot be loaded (e.g. because of a missing application parameter) is not opened, and the errors
+  are shown, instead of opening an empty or broken tab.
+
 ### thrift generator
 
 * Updated thrift generator to use `yarp.api.include` also in `enums` when required.

@@ -317,12 +317,20 @@ bool Manager::switchBroker(size_t id)
 
 bool Manager::prepare(bool silent)
 {
-    knowledge.reasolveDependency(strAppName.c_str(), bAutoDependancy, silent);
-
     clearExecutables();
     connections.clear();
     modules.clear();
     resources.clear();
+
+    // reasolveDependency() also fails when some dependencies cannot be
+    // satisfied (e.g. a module without node): the application can still be
+    // loaded in that case. It cannot when the application could not be put
+    // together (e.g. a missing application parameter).
+    if (!knowledge.reasolveDependency(strAppName.c_str(), bAutoDependancy, silent)
+        && !knowledge.getApplication()) {
+        return false;
+    }
+
     connections = knowledge.getSelConnection();
     modules = knowledge.getSelModules();
     resources = knowledge.getSelResources();
