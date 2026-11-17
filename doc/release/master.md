@@ -179,3 +179,13 @@ Important Changes
 ### Build system
 
 * Enabled parallel installation (`INSTALL_PARALLEL`) when using CMake >= 3.30.
+
+### Github workflows
+
+* Fixed branch correspondance (the image labelled yarp4 was being built using the master branch)
+* Added two new build
+* The images built now are:
+  * Yarp master on ubuntu 24.04
+  * Yarp master on ubuntu 26.04
+  * Yarp yarp-4.0 on ubuntu 24.04
+  * Yarp yarp-4.0 on ubuntu 26.04

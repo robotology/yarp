@@ -18,15 +18,25 @@ jobs:
               base_image: "ubuntu:24.04",
               base_image_label: "ubuntu24.04",
               work_dir: "docker/",
-              yarp_branch: "master",
-              yarp_branch_label: "yarp4.0"  
+              yarp_branch: "master" 
             }
           - {
               base_image: "ubuntu:26.04",
               base_image_label: "ubuntu26.04",
               work_dir: "docker/",
-              yarp_branch: "master",
-              yarp_branch_label: "yarp4.0"  
+              yarp_branch: "master"  
+            }
+          - {
+              base_image: "ubuntu:24.04",
+              base_image_label: "ubuntu24.04",
+              work_dir: "docker/",
+              yarp_branch: "yarp-4.0"
+            }
+          - {
+              base_image: "ubuntu:26.04",
+              base_image_label: "ubuntu26.04",
+              work_dir: "docker/",
+              yarp_branch: "yarp-4.0"
             }
     permissions:
       contents: read
@@ -65,4 +75,4 @@ jobs:
           push: true
           outputs: type=registry
           tags: |
-            ghcr.io/${{ github.repository_owner }}/yarp:${{matrix.config.base_image_label}}_${{matrix.config.yarp_branch_label}}
+            ghcr.io/${{ github.repository_owner }}/yarp:${{matrix.config.base_image_label}}_${{matrix.config.yarp_branch}}
