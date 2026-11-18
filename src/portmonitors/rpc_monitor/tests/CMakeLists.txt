@@ -4,7 +4,7 @@
 # BUILD_SHARED_LIBS is required
 if (BUILD_SHARED_LIBS)
     include(YarpCatchUtils)
-    
+
     find_package(Threads REQUIRED)
     
     add_executable(harness_pm_rpc_monitor)
