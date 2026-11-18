@@ -5,6 +5,8 @@
 if (BUILD_SHARED_LIBS)
     include(YarpCatchUtils)
 
+    find_package(Threads REQUIRED)
+
     add_executable(harness_pm_rpc_monitor)
 
     target_sources(harness_pm_rpc_monitor PRIVATE
@@ -15,6 +17,7 @@ if (BUILD_SHARED_LIBS)
       PRIVATE
         YARP_harness
         YARP::YARP_os
+        Threads::Threads
     )
 
     set_property(TARGET harness_pm_rpc_monitor PROPERTY FOLDER "Test")

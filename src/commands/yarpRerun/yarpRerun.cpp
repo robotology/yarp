@@ -16,7 +16,7 @@
 #include <yarp/dev/all.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/SensorStreamingData.h>
-#include <yarp/dev/impl/jointData.h>
+#include <yarp/dev/JointStateData.h>
 #include <yarp/sig/LaserScan2D.h>
 #include <yarp/sig/PointCloud.h>
 
@@ -404,7 +404,7 @@ bool  RerunLogger::process_Vector (const Bottle* pbot)
 
 bool  RerunLogger::process_RobotState (const Bottle* pbot)
 {
-    yarp::dev::impl::jointData data;
+    yarp::dev::JointStateData data;
     bool bcp = yarp::os::Portable::copyPortable(*pbot, data);
     if (bcp)
     {
